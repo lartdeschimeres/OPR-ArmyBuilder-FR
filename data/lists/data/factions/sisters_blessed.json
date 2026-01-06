@@ -3,16 +3,16 @@
   "units": [
     {
       "id": "sister_superior",
-      "name": "Sister Superior",
+      "name": "Soeur Supérieure",
       "type": "Hero",
-      "base_cost": 75,
+      "base_cost": 35,
       "slots": ["arme_principale", "relique"]
     },
     {
-      "id": "battle_sisters",
-      "name": "Battle Sisters",
+      "id": "Warriors_sisters",
+      "name": "Soeurs Guerrières",
       "type": "Infantry",
-      "base_cost": 120,
+      "base_cost": 135,
       "size": 5,
       "slots": ["arme_principale", "arme_speciale"]
     }
