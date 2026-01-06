@@ -1,0 +1,20 @@
+{
+  "faction": "Sœurs Bénies",
+  "units": [
+    {
+      "id": "sister_superior",
+      "name": "Sister Superior",
+      "type": "Hero",
+      "base_cost": 75,
+      "slots": ["arme_principale", "relique"]
+    },
+    {
+      "id": "battle_sisters",
+      "name": "Battle Sisters",
+      "type": "Infantry",
+      "base_cost": 120,
+      "size": 5,
+      "slots": ["arme_principale", "arme_speciale"]
+    }
+  ]
+}
