@@ -61,7 +61,7 @@ def scan_faction_jsons(dirs=None):
 
 # Chemins possibles (compatible avec la structure du dépôt)
 faction_paths = [
-    'data/factions/sisters_blessed.json',
+    #'data/factions/sisters_blessed.json',
     'data/lists/data/factions/sisters_blessed.json'
 ]
 rules_paths = [
