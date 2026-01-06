@@ -3,7 +3,7 @@
 Outil Streamlit pour construire des listes d'armée OPR (version française).
 
 ## Description
-Application simple permettant de sélectionner des unités d'une faction, calculer le coût total et vérifier des règles basiques (budget, nombre maximal d'unités selon `unit_per_points`).
+Application simple permettant de sélectionner des unités d'une faction, calculer le coût total et vérifier des règles basiques (budget, nombre maximal d'unités selon les klimitations OPR).
 
 Les fichiers de données JSON se trouvent dans le dépôt (`data/...`). Le projet contient une faction d'exemple : *Sœurs Bénies*.
 
