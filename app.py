@@ -1,244 +1,115 @@
-import os
-import csv
 import json
 import streamlit as st
+from pathlib import Path
 
-# ======================
-# Helpers
-# ======================
+# -----------------------------
+# CONFIG
+# -----------------------------
+FACTION_PATH = Path("data/factions/disciplines_de_la_guerre.json")
 
-def try_load(paths):
-    for p in paths:
-        try:
-            with open(p, encoding='utf-8') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            continue
-        except json.JSONDecodeError as e:
-            st.error(f"JSON invalide dans {p}: {e}")
-            st.stop()
-    st.error(f"Aucun fichier trouvé parmi: {', '.join(paths)}")
-    st.stop()
-
-def load_faction_mapping(csv_path="data/factions_by_game.csv"):
-    mapping = {}
-    if not os.path.exists(csv_path):
-        return mapping, f"Mapping non trouvé: {csv_path}"
-    try:
-        with open(csv_path, newline='', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                game = (row.get('Game') or '').strip()
-                filep = (row.get('faction_file') or '').strip()
-                name = (row.get('faction_name') or '').strip()
-                if not game:
-                    continue
-                mapping.setdefault(game, []).append({
-                    'file': filep if filep else None,
-                    'name': name if name else None
-                })
-        return mapping, f"Mapping chargé depuis {csv_path}"
-    except Exception as e:
-        return {}, f"Erreur lecture mapping CSV: {e}"
-
-def scan_faction_jsons(dirs=None):
-    if dirs is None:
-        dirs = ['data/lists/data/factions', 'data/factions']
-    found = []
-    for d in dirs:
-        if not os.path.isdir(d):
-            continue
-        for fn in sorted(os.listdir(d)):
-            if fn.lower().endswith('.json'):
-                p = os.path.join(d, fn)
-                try:
-                    with open(p, encoding='utf-8') as f:
-                        j = json.load(f)
-                        name = j.get('faction') or j.get('name')
-                except Exception:
-                    name = os.path.splitext(fn)[0]
-                found.append({'file': p, 'name': name})
-    return found
-
-# ======================
-# Initialisation
-# ======================
-
+st.set_page_config(page_title="OPR Army Builder 🇫🇷", layout="centered")
 st.title("OPR Army Builder 🇫🇷")
 
-# Jeux OPR
-GAMES = [
-    "Age of Fantasy",
-    "Age of Fantasy Skirmish",
-    "Age of Fantasy Regiment",
-    "Grimdark Future",
-    "Grimdark Future Firefight",
-    "Warfleet",
-]
-
-# Paths fallback
-faction_paths = ['data/lists/data/factions/sisters_blessed.json']
-rules_paths = ['data/lists/data/rules/opr_limits.json']
-
-rules = try_load(rules_paths)
-
-# Session state
-if 'selected_game' not in st.session_state:
-    st.session_state.selected_game = GAMES[0]
-
-if 'selected_faction_name' not in st.session_state:
-    st.session_state.selected_faction_name = None
-
-if 'selected_faction_path' not in st.session_state:
-    st.session_state.selected_faction_path = None
-
-if 'faction' not in st.session_state:
-    st.session_state.faction = try_load(faction_paths)
-
-if 'army' not in st.session_state:
-    st.session_state.army = []
-
-# ======================
-# Sélection du jeu
-# ======================
-
-selected_game = st.selectbox(
-    "Variante OPR (jeu)",
-    GAMES,
-    key="selected_game"
-)
-
-# unit_per_points
-DEFAULT_UNIT_PER_POINTS = {
-    "Age of Fantasy": 200,
-    "Age of Fantasy Skirmish": 100,
-    "Age of Fantasy Regiment": 300,
-    "Grimdark Future": 200,
-    "Grimdark Future Firefight": 150,
-    "Warfleet": 400,
-}
-
-unit_per_points = rules.get("unit_per_points_by_game", {}).get(
-    selected_game,
-    rules.get("unit_per_points", DEFAULT_UNIT_PER_POINTS[selected_game])
-)
-
-# ======================
-# Chargement factions
-# ======================
-
-mapping, _ = load_faction_mapping("data/factions_by_game.csv")
-
-faction_options = []
-seen = set()
-
-for entry in mapping.get(selected_game, []):
-    name = entry.get("name")
-    filep = entry.get("file")
-    if name and name not in seen:
-        faction_options.append({'name': name, 'file': filep})
-        seen.add(name)
-
-for found in scan_faction_jsons():
-    if found['name'] not in seen:
-        faction_options.append(found)
-        seen.add(found['name'])
-
-if not faction_options:
-    st.error("Aucune faction disponible.")
+# -----------------------------
+# LOAD FACTION
+# -----------------------------
+if not FACTION_PATH.exists():
+    st.error(f"Fichier faction introuvable : {FACTION_PATH}")
     st.stop()
 
-# ======================
-# Sélection faction
-# ======================
+with open(FACTION_PATH, encoding="utf-8") as f:
+    faction = json.load(f)
 
-faction_names = [f['name'] for f in faction_options]
+st.subheader(f"Faction : {faction['faction']}")
+st.caption(f"Jeu : {faction['game']}")
 
-sel_name = st.selectbox(
-    "Sélectionner la faction",
-    faction_names,
-    key="selected_faction_name"
+units = faction.get("units", [])
+if not units:
+    st.warning("Aucune unité dans cette faction.")
+    st.stop()
+
+# -----------------------------
+# SESSION STATE
+# -----------------------------
+if "selected_unit_name" not in st.session_state:
+    st.session_state.selected_unit_name = units[0]["name"]
+
+# -----------------------------
+# UNIT SELECTOR
+# -----------------------------
+def unit_label(u):
+    return f"{u['name']} ({u['base_cost']} pts | Q{u['quality']}+ / D{u['defense']}+)"
+
+unit_names = [u["name"] for u in units]
+
+selected_name = st.selectbox(
+    "Choisir une unité",
+    unit_names,
+    index=unit_names.index(st.session_state.selected_unit_name),
+    format_func=lambda n: unit_label(next(u for u in units if u["name"] == n))
 )
 
-selected_entry = next(f for f in faction_options if f['name'] == sel_name)
-selected_path = selected_entry.get('file')
+st.session_state.selected_unit_name = selected_name
+unit = next(u for u in units if u["name"] == selected_name)
 
-# Charger la faction SEULEMENT si elle change
-if selected_path != st.session_state.selected_faction_path:
-    st.session_state.selected_faction_path = selected_path
-    st.session_state.army = []  # reset armée
+# -----------------------------
+# BASE PROFILE
+# -----------------------------
+st.divider()
+st.subheader("Profil de base")
 
-    if selected_path and os.path.exists(selected_path):
-        with open(selected_path, encoding='utf-8') as f:
-            st.session_state.faction = json.load(f)
-    else:
-        st.session_state.faction = {
-            "faction": sel_name,
-            "units": []
-        }
+st.write(f"**Type :** {unit['type']}")
+st.write(f"**Qualité :** {unit['quality']}+")
+st.write(f"**Défense :** {unit['defense']}+")
+st.write(f"**Coût de base :** {unit['base_cost']} pts")
 
-    st.session_state.faction["faction"] = sel_name
+# -----------------------------
+# OPTIONS
+# -----------------------------
+st.divider()
+st.subheader("Options")
 
-# ======================
-# Affichage
-# ======================
+total_cost = unit["base_cost"]
+final_rules = list(unit.get("special_rules", []))
+final_weapons = list(unit.get("weapons", []))
 
-st.subheader(f"Faction : {st.session_state.faction.get('faction')}")
-st.caption(f"Jeu : {selected_game} — unit_per_points : {unit_per_points}")
+for group in unit.get("upgrade_groups", []):
+    key = f"{unit['name']}_{group['group']}"
 
-# ======================
-# Ajout unités
-# ======================
+    options = ["— Aucun —"] + [opt["name"] for opt in group["options"]]
 
-units = st.session_state.faction.get("units", [])
+    choice = st.selectbox(
+        group["group"],
+        options,
+        key=key
+    )
 
-if not units:
-    st.warning("Aucune unité disponible pour cette faction.")
-else:
-    unit_names = [u.get("name", "Sans nom") for u in units]
-    col1, col2 = st.columns([3, 1])
+    if choice != "— Aucun —":
+        opt = next(o for o in group["options"] if o["name"] == choice)
+        total_cost += opt["cost"]
 
-    with col1:
-        sel_unit = st.selectbox("Ajouter une unité", unit_names)
+        if "special_rules" in opt:
+            final_rules.extend(opt["special_rules"])
 
-    with col2:
-        if st.button("➕ Ajouter"):
-            unit = next(u for u in units if u.get("name") == sel_unit)
-            st.session_state.army.append({
-                **unit,
-                "base_cost": int(unit.get("base_cost", 0))
-            })
+        if "weapon" in opt:
+            final_weapons = [opt["weapon"]]
 
-# ======================
-# Liste actuelle
-# ======================
+# -----------------------------
+# FINAL PROFILE
+# -----------------------------
+st.divider()
+st.subheader("Profil final")
 
-st.subheader("🧾 Liste actuelle")
+st.markdown(f"## 💰 Coût total : **{total_cost} pts**")
 
-if not st.session_state.army:
-    st.info("Aucune unité ajoutée.")
-else:
-    for i, u in enumerate(st.session_state.army):
-        cols = st.columns([6, 1])
-        cols[0].write(f"- {u['name']} ({u['base_cost']} pts)")
-        if cols[1].button("🗑️", key=f"del_{i}"):
-            st.session_state.army.pop(i)
-            st.experimental_rerun()
+st.markdown("### 🛡️ Règles spéciales")
+for r in sorted(set(final_rules)):
+    st.write(f"- {r}")
 
-# ======================
-# Budget & validation
-# ======================
-
-budget = st.number_input("Budget total", min_value=0, value=1000, step=50)
-total = sum(u["base_cost"] for u in st.session_state.army)
-
-st.markdown(f"### Total : **{total} pts**")
-
-max_units = budget // unit_per_points
-
-if total > budget:
-    st.error("❌ Dépasse le budget")
-elif len(st.session_state.army) > max_units:
-    st.error("❌ Trop d’unités")
-else:
-    st.success("✅ Liste valide")
+st.markdown("### ⚔️ Armes")
+for w in final_weapons:
+    st.write(
+        f"- **{w.get('name','Arme')}** | "
+        f"A{w['attacks']} | PA({w['armor_piercing']}) "
+        f"{' '.join(w.get('special_rules', []))}"
+    )
