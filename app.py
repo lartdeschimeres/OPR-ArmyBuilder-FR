@@ -8,7 +8,7 @@ import streamlit as st
 st.set_page_config(page_title="OPR Army Builder FR", layout="centered")
 st.title("OPR Army Builder 🇫🇷")
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(".")
 FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
 
 # -------------------------------------------------
