@@ -5,7 +5,7 @@ from pathlib import Path
 # -----------------------------
 # CONFIG
 # -----------------------------
-FACTION_PATH = Path("data/factions/disciplines_de_la_guerre.json")
+FACTION_PATH = Path("data/factions/disciples_de_la_guerre.json")
 
 st.set_page_config(page_title="OPR Army Builder 🇫🇷", layout="centered")
 st.title("OPR Army Builder 🇫🇷")
