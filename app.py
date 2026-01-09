@@ -5,7 +5,35 @@ from pathlib import Path
 # -----------------------------
 # CONFIG
 # -----------------------------
-FACTION_PATH = Path("data/factions/disciples_de_la_guerre.json")
+FACTIONS_DIR = Path("data/factions")
+
+if not FACTIONS_DIR.exists():
+    st.error("Dossier data/factions introuvable")
+    st.stop()
+
+faction_files = sorted(FACTIONS_DIR.glob("*.json"))
+
+if not faction_files:
+    st.error("Aucun fichier faction trouvé dans data/factions")
+    st.stop()
+
+faction_map = {}
+
+for fp in faction_files:
+    try:
+        with open(fp, encoding="utf-8") as f:
+            data = json.load(f)
+            name = data.get("faction", fp.stem)
+            faction_map[name] = fp
+    except Exception as e:
+        st.warning(f"Impossible de lire {fp.name} : {e}")
+
+selected_faction = st.selectbox(
+    "Choisir la faction",
+    list(faction_map.keys())
+)
+
+FACTION_PATH = faction_map[selected_faction]
 
 st.set_page_config(page_title="OPR Army Builder 🇫🇷", layout="centered")
 st.title("OPR Army Builder 🇫🇷")
