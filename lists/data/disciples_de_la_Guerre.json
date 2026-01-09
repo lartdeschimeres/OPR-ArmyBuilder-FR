@@ -7,11 +7,11 @@
   "units": [
     {
       "name": "Maître de la Guerre Élu",
-      "type": "Héros",
+      "type": "Hero",
       "size": 1,
       "base_cost": 60,
-      "quality": "4+",
-      "defense": "4+",
+      "quality": 4,
+      "defense": 4,
 
       "special_rules": [
         "Attaque versatile",
@@ -32,10 +32,10 @@
 
       "upgrade_groups": [
         {
-          "group": "Améliorations",
+          "group": "Améliorations de rôle",
           "type": "upgrade",
           "options": [
-            { "name": "Conquérant (Aura d’Éclaireur)", "cost": 20, "special_rules": ["Aura d’Éclaireur"] },
+            { "name": "Conquérant", "cost": 20, "special_rules": ["Aura d’Éclaireur"] },
             { "name": "Marauder", "cost": 30, "special_rules": ["Aura de combattant imprévisible"] },
             { "name": "Porteur de la bannière de l’armée", "cost": 30, "special_rules": ["Effrayant (3)"] },
             { "name": "Mage", "cost": 35, "special_rules": ["Aura de Voile fluctuant"] },
@@ -73,8 +73,8 @@
         },
 
         {
-          "group": "Monture",
+          "group": "Montures",
           "type": "mount",
           "options": [
             { "name": "Cheval", "cost": 15, "special_rules": ["Impact (1)", "Rapide"] },
-            { "name": "Grande bête", "cost": 65, "special_rules": ["Griffes lourdes (A1, PA (1)", "Coriace (+3)", "Impact (2)", "Rapide"]},
+            {
