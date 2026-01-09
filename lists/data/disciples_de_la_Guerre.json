@@ -7,11 +7,11 @@
   "units": [
     {
       "name": "Maître de la Guerre Élu",
-      "type": "Hero",
+      "type": "Héros",
       "size": 1,
       "base_cost": 60,
-      "quality": 4,
-      "defense": 4,
+      "quality": "4+",
+      "defense": "4+",
 
       "special_rules": [
         "Attaque versatile",
@@ -32,7 +32,7 @@
 
       "upgrade_groups": [
         {
-          "group": "Améliorations de rôle",
+          "group": "Améliorations",
           "type": "upgrade",
           "options": [
             { "name": "Conquérant", "cost": 20, "special_rules": ["Aura d’Éclaireur"] },
@@ -73,8 +73,8 @@
         },
 
         {
-          "group": "Montures",
+          "group": "Monture",
           "type": "mount",
           "options": [
             { "name": "Cheval", "cost": 15, "special_rules": ["Impact (1)", "Rapide"] },
-            {
+            { "name": "Grande bête", "cost": 65, "special_rules": ["Griffes lourdes (A1, PA (1)", "Coriace (+3)", "Impact (2)", "Rapide"]},
