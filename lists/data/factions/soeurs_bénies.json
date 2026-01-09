@@ -1,0 +1,102 @@
+{
+  "faction": "Sœurs Bénies",
+  "game": "Grimdark Future",
+  "version": "FR-0.1",
+  "status": "stub",
+  "units": [
+    {
+      "name": "Sœurs de Bataille",
+      "original_name": "Battle Sisters",
+      "base_cost": 110,
+      "size": 5,
+      "quality": 4,
+      "defense": 4,
+      "equipment": [
+        "Fusils",
+        "Armure lourde"
+      ],
+      "special_rules": [
+        "Foi",
+        "Zèle"
+      ]
+    },
+    {
+      "name": "Sœurs d'Élite",
+      "original_name": "Elite Sisters",
+      "base_cost": 150,
+      "size": 5,
+      "quality": 4,
+      "defense": 3,
+      "equipment": [
+        "Fusils énergétiques",
+        "Armure lourde"
+      ],
+      "special_rules": [
+        "Foi",
+        "Zèle"
+      ]
+    },
+    {
+      "name": "Repentantes",
+      "original_name": "Repentants",
+      "base_cost": 120,
+      "size": 5,
+      "quality": 4,
+      "defense": 5,
+      "equipment": [
+        "Armes lourdes de mêlée"
+      ],
+      "special_rules": [
+        "Frénésie",
+        "Sans Peur"
+      ]
+    },
+    {
+      "name": "Séraphines",
+      "original_name": "Seraphim",
+      "base_cost": 160,
+      "size": 5,
+      "quality": 4,
+      "defense": 4,
+      "equipment": [
+        "Pistolets jumelés",
+        "Réacteurs dorsaux"
+      ],
+      "special_rules": [
+        "Vol",
+        "Foi"
+      ]
+    },
+    {
+      "name": "Exorciste",
+      "original_name": "Exorcist",
+      "base_cost": 220,
+      "size": 1,
+      "quality": 4,
+      "defense": 2,
+      "equipment": [
+        "Missiles sacrés",
+        "Blindage lourd"
+      ],
+      "special_rules": [
+        "Tir Indirect"
+      ]
+    },
+    {
+      "name": "Chanoinesse",
+      "original_name": "Canoness",
+      "base_cost": 95,
+      "size": 1,
+      "quality": 3,
+      "defense": 4,
+      "equipment": [
+        "Arme énergétique",
+        "Pistolet"
+      ],
+      "special_rules": [
+        "Héroïne",
+        "Foi"
+      ]
+    }
+  ]
+}
