@@ -8,20 +8,41 @@ import streamlit as st
 st.set_page_config(page_title="OPR Army Builder FR", layout="centered")
 st.title("OPR Army Builder 🇫🇷")
 
-BASE_DIR = Path(".")
-FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
+BASE_DIR = Path(__file__).resolve().parent
+GAMES_DIR = BASE_DIR / "lists" / "data"
 
 # -------------------------------------------------
-# CHARGEMENT DES FACTIONS
+# CHARGEMENT DES JEUX
 # -------------------------------------------------
-if not FACTIONS_DIR.exists():
-    st.error(f"Dossier factions introuvable : {FACTIONS_DIR}")
+if not GAMES_DIR.exists():
+    st.error(f"Dossier jeux introuvable : {GAMES_DIR}")
     st.stop()
 
-faction_files = sorted(FACTIONS_DIR.glob("*.json"))
+game_dirs = [d for d in GAMES_DIR.iterdir() if d.is_dir()]
+
+if not game_dirs:
+    st.error("Aucun jeu trouvé")
+    st.stop()
+
+# Sélecteur de jeu
+selected_game = st.selectbox(
+    "Sélectionner le jeu",
+    [d.name for d in game_dirs]
+)
+
+# -------------------------------------------------
+# CHARGEMENT DES FACTIONS POUR LE JEU SÉLECTIONNÉ
+# -------------------------------------------------
+GAME_FACTIONS_DIR = GAMES_DIR / selected_game
+
+if not GAME_FACTIONS_DIR.exists():
+    st.error(f"Dossier factions introuvable pour le jeu {selected_game}")
+    st.stop()
+
+faction_files = sorted(GAME_FACTIONS_DIR.glob("*.json"))
 
 if not faction_files:
-    st.error("Aucun fichier faction trouvé")
+    st.error(f"Aucun fichier faction trouvé pour le jeu {selected_game}")
     st.stop()
 
 faction_map = {}
@@ -35,11 +56,15 @@ for fp in faction_files:
     except Exception as e:
         st.warning(f"Impossible de lire {fp.name} : {e}")
 
+# Sélecteur de faction
 selected_faction = st.selectbox(
     "Sélectionner la faction",
     sorted(faction_map.keys())
 )
 
+# -------------------------------------------------
+# CHARGEMENT DE LA FACTION
+# -------------------------------------------------
 FACTION_PATH = faction_map[selected_faction]
 
 with open(FACTION_PATH, encoding="utf-8") as f:
@@ -49,7 +74,7 @@ with open(FACTION_PATH, encoding="utf-8") as f:
 # AFFICHAGE FACTION
 # -------------------------------------------------
 st.subheader(f"Faction : {faction.get('faction','Inconnue')}")
-st.caption(f"Jeu : {faction.get('game','?')}")
+st.caption(f"Jeu : {faction.get('game', selected_game)}")
 
 units = faction.get("units", [])
 if not units:
@@ -120,7 +145,7 @@ for group in unit.get("upgrade_groups", []):
             final_rules.extend(opt["special_rules"])
 
         if "weapon" in opt:
-            final_weapons = [opt["weapon"]]  # Remplacement des armes de base
+            final_weapons = [opt["weapon"]]
 
 # -------------------------------------------------
 # PROFIL FINAL
