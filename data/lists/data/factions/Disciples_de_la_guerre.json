@@ -1,0 +1,194 @@
+{
+  "name": "Maître de la Guerre Élu",
+  "faction": "Disciples de la Guerre",
+  "game": "Age of Fantasy",
+  "type": "Hero",
+  "size": 1,
+  "base_cost": 60,
+  "quality": 4,
+  "defense": 4,
+
+  "special_rules": [
+    "Attaque versatile",
+    "Coriace (3)",
+    "Héros",
+    "Né pour la guerre"
+  ],
+
+  "weapons": [
+    {
+      "name": "Arme à une main lourde",
+      "range": "-",
+      "attacks": 3,
+      "armor_piercing": 1,
+      "special_rules": []
+    }
+  ],
+
+  "upgrade_groups": [
+    {
+      "group": "Améliorations de rôle",
+      "type": "upgrade",
+      "options": [
+        {
+          "name": "Conquérant",
+          "cost": 20,
+          "special_rules": ["Aura d’Éclaireur"]
+        },
+        {
+          "name": "Marauder",
+          "cost": 30,
+          "special_rules": ["Aura de combattant imprévisible"]
+        },
+        {
+          "name": "Porteur de la bannière de l’armée",
+          "cost": 30,
+          "special_rules": ["Effrayant (3)"]
+        },
+        {
+          "name": "Mage",
+          "cost": 35,
+          "special_rules": ["Aura de Voile fluctuant"]
+        },
+        {
+          "name": "Seigneur de Guerre",
+          "cost": 35,
+          "special_rules": ["Aura de Boost de Né pour la guerre"]
+        },
+        {
+          "name": "Sorcier",
+          "cost": 40,
+          "special_rules": ["Lanceur de sorts (2)"]
+        },
+        {
+          "name": "Maître Sorcier",
+          "cost": 60,
+          "special_rules": ["Lanceur de sorts (3)"]
+        }
+      ]
+    },
+
+    {
+      "group": "Remplacement d’arme",
+      "type": "weapon",
+      "options": [
+        {
+          "name": "Hallebarde lourde",
+          "cost": 5,
+          "weapon": {
+            "range": "-",
+            "attacks": 3,
+            "armor_piercing": 1,
+            "special_rules": ["Perforant"]
+          }
+        },
+        {
+          "name": "Paire d’armes lourdes",
+          "cost": 10,
+          "weapon": {
+            "range": "-",
+            "attacks": 4,
+            "armor_piercing": 1,
+            "special_rules": []
+          }
+        },
+        {
+          "name": "Grande arme lourde",
+          "cost": 15,
+          "weapon": {
+            "range": "-",
+            "attacks": 3,
+            "armor_piercing": 3,
+            "special_rules": []
+          }
+        },
+        {
+          "name": "Lance lourde",
+          "cost": 10,
+          "weapon": {
+            "range": "-",
+            "attacks": 3,
+            "armor_piercing": 1,
+            "special_rules": ["Percée"]
+          }
+        }
+      ]
+    },
+
+    {
+      "group": "Montures",
+      "type": "mount",
+      "options": [
+        {
+          "name": "Cheval",
+          "cost": 15,
+          "special_rules": ["Impact (1)", "Rapide"]
+        },
+        {
+          "name": "Grande bête",
+          "cost": 65,
+          "special_rules": [
+            "Griffes lourdes (A1, PA (1))",
+            "Coriace (+3)",
+            "Impact (2)",
+            "Rapide"
+          ]
+        },
+        {
+          "name": "Monture démoniaque",
+          "cost": 75,
+          "special_rules": [
+            "Griffes lourdes (A1, PA (1))",
+            "Coriace (+3)",
+            "Impact (2)",
+            "Effrayant (1)",
+            "Rapide"
+          ]
+        },
+        {
+          "name": "Char",
+          "cost": 120,
+          "special_rules": [
+            "Sabots (A2)",
+            "Coriace (+6)",
+            "Impact (4)",
+            "Rapide"
+          ]
+        },
+        {
+          "name": "Char bestial",
+          "cost": 135,
+          "special_rules": [
+            "Griffes lourdes (A2, PA (1))",
+            "Coriace (+6)",
+            "Effrayant (1)",
+            "Impact (4)",
+            "Rapide"
+          ]
+        },
+        {
+          "name": "Manticore",
+          "cost": 155,
+          "special_rules": [
+            "Griffes perforantes (A6, Perforant)",
+            "Coriace (+6)",
+            "Effrayant (1)",
+            "Volant"
+          ]
+        },
+        {
+          "name": "Dragon du Ravage",
+          "cost": 320,
+          "special_rules": [
+            "Griffes lourdes (A6, PA (1))",
+            "Piétinement (A4, PA (1))",
+            "Attaque de souffle",
+            "Coriace (+12)",
+            "Effrayant (2)",
+            "Volant"
+          ]
+        }
+      ]
+    }
+  ]
+}
