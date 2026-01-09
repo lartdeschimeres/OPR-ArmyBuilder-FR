@@ -137,10 +137,32 @@ total_cost = unit.get("base_cost", 0)
 final_rules = list(unit.get("special_rules", []))
 final_weapons = list(unit.get("weapons", []))
 
+# Affichage des armes de base
+st.subheader("Armes de base")
+for w in unit.get("weapons", []):
+    st.write(
+        f"- **{w.get('name', 'Arme')}** | "
+        f"A{w.get('attacks', '?')} | "
+        f"PA({w.get('armor_piercing', '?')}) | "
+        f"{' '.join(w.get('special_rules', []))}"
+    )
+
+# Séparateur pour les options
+st.divider()
+st.subheader("Options d'amélioration")
+
+# -------------------------------------------------
+# OPTIONS PAR GROUPE (Rôle, Montures, etc.)
+# -------------------------------------------------
 for group in unit.get("upgrade_groups", []):
+    st.subheader(f"🔹 {group['group']}")
     key = f"{unit['name']}_{group['group']}"
     options = ["— Aucun —"] + [opt["name"] for opt in group["options"]]
-    choice = st.selectbox(group["group"], options, key=key)
+    choice = st.selectbox(
+        f"Choisir une {group['group'].lower()}",
+        options,
+        key=key
+    )
 
     if choice != "— Aucun —":
         opt = next(o for o in group["options"] if o["name"] == choice)
@@ -148,6 +170,13 @@ for group in unit.get("upgrade_groups", []):
         if "special_rules" in opt:
             final_rules.extend(opt["special_rules"])
         if "weapon" in opt:
+            st.markdown("**⚠️ Arme remplacée :**")
+            st.write(
+                f"- **{opt['weapon'].get('name', 'Arme')}** | "
+                f"A{opt['weapon'].get('attacks', '?')} | "
+                f"PA({opt['weapon'].get('armor_piercing', '?')}) | "
+                f"{' '.join(opt['weapon'].get('special_rules', []))}"
+            )
             final_weapons = [opt["weapon"]]
 
 # -------------------------------------------------
@@ -156,7 +185,7 @@ for group in unit.get("upgrade_groups", []):
 st.divider()
 st.subheader("Profil final de l'unité")
 
-st.markdown(f"## 💰 Coût total : **{total_cost} pts**")
+st.markdown(f"### 💰 Coût total : **{total_cost} pts**")
 
 st.markdown("### 🛡️ Règles spéciales")
 if final_rules:
@@ -171,7 +200,7 @@ if final_weapons:
         st.write(
             f"- **{w.get('name','Arme')}** | "
             f"A{w.get('attacks','?')} | "
-            f"PA({w.get('armor_piercing','?')}) "
+            f"PA({w.get('armor_piercing','?')}) | "
             f"{' '.join(w.get('special_rules', []))}"
         )
 else:
