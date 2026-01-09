@@ -76,18 +76,22 @@ army_target_cost = st.number_input(
 )
 
 # -------------------------------------------------
-# AFFICHAGE FACTION
-# -------------------------------------------------
-st.subheader(f"Faction : {faction.get('faction','Inconnue')}")
-st.caption(f"Jeu : {faction.get('game', selected_game)}")
-
-# -------------------------------------------------
 # CHARGEMENT DE LA FACTION
 # -------------------------------------------------
 FACTION_PATH = game_factions[selected_faction]["file"]
 
-with open(FACTION_PATH, encoding="utf-8") as f:
-    faction = json.load(f)
+try:
+    with open(FACTION_PATH, encoding="utf-8") as f:
+        faction = json.load(f)
+except Exception as e:
+    st.error(f"Erreur lors de la lecture du fichier {FACTION_PATH}: {e}")
+    st.stop()
+
+# -------------------------------------------------
+# AFFICHAGE FACTION
+# -------------------------------------------------
+st.subheader(f"Faction : {faction.get('faction', 'Inconnue')}")
+st.caption(f"Jeu : {faction.get('game', selected_game)}")
 
 units = faction.get("units", [])
 if not units:
