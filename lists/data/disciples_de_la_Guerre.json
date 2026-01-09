@@ -35,7 +35,7 @@
           "group": "Améliorations",
           "type": "upgrade",
           "options": [
-            { "name": "Conquérant", "cost": 20, "special_rules": ["Aura d’Éclaireur"] },
+            { "name": "Conquérant (Aura d’Éclaireur)", "cost": 20, "special_rules": ["Aura d’Éclaireur"] },
             { "name": "Marauder", "cost": 30, "special_rules": ["Aura de combattant imprévisible"] },
             { "name": "Porteur de la bannière de l’armée", "cost": 30, "special_rules": ["Effrayant (3)"] },
             { "name": "Mage", "cost": 35, "special_rules": ["Aura de Voile fluctuant"] },
