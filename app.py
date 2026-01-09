@@ -1,6 +1,9 @@
 import streamlit as st
 st.error("DEBUG – NOUVELLE VERSION DU CODE CHARGÉE")
 st.stop()
+st.write("DEBUG BASE_DIR =", BASE_DIR)
+st.write("DEBUG FACTIONS_DIR =", FACTIONS_DIR)
+st.write("DEBUG EXISTS =", FACTIONS_DIR.exists())
 
 import json
 import streamlit as st
