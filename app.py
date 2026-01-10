@@ -287,6 +287,9 @@ else:
             .rules-list {{
                 margin-left: 15px;
             }}
+            .rule-item {{
+                margin-bottom: 3px;
+            }}
             </style>
             <div class="army-card">
                 <div class="army-card-header">
@@ -299,7 +302,7 @@ else:
                 <div class="army-card-section">
                     <div class="army-card-section-title">Règles spéciales</div>
                     <div class="rules-list">
-                        {', '.join(army_unit['base_rules'])}
+                        {''.join(f'<div class="rule-item">• {rule}</div>' for rule in sorted(army_unit["base_rules"]))}
                     </div>
                 </div>
                 <div class="army-card-section">
