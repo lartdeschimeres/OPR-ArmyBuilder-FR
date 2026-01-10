@@ -144,8 +144,7 @@ for w in unit.get("weapons", []):
     st.write(
         f"- **{w.get('name', 'Arme')}** | "
         f"A{w.get('attacks', '?')} | "
-        f"PA({w.get('armor_piercing', '?')}) | "
-        f"{' '.join(w.get('special_rules', []))}"
+        f"PA({w.get('armor_piercing', '?')})"
     )
 
 # -------------------------------------------------
@@ -170,7 +169,7 @@ for group in unit.get("upgrade_groups", []):
             final_weapons = [opt["weapon"]]
 
 # -------------------------------------------------
-# PROFIL FINAL DE L'UNITÉ (sans règles spéciales et armes)
+# PROFIL FINAL DE L'UNITÉ
 # -------------------------------------------------
 st.divider()
 st.subheader("Profil final de l'unité")
@@ -181,18 +180,21 @@ st.markdown(f"### 💰 Coût total : **{total_cost} pts**")
 # BOUTON POUR AJOUTER L'UNITÉ À L'ARMÉE
 # -------------------------------------------------
 if st.button("➕ Ajouter à l'armée"):
+    # Déterminer l'arme actuelle (de base ou remplacée)
+    current_weapon = final_weapons[0] if final_weapons else unit.get("weapons", [{}])[0]
+
     st.session_state.army_list.append({
         "name": unit["name"],
         "cost": total_cost,
-        "rules": final_rules,
-        "weapons": final_weapons,
-        "options": selected_options
+        "base_rules": [rule for rule in final_rules if rule not in sum([opt.get("special_rules", []) for opt in selected_options.values()], [])],
+        "options": selected_options,
+        "current_weapon": current_weapon
     })
     st.session_state.army_total_cost += total_cost
     st.success(f"Unité {unit['name']} ajoutée à l'armée !")
 
 # -------------------------------------------------
-# AFFICHAGE DE LA LISTE D'ARMÉE (avec détails)
+# AFFICHAGE DE LA LISTE D'ARMÉE
 # -------------------------------------------------
 st.divider()
 st.subheader("Liste de l'armée")
@@ -202,23 +204,24 @@ if not st.session_state.army_list:
 else:
     for i, army_unit in enumerate(st.session_state.army_list, 1):
         with st.expander(f"{i}. **{army_unit['name']}** ({army_unit['cost']} pts)"):
-            if army_unit["rules"]:
-                st.markdown("#### 🛡️ **Règles spéciales**")
-                unique_rules = sorted(set(army_unit["rules"]))
-                for rule in unique_rules:
+            # Règles spéciales de base (sans celles des options)
+            if army_unit["base_rules"]:
+                st.markdown("#### 🛡️ **Règles spéciales de base**")
+                for rule in sorted(set(army_unit["base_rules"])):
                     st.write(f"- {rule}")
 
-            if army_unit["weapons"]:
-                st.markdown("#### ⚔️ **Armes**")
-                for w in army_unit["weapons"]:
-                    st.write(
-                        f"- **{w.get('name', 'Arme')}** | "
-                        f"A{w.get('attacks', '?')} | "
-                        f"PA({w.get('armor_piercing', '?')})"
-                    )
-                    if w.get("special_rules"):
-                        st.write(f"  - *Règles spéciales* : {', '.join(w.get('special_rules', []))}")
+            # Arme actuelle (de base ou remplacée)
+            weapon = army_unit["current_weapon"]
+            st.markdown("#### ⚔️ **Arme équipée**")
+            st.write(
+                f"- **{weapon.get('name', 'Arme')}** | "
+                f"A{weapon.get('attacks', '?')} | "
+                f"PA({weapon.get('armor_piercing', '?')})"
+            )
+            if weapon.get("special_rules"):
+                st.write(f"  - *Règles spéciales de l'arme* : {', '.join(weapon.get('special_rules', []))}")
 
+            # Options sélectionnées (rôle, montures, etc.)
             if army_unit["options"]:
                 st.markdown("#### 🔧 **Options sélectionnées**")
                 for group_name, option in army_unit["options"].items():
