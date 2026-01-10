@@ -254,8 +254,8 @@ else:
                     <div class="army-card-title">{army_unit['name']} [{i}] - {army_unit['cost']}pts</div>
                 </div>
                 <div class="army-card-stats">
-                    <div class="stat-badge">Quality {army_unit['Qualité']}+</div>
-                    <div class="stat-badge">Defense {army_unit['Défense']}+</div>
+                    <div class="stat-badge">Quality {army_unit['quality']}+</div>
+                    <div class="stat-badge">Defense {army_unit['defense']}+</div>
                 </div>
                 <div class="army-card-section">
                     <div class="army-card-section-title">Règles spéciales</div>
