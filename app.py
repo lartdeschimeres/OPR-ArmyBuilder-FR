@@ -1,7 +1,22 @@
+# -------------------------------------------------
+# UTILITAIRES
+# -------------------------------------------------
 import json
 from pathlib import Path
 import streamlit as st
+import re
 
+def extract_coriace(rules):
+    """
+    Extrait et additionne toutes les valeurs de Coriace trouvées
+    dans une liste de règles (ex: 'Coriace (3)', 'Coriace (+6)')
+    """
+    total = 0
+    for r in rules:
+        match = re.search(r"Coriace\s*\(?\+?(\d+)\)?", r)
+        if match:
+            total += int(match.group(1))
+    return total
 # -------------------------------------------------
 # CONFIG GÉNÉRALE
 # -------------------------------------------------
