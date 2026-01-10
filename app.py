@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 import streamlit as st
 
@@ -188,8 +189,7 @@ if st.button("➕ Ajouter à l'armée"):
     coriace_value = 0
     base_coriace = next((rule for rule in final_rules if "Coriace" in rule), None)
     if base_coriace:
-        import re
-        match = re.search(r'Coriace \((\d+)\)', base_coriace)
+        match = re.search(r'Coriace \(([\d+]+)\)', base_coriace)
         if match:
             coriace_value = int(match.group(1))
 
@@ -198,9 +198,9 @@ if st.button("➕ Ajouter à l'armée"):
         mount_rules = selected_mount.get("special_rules", [])
         for rule in mount_rules:
             if "Coriace" in rule:
-                match = re.search(r'Coriace \((\+?(\d+)\)\)', rule)
+                match = re.search(r'Coriace \(\+(\d+)\)', rule)
                 if match:
-                    coriace_value += int(match.group(2))
+                    coriace_value += int(match.group(1))
 
     # Créer la règle Coriace finale
     final_coriace = f"Coriace ({coriace_value})" if coriace_value > 0 else None
