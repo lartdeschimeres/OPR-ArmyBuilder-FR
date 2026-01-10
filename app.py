@@ -190,16 +190,26 @@ else:
 
 <strong>{u['name']} [{i}]</strong> — {u['cost']} pts<br><br>
 
-<span style="background:#4a89dc;
-             color:white;
-             padding:4px 10px;
-             border-radius:14px;
-             font-size:0.9em">
-Q{u['quality']}+ / D{u['defense']}+
-</span><br><br>
+<div style="display:flex; gap:10px; margin-bottom:10px">
+  <span style="background:#4a89dc;
+               color:white;
+               padding:4px 12px;
+               border-radius:14px;
+               font-size:0.9em">
+    Qualité {u['quality']}+
+  </span>
+  <span style="background:#5cb85c;
+               color:white;
+               padding:4px 12px;
+               border-radius:14px;
+               font-size:0.9em">
+    Défense {u['defense']}+
+  </span>
+</div>
 
 <strong>Règles spéciales :</strong><br>
-{', '.join(sorted(set(u['rules']))) or 'Aucune'}<br><br>
+{', '.join(sorted(set(u['base_rules']))) or 'Aucune'}
+<br><br>
 
 <strong>Arme :</strong><br>
 {u['weapon']['name']} |
@@ -209,15 +219,12 @@ PA({u['weapon']['armor_piercing']})
 <br><br>
 
 <strong>Options sélectionnées :</strong><br>
-{', '.join(
-    o['name'] + (f" ({', '.join(o.get('special_rules', []))})" if o.get('special_rules') else "")
-    for o in u['options'].values()
-) or 'Aucune'}
+{', '.join(opt['name'] for opt in u['options'].values()) or 'Aucune'}
 <br><br>
 
 {f"""
 <strong style="color:#4a89dc">Monture :</strong><br>
-{u['mount']['name']} ({', '.join(u['mount'].get('special_rules', []))})
+{u['mount']['name']} — {', '.join(u['mount'].get('special_rules', []))}
 """ if u.get("mount") else ""}
 
 </div>
