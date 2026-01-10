@@ -137,6 +137,7 @@ total_cost = unit.get("base_cost", 0)
 final_rules = list(unit.get("special_rules", []))
 current_weapon = unit.get("weapons", [{"name": "Arme non définie", "attacks": "?", "armor_piercing": "?"}])[0]
 selected_options = {}
+selected_mount = None
 
 # Affichage des armes de base
 st.subheader("Armes de base")
@@ -168,6 +169,8 @@ for group in unit.get("upgrade_groups", []):
         if "weapon" in opt:
             current_weapon = opt["weapon"]
             current_weapon["name"] = opt["name"]
+        if group["group"] == "Monture":
+            selected_mount = opt
 
 # -------------------------------------------------
 # PROFIL FINAL DE L'UNITÉ
@@ -181,14 +184,41 @@ st.markdown(f"### 💰 Coût total : **{total_cost} pts**")
 # BOUTON POUR AJOUTER L'UNITÉ À L'ARMÉE
 # -------------------------------------------------
 if st.button("➕ Ajouter à l'armée"):
+    # Calculer la valeur totale de Coriace
+    coriace_value = 0
+    base_coriace = next((rule for rule in final_rules if "Coriace" in rule), None)
+    if base_coriace:
+        import re
+        match = re.search(r'Coriace \((\d+)\)', base_coriace)
+        if match:
+            coriace_value = int(match.group(1))
+
+    # Ajouter la valeur de la monture si elle existe
+    if selected_mount:
+        mount_rules = selected_mount.get("special_rules", [])
+        for rule in mount_rules:
+            if "Coriace" in rule:
+                match = re.search(r'Coriace \((\+?(\d+)\)\)', rule)
+                if match:
+                    coriace_value += int(match.group(2))
+
+    # Créer la règle Coriace finale
+    final_coriace = f"Coriace ({coriace_value})" if coriace_value > 0 else None
+
+    # Filtrer les règles spéciales de base (sans les doublons de Coriace)
+    base_rules = [rule for rule in final_rules if not rule.startswith("Coriace")]
+    if final_coriace:
+        base_rules.append(final_coriace)
+
     st.session_state.army_list.append({
         "name": unit["name"],
         "cost": total_cost,
-        "base_rules": [rule for rule in final_rules if rule not in sum([opt.get("special_rules", []) for opt in selected_options.values()], [])],
-        "options": selected_options,
+        "base_rules": base_rules,
+        "options": {k: v for k, v in selected_options.items() if k != "Monture"},
         "current_weapon": current_weapon,
         "quality": unit.get("quality", "?"),
-        "defense": unit.get("defense", "?")
+        "defense": unit.get("defense", "?"),
+        "mount": selected_mount
     })
     st.session_state.army_total_cost += total_cost
     st.success(f"Unité {unit['name']} ajoutée à l'armée !")
@@ -248,6 +278,11 @@ else:
                 margin-bottom: 5px;
                 color: #4a89dc;
             }}
+            .mount-section {{
+                color: #4a89dc;
+                font-weight: bold;
+                margin-top: 10px;
+            }}
             </style>
             <div class="army-card">
                 <div class="army-card-header">
@@ -259,7 +294,7 @@ else:
                 </div>
                 <div class="army-card-section">
                     <div class="army-card-section-title">Règles spéciales</div>
-                    <div>{', '.join(sorted(set(army_unit['base_rules']))) or 'Aucune'}</div>
+                    <div>{', '.join(sorted(army_unit['base_rules'])) or 'Aucune'}</div>
                 </div>
                 <div class="army-card-section">
                     <div class="army-card-section-title">Arme équipée</div>
@@ -270,10 +305,19 @@ else:
                         {f" | {', '.join(army_unit['current_weapon'].get('special_rules', []))}" if army_unit['current_weapon'].get('special_rules') else ''}
                     </div>
                 </div>
+                {f"""
+                <div class="army-card-section mount-section">
+                    Monture
+                </div>
+                <div>
+                    {army_unit['mount']['name']} (+{army_unit['mount'].get('cost', 0)} pts) |
+                    {', '.join(army_unit['mount'].get('special_rules', []))}
+                </div>
+                """ if army_unit.get('mount') else ''}
                 <div class="army-card-section">
                     <div class="army-card-section-title">Options sélectionnées</div>
                     <div>
-                        {', '.join([f"{group}: {opt['name']}" for group, opt in army_unit['options'].items()]) or 'Aucune'}
+                        {', '.join([f"{opt['name']}" for opt in army_unit['options'].values()]) or 'Aucune'}
                     </div>
                 </div>
             </div>
