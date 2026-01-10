@@ -208,7 +208,7 @@ else:
 </div>
 
 <strong>Règles spéciales :</strong><br>
-{', '.join(sorted(set(u['base_rules']))) or 'Aucune'}
+{', '.join(sorted(set(u.get('base_rules', [])))) or 'Aucune'}
 <br><br>
 
 <strong>Arme :</strong><br>
