@@ -167,7 +167,7 @@ for group in unit.get("upgrade_groups", []):
             final_rules.extend(opt["special_rules"])
         if "weapon" in opt:
             current_weapon = opt["weapon"]
-            current_weapon["name"] = opt["name"]  # Assure que le nom de l'option est utilisé comme nom de l'arme
+            current_weapon["name"] = opt["name"]
 
 # -------------------------------------------------
 # PROFIL FINAL DE L'UNITÉ
@@ -186,7 +186,9 @@ if st.button("➕ Ajouter à l'armée"):
         "cost": total_cost,
         "base_rules": [rule for rule in final_rules if rule not in sum([opt.get("special_rules", []) for opt in selected_options.values()], [])],
         "options": selected_options,
-        "current_weapon": current_weapon
+        "current_weapon": current_weapon,
+        "quality": unit.get("quality", "?"),
+        "defense": unit.get("defense", "?")
     })
     st.session_state.army_total_cost += total_cost
     st.success(f"Unité {unit['name']} ajoutée à l'armée !")
@@ -201,30 +203,81 @@ if not st.session_state.army_list:
     st.write("Aucune unité ajoutée pour le moment.")
 else:
     for i, army_unit in enumerate(st.session_state.army_list, 1):
-        with st.expander(f"{i}. **{army_unit['name']}** ({army_unit['cost']} pts)"):
-            # Règles spéciales de base
-            if army_unit["base_rules"]:
-                st.markdown("#### 🛡️ **Règles spéciales de base**")
-                for rule in sorted(set(army_unit["base_rules"])):
-                    st.write(f"- {rule}")
-
-            # Arme actuelle
-            weapon = army_unit["current_weapon"]
-            st.markdown("#### ⚔️ **Arme équipée**")
-            st.write(
-                f"- **{weapon.get('name', 'Arme non définie')}** | "
-                f"A{weapon.get('attacks', '?')} | "
-                f"PA({weapon.get('armor_piercing', '?')}) | "
-                f"{', '.join(weapon.get('special_rules', []))}"
-            )
-
-            # Options sélectionnées
-            if army_unit["options"]:
-                st.markdown("#### 🔧 **Options sélectionnées**")
-                for group_name, option in army_unit["options"].items():
-                    st.write(f"- **{group_name}** : {option['name']} (+{option.get('cost', 0)} pts)")
-                    if "special_rules" in option:
-                        st.write(f"  - *Règles spéciales* : {', '.join(option['special_rules'])}")
+        with st.container():
+            st.markdown(f"""
+            <style>
+            .army-card {{
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+                background-color: #f9f9f9;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }}
+            .army-card-header {{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+            }}
+            .army-card-title {{
+                font-size: 1.2em;
+                font-weight: bold;
+            }}
+            .army-card-cost {{
+                font-size: 1.1em;
+                color: #666;
+            }}
+            .army-card-stats {{
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }}
+            .stat-badge {{
+                background-color: #4a89dc;
+                color: white;
+                padding: 5px 10px;
+                border-radius: 15px;
+                font-size: 0.9em;
+            }}
+            .army-card-section {{
+                margin-bottom: 10px;
+            }}
+            .army-card-section-title {{
+                font-weight: bold;
+                margin-bottom: 5px;
+                color: #4a89dc;
+            }}
+            </style>
+            <div class="army-card">
+                <div class="army-card-header">
+                    <div class="army-card-title">{army_unit['name']} [{i}] - {army_unit['cost']}pts</div>
+                </div>
+                <div class="army-card-stats">
+                    <div class="stat-badge">Quality {army_unit['Qualité']}+</div>
+                    <div class="stat-badge">Defense {army_unit['Défense']}+</div>
+                </div>
+                <div class="army-card-section">
+                    <div class="army-card-section-title">Règles spéciales</div>
+                    <div>{', '.join(sorted(set(army_unit['base_rules']))) or 'Aucune'}</div>
+                </div>
+                <div class="army-card-section">
+                    <div class="army-card-section-title">Arme équipée</div>
+                    <div>
+                        <strong>{army_unit['current_weapon'].get('name', 'Arme non définie')}</strong> |
+                        A{army_unit['current_weapon'].get('attacks', '?')} |
+                        PA({army_unit['current_weapon'].get('armor_piercing', '?')})
+                        {f" | {', '.join(army_unit['current_weapon'].get('special_rules', []))}" if army_unit['current_weapon'].get('special_rules') else ''}
+                    </div>
+                </div>
+                <div class="army-card-section">
+                    <div class="army-card-section-title">Options sélectionnées</div>
+                    <div>
+                        {', '.join([f"{group}: {opt['name']}" for group, opt in army_unit['options'].items()]) or 'Aucune'}
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
         col1, col2 = st.columns([4, 1])
         with col2:
