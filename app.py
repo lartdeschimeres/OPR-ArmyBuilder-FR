@@ -180,6 +180,11 @@ else:
     for i, u in enumerate(st.session_state.army_list, 1):
         col_card, col_btn = st.columns([5, 1])
 
+        # ---- Calcul Coriace ----
+        base_coriace = extract_coriace(u.get("base_rules", []))
+        mount_coriace = extract_coriace(u["mount"].get("special_rules", [])) if u.get("mount") else 0
+        total_coriace = base_coriace + mount_coriace
+
         with col_card:
             st.markdown(f"""
 <div style="border:1px solid #ccc;
@@ -191,19 +196,14 @@ else:
 <strong>{u['name']} [{i}]</strong> — {u['cost']} pts<br><br>
 
 <div style="display:flex; gap:10px; margin-bottom:10px">
-  <span style="background:#4a89dc;
-               color:white;
-               padding:4px 12px;
-               border-radius:14px;
-               font-size:0.9em">
+  <span style="background:#4a89dc;color:white;padding:4px 12px;border-radius:14px;font-size:0.9em">
     Qualité {u['quality']}+
   </span>
-  <span style="background:#5cb85c;
-               color:white;
-               padding:4px 12px;
-               border-radius:14px;
-               font-size:0.9em">
+  <span style="background:#5cb85c;color:white;padding:4px 12px;border-radius:14px;font-size:0.9em">
     Défense {u['defense']}+
+  </span>
+  <span style="background:#d9534f;color:white;padding:4px 12px;border-radius:14px;font-size:0.9em">
+    Coriace {total_coriace}
   </span>
 </div>
 
@@ -219,7 +219,11 @@ PA({u['weapon']['armor_piercing']})
 <br><br>
 
 <strong>Options sélectionnées :</strong><br>
-{', '.join(opt['name'] for opt in u['options'].values()) or 'Aucune'}
+{', '.join(
+    opt['name']
+    for opt in u['options'].values()
+    if 'weapon' not in opt
+) or 'Aucune'}
 <br><br>
 
 {f"""
