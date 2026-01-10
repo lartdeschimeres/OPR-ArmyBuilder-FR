@@ -203,20 +203,30 @@ if not st.session_state.army_list:
     st.write("Aucune unité ajoutée pour le moment.")
 else:
     for i, army_unit in enumerate(st.session_state.army_list, 1):
-        with st.expander(f"{i}. **{army_unit['name']}** ({army_unit['cost']} pts)"):
-            # Règles spéciales de base (sans celles des options)
-            if army_unit["base_rules"]:
-                st.markdown("#### 🛡️ **Règles spéciales de base**")
-                for rule in sorted(set(army_unit["base_rules"])):
-                    st.write(f"- {rule}")
+    with st.expander(f"{i}. **{army_unit['name']}** ({army_unit['cost']} pts)"):
+        # Règles spéciales de base
+        if army_unit["base_rules"]:
+            st.markdown("#### 🛡️ **Règles spéciales de base**")
+            for rule in sorted(set(army_unit["base_rules"])):
+                st.write(f"- {rule}")
 
-            # Arme actuelle (de base ou remplacée)
-            weapon = army_unit["current_weapon"]
-            st.markdown("#### ⚔️ **Arme équipée**")
-            st.write(
-                f"- **{weapon.get('name', 'Arme')}** | "
-                f"A{weapon.get('attacks', '?')} | "
-                f"PA({weapon.get('armor_piercing', '?')})"
+        # Arme actuelle (avec séparation claire)
+        weapon = army_unit["current_weapon"]
+        st.markdown("#### ⚔️ **Arme équipée**")
+        st.write(
+            f"- **{weapon.get('name', 'Arme non définie')}** | "
+            f"A{weapon.get('attacks', '?')} | "
+            f"PA({weapon.get('armor_piercing', '?')}) | "
+            f"{', '.join(weapon.get('special_rules', []))}"
+        )
+
+        # Options sélectionnées
+        if army_unit["options"]:
+            st.markdown("#### 🔧 **Options sélectionnées**")
+            for group_name, option in army_unit["options"].items():
+                st.write(f"- **{group_name}** : {option['name']} (+{option.get('cost', 0)} pts)")
+                if "special_rules" in option:
+                    st.write(f"  - *Règles spéciales* : {', '.join(option['special_rules'])}")
             )
             if weapon.get("special_rules"):
                 st.write(f"  - *Règles spéciales de l'arme* : {', '.join(weapon.get('special_rules', []))}")
