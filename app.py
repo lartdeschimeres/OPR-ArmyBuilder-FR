@@ -138,13 +138,11 @@ def validate_army(army_list, game_rules, total_cost, total_points):
         return False, errors
 
     if game_rules == GAME_RULES["Age of Fantasy"]:
-        # 1 héros par tranche de 375 pts
         heroes = sum(1 for u in army_list if u.get("type", "").lower() == "hero")
         max_heroes = max(1, total_points // game_rules["hero_per_points"])
         if heroes > max_heroes:
             errors.append(f"Trop de héros (max: {max_heroes} pour {total_points} pts)")
 
-        # 1+X copies de la même unité (X=1 pour 750 pts)
         unit_counts = defaultdict(int)
         for unit in army_list:
             unit_counts[unit["name"]] += 1
@@ -154,13 +152,11 @@ def validate_army(army_list, game_rules, total_cost, total_points):
             if count > max_copies:
                 errors.append(f"Trop de copies de '{unit_name}' (max: {max_copies})")
 
-        # Aucune unité ne peut valoir plus de 35% du total des points de l'armée
         for unit in army_list:
             percentage = (unit["cost"] / total_points) * 100
             if percentage > game_rules["max_unit_percentage"]:
                 errors.append(f"'{unit['name']}' ({unit['cost']} pts) dépasse {game_rules['max_unit_percentage']}% du total ({total_points} pts)")
 
-        # 1 unité max par tranche de 150 pts
         max_units = total_points // game_rules["unit_per_points"]
         if len(army_list) > max_units:
             errors.append(f"Trop d'unités (max: {max_units} pour {total_points} pts)")
@@ -315,7 +311,7 @@ if st.session_state.page == "army":
     for w in unit.get("weapons", []):
         st.write(f"- **{w.get('name', 'Arme non définie')}** | A{w.get('attacks', '?')} | PA({w.get('armor_piercing', '?')})")
 
-    # Options
+    # Options standards
     for group in unit.get("upgrade_groups", []):
         if group.get("type") == "multiple":
             st.write(f"### {group['group']}")
@@ -344,6 +340,32 @@ if st.session_state.page == "army":
                 if group["type"] == "weapon":
                     current_weapon = opt["weapon"]
                     current_weapon["name"] = opt["name"]
+
+    # Section pour les améliorations d'unité (Sergent, Bannière, Musicien)
+    st.divider()
+    st.subheader("Améliorations d'unité")
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.checkbox("Sergent (+5 pts)"):
+            total_cost += 5
+            if "Améliorations" not in options_selected:
+                options_selected["Améliorations"] = []
+            options_selected["Améliorations"].append({"name": "Sergent", "cost": 5})
+
+    with col2:
+        if st.checkbox("Bannière (+5 pts)"):
+            total_cost += 5
+            if "Améliorations" not in options_selected:
+                options_selected["Améliorations"] = []
+            options_selected["Améliorations"].append({"name": "Bannière", "cost": 5})
+
+    with col3:
+        if st.checkbox("Musicien (+10 pts)"):
+            total_cost += 10
+            if "Améliorations" not in options_selected:
+                options_selected["Améliorations"] = []
+            options_selected["Améliorations"].append({"name": "Musicien", "cost": 10})
 
     # Calcul de la valeur de Coriace
     coriace_value = 0
@@ -409,14 +431,23 @@ if st.session_state.page == "army":
             weapon = u['current_weapon']
             st.markdown(f"- **Arme**: {weapon.get('name', 'Arme de base')} (A{weapon.get('attacks', '?')}, PA{weapon.get('armor_piercing', '?')})")
 
-        if u.get("options"):
-            options_text = []
-            for opt_group in u['options'].values():
+        # Affichage des améliorations (Sergent, Bannière, Musicien)
+        if "Améliorations" in u.get("options", {}):
+            improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
+            if improvements:
+                st.markdown(f"- **Améliorations**: {', '.join(improvements)}")
+
+        # Affichage des autres options
+        other_options = []
+        for group_name, opt_group in u.get("options", {}).items():
+            if group_name != "Améliorations":
                 if isinstance(opt_group, list):
-                    options_text.extend([opt['name'] for opt in opt_group])
+                    other_options.extend([opt["name"] for opt in opt_group])
                 else:
-                    options_text.append(opt_group['name'])
-            st.markdown(f"- **Options**: {', '.join(options_text)}")
+                    other_options.append(opt_group["name"])
+
+        if other_options:
+            st.markdown(f"- **Options**: {', '.join(other_options)}")
 
         if st.button(f"❌ Supprimer {u['name']}", key=f"del_{i}"):
             st.session_state.army_total_cost -= u["cost"]
@@ -505,16 +536,28 @@ if st.session_state.page == "army":
                     </div>
                     """
 
-                if u.get("options"):
-                    options_text = []
-                    for opt_group in u['options'].values():
+                # Affichage des améliorations
+                if "Améliorations" in u.get("options", {}):
+                    improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
+                    if improvements:
+                        html_content += f"""
+                        <div class="title">Améliorations</div>
+                        <div>{', '.join(improvements)}</div>
+                        """
+
+                # Affichage des autres options
+                other_options = []
+                for group_name, opt_group in u.get("options", {}).items():
+                    if group_name != "Améliorations":
                         if isinstance(opt_group, list):
-                            options_text.extend([opt['name'] for opt in opt_group])
+                            other_options.extend([opt["name"] for opt in opt_group])
                         else:
-                            options_text.append(opt_group['name'])
+                            other_options.append(opt_group["name"])
+
+                if other_options:
                     html_content += f"""
-                    <div class="title">Options sélectionnées</div>
-                    <div>{', '.join(options_text)}</div>
+                    <div class="title">Options</div>
+                    <div>{', '.join(other_options)}</div>
                     """
 
                 html_content += "</div>"
