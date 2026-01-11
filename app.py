@@ -130,6 +130,24 @@ def save_player_army_list(username, army_list_data):
 
     return True
 
+def delete_player_army_list(username, list_index):
+    player_file = PLAYERS_DIR / f"{username}.json"
+    if not player_file.exists():
+        return False
+
+    with open(player_file, encoding="utf-8") as f:
+        player_data = json.load(f)
+
+    if list_index < 0 or list_index >= len(player_data["army_lists"]):
+        return False
+
+    player_data["army_lists"].pop(list_index)
+
+    with open(player_file, "w", encoding="utf-8") as f:
+        json.dump(player_data, f, ensure_ascii=False, indent=2)
+
+    return True
+
 def validate_army(army_list, game_rules, total_cost, total_points):
     errors = []
 
@@ -211,19 +229,66 @@ if st.session_state.page == "setup":
         st.rerun()
 
     st.subheader("Mes listes d'armées sauvegardées")
+
     if st.session_state.player_army_lists:
         for i, army_list in enumerate(st.session_state.player_army_lists):
-            with st.expander(f"{army_list['name']} - {army_list['game']} - {army_list['total_cost']}/{army_list['points']} pts"):
-                st.write(f"Créée le: {army_list['date'][:10]}")
-                if st.button(f"Charger cette liste", key=f"load_{i}"):
-                    st.session_state.game = army_list['game']
-                    st.session_state.faction = army_list['faction']
-                    st.session_state.points = army_list['points']
-                    st.session_state.list_name = army_list['name']
-                    st.session_state.army_list = army_list['army_list']
-                    st.session_state.army_total_cost = army_list['total_cost']
-                    st.session_state.page = "army"
-                    st.rerun()
+            col1, col2 = st.columns([4, 1])
+            with col1:
+                with st.expander(f"{army_list['name']} - {army_list['game']} - {army_list['total_cost']}/{army_list['points']} pts"):
+                    st.write(f"Créée le: {army_list['date'][:10]}")
+                    if st.button(f"Charger cette liste", key=f"load_{i}"):
+                        try:
+                            # Vérification des données de base
+                            required_keys = ["game", "faction", "points", "army_list", "total_cost", "name"]
+                            if not all(key in army_list for key in required_keys):
+                                st.error("Données de liste incomplètes")
+                                continue
+
+                            # Charger les données de base
+                            st.session_state.game = army_list['game']
+                            st.session_state.faction = army_list['faction']
+                            st.session_state.points = army_list['points']
+                            st.session_state.list_name = army_list['name']
+                            st.session_state.army_total_cost = army_list['total_cost']
+
+                            # Vérifier et charger les unités
+                            valid_army_list = []
+                            for unit in army_list['army_list']:
+                                # Propriétés minimales requises pour une unité
+                                unit_required_keys = ["name", "cost", "quality", "defense", "type"]
+                                if all(key in unit for key in unit_required_keys):
+                                    # Vérifier que base_cost existe, sinon utiliser cost
+                                    if "base_cost" not in unit:
+                                        unit["base_cost"] = unit.get("cost", 0)
+                                    valid_army_list.append(unit)
+                                else:
+                                    st.warning(f"Unité invalide ignorée: {unit.get('name', 'Inconnue')}")
+
+                            st.session_state.army_list = valid_army_list
+
+                            # Charger les unités de la faction
+                            try:
+                                faction_file = next(f["file"] for f in factions if f["name"] == st.session_state.faction)
+                                with open(faction_file, encoding="utf-8") as f:
+                                    faction_data = json.load(f)
+                                st.session_state.units = faction_data.get("units", [])
+                            except StopIteration:
+                                st.error("Faction introuvable")
+                                continue
+
+                            st.session_state.page = "army"
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Erreur lors du chargement: {str(e)}")
+
+            with col2:
+                if st.button(f"❌ Supprimer", key=f"delete_{i}"):
+                    if delete_player_army_list(st.session_state.current_player, i):
+                        st.session_state.player_army_lists = load_player_army_lists(st.session_state.current_player)
+                        st.success(f"Liste '{army_list['name']}' supprimée avec succès!")
+                        st.rerun()
+                    else:
+                        st.error("Erreur lors de la suppression de la liste")
     else:
         st.info("Vous n'avez pas encore sauvegardé de listes d'armées")
 
