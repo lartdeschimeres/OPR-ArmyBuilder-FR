@@ -8,7 +8,6 @@ from datetime import datetime
 import hashlib
 import os
 
-# Configuration de base
 def main():
     # Initialisation de la session
     if "page" not in st.session_state:
@@ -24,9 +23,8 @@ def main():
     PLAYERS_DIR = BASE_DIR / "players"
 
     # Créer les dossiers s'ils n'existent pas
-    SAVE_DIR.mkdir(exist_ok=True, parents=True)
-    PLAYERS_DIR.mkdir(exist_ok=True, parents=True)
-    FACTIONS_DIR.mkdir(exist_ok=True, parents=True)
+    for dir_path in [SAVE_DIR, PLAYERS_DIR, FACTIONS_DIR]:
+        dir_path.mkdir(exist_ok=True, parents=True)
 
     # Règles spécifiques par jeu
     GAME_RULES = {
@@ -140,6 +138,17 @@ def main():
                                                         "armor_piercing": 0,
                                                         "special_rules": ["Contre-charge"]
                                                     }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "group": "Option",
+                                            "type": "multiple",
+                                            "options": [
+                                                {
+                                                    "name": "Icône du Ravage (Aura de Défense versatile)",
+                                                    "cost": 20,
+                                                    "special_rules": ["Aura de Défense versatile"]
                                                 }
                                             ]
                                         }
@@ -528,15 +537,13 @@ def main():
 
         base_rules = list(unit.get("special_rules", []))
         options_selected = {}
-        current_weapon = unit.get("weapons", [{"name": "Arme non définie", "attacks": "?", "armor_piercing": "?"}])[0]
+        current_weapon = None
         mount_selected = None
-        weapon_replaced = False  # Variable pour suivre si une arme a été remplacée
+        weapon_replaced = False
 
-        # Affichage des armes de base (uniquement si aucune arme n'a été remplacée)
-        if not weapon_replaced:
-            st.subheader("Armes de base")
-            for w in unit.get("weapons", []):
-                st.write(f"- **{w.get('name', 'Arme non définie')}** | A{w.get('attacks', '?')} | PA({w.get('armor_piercing', '?')})")
+        # Trouver l'arme de base par défaut
+        default_weapon = unit.get("weapons", [{"name": "Arme non définie", "attacks": "?", "armor_piercing": "?"}])[0]
+        current_weapon = default_weapon.copy()
 
         # Options standards
         for group in unit.get("upgrade_groups", []):
@@ -549,17 +556,17 @@ def main():
             if group.get("type") == "weapon":
                 choice = st.selectbox(
                     group["group"],
-                    ["— Aucun —"] + [o["name"] for o in group["options"]],
+                    ["— Garder l'arme de base —"] + [o["name"] for o in group["options"]],
                     key=f"{unit['name']}_{group['group']}"
                 )
 
-                if choice != "— Aucun —":
+                if choice != "— Garder l'arme de base —":
                     opt = next(o for o in group["options"] if o["name"] == choice)
                     total_cost += opt.get("cost", 0)
                     options_selected[group["group"]] = opt
-                    current_weapon = opt["weapon"]
+                    current_weapon = opt["weapon"].copy()
                     current_weapon["name"] = opt["name"]
-                    weapon_replaced = True  # Marquer qu'une arme a été remplacée
+                    weapon_replaced = True
             elif group.get("type") == "multiple":
                 selected_options = []
                 for opt in group["options"]:
@@ -635,7 +642,7 @@ def main():
                 "current_weapon": current_weapon,
                 "type": unit.get("type", "Infantry"),
                 "combined": combined_unit,
-                "weapon_replaced": weapon_replaced  # Ajout de l'information sur le remplacement d'arme
+                "weapon_replaced": weapon_replaced
             }
 
             # Ajouter la monture si elle existe
@@ -763,7 +770,6 @@ def main():
             if coriace_value > 0:
                 html_content += f'<span class="badge coriace-badge">Coriace {coriace_value}</span>'
 
-            # Badge pour unité combinée
             if u.get("combined", False):
                 html_content += '<span class="combined-badge">Unité combinée</span>'
 
@@ -782,7 +788,7 @@ def main():
                     </div>
                     """
 
-            # Arme équipée (uniquement l'arme actuelle)
+            # Arme équipée (UNIQUEMENT l'arme actuelle)
             if 'current_weapon' in u:
                 weapon = u['current_weapon']
                 html_content += f"""
@@ -790,6 +796,10 @@ def main():
                     <div class="section-title">Arme équipée</div>
                     <div class="section-content">
                         {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
+                """
+                if 'special_rules' in weapon and weapon['special_rules']:
+                    html_content += f"<br>{', '.join(weapon['special_rules'])}"
+                html_content += """
                     </div>
                 </div>
                 """
@@ -975,7 +985,6 @@ def main():
                 """
 
                 for u in st.session_state.army_list:
-                    # Calcul de la valeur totale de Coriace pour l'export
                     coriace_value = calculate_coriace_value(u)
 
                     html_content += f"""
@@ -993,7 +1002,6 @@ def main():
                     if coriace_value > 0:
                         html_content += f'<span class="badge coriace-badge">Coriace {coriace_value}</span>'
 
-                    # Badge pour unité combinée
                     if u.get("combined", False):
                         html_content += '<span class="combined-badge">Unité combinée</span>'
 
@@ -1018,11 +1026,14 @@ def main():
                             <div class="section-title">Arme équipée</div>
                             <div class="section-content">
                                 {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
+                        """
+                        if 'special_rules' in weapon and weapon['special_rules']:
+                            html_content += f"<br>{', '.join(weapon['special_rules'])}"
+                        html_content += """
                             </div>
                         </div>
                         """
 
-                    # Options (sans les changements d'armes)
                     other_options = []
                     for group_name, opt_group in u.get("options", {}).items():
                         if group_name != "Améliorations":
@@ -1042,7 +1053,6 @@ def main():
                         </div>
                         """
 
-                    # Monture
                     if u.get("mount"):
                         mount = u['mount']
                         mount_rules = []
@@ -1064,7 +1074,6 @@ def main():
                         </div>
                         """
 
-                    # Améliorations
                     if "Améliorations" in u.get("options", {}) and u.get("type", "").lower() != "hero":
                         improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
                         if improvements:
