@@ -10,8 +10,8 @@
       "type": "Hero",
       "size": 1,
       "base_cost": 60,
-      "quality": 4,
-      "defense": 4,
+      "quality": 3,
+      "defense": 3,
 
       "special_rules": [
         "Attaque versatile",
@@ -105,7 +105,7 @@
             {
               "name": "Dragon du Ravage",
               "cost": 320,
-              "special_rules": ["Griffes lourdes (A6, PA (1))", "Piétinement (A4, PA (1))", "Attaque de souffle", "Coriace (+12)", "Effrayant (2)", "Volant"]
+              "special_rules": ["Griffes lourdes (A6, PA (1))", "Piétinement (A4, PA (1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]
             }
           ]
         }
