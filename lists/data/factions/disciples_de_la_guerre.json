@@ -110,6 +110,78 @@
           ]
         }
       ]
+    },
+    {
+  "name": "Barbares de la Guerre [10]",
+  "type": "Infantry",
+  "size": 10,
+  "base_cost": 100,
+  "quality": 3,
+  "defense": 4,
+  "special_rules": ["Éclaireur", "Furieux", "Né pour la guerre"],
+
+  "weapons": [
+    {
+      "name": "Armes à une main",
+      "range": "-",
+      "attacks": 1,
+      "armor_piercing": 0,
+      "special_rules": []
     }
+  ],
+
+  "upgrade_groups": [
+    {
+      "group": "Remplacement d'armes",
+      "type": "weapon",
+      "options": [
+        {
+          "name": "Fléau (A1, PA (1))",
+          "cost": 20,
+          "weapon": { "range": "-", "attacks": 1, "armor_piercing": 1, "special_rules": [] }
+        },
+        {
+          "name": "Lance (A1, Contre-charge)",
+          "cost": 35,
+          "weapon": { "range": "-", "attacks": 1, "armor_piercing": 0, "special_rules": ["Contre-charge"] }
+        }
+      ]
+    },
+    {
+      "group": "Remplacement de figurine",
+      "type": "upgrade",
+      "options": [
+        {
+          "name": "Icône du Ravage (Aura de Défense versatile)",
+          "cost": 20,
+          "special_rules": ["Aura de Défense versatile"]
+        }
+      ]
+    },
+    {
+      "group": "Améliorations de figurines",
+      "type": "upgrade",
+      "options": [
+        {
+          "name": "Bannière",
+          "cost": 5,
+          "special_rules": []
+        },
+        {
+          "name": "Sergent",
+          "cost": 5,
+          "special_rules": []
+        },
+        {
+          "name": "Musicien",
+          "cost": 10,
+          "special_rules": []
+        }
+      ],
+      "max_choices": 3,
+      "description": "Améliorer jusqu'à trois figurines avec une des options suivantes"
+    }
+  ]
+}
   ]
 }
