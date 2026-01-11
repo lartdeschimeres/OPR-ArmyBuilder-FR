@@ -1,32 +1,26 @@
 import json
 import re
 from pathlib import Path
+from collections import defaultdict
 import streamlit as st
 import streamlit.components.v1 as components
-from collections import defaultdict
 
-# -------------------------------------------------
-# CONFIG
-# -------------------------------------------------
+# Configuration de base
 st.set_page_config(page_title="OPR Army Builder FR", layout="centered")
 BASE_DIR = Path(__file__).resolve().parent
 FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
 
-# -------------------------------------------------
 # Règles spécifiques par jeu
 GAME_RULES = {
     "Age of Fantasy": {
         "hero_per_points": 375,  # 1 héros par tranche de 375 pts
         "unit_copies": {750: 1},  # 1+X copies où X=1 pour 750 pts
-        "max_unit_percentage": 35,  # Aucune unité ne peut valoir plus de 35% du total
+        "max_unit_percentage": 35,  # Aucune unité ne peut valoir plus de 35% du total des points de l'armée
         "unit_per_points": 150,  # 1 unité max par tranche de 150 pts
-    },
-    # Ajoute d'autres jeux ici avec leurs règles spécifiques
+    }
 }
 
-# -------------------------------------------------
-# SESSION STATE INIT
-# -------------------------------------------------
+# Initialisation de l'état de la session
 if "page" not in st.session_state:
     st.session_state.page = "setup"
 
@@ -43,26 +37,25 @@ for key, default in {
     if key not in st.session_state:
         st.session_state[key] = default
 
-# -------------------------------------------------
-# CHARGEMENT DES FACTIONS
-# -------------------------------------------------
+# Chargement des factions
 faction_files = list(FACTIONS_DIR.glob("*.json"))
 factions = []
 
 for fp in faction_files:
-    with open(fp, encoding="utf-8") as f:
-        data = json.load(f)
-        factions.append({
-            "name": data["faction"],
-            "game": data["game"],
-            "file": fp
-        })
+    try:
+        with open(fp, encoding="utf-8") as f:
+            data = json.load(f)
+            factions.append({
+                "name": data["faction"],
+                "game": data["game"],
+                "file": fp
+            })
+    except Exception as e:
+        st.warning(f"Impossible de lire {fp.name} : {e}")
 
 games = sorted(set(f["game"] for f in factions))
 
-# =================================================
-# PAGE 1 — CONFIGURATION DE LA LISTE
-# =================================================
+# PAGE 1 — Configuration de la liste
 if st.session_state.page == "setup":
     st.title("OPR Army Builder 🇫🇷")
     st.subheader("Créer une nouvelle liste")
@@ -73,17 +66,13 @@ if st.session_state.page == "setup":
         index=games.index(st.session_state.game) if st.session_state.game else 0
     )
 
-    available_factions = [
-        f for f in factions if f["game"] == st.session_state.game
-    ]
-
+    available_factions = [f for f in factions if f["game"] == st.session_state.game]
     faction_names = [f["name"] for f in available_factions]
 
     st.session_state.faction = st.selectbox(
         "Faction",
         faction_names,
-        index=faction_names.index(st.session_state.faction)
-        if st.session_state.faction in faction_names else 0
+        index=faction_names.index(st.session_state.faction) if st.session_state.faction in faction_names else 0
     )
 
     st.session_state.points = st.number_input(
@@ -99,7 +88,6 @@ if st.session_state.page == "setup":
     )
 
     col1, col2 = st.columns(2)
-
     with col1:
         if st.button("💾 Sauvegarder la configuration"):
             st.success("Configuration sauvegardée")
@@ -113,7 +101,6 @@ if st.session_state.page == "setup":
 def validate_army(army_list, game_rules, total_cost, total_points):
     errors = []
 
-    # Règles générales
     if not army_list:
         errors.append("Aucune unité dans l'armée")
         return False, errors
@@ -122,7 +109,7 @@ def validate_army(army_list, game_rules, total_cost, total_points):
     if game_rules == GAME_RULES["Age of Fantasy"]:
         # 1 héros par tranche de 375 pts
         heroes = sum(1 for u in army_list if u.get("type", "").lower() in ["hero", "héro"])
-        max_heroes = total_points // game_rules["hero_per_points"]
+        max_heroes = max(1, total_points // game_rules["hero_per_points"])
         if heroes > max_heroes:
             errors.append(f"Trop de héros (max: {max_heroes} pour {total_points} pts)")
 
@@ -136,10 +123,11 @@ def validate_army(army_list, game_rules, total_cost, total_points):
             if count > max_copies:
                 errors.append(f"Trop de copies de '{unit_name}' (max: {max_copies})")
 
-        # Aucune unité ne peut valoir plus de 35% du total
+        # Aucune unité ne peut valoir plus de 35% du total des points de l'armée
         for unit in army_list:
-            if (unit["cost"] / total_cost) * 100 > game_rules["max_unit_percentage"]:
-                errors.append(f"'{unit['name']}' dépasse 35% du total des points")
+            percentage = (unit["cost"] / total_points) * 100
+            if percentage > game_rules["max_unit_percentage"]:
+                errors.append(f"'{unit['name']}' ({unit['cost']} pts) dépasse {game_rules['max_unit_percentage']}% du total des points de l'armée ({total_points} pts)")
 
         # 1 unité max par tranche de 150 pts
         max_units = total_points // game_rules["unit_per_points"]
@@ -148,28 +136,17 @@ def validate_army(army_list, game_rules, total_cost, total_points):
 
     return len(errors) == 0, errors
 
-# =================================================
-# PAGE 2 — COMPOSITION DE L’ARMÉE
-# =================================================
+# PAGE 2 — Composition de l'armée
 if st.session_state.page == "army":
     st.title(st.session_state.list_name or "Ma liste d'armée")
-    st.caption(
-        f"{st.session_state.game} — {st.session_state.faction} — "
-        f"{st.session_state.army_total_cost}/{st.session_state.points} pts"
-    )
+    st.caption(f"{st.session_state.game} — {st.session_state.faction} — {st.session_state.army_total_cost}/{st.session_state.points} pts")
 
     if st.button("⬅️ Retour configuration"):
         st.session_state.page = "setup"
         st.rerun()
 
-    # ---------------------------------------------
-    # CHARGER LA FACTION
-    # ---------------------------------------------
-    faction_file = next(
-        f["file"] for f in factions
-        if f["name"] == st.session_state.faction
-    )
-
+    # Charger la faction
+    faction_file = next(f["file"] for f in factions if f["name"] == st.session_state.faction)
     with open(faction_file, encoding="utf-8") as f:
         faction = json.load(f)
 
@@ -189,9 +166,7 @@ if st.session_state.page == "army":
     options_selected = {}
     mount_selected = None
 
-    # ---------------------------------------------
-    # OPTIONS
-    # ---------------------------------------------
+    # Options
     for group in unit.get("upgrade_groups", []):
         choice = st.selectbox(
             group["group"],
@@ -257,9 +232,7 @@ if st.session_state.page == "army":
         for error in st.session_state.validation_errors:
             st.write(f"- {error}")
 
-    # ---------------------------------------------
-    # LISTE DE L’ARMÉE
-    # ---------------------------------------------
+    # Liste de l'armée
     st.divider()
     st.subheader("Liste de l'armée")
 
@@ -345,10 +318,7 @@ if st.session_state.page == "army":
             st.session_state.army_list.pop(i)
             st.rerun()
 
-    st.progress(
-        st.session_state.army_total_cost / st.session_state.points
-        if st.session_state.points else 0
-    )
+    st.progress(st.session_state.army_total_cost / st.session_state.points if st.session_state.points else 0)
 
     # Affichage des règles spécifiques au jeu
     if st.session_state.game in GAME_RULES:
@@ -358,6 +328,6 @@ if st.session_state.page == "army":
         st.markdown(f"""
         - **Héros** : 1 par tranche de {rules['hero_per_points']} pts
         - **Copies d'unités** : 1+X (X=1 pour {list(rules['unit_copies'].keys())[0]} pts)
-        - **Unité max** : {rules['max_unit_percentage']}% du total des points
+        - **Unité max** : {rules['max_unit_percentage']}% du total des points de l'armée
         - **Nombre d'unités** : 1 par tranche de {rules['unit_per_points']} pts
         """)
