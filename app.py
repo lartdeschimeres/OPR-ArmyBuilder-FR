@@ -377,7 +377,7 @@ if st.session_state.page == "setup":
     st.session_state.points = st.number_input(
         "Format de la partie (points)",
         min_value=250,
-        step=250,
+        step=50,
         value=st.session_state.points
     )
 
