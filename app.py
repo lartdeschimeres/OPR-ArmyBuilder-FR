@@ -177,6 +177,45 @@ def delete_player_army_list(username, list_index):
         st.error(f"Erreur lors de la suppression: {str(e)}")
         return False
 
+def calculate_coriace_value(unit_data):
+    """Calcule la valeur totale de Coriace pour une unité"""
+    coriace_value = 0
+
+    # 1. Vérifier la valeur de base de Coriace
+    if 'coriace' in unit_data:
+        coriace_value += unit_data['coriace']
+
+    # 2. Vérifier dans les règles spéciales
+    for rule in unit_data.get("base_rules", []):
+        match = re.search(r'Coriace \((\d+)\)', rule)
+        if match:
+            coriace_value += int(match.group(1))
+
+    # 3. Vérifier dans les options
+    if 'options' in unit_data:
+        for option_group in unit_data['options'].values():
+            if isinstance(option_group, list):
+                for option in option_group:
+                    if 'special_rules' in option:
+                        for rule in option['special_rules']:
+                            match = re.search(r'Coriace \((\d+)\)', rule)
+                            if match:
+                                coriace_value += int(match.group(1))
+            elif 'special_rules' in option_group:
+                for rule in option_group['special_rules']:
+                    match = re.search(r'Coriace \((\d+)\)', rule)
+                    if match:
+                        coriace_value += int(match.group(1))
+
+    # 4. Vérifier dans l'arme équipée
+    if 'current_weapon' in unit_data and 'special_rules' in unit_data['current_weapon']:
+        for rule in unit_data['current_weapon']['special_rules']:
+            match = re.search(r'Coriace \((\d+)\)', rule)
+            if match:
+                coriace_value += int(match.group(1))
+
+    return coriace_value
+
 def validate_army(army_list, game_rules, total_cost, total_points):
     errors = []
 
@@ -474,6 +513,38 @@ elif st.session_state.page == "army":
         st.markdown(f"**Coriace totale : {coriace_value}**")
 
     if st.button("➕ Ajouter à l'armée"):
+        # Calcul complet de la valeur de Coriace
+        coriace_value = 0
+
+        # 1. Vérifier dans les règles spéciales
+        for rule in base_rules:
+            match = re.search(r'Coriace \((\d+)\)', rule)
+            if match:
+                coriace_value += int(match.group(1))
+
+        # 2. Vérifier dans les options sélectionnées
+        if 'options' in options_selected:
+            for option_group in options_selected.values():
+                if isinstance(option_group, list):
+                    for option in option_group:
+                        if 'special_rules' in option:
+                            for rule in option['special_rules']:
+                                match = re.search(r'Coriace \((\d+)\)', rule)
+                                if match:
+                                    coriace_value += int(match.group(1))
+                elif 'special_rules' in option_group:
+                    for rule in option_group['special_rules']:
+                        match = re.search(r'Coriace \((\d+)\)', rule)
+                        if match:
+                            coriace_value += int(match.group(1))
+
+        # 3. Vérifier dans l'arme équipée
+        if 'special_rules' in current_weapon:
+            for rule in current_weapon['special_rules']:
+                match = re.search(r'Coriace \((\d+)\)', rule)
+                if match:
+                    coriace_value += int(match.group(1))
+
         unit_data = {
             "name": unit["name"],
             "cost": total_cost,
@@ -515,13 +586,7 @@ elif st.session_state.page == "army":
 
     for i, u in enumerate(st.session_state.army_list):
         # Calcul de la valeur totale de Coriace
-        coriace_value = u.get('coriace', 0)
-
-        # Calcul des règles spéciales de Coriace
-        for rule in u.get("base_rules", []):
-            match = re.search(r'Coriace \((\d+)\)', rule)
-            if match:
-                coriace_value += int(match.group(1))
+        coriace_value = calculate_coriace_value(u)
 
         # Calcul de la hauteur en fonction des éléments à afficher
         height = 200
@@ -718,11 +783,7 @@ elif st.session_state.page == "army":
 
             for u in st.session_state.army_list:
                 # Calcul de la valeur totale de Coriace pour l'export
-                coriace_value = u.get('coriace', 0)
-                for rule in u.get("base_rules", []):
-                    match = re.search(r'Coriace \((\d+)\)', rule)
-                    if match:
-                        coriace_value += int(match.group(1))
+                coriace_value = calculate_coriace_value(u)
 
                 html_content += f"""
                 <div class="army-card">
