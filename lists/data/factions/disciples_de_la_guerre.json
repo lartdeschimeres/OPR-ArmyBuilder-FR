@@ -37,7 +37,7 @@
           "options": [
             { "name": "Conquérant (Aura d’Éclaireur)", "cost": 20, "special_rules": ["Aura d’Éclaireur"] },
             { "name": "Marauder (Aura de combattant imprévisible)", "cost": 30, "special_rules": ["Aura de combattant imprévisible"] },
-            { "name": "Porteur de la bannière de l’armée (Effrayant (+3))", "cost": 30, "special_rules": ["Effrayant (+3)"] },
+            { "name": "Porteur de la bannière de l’armée (Effrayant (3))", "cost": 30, "special_rules": ["Effrayant (3)"] },
             { "name": "Mage (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"] },
             { "name": "Seigneur de Guerre (Aura de Boost de Né pour la guerre)", "cost": 35, "special_rules": ["Aura de Boost de Né pour la guerre"] },
             { "name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"] },
@@ -80,27 +80,27 @@
             {
               "name": "Grande bête",
               "cost": 65,
-              "special_rules": ["Griffes lourdes (A1, PA (1))", "Coriace (+3)", "Impact (2)", "Rapide"]
+              "special_rules": ["Griffes lourdes (A1, PA (1))", "Coriace (3)", "Impact (2)", "Rapide"]
             },
             {
               "name": "Monture démoniaque",
               "cost": 75,
-              "special_rules": ["Griffes lourdes (A1, PA (1))", "Coriace (+3)", "Impact (2)", "Effrayant (1)", "Rapide"]
+              "special_rules": ["Griffes lourdes (A1, PA (1))", "Coriace (3)", "Impact (2)", "Effrayant (1)", "Rapide"]
             },
             {
               "name": "Char",
               "cost": 120,
-              "special_rules": ["Sabots (A2)", "Coriace (+6)", "Impact (4)", "Rapide"]
+              "special_rules": ["Sabots (A2)", "Coriace (6)", "Impact (4)", "Rapide"]
             },
             {
               "name": "Char bestial",
               "cost": 135,
-              "special_rules": ["Griffes lourdes (A2, PA (1))", "Coriace (+6)", "Effrayant (1)", "Impact (4)", "Rapide"]
+              "special_rules": ["Griffes lourdes (A2, PA (1))", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]
             },
             {
               "name": "Manticore",
               "cost": 155,
-              "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (+6)", "Effrayant (1)", "Volant"]
+              "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (6)", "Effrayant (1)", "Volant"]
             },
             {
               "name": "Dragon du Ravage",
