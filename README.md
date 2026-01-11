@@ -22,7 +22,9 @@
 - Python 3.7 ou supérieur
 - Streamlit
 
-🚀 Installation et lancement
+---
+
+## 🚀 Installation et lancement
 
 Clonez ce dépôt :
 bash
@@ -45,8 +47,9 @@ Copier
 
 streamlit run app.py
 
+---
 
-📂 Structure du projet
+## 📂 Structure du projet
 Copier
 
 opr-army-forge-fr/
@@ -59,7 +62,9 @@ opr-army-forge-fr/
 └── README.md               # Ce fichier
 
 
-🎮 Utilisation pas à pas
+---
+
+## 🎮 Utilisation pas à pas
 
 Créez un compte (ou connectez-vous si vous en avez déjà un)
 Configurez une nouvelle liste :
@@ -77,7 +82,9 @@ Vérifiez la validation des règles
 Sauvegardez votre liste pour la retrouver plus tard
 Exportez en HTML pour partager ou imprimer
 
-📜 Règles spécifiques implémentées
+---
+
+## 📜 Règles spécifiques implémentées
 Pour Age of Fantasy :
 
 1 héros par tranche de 375 pts
@@ -85,7 +92,9 @@ Pour Age of Fantasy :
 Aucune unité ne peut valoir plus de 35% du total des points
 1 unité max par tranche de 150 pts
 
-🔧 Personnalisation
+---
+
+## 🔧 Personnalisation
 
 
 Ajouter de nouvelles factions :
@@ -103,13 +112,17 @@ Adapter le style :
 Modifiez le CSS dans les composants HTML
 
 
-📦 Déploiement (Streamlit Cloud)
+---
+
+## 📦 Déploiement (Streamlit Cloud)
 
 Créez un compte sur Streamlit Community Cloud
 Liez votre dépôt GitHub
 Configurez les paramètres de déploiement
 
-🤝 Contribution
+---
+
+## 🤝 Contribution
 Les contributions sont bienvenues ! Pour contribuer :
 
 Fork le projet
@@ -118,10 +131,14 @@ Commitez vos changements
 Poussez vers la branche
 Ouvrez une Pull Request
 
-📜 Licence
+---
+
+## 📜 Licence
 Ce projet est sous licence MIT.
 
-🙏 Remerciements
+---
+
+## 🙏 Remerciements
 
 À la communauté OPR pour les règles et l'univers
 À tous les testeurs et contributeurs
