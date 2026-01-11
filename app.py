@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import streamlit as st
 import streamlit.components.v1 as components
+import re
 
 # -------------------------------------------------
 # CONFIG
@@ -48,7 +49,6 @@ games = sorted(set(f["game"] for f in factions))
 # PAGE 1 — CONFIGURATION DE LA LISTE
 # =================================================
 if st.session_state.page == "setup":
-
     st.title("OPR Army Builder 🇫🇷")
     st.subheader("Créer une nouvelle liste")
 
@@ -98,7 +98,6 @@ if st.session_state.page == "setup":
 # PAGE 2 — COMPOSITION DE L’ARMÉE
 # =================================================
 if st.session_state.page == "army":
-
     st.title(st.session_state.list_name or "Ma liste d'armée")
     st.caption(
         f"{st.session_state.game} — {st.session_state.faction} — "
@@ -155,7 +154,21 @@ if st.session_state.page == "army":
             else:
                 options_selected[group["group"]] = opt
 
+    # Calcul de la valeur de Coriace
+    coriace_value = 0
+    for rule in base_rules:
+        match = re.search(r'Coriace \((\d+)\)', rule)
+        if match:
+            coriace_value += int(match.group(1))
+
+    if mount_selected:
+        for rule in mount_selected.get("special_rules", []):
+            match = re.search(r'Coriace \(\+(\d+)\)', rule)
+            if match:
+                coriace_value += int(match.group(1))
+
     st.markdown(f"### 💰 Coût : **{total_cost} pts**")
+    st.markdown(f"**Coriace totale : {coriace_value}**")
 
     if st.button("➕ Ajouter à l'armée"):
         st.session_state.army_list.append({
@@ -163,6 +176,7 @@ if st.session_state.page == "army":
             "cost": total_cost,
             "quality": unit["quality"],
             "defense": unit["defense"],
+            "coriace": coriace_value,
             "base_rules": base_rules,
             "options": options_selected,
             "mount": mount_selected
@@ -177,7 +191,6 @@ if st.session_state.page == "army":
     st.subheader("Liste de l'armée")
 
     for i, u in enumerate(st.session_state.army_list):
-
         components.html(f"""
         <style>
         .card {{
@@ -208,6 +221,7 @@ if st.session_state.page == "army":
             <div>
                 <span class="badge">Qualité {u['quality']}+</span>
                 <span class="badge">Défense {u['defense']}+</span>
+                <span class="badge">Coriace {u['coriace']}</span>
             </div>
 
             <div class="title">Règles spéciales</div>
