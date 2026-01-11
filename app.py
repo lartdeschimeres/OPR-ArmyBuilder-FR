@@ -375,7 +375,7 @@ elif st.session_state.page == "setup":
     st.session_state.points = st.number_input(
         "Format de la partie (points)",
         min_value=250,
-        step=250,
+        step=50,
         value=st.session_state.points
     )
 
@@ -696,14 +696,24 @@ elif st.session_state.page == "army":
             </div>
             """
 
-        # Monture (si elle existe)
+        # Monture (si elle existe) - MÊME FORMAT QUE LES OPTIONS
         if u.get("mount"):
             mount = u['mount']
+            mount_rules = []
+            if 'special_rules' in mount:
+                mount_rules = mount['special_rules']
+
             html_content += f"""
             <div class="section">
                 <div class="title">Monture</div>
                 <div style="margin-left:15px; margin-bottom:5px; font-size:0.9em;">
                     <strong>{mount.get('name', '')}</strong>
+            """
+
+            if mount_rules:
+                html_content += f"<br>{', '.join(mount_rules)}"
+
+            html_content += """
                 </div>
             </div>
             """
@@ -771,9 +781,30 @@ elif st.session_state.page == "army":
                 <style>
                     body {{ font-family: Arial, sans-serif; margin: 20px; }}
                     h1 {{ color: #4a89dc; }}
-                    .army-card {{ border:1px solid #4a89dc; border-radius:8px; padding:15px; margin-bottom:15px; background: #f9f9f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
-                    .badge {{ display: inline-block; background: #4a89dc; color: white; padding: 6px 12px; border-radius: 15px; margin-right: 8px; margin-bottom: 5px; font-size: 0.9em; }}
-                    .title {{ font-weight: bold; color: #4a89dc; margin-top: 10px; margin-bottom: 5px; }}
+                    .army-card {{
+                        border:1px solid #4a89dc;
+                        border-radius:8px;
+                        padding:15px;
+                        margin-bottom:15px;
+                        background: #f9f9f9;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    }}
+                    .badge {{
+                        display: inline-block;
+                        background: #4a89dc;
+                        color: white;
+                        padding: 6px 12px;
+                        border-radius: 15px;
+                        margin-right: 8px;
+                        margin-bottom: 5px;
+                        font-size: 0.9em;
+                    }}
+                    .title {{
+                        font-weight: bold;
+                        color: #4a89dc;
+                        margin-top: 10px;
+                        margin-bottom: 5px;
+                    }}
                 </style>
             </head>
             <body>
@@ -834,13 +865,23 @@ elif st.session_state.page == "army":
                     </div>
                     """
 
-                # Monture
+                # Monture (si elle existe) - MÊME FORMAT QUE LES OPTIONS
                 if u.get("mount"):
                     mount = u['mount']
+                    mount_rules = []
+                    if 'special_rules' in mount:
+                        mount_rules = mount['special_rules']
+
                     html_content += f"""
                     <div class="title">Monture</div>
                     <div style="margin-left:15px; margin-bottom:10px; font-size:0.9em;">
                         <strong>{mount.get('name', '')}</strong>
+                    """
+
+                    if mount_rules:
+                        html_content += f"<br>{', '.join(mount_rules)}"
+
+                    html_content += """
                     </div>
                     """
 
