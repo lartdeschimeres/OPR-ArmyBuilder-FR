@@ -7,7 +7,7 @@
   "units": [
     {
       "name": "Maître de la Guerre Élu",
-      "type": "Héros",
+      "type": "Hero",
       "size": 1,
       "base_cost": 60,
       "quality": 4,
