@@ -164,244 +164,6 @@ def validate_army(army_list, game_rules, total_cost, total_points):
 
     return len(errors) == 0, errors
 
-def export_to_html():
-    if not st.session_state.army_list:
-        st.warning("Aucune unité dans l'armée à exporter")
-        return
-
-    html_content = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Liste d'armée OPR - {st.session_state.list_name}</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 20px; }}
-            h1 {{ color: #4a89dc; }}
-            .army-card {{ border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #f9f9f9; }}
-            .hero-card {{ border: 1px solid #e74c3c; border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #fff0f0; margin-left: 20px; margin-top: 10px; }}
-            .badge {{ display: inline-block; background: #4a89dc; color: white; padding: 6px 12px; border-radius: 15px; margin-right: 8px; margin-bottom: 5px; }}
-            .title {{ font-weight: bold; color: #4a89dc; margin-top: 10px; }}
-        </style>
-    </head>
-    <body>
-        <h1>Liste d'armée OPR - {st.session_state.list_name}</h1>
-        <h2>{st.session_state.game} - {st.session_state.faction} - {st.session_state.army_total_cost}/{st.session_state.points} pts</h2>
-    """
-
-    # Regrouper les unités avec leurs héros rattachés
-    units_with_heroes = {}
-    independent_heroes = []
-
-    for unit in st.session_state.army_list:
-        if unit.get("attached_to_unit"):
-            unit_name = unit["attached_to_unit"]
-            if unit_name not in units_with_heroes:
-                units_with_heroes[unit_name] = []
-            units_with_heroes[unit_name].append(unit)
-        elif unit.get("type", "").lower() == "hero":
-            independent_heroes.append(unit)
-
-    # Afficher les unités normales et leurs héros rattachés
-    for unit in st.session_state.army_list:
-        if unit.get("type", "").lower() != "hero" and not unit.get("attached_to_unit", False):
-            base_rules = unit.get("base_rules", [])
-            weapon_rules = []
-            option_rules = []
-            mount_rules = []
-
-            if 'current_weapon' in unit and 'special_rules' in unit['current_weapon']:
-                weapon_rules = unit['current_weapon']['special_rules']
-
-            for opt_group in unit.get("options", {}).values():
-                if isinstance(opt_group, list):
-                    for opt in opt_group:
-                        if 'special_rules' in opt:
-                            option_rules.extend(opt['special_rules'])
-                elif 'special_rules' in opt_group:
-                    option_rules.extend(opt_group['special_rules'])
-
-            if 'mount' in unit and 'special_rules' in unit['mount']:
-                mount_rules = unit['mount']['special_rules']
-
-            html_content += f"""
-            <div class="army-card">
-                <h3>{unit['name']} - {unit['cost']} pts</h3>
-                <div>
-                    <span class="badge">Qualité {unit['quality']}+</span>
-                    <span class="badge">Défense {unit['defense']}+</span>
-            """
-
-            if unit.get('coriace', 0) > 0:
-                html_content += f'<span class="badge">Coriace {unit["coriace"]}</span>'
-
-            html_content += """
-                </div>
-            """
-
-            if base_rules:
-                html_content += f"""
-                <div class="title">Règles spéciales de base</div>
-                <div>{', '.join(base_rules)}</div>
-                """
-
-            if 'current_weapon' in unit:
-                weapon = unit['current_weapon']
-                html_content += f"""
-                <div class="title">Arme équipée</div>
-                <div>
-                    {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
-                """
-                if weapon_rules:
-                    html_content += f" | {', '.join(weapon_rules)}"
-                html_content += "</div>"
-
-            if unit.get("options"):
-                options_text = []
-                for opt_group in unit['options'].values():
-                    if isinstance(opt_group, list):
-                        options_text.extend([opt['name'] for opt in opt_group])
-                    else:
-                        options_text.append(opt_group['name'])
-                html_content += f"""
-                <div class="title">Options sélectionnées</div>
-                <div>{', '.join(options_text)}
-                """
-                if option_rules:
-                    html_content += f" | {', '.join(option_rules)}"
-                html_content += "</div>"
-
-            if unit.get("mount"):
-                mount = unit['mount']
-                html_content += f"""
-                <div class="title">Monture</div>
-                <div>
-                    <strong>{mount['name']}</strong> (+{mount.get('cost', 0)} pts)<br>
-                    {', '.join(mount_rules) if mount_rules else 'Aucune règle spéciale'}
-                </div>
-                """
-
-            # Afficher les héros rattachés à cette unité
-            if unit["name"] in units_with_heroes:
-                for hero in units_with_heroes[unit["name"]]:
-                    hero_rules = hero.get("base_rules", [])
-                    weapon_rules = []
-
-                    if 'current_weapon' in hero and 'special_rules' in hero['current_weapon']:
-                        weapon_rules = hero['current_weapon']['special_rules']
-
-                    html_content += f"""
-                    <div class="hero-card">
-                        <h4>⚔️ {hero['name']} (Héros rattaché) - {hero['cost']} pts</h4>
-                        <div>
-                            <span class="badge">Qualité {hero['quality']}+</span>
-                            <span class="badge">Défense {hero['defense']}+</span>
-                    """
-
-                    if hero.get('coriace', 0) > 0:
-                        html_content += f'<span class="badge">Coriace {hero["coriace"]}</span>'
-
-                    html_content += """
-                        </div>
-                    """
-
-                    if hero_rules:
-                        html_content += f"""
-                        <div class="title">Règles spéciales</div>
-                        <div>{', '.join(hero_rules)}</div>
-                        """
-
-                    if 'current_weapon' in hero:
-                        weapon = hero['current_weapon']
-                        html_content += f"""
-                        <div class="title">Arme équipée</div>
-                        <div>
-                            {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
-                        """
-                        if weapon_rules:
-                            html_content += f" | {', '.join(weapon_rules)}"
-                        html_content += "</div>"
-
-                    html_content += "</div>"
-
-            html_content += "</div>"
-
-    # Afficher les héros indépendants
-    if independent_heroes:
-        html_content += "<h3>Héros indépendants</h3>"
-        for hero in independent_heroes:
-            base_rules = hero.get("base_rules", [])
-            weapon_rules = []
-            mount_rules = []
-
-            if 'current_weapon' in hero and 'special_rules' in hero['current_weapon']:
-                weapon_rules = hero['current_weapon']['special_rules']
-
-            if 'mount' in hero and 'special_rules' in hero['mount']:
-                mount_rules = hero['mount']['special_rules']
-
-            html_content += f"""
-            <div class="army-card">
-                <h3>{hero['name']} - {hero['cost']} pts (Héros indépendant)</h3>
-                <div>
-                    <span class="badge">Qualité {hero['quality']}+</span>
-                    <span class="badge">Défense {hero['defense']}+</span>
-            """
-
-            if hero.get('coriace', 0) > 0:
-                html_content += f'<span class="badge">Coriace {hero["coriace"]}</span>'
-
-            html_content += """
-                </div>
-            """
-
-            if base_rules:
-                html_content += f"""
-                <div class="title">Règles spéciales</div>
-                <div>{', '.join(base_rules)}</div>
-                """
-
-            if 'current_weapon' in hero:
-                weapon = hero['current_weapon']
-                html_content += f"""
-                <div class="title">Arme équipée</div>
-                <div>
-                    {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
-                """
-                if weapon_rules:
-                    html_content += f" | {', '.join(weapon_rules)}"
-                html_content += "</div>"
-
-            if 'mount' in hero:
-                mount = hero['mount']
-                html_content += f"""
-                <div class="title">Monture</div>
-                <div>
-                    <strong>{mount['name']}</strong> (+{mount.get('cost', 0)} pts)<br>
-                    {', '.join(mount_rules) if mount_rules else 'Aucune règle spéciale'}
-                </div>
-                """
-
-            html_content += "</div>"
-
-    html_content += """
-    </body>
-    </html>
-    """
-
-    filename = f"{st.session_state.list_name or 'army_list'}.html"
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(html_content)
-
-    with open(filename, "r", encoding="utf-8") as f:
-        st.download_button(
-            label="Télécharger le fichier HTML",
-            data=f,
-            file_name=filename,
-            mime="text/html"
-        )
-
-    components.html(html_content, height=600, scrolling=True)
-
 # PAGE 1 — Connexion/Inscription
 if st.session_state.page == "login":
     st.title("OPR Army Builder 🇫🇷")
@@ -669,7 +431,6 @@ if st.session_state.page == "army":
     # Combiner les héros disponibles et les héros indépendants déjà dans l'armée
     all_available_heroes = []
     for hero in available_heroes:
-        # Vérifier si le héros n'est pas déjà dans l'armée (indépendant ou rattaché)
         hero_name = hero["name"]
         hero_in_army = any(u["name"] == hero_name for u in st.session_state.army_list)
         if not hero_in_army:
@@ -695,8 +456,6 @@ if st.session_state.page == "army":
 
         if selected_hero_name != "— Aucun —":
             hero = next(h for h in all_available_heroes if h["name"] == selected_hero_name)
-
-            # Vérifier si c'est un héros déjà dans l'armée
             hero_in_army = any(u["name"] == hero["name"] for u in independent_heroes)
 
             # Sélection de l'unité cible
@@ -723,7 +482,6 @@ if st.session_state.page == "army":
                             if hero_in_army:
                                 hero_unit = next(u for u in st.session_state.army_list if u["name"] == hero["name"])
                                 st.session_state.army_list.remove(hero_unit)
-                                st.session_state.army_total_cost -= hero_unit["cost"]
 
                             # Créer une nouvelle entrée pour le héros rattaché
                             hero_data = {
@@ -736,16 +494,6 @@ if st.session_state.page == "army":
                                 "attached_to_unit": target_unit["name"],
                                 "current_weapon": hero.get("weapons", [{"name": "Arme non définie", "attacks": "?", "armor_piercing": "?"}])[0]
                             }
-
-                            # Calcul de la valeur de Coriace pour le héros
-                            coriace_value = 0
-                            for rule in hero_data["base_rules"]:
-                                match = re.search(r'Coriace \((\d+)\)', rule)
-                                if match:
-                                    coriace_value += int(match.group(1))
-
-                            if coriace_value > 0:
-                                hero_data["coriace"] = coriace_value
 
                             st.session_state.army_list.append(hero_data)
                             st.success(f"Héros {hero['name']} rattaché à l'unité {target_unit['name']}!")
@@ -783,63 +531,19 @@ if st.session_state.page == "army":
 
         if unit.get("type", "").lower() == "hero" and not unit.get("attached_to_unit", False):
             # Affichage des héros indépendants
-            base_rules = unit.get("base_rules", [])
-            weapon_rules = []
-            mount_rules = []
-
-            if 'current_weapon' in unit and 'special_rules' in unit['current_weapon']:
-                weapon_rules = unit['current_weapon']['special_rules']
-
-            if 'mount' in unit and 'special_rules' in unit['mount']:
-                mount_rules = unit['mount']['special_rules']
-
-            components.html(f"""
-            <div class="card" style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:15px; background:#f9f9f9;">
-                <h4>{unit['name']} — {unit['cost']} pts (Héros indépendant)</h4>
-                <div style="margin-bottom: 10px;">
-                    <span style="display:inline-block; background:#4a89dc; color:white; padding:6px 12px; border-radius:15px; margin-right:8px; margin-bottom: 5px;">Qualité {unit['quality']}+</span>
-                    <span style="display:inline-block; background:#4a89dc; color:white; padding:6px 12px; border-radius:15px; margin-right:8px; margin-bottom: 5px;">Défense {unit['defense']}+</span>
-            """
-
+            st.markdown(f"### {unit['name']} — {unit['cost']} pts (Héros indépendant)")
+            st.markdown(f"- Qualité: {unit['quality']}+, Défense: {unit['defense']}+")
             if unit.get('coriace', 0) > 0:
-                components.html(f"""
-                    <span style="display:inline-block; background:#4a89dc; color:white; padding:6px 12px; border-radius:15px; margin-right:8px; margin-bottom: 5px;">Coriace {unit['coriace']}</span>
-                """)
+                st.markdown(f"- Coriace: {unit['coriace']}")
 
-            components.html("""
-                </div>
-            """)
-
-            if base_rules:
-                components.html(f"""
-                <div style="font-weight:bold; color:#4a89dc; margin-top:10px;">Règles spéciales</div>
-                <div style="margin-left: 15px; margin-bottom: 10px;">{', '.join(base_rules)}</div>
-                """)
+            if unit.get("base_rules"):
+                st.markdown(f"- **Règles spéciales**: {', '.join(unit['base_rules'])}")
 
             if 'current_weapon' in unit:
                 weapon = unit['current_weapon']
-                components.html(f"""
-                <div style="font-weight:bold; color:#4a89dc; margin-top:10px;">Arme équipée</div>
-                <div style="margin-left: 15px; margin-bottom: 10px;">
-                    {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
-                """)
-                if weapon_rules:
-                    components.html(f" | {', '.join(weapon_rules)}")
-                components.html("</div>")
+                st.markdown(f"- **Arme**: {weapon.get('name', 'Arme de base')} (A{weapon.get('attacks', '?')}, PA{weapon.get('armor_piercing', '?')})")
 
-            if 'mount' in unit:
-                mount = unit['mount']
-                components.html(f"""
-                <div style="font-weight:bold; color:#4a89dc; margin-top:10px;">Monture</div>
-                <div style="margin-left: 15px; margin-bottom: 10px;">
-                    <strong>{mount['name']}</strong> (+{mount.get('cost', 0)} pts)<br>
-                    {', '.join(mount_rules) if mount_rules else 'Aucune règle spéciale'}
-                </div>
-                """)
-
-            components.html("</div>")
-
-            if st.button("❌ Supprimer", key=f"del_hero_{i}"):
+            if st.button(f"❌ Supprimer {unit['name']}", key=f"del_hero_{i}"):
                 st.session_state.army_total_cost -= unit["cost"]
                 st.session_state.army_list = [u for idx, u in enumerate(st.session_state.army_list) if not (u["name"] == unit["name"] and u.get("type", "").lower() == "hero" and not u.get("attached_to_unit", False))]
                 st.rerun()
@@ -849,58 +553,17 @@ if st.session_state.page == "army":
         if unit.get("type", "").lower() == "hero" or unit.get("attached_to_unit", False):
             continue
 
-        base_rules = unit.get("base_rules", [])
-        weapon_rules = []
-        option_rules = []
-        mount_rules = []
-
-        if 'current_weapon' in unit and 'special_rules' in unit['current_weapon']:
-            weapon_rules = unit['current_weapon']['special_rules']
-
-        for opt_group in unit.get("options", {}).values():
-            if isinstance(opt_group, list):
-                for opt in opt_group:
-                    if 'special_rules' in opt:
-                        option_rules.extend(opt['special_rules'])
-            elif 'special_rules' in opt_group:
-                option_rules.extend(opt_group['special_rules'])
-
-        if 'mount' in unit and 'special_rules' in unit['mount']:
-            mount_rules = unit['mount']['special_rules']
-
-        components.html(f"""
-        <div class="card" style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:15px; background:#f9f9f9;">
-            <h4>{unit['name']} — {unit['cost']} pts</h4>
-            <div style="margin-bottom: 10px;">
-                <span style="display:inline-block; background:#4a89dc; color:white; padding:6px 12px; border-radius:15px; margin-right:8px; margin-bottom: 5px;">Qualité {unit['quality']}+</span>
-                <span style="display:inline-block; background:#4a89dc; color:white; padding:6px 12px; border-radius:15px; margin-right:8px; margin-bottom: 5px;">Défense {unit['defense']}+</span>
-        """)
-
+        st.markdown(f"### {unit['name']} — {unit['cost']} pts")
+        st.markdown(f"- Qualité: {unit['quality']}+, Défense: {unit['defense']}+")
         if unit.get('coriace', 0) > 0:
-            components.html(f"""
-                <span style="display:inline-block; background:#4a89dc; color:white; padding:6px 12px; border-radius:15px; margin-right:8px; margin-bottom: 5px;">Coriace {unit['coriace']}</span>
-            """)
+            st.markdown(f"- Coriace: {unit['coriace']}")
 
-        components.html("""
-            </div>
-        """)
-
-        if base_rules:
-            components.html(f"""
-            <div style="font-weight:bold; color:#4a89dc; margin-top:10px;">Règles spéciales de base</div>
-            <div style="margin-left: 15px; margin-bottom: 10px;">{', '.join(base_rules)}</div>
-            """)
+        if unit.get("base_rules"):
+            st.markdown(f"- **Règles spéciales**: {', '.join(unit['base_rules'])}")
 
         if 'current_weapon' in unit:
             weapon = unit['current_weapon']
-            components.html(f"""
-            <div style="font-weight:bold; color:#4a89dc; margin-top:10px;">Arme équipée</div>
-            <div style="margin-left: 15px; margin-bottom: 10px;">
-                {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
-            """)
-            if weapon_rules:
-                components.html(f" | {', '.join(weapon_rules)}")
-            components.html("</div>")
+            st.markdown(f"- **Arme**: {weapon.get('name', 'Arme de base')} (A{weapon.get('attacks', '?')}, PA{weapon.get('armor_piercing', '?')})")
 
         if unit.get("options"):
             options_text = []
@@ -909,72 +572,24 @@ if st.session_state.page == "army":
                     options_text.extend([opt['name'] for opt in opt_group])
                 else:
                     options_text.append(opt_group['name'])
-            components.html(f"""
-            <div style="font-weight:bold; color:#4a89dc; margin-top:10px;">Options sélectionnées</div>
-            <div style="margin-left: 15px; margin-bottom: 10px;">{', '.join(options_text)}
-            """)
-            if option_rules:
-                components.html(f" | {', '.join(option_rules)}")
-            components.html("</div>")
-
-        if 'mount' in unit:
-            mount = unit['mount']
-            components.html(f"""
-            <div style="font-weight:bold; color:#4a89dc; margin-top:10px;">Monture</div>
-            <div style="margin-left: 15px; margin-bottom: 10px;">
-                <strong>{mount['name']}</strong> (+{mount.get('cost', 0)} pts)<br>
-                {', '.join(mount_rules) if mount_rules else 'Aucune règle spéciale'}
-            </div>
-            """)
+            st.markdown(f"- **Options**: {', '.join(options_text)}")
 
         # Afficher les héros rattachés à cette unité
         heroes_attached = [h for h in st.session_state.army_list if h.get("attached_to_unit") == unit["name"]]
         for j, hero in enumerate(heroes_attached):
-            hero_rules = hero.get("base_rules", [])
-            weapon_rules = []
-
-            if 'current_weapon' in hero and 'special_rules' in hero['current_weapon']:
-                weapon_rules = hero['current_weapon']['special_rules']
-
-            components.html(f"""
-            <div style="border:1px solid #e74c3c; border-radius:8px; padding:15px; margin-bottom:15px; background:#fff0f0; margin-left: 20px; margin-top: 10px;">
-                <h4 style="margin:0;">⚔️ {hero['name']} (Héros rattaché) — {hero['cost']} pts</h4>
-                <div style="margin-bottom: 10px;">
-                    <span style="display:inline-block; background:#4a89dc; color:white; padding:6px 12px; border-radius:15px; margin-right:8px; margin-bottom: 5px;">Qualité {hero['quality']}+</span>
-                    <span style="display:inline-block; background:#4a89dc; color:white; padding:6px 12px; border-radius:15px; margin-right:8px; margin-bottom: 5px;">Défense {hero['defense']}+</span>
-            """)
-
+            st.markdown(f"#### ⚔️ {hero['name']} (Héros rattaché) — {hero['cost']} pts")
+            st.markdown(f"- Qualité: {hero['quality']}+, Défense: {hero['defense']}+")
             if hero.get('coriace', 0) > 0:
-                components.html(f"""
-                    <span style="display:inline-block; background:#4a89dc; color:white; padding:6px 12px; border-radius:15px; margin-right:8px; margin-bottom: 5px;">Coriace {hero['coriace']}</span>
-                """)
+                st.markdown(f"- Coriace: {hero['coriace']}")
 
-            components.html("""
-                </div>
-            """)
-
-            if hero_rules:
-                components.html(f"""
-                <div style="font-weight:bold; color:#4a89dc; margin-top:10px;">Règles spéciales</div>
-                <div style="margin-left: 15px; margin-bottom: 10px;">{', '.join(hero_rules)}</div>
-                """)
+            if hero.get("base_rules"):
+                st.markdown(f"- **Règles spéciales**: {', '.join(hero['base_rules'])}")
 
             if 'current_weapon' in hero:
                 weapon = hero['current_weapon']
-                components.html(f"""
-                <div style="font-weight:bold; color:#4a89dc; margin-top:10px;">Arme équipée</div>
-                <div style="margin-left: 15px; margin-bottom: 10px;">
-                    {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
-                """)
-                if weapon_rules:
-                    components.html(f" | {', '.join(weapon_rules)}")
-                components.html("</div>")
+                st.markdown(f"- **Arme**: {weapon.get('name', 'Arme de base')} (A{weapon.get('attacks', '?')}, PA{weapon.get('armor_piercing', '?')})")
 
-            components.html("</div>")
-
-        components.html("</div>")
-
-        if st.button("❌ Supprimer", key=f"del_unit_{i}"):
+        if st.button(f"❌ Supprimer {unit['name']}", key=f"del_unit_{i}"):
             st.session_state.army_total_cost -= unit["cost"]
             # Supprimer aussi les héros rattachés
             st.session_state.army_list = [u for u in st.session_state.army_list if u["name"] != unit["name"] and not (u.get("attached_to_unit") == unit["name"])]
@@ -1013,7 +628,162 @@ if st.session_state.page == "army":
 
     with col2:
         if st.button("📄 Exporter en HTML"):
-            export_to_html()
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Liste d'armée OPR - {st.session_state.list_name}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 20px; }}
+                    h1 {{ color: #4a89dc; }}
+                    .army-card {{ border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #f9f9f9; }}
+                    .hero-card {{ border: 1px solid #e74c3c; border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #fff0f0; margin-left: 20px; margin-top: 10px; }}
+                    .badge {{ display: inline-block; background: #4a89dc; color: white; padding: 6px 12px; border-radius: 15px; margin-right: 8px; margin-bottom: 5px; }}
+                    .title {{ font-weight: bold; color: #4a89dc; margin-top: 10px; }}
+                </style>
+            </head>
+            <body>
+                <h1>Liste d'armée OPR - {st.session_state.list_name}</h1>
+                <h2>{st.session_state.game} - {st.session_state.faction} - {st.session_state.army_total_cost}/{st.session_state.points} pts</h2>
+            """
+
+            # Affichage des unités normales et leurs héros rattachés
+            for unit in st.session_state.army_list:
+                if unit.get("type", "").lower() == "hero" or unit.get("attached_to_unit", False):
+                    continue
+
+                html_content += f"""
+                <div class="army-card">
+                    <h3>{unit['name']} - {unit['cost']} pts</h3>
+                    <div>
+                        <span class="badge">Qualité {unit['quality']}+</span>
+                        <span class="badge">Défense {unit['defense']}+</span>
+                """
+
+                if unit.get('coriace', 0) > 0:
+                    html_content += f'<span class="badge">Coriace {unit["coriace"]}</span>'
+
+                html_content += """
+                    </div>
+                """
+
+                if unit.get("base_rules"):
+                    html_content += f"""
+                    <div class="title">Règles spéciales de base</div>
+                    <div>{', '.join(unit['base_rules'])}</div>
+                    """
+
+                if 'current_weapon' in unit:
+                    weapon = unit['current_weapon']
+                    html_content += f"""
+                    <div class="title">Arme équipée</div>
+                    <div>
+                        {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
+                    </div>
+                    """
+
+                if unit.get("options"):
+                    options_text = []
+                    for opt_group in unit['options'].values():
+                        if isinstance(opt_group, list):
+                            options_text.extend([opt['name'] for opt in opt_group])
+                        else:
+                            options_text.append(opt_group['name'])
+                    html_content += f"""
+                    <div class="title">Options sélectionnées</div>
+                    <div>{', '.join(options_text)}</div>
+                    """
+
+                # Afficher les héros rattachés à cette unité
+                heroes_attached = [h for h in st.session_state.army_list if h.get("attached_to_unit") == unit["name"]]
+                for hero in heroes_attached:
+                    html_content += f"""
+                    <div class="hero-card">
+                        <h4>⚔️ {hero['name']} (Héros rattaché) - {hero['cost']} pts</h4>
+                        <div>
+                            <span class="badge">Qualité {hero['quality']}+</span>
+                            <span class="badge">Défense {hero['defense']}+</span>
+                    """
+
+                    if hero.get('coriace', 0) > 0:
+                        html_content += f'<span class="badge">Coriace {hero["coriace"]}</span>'
+
+                    html_content += """
+                        </div>
+                    """
+
+                    if hero.get("base_rules"):
+                        html_content += f"""
+                        <div class="title">Règles spéciales</div>
+                        <div>{', '.join(hero['base_rules'])}</div>
+                        """
+
+                    if 'current_weapon' in hero:
+                        weapon = hero['current_weapon']
+                        html_content += f"""
+                        <div class="title">Arme équipée</div>
+                        <div>
+                            {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
+                        </div>
+                        """
+
+                    html_content += "</div>"
+
+                html_content += "</div>"
+
+            # Affichage des héros indépendants
+            for unit in st.session_state.army_list:
+                if unit.get("type", "").lower() != "hero" or unit.get("attached_to_unit", False):
+                    continue
+
+                html_content += f"""
+                <div class="army-card">
+                    <h3>{unit['name']} - {unit['cost']} pts (Héros indépendant)</h3>
+                    <div>
+                        <span class="badge">Qualité {unit['quality']}+</span>
+                        <span class="badge">Défense {unit['defense']}+</span>
+                """
+
+                if unit.get('coriace', 0) > 0:
+                    html_content += f'<span class="badge">Coriace {unit["coriace"]}</span>'
+
+                html_content += """
+                    </div>
+                """
+
+                if unit.get("base_rules"):
+                    html_content += f"""
+                    <div class="title">Règles spéciales</div>
+                    <div>{', '.join(unit['base_rules'])}</div>
+                    """
+
+                if 'current_weapon' in unit:
+                    weapon = unit['current_weapon']
+                    html_content += f"""
+                    <div class="title">Arme équipée</div>
+                    <div>
+                        {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
+                    </div>
+                    """
+
+                html_content += "</div>"
+
+            html_content += """
+            </body>
+            </html>
+            """
+
+            filename = f"{st.session_state.list_name or 'army_list'}.html"
+            with open(filename, "w", encoding="utf-8") as f:
+                f.write(html_content)
+
+            with open(filename, "r", encoding="utf-8") as f:
+                st.download_button(
+                    label="Télécharger le fichier HTML",
+                    data=f,
+                    file_name=filename,
+                    mime="text/html"
+                )
 
     with col3:
         if st.button("🧹 Réinitialiser la liste"):
