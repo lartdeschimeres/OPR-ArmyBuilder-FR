@@ -12,20 +12,10 @@ import os
 def main():
     # Initialisation de la session
     if "page" not in st.session_state:
-        st.session_state.page = "login"
+        st.session_state.page = "army"  # On commence directement sur la page de l'armée pour simplifier
 
     # Configuration de la page
     st.set_page_config(page_title="OPR Army Builder FR", layout="centered")
-
-    # Définir les chemins
-    BASE_DIR = Path(__file__).resolve().parent
-    FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
-    SAVE_DIR = BASE_DIR / "saves"
-    PLAYERS_DIR = BASE_DIR / "players"
-
-    # Créer les dossiers s'ils n'existent pas
-    SAVE_DIR.mkdir(exist_ok=True, parents=True)
-    PLAYERS_DIR.mkdir(exist_ok=True, parents=True)
 
     # Règles spécifiques par jeu
     GAME_RULES = {
@@ -40,141 +30,64 @@ def main():
     # Initialisation de l'état de la session
     def init_session_state():
         defaults = {
-            "game": None,
-            "faction": None,
+            "game": "Age of Fantasy",
+            "faction": "Disciples de la Guerre",
             "points": 1000,
-            "list_name": "",
+            "list_name": "Ma liste d'armée",
             "army_list": [],
             "army_total_cost": 0,
             "is_army_valid": True,
             "validation_errors": [],
-            "current_player": None,
-            "player_army_lists": [],
-            "units": []
+            "units": [
+                {
+                    "name": "Maître de la Guerre Élu",
+                    "type": "Hero",
+                    "base_cost": 60,
+                    "quality": 4,
+                    "defense": 4,
+                    "special_rules": ["Attaque versatile", "Héros", "Né pour la guerre"],
+                    "weapons": [
+                        {
+                            "name": "Paire d'armes à une main lourdes",
+                            "range": "-",
+                            "attacks": 4,
+                            "armor_piercing": 1
+                        }
+                    ],
+                    "upgrade_groups": [
+                        {
+                            "group": "Option",
+                            "type": "multiple",
+                            "options": [
+                                {
+                                    "name": "Conquérant (Aura d'Éclaireur)",
+                                    "cost": 15,
+                                    "special_rules": ["Aura d'Éclaireur"]
+                                },
+                                {
+                                    "name": "Marauder (Aura de combat imprévisible)",
+                                    "cost": 10,
+                                    "special_rules": ["Aura de combat imprévisible"]
+                                },
+                                {
+                                    "name": "Manticore",
+                                    "cost": 195,
+                                    "mount": {
+                                        "name": "Manticore",
+                                        "special_rules": ["Vol", "Coriace (9)", "Peur", "Attaque mortelle"]
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
         for key, default in defaults.items():
             if key not in st.session_state:
                 st.session_state[key] = default
 
     init_session_state()
-
-    @st.cache_data
-    def load_factions():
-        try:
-            faction_files = list(FACTIONS_DIR.glob("*.json"))
-            factions = []
-
-            for fp in faction_files:
-                try:
-                    with open(fp, encoding="utf-8") as f:
-                        data = json.load(f)
-                        factions.append({
-                            "name": data["faction"],
-                            "game": data["game"],
-                            "file": fp
-                        })
-                except Exception as e:
-                    st.warning(f"Impossible de lire {fp.name} : {e}")
-
-            games = sorted(set(f["game"] for f in factions))
-            return factions, games
-        except Exception as e:
-            st.error(f"Erreur lors du chargement des factions: {str(e)}")
-            return [], []
-
-    factions, games = load_factions()
-
-    # Fonctions pour la gestion des comptes joueurs
-    def hash_password(password):
-        return hashlib.sha256(password.encode()).hexdigest()
-
-    def create_player(username, password):
-        player_file = PLAYERS_DIR / f"{username}.json"
-        if player_file.exists():
-            return False, "Ce nom d'utilisateur existe déjà"
-
-        player_data = {
-            "username": username,
-            "password": hash_password(password),
-            "army_lists": []
-        }
-
-        try:
-            with open(player_file, "w", encoding="utf-8") as f:
-                json.dump(player_data, f, ensure_ascii=False, indent=2)
-            return True, "Compte créé avec succès"
-        except Exception as e:
-            return False, f"Erreur lors de la création du compte: {str(e)}"
-
-    def verify_player(username, password):
-        player_file = PLAYERS_DIR / f"{username}.json"
-        if not player_file.exists():
-            return False, "Nom d'utilisateur ou mot de passe incorrect"
-
-        try:
-            with open(player_file, encoding="utf-8") as f:
-                player_data = json.load(f)
-
-            if player_data["password"] != hash_password(password):
-                return False, "Nom d'utilisateur ou mot de passe incorrect"
-
-            return True, "Connexion réussie"
-        except Exception as e:
-            return False, f"Erreur lors de la vérification: {str(e)}"
-
-    def load_player_army_lists(username):
-        player_file = PLAYERS_DIR / f"{username}.json"
-        if not player_file.exists():
-            return []
-
-        try:
-            with open(player_file, encoding="utf-8") as f:
-                player_data = json.load(f)
-            return player_data.get("army_lists", [])
-        except Exception as e:
-            st.error(f"Erreur lors du chargement des listes: {str(e)}")
-            return []
-
-    def save_player_army_list(username, army_list_data):
-        player_file = PLAYERS_DIR / f"{username}.json"
-        if not player_file.exists():
-            return False
-
-        try:
-            with open(player_file, encoding="utf-8") as f:
-                player_data = json.load(f)
-
-            player_data["army_lists"].append(army_list_data)
-
-            with open(player_file, "w", encoding="utf-8") as f:
-                json.dump(player_data, f, ensure_ascii=False, indent=2)
-
-            return True
-        except Exception as e:
-            st.error(f"Erreur lors de la sauvegarde: {str(e)}")
-            return False
-
-    def delete_player_army_list(username, list_index):
-        player_file = PLAYERS_DIR / f"{username}.json"
-        if not player_file.exists():
-            return False
-
-        try:
-            with open(player_file, encoding="utf-8") as f:
-                player_data = json.load(f)
-
-            if list_index < 0 or list_index >= len(player_data["army_lists"]):
-                return False
-
-            player_data["army_lists"].pop(list_index)
-
-            with open(player_file, "w", encoding="utf-8") as f:
-                json.dump(player_data, f, ensure_ascii=False, indent=2)
-
-            return True
-        except Exception as e:
-            st.error(f"Erreur lors de la suppression: {str(e)}")
-            return False
 
     def calculate_coriace_value(unit_data):
         """Calcule la valeur totale de Coriace pour une unité"""
@@ -261,174 +174,10 @@ def main():
 
         return len(errors) == 0, errors
 
-    # PAGE 1 — Connexion/Inscription
-    if st.session_state.page == "login":
-        st.title("OPR Army Builder 🇫🇷")
-        st.subheader("Connexion")
-
-        tab1, tab2 = st.tabs(["Connexion", "Inscription"])
-
-        with tab1:
-            username = st.text_input("Nom d'utilisateur")
-            password = st.text_input("Mot de passe", type="password")
-
-            if st.button("Se connecter"):
-                success, message = verify_player(username, password)
-                if success:
-                    st.session_state.current_player = username
-                    st.session_state.player_army_lists = load_player_army_lists(username)
-                    st.session_state.page = "setup"
-                    st.rerun()
-                else:
-                    st.error(message)
-
-        with tab2:
-            new_username = st.text_input("Nouveau nom d'utilisateur")
-            new_password = st.text_input("Nouveau mot de passe", type="password")
-            confirm_password = st.text_input("Confirmer le mot de passe", type="password")
-
-            if new_password != confirm_password:
-                st.warning("Les mots de passe ne correspondent pas")
-
-            if st.button("Créer un compte") and new_password == confirm_password:
-                success, message = create_player(new_username, new_password)
-                st.info(message)
-                if success:
-                    st.session_state.current_player = new_username
-                    st.session_state.page = "setup"
-                    st.rerun()
-
-    # PAGE 2 — Configuration de la liste
-    elif st.session_state.page == "setup":
-        st.title("OPR Army Builder 🇫🇷")
-        st.subheader(f"Bienvenue, {st.session_state.current_player}!")
-
-        if st.button("🚪 Déconnexion"):
-            st.session_state.current_player = None
-            st.session_state.page = "login"
-            st.rerun()
-
-        st.subheader("Mes listes d'armées sauvegardées")
-
-        if st.session_state.player_army_lists:
-            for i, army_list in enumerate(st.session_state.player_army_lists):
-                col1, col2 = st.columns([4, 1])
-                with col1:
-                    with st.expander(f"{army_list['name']} - {army_list['game']} - {army_list['total_cost']}/{army_list['points']} pts"):
-                        st.write(f"Créée le: {army_list['date'][:10]}")
-                        if st.button(f"Charger cette liste", key=f"load_{i}"):
-                            try:
-                                required_keys = ["game", "faction", "points", "army_list", "total_cost", "name"]
-                                if not all(key in army_list for key in required_keys):
-                                    st.error("Données de liste incomplètes")
-                                    continue
-
-                                st.session_state.game = army_list['game']
-                                st.session_state.faction = army_list['faction']
-                                st.session_state.points = army_list['points']
-                                st.session_state.list_name = army_list['name']
-                                st.session_state.army_total_cost = army_list['total_cost']
-
-                                valid_army_list = []
-                                for unit in army_list['army_list']:
-                                    unit_required_keys = ["name", "cost", "quality", "defense", "type"]
-                                    if all(key in unit for key in unit_required_keys):
-                                        if "base_cost" not in unit:
-                                            unit["base_cost"] = unit.get("cost", 0)
-                                        valid_army_list.append(unit)
-                                    else:
-                                        st.warning(f"Unité invalide ignorée: {unit.get('name', 'Inconnue')}")
-
-                                st.session_state.army_list = valid_army_list
-
-                                try:
-                                    faction_file = next(f["file"] for f in factions if f["name"] == st.session_state.faction)
-                                    with open(faction_file, encoding="utf-8") as f:
-                                        faction_data = json.load(f)
-                                    st.session_state.units = faction_data.get("units", [])
-                                except StopIteration:
-                                    st.error("Faction introuvable")
-                                    continue
-
-                                st.session_state.page = "army"
-                                st.rerun()
-                            except Exception as e:
-                                st.error(f"Erreur lors du chargement: {str(e)}")
-
-                with col2:
-                    if st.button(f"❌ Supprimer", key=f"delete_{i}"):
-                        if delete_player_army_list(st.session_state.current_player, i):
-                            st.session_state.player_army_lists = load_player_army_lists(st.session_state.current_player)
-                            st.success(f"Liste '{army_list['name']}' supprimée avec succès!")
-                            st.rerun()
-                        else:
-                            st.error("Erreur lors de la suppression de la liste")
-        else:
-            st.info("Vous n'avez pas encore sauvegardé de listes d'armées")
-
-        st.divider()
-        st.subheader("Créer une nouvelle liste")
-
-        st.session_state.game = st.selectbox(
-            "Jeu",
-            games,
-            index=games.index(st.session_state.game) if st.session_state.game and st.session_state.game in games else 0
-        )
-
-        available_factions = [f for f in factions if f["game"] == st.session_state.game]
-        faction_names = [f["name"] for f in available_factions]
-
-        st.session_state.faction = st.selectbox(
-            "Faction",
-            faction_names,
-            index=faction_names.index(st.session_state.faction) if st.session_state.faction in faction_names else 0
-        )
-
-        st.session_state.points = st.number_input(
-            "Format de la partie (points)",
-            min_value=250,
-            step=250,
-            value=st.session_state.points
-        )
-
-        st.session_state.list_name = st.text_input(
-            "Nom de la liste",
-            value=st.session_state.list_name
-        )
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            if st.button("💾 Sauvegarder la configuration"):
-                st.success("Configuration sauvegardée")
-
-        with col2:
-            if st.button("➡️ Ma liste"):
-                try:
-                    faction_file = next(f["file"] for f in factions if f["name"] == st.session_state.faction)
-                    with open(faction_file, encoding="utf-8") as f:
-                        faction_data = json.load(f)
-                    st.session_state.units = faction_data.get("units", [])
-                    st.session_state.page = "army"
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"Erreur lors du chargement de la faction: {str(e)}")
-
     # PAGE 3 — Composition de l'armée
-    elif st.session_state.page == "army":
-        st.title(st.session_state.list_name or "Ma liste d'armée")
+    if st.session_state.page == "army":
+        st.title(st.session_state.list_name)
         st.caption(f"{st.session_state.game} — {st.session_state.faction} — {st.session_state.army_total_cost}/{st.session_state.points} pts")
-
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("⬅️ Retour configuration"):
-                st.session_state.page = "setup"
-                st.rerun()
-        with col2:
-            if st.button("🚪 Déconnexion"):
-                st.session_state.current_player = None
-                st.session_state.page = "login"
-                st.rerun()
 
         units = st.session_state.units
 
@@ -455,7 +204,6 @@ def main():
 
         # Options standards
         for group in unit.get("upgrade_groups", []):
-            # Renommer "Remplacement de figurine" en "Option"
             group_name = "Option" if group["group"] == "Remplacement de figurine" else group["group"]
 
             st.write(f"### {group_name}")
@@ -684,14 +432,18 @@ def main():
                 </div>
                 """
 
-            # Options
+            # Options (sans les changements d'armes)
             other_options = []
             for group_name, opt_group in u.get("options", {}).items():
                 if group_name != "Améliorations":
                     if isinstance(opt_group, list):
-                        other_options.extend([opt["name"] for opt in opt_group])
+                        for opt in opt_group:
+                            # Exclure les options qui sont des changements d'armes
+                            if not (isinstance(opt, dict) and 'weapon' in opt):
+                                other_options.append(opt["name"])
                     else:
-                        other_options.append(opt_group["name"])
+                        if not (isinstance(opt_group, dict) and 'weapon' in opt_group):
+                            other_options.append(opt_group["name"])
 
             if other_options:
                 html_content += f"""
@@ -749,239 +501,6 @@ def main():
         progress = st.session_state.army_total_cost / st.session_state.points if st.session_state.points else 0
         st.progress(progress)
         st.markdown(f"**{st.session_state.army_total_cost} / {st.session_state.points} pts**")
-
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            if st.button("💾 Sauvegarder la liste"):
-                if not st.session_state.list_name:
-                    st.warning("Veuillez donner un nom à votre liste avant de sauvegarder")
-                elif not st.session_state.current_player:
-                    st.warning("Vous devez être connecté pour sauvegarder une liste")
-                else:
-                    army_list_data = {
-                        "name": st.session_state.list_name,
-                        "game": st.session_state.game,
-                        "faction": st.session_state.faction,
-                        "points": st.session_state.points,
-                        "army_list": st.session_state.army_list,
-                        "total_cost": st.session_state.army_total_cost,
-                        "date": datetime.now().isoformat()
-                    }
-
-                    success = save_player_army_list(st.session_state.current_player, army_list_data)
-                    if success:
-                        st.success(f"Liste '{st.session_state.list_name}' sauvegardée avec succès!")
-                        st.session_state.player_army_lists = load_player_army_lists(st.session_state.current_player)
-                    else:
-                        st.error("Erreur lors de la sauvegarde de la liste")
-
-        with col2:
-            if st.button("📄 Exporter en HTML"):
-                html_content = f"""
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Liste d'armée OPR - {st.session_state.list_name}</title>
-                    <style>
-                        body {{ font-family: Arial, sans-serif; margin: 20px; }}
-                        h1 {{ color: #333; }}
-                        .army-card {{
-                            border: 2px solid #4a89dc;
-                            border-radius: 15px;
-                            padding: 15px;
-                            margin-bottom: 20px;
-                            background: white;
-                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                        }}
-                        .unit-header {{
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                            margin-bottom: 10px;
-                        }}
-                        .unit-name {{
-                            font-size: 1.2em;
-                            font-weight: bold;
-                            color: #333;
-                            margin: 0;
-                        }}
-                        .unit-points {{
-                            color: #666;
-                            font-size: 0.9em;
-                        }}
-                        .badges-container {{
-                            display: flex;
-                            gap: 8px;
-                            margin-bottom: 15px;
-                            flex-wrap: wrap;
-                        }}
-                        .badge {{
-                            padding: 6px 12px;
-                            border-radius: 20px;
-                            font-size: 0.9em;
-                            font-weight: 500;
-                            color: white;
-                            text-align: center;
-                        }}
-                        .quality-badge {{
-                            background-color: #4a89dc;
-                        }}
-                        .defense-badge {{
-                            background-color: #4a89dc;
-                        }}
-                        .coriace-badge {{
-                            background-color: #4a89dc;
-                        }}
-                        .section {{
-                            margin-bottom: 12px;
-                        }}
-                        .section-title {{
-                            font-weight: bold;
-                            color: #4a89dc;
-                            margin-bottom: 5px;
-                            font-size: 0.95em;
-                        }}
-                        .section-content {{
-                            margin-left: 10px;
-                            font-size: 0.9em;
-                            color: #555;
-                        }}
-                    </style>
-                </head>
-                <body>
-                    <h1>Liste d'armée OPR - {st.session_state.list_name}</h1>
-                    <h2>{st.session_state.game} - {st.session_state.faction} - {st.session_state.army_total_cost}/{st.session_state.points} pts</h2>
-                """
-
-                for u in st.session_state.army_list:
-                    # Calcul de la valeur totale de Coriace pour l'export
-                    coriace_value = calculate_coriace_value(u)
-
-                    html_content += f"""
-                    <div class="army-card">
-                        <div class="unit-header">
-                            <h3 class="unit-name">{u['name']}</h3>
-                            <span class="unit-points">{u['cost']} pts</span>
-                        </div>
-
-                        <div class="badges-container">
-                            <span class="badge quality-badge">Qualité {u['quality']}+</span>
-                            <span class="badge defense-badge">Défense {u['defense']}+</span>
-                    """
-
-                    if coriace_value > 0:
-                        html_content += f'<span class="badge coriace-badge">Coriace {coriace_value}</span>'
-
-                    html_content += """
-                        </div>
-                    """
-
-                    if u.get("base_rules"):
-                        rules = [r for r in u['base_rules'] if not r.startswith("Coriace")]
-                        if rules:
-                            html_content += f"""
-                            <div class="section">
-                                <div class="section-title">Règles spéciales</div>
-                                <div class="section-content">{', '.join(rules)}</div>
-                            </div>
-                            """
-
-                    if 'current_weapon' in u:
-                        weapon = u['current_weapon']
-                        html_content += f"""
-                        <div class="section">
-                            <div class="section-title">Arme équipée</div>
-                            <div class="section-content">
-                                {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
-                            </div>
-                        </div>
-                        """
-
-                    # Options
-                    other_options = []
-                    for group_name, opt_group in u.get("options", {}).items():
-                        if group_name != "Améliorations":
-                            if isinstance(opt_group, list):
-                                other_options.extend([opt["name"] for opt in opt_group])
-                            else:
-                                other_options.append(opt_group["name"])
-
-                    if other_options:
-                        html_content += f"""
-                        <div class="section">
-                            <div class="section-title">Options</div>
-                            <div class="section-content">{', '.join(other_options)}</div>
-                        </div>
-                        """
-
-                    # Monture
-                    if u.get("mount"):
-                        mount = u['mount']
-                        mount_rules = []
-                        if 'special_rules' in mount:
-                            mount_rules = mount['special_rules']
-
-                        html_content += f"""
-                        <div class="section">
-                            <div class="section-title">Monture</div>
-                            <div class="section-content">
-                                <strong>{mount.get('name', '')}</strong>
-                        """
-
-                        if mount_rules:
-                            html_content += f"<br>{', '.join(mount_rules)}"
-
-                        html_content += """
-                            </div>
-                        </div>
-                        """
-
-                    # Améliorations
-                    if "Améliorations" in u.get("options", {}) and u.get("type", "").lower() != "hero":
-                        improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
-                        if improvements:
-                            html_content += f"""
-                            <div class="section">
-                                <div class="section-title">Améliorations</div>
-                                <div class="section-content">{', '.join(improvements)}</div>
-                            </div>
-                            """
-
-                    html_content += "</div>"
-
-                html_content += """
-                </body>
-                </html>
-                """
-
-                filename = f"{st.session_state.list_name or 'army_list'}.html"
-                with open(filename, "w", encoding="utf-8") as f:
-                    f.write(html_content)
-
-                with open(filename, "r", encoding="utf-8") as f:
-                    st.download_button(
-                        label="Télécharger le fichier HTML",
-                        data=f,
-                        file_name=filename,
-                        mime="text/html"
-                    )
-
-        with col3:
-            if st.button("🧹 Réinitialiser la liste"):
-                st.session_state.army_list = []
-                st.session_state.army_total_cost = 0
-                st.rerun()
-
-        if st.session_state.game in GAME_RULES:
-            st.divider()
-            st.subheader("Règles spécifiques à " + st.session_state.game)
-            rules = GAME_RULES[st.session_state.game]
-            st.markdown(f"""
-            - **Héros** : 1 par tranche de {rules['hero_per_points']} pts
-            - **Copies d'unités** : 1+X (X=1 pour {list(rules['unit_copies'].keys())[0]} pts)
-            - **Unité max** : {rules['max_unit_percentage']}% du total des points de l'armée
-            - **Nombre d'unités** : 1 par tranche de {rules['unit_per_points']} pts
-            """)
 
 if __name__ == "__main__":
     main()
