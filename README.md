@@ -9,10 +9,15 @@
 ## 📋 Fonctionnalités principales
 
 ✅ **Création de listes d'armées** pour tous les jeux OPR
+
 ✅ **Validation automatique** des règles spécifiques à chaque jeu
+
 ✅ **Système de comptes joueurs** pour sauvegarder et retrouver vos listes
+
 ✅ **Export HTML** pour partager ou imprimer vos listes
+
 ✅ **Calcul automatique** des valeurs de Coriace et autres statistiques
+
 ✅ **Interface intuitive** avec visualisation claire des unités
 
 ---
@@ -26,33 +31,24 @@
 
 ## 🚀 Installation et lancement
 
-Clonez ce dépôt :
-bash
-Copier
+1. Clonez ce dépôt :
 
 git clone https://github.com/votre-utilisateur/opr-army-forge-fr.git
+
 cd opr-army-forge-fr
 
-
-Installez les dépendances :
-bash
-Copier
+2. Installez les dépendances :
 
 pip install -r requirements.txt
 
 
-Lancez l'application :
-bash
-Copier
+3. Lancez l'application :
 
 streamlit run app.py
-
-
 
 ---
 
 ## 📂 Structure du projet
-Copier
 
 opr-army-forge-fr/
 ├── app.py                  # Code principal
@@ -62,7 +58,6 @@ opr-army-forge-fr/
 ├── players/                # Comptes joueurs (créé automatiquement)
 ├── saves/                  # Listes sauvegardées
 └── README.md               # Ce fichier
-
 
 ---
 
