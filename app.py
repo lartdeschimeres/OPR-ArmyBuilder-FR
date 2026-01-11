@@ -32,7 +32,7 @@ GAME_RULES = {
 
 # Initialisation de l'état de la session
 if "page" not in st.session_state:
-    st.session_state.page = "login"  # Page de connexion par défaut
+    st.session_state.page = "login"
 
 for key, default in {
     "game": None,
@@ -44,7 +44,8 @@ for key, default in {
     "is_army_valid": True,
     "validation_errors": [],
     "current_player": None,
-    "player_army_lists": []
+    "player_army_lists": [],
+    "units": []
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
@@ -140,11 +141,11 @@ def validate_army(army_list, game_rules, total_cost, total_points):
         return False, errors
 
     if game_rules == GAME_RULES["Age of Fantasy"]:
-        # 1 héros par tranche de 375 pts
-        heroes = sum(1 for u in army_list if u.get("type", "").lower() in ["hero", "héro"])
+        # 1 héros par tranche de 375 pts (en comptant les héros indépendants)
+        independent_heroes = sum(1 for u in army_list if u.get("type", "").lower() in ["hero", "héro"] and "attached_hero" not in u)
         max_heroes = max(1, total_points // game_rules["hero_per_points"])
-        if heroes > max_heroes:
-            errors.append(f"Trop de héros (max: {max_heroes} pour {total_points} pts)")
+        if independent_heroes > max_heroes:
+            errors.append(f"Trop de héros indépendants (max: {max_heroes} pour {total_points} pts)")
 
         # 1+X copies de la même unité (X=1 pour 750 pts)
         unit_counts = defaultdict(int)
@@ -169,7 +170,7 @@ def validate_army(army_list, game_rules, total_cost, total_points):
 
     return len(errors) == 0, errors
 
-# Fonction pour sauvegarder la liste (pour compatibilité)
+# Fonction pour sauvegarder la liste
 def save_army():
     if not st.session_state.list_name:
         st.warning("Veuillez donner un nom à votre liste avant de sauvegarder")
@@ -192,7 +193,6 @@ def save_army():
     success = save_player_army_list(st.session_state.current_player, army_list_data)
     if success:
         st.success(f"Liste '{st.session_state.list_name}' sauvegardée avec succès!")
-        # Recharger les listes du joueur
         st.session_state.player_army_lists = load_player_army_lists(st.session_state.current_player)
     else:
         st.error("Erreur lors de la sauvegarde de la liste")
@@ -249,7 +249,7 @@ def export_to_html():
             html_content += f"""
             <div class="title">Options sélectionnées</div>
             <div>
-                {', '.join(o['name'] for o in unit['options'].values())}
+                {', '.join(o['name'] for o in unit['options'].values() if o.get('type') != 'hero_attachment')}
             </div>
             """
 
@@ -260,6 +260,19 @@ def export_to_html():
             <div>
                 <strong>{mount['name']}</strong> (+{mount.get('cost', 0)} pts)<br>
                 {', '.join(mount.get('special_rules', []))}
+            </div>
+            """
+
+        # Affichage du héros rattaché
+        if unit.get("attached_hero"):
+            hero = unit['attached_hero']
+            html_content += f"""
+            <div class="title">Héros rattaché</div>
+            <div>
+                <strong>{hero.get('name', '')}</strong><br>
+                Qualité {hero.get('quality', '')}+,
+                Défense {hero.get('defense', '')}+<br>
+                {', '.join(hero.get('special_rules', []))}
             </div>
             """
         html_content += "</div>"
@@ -377,7 +390,7 @@ if st.session_state.page == "setup":
     st.session_state.points = st.number_input(
         "Format de la partie (points)",
         min_value=250,
-        step=50,
+        step=250,
         value=st.session_state.points
     )
 
@@ -394,6 +407,11 @@ if st.session_state.page == "setup":
 
     with col2:
         if st.button("➡️ Ma liste"):
+            # Charger les unités pour la faction sélectionnée
+            faction_file = next(f["file"] for f in factions if f["name"] == st.session_state.faction)
+            with open(faction_file, encoding="utf-8") as f:
+                faction_data = json.load(f)
+            st.session_state.units = faction_data.get("units", [])
             st.session_state.page = "army"
             st.rerun()
 
@@ -414,16 +432,8 @@ if st.session_state.page == "army":
             st.session_state.page = "login"
             st.rerun()
 
-    # Charger la faction
-    faction_file = next(
-        f["file"] for f in factions
-        if f["name"] == st.session_state.faction
-    )
-
-    with open(faction_file, encoding="utf-8") as f:
-        faction = json.load(f)
-
-    units = faction.get("units", [])
+    # Charger les unités
+    units = st.session_state.units
 
     st.divider()
     st.subheader("Ajouter une unité")
@@ -435,9 +445,15 @@ if st.session_state.page == "army":
     )
 
     total_cost = unit["base_cost"]
-    base_rules = unit.get("special_rules", [])
+    base_rules = list(unit.get("special_rules", []))
     options_selected = {}
     mount_selected = None
+    attached_hero = None
+
+    # Affichage des armes de base
+    st.subheader("Armes de base")
+    for w in unit.get("weapons", []):
+        st.write(f"- **{w.get('name', 'Arme non définie')}** | A{w.get('attacks', '?')} | PA({w.get('armor_piercing', '?')})")
 
     # Options
     for group in unit.get("upgrade_groups", []):
@@ -450,11 +466,37 @@ if st.session_state.page == "army":
         if choice != "— Aucun —":
             opt = next(o for o in group["options"] if o["name"] == choice)
             total_cost += opt.get("cost", 0)
+            options_selected[group["group"]] = opt
+            if "special_rules" in opt:
+                base_rules.extend(opt["special_rules"])
+            if "weapon" in opt:
+                current_weapon = opt["weapon"]
+                current_weapon["name"] = opt["name"]
 
-            if group["type"] == "mount":
-                mount_selected = opt
-            else:
-                options_selected[group["group"]] = opt
+    # Rattachement de héros
+    if unit.get("can_attach_hero", False):
+        st.subheader("Rattachement de héros")
+        available_heroes = [u for u in units if u.get("type", "").lower() in ["hero", "héro"]]
+
+        if available_heroes:
+            selected_hero = st.selectbox(
+                "Rattacher un héros à cette unité",
+                ["— Aucun —"] + [h["name"] for h in available_heroes],
+                key=f"hero_attachment_{unit['name']}"
+            )
+
+            if selected_hero != "— Aucun —":
+                hero = next(h for h in available_heroes if h["name"] == selected_hero)
+                total_cost += hero["base_cost"]
+                attached_hero = {
+                    "name": hero["name"],
+                    "cost": hero["base_cost"],
+                    "quality": hero["quality"],
+                    "defense": hero["defense"],
+                    "special_rules": hero.get("special_rules", []),
+                    "weapons": hero.get("weapons", [])
+                }
+                base_rules.extend(hero.get("special_rules", []))
 
     # Calcul de la valeur de Coriace
     coriace_value = 0
@@ -463,17 +505,11 @@ if st.session_state.page == "army":
         if match:
             coriace_value += int(match.group(1))
 
-    if mount_selected:
-        for rule in mount_selected.get("special_rules", []):
-            match = re.search(r'Coriace \(\+?(\d+)\)', rule)
-            if match:
-                coriace_value += int(match.group(1))
-
     st.markdown(f"### 💰 Coût : **{total_cost} pts**")
     st.markdown(f"**Coriace totale : {coriace_value}**")
 
     if st.button("➕ Ajouter à l'armée"):
-        st.session_state.army_list.append({
+        unit_data = {
             "name": unit["name"],
             "cost": total_cost,
             "quality": unit["quality"],
@@ -481,9 +517,14 @@ if st.session_state.page == "army":
             "coriace": coriace_value,
             "base_rules": base_rules,
             "options": options_selected,
-            "mount": mount_selected,
             "type": unit.get("type", "Infantry")
-        })
+        }
+
+        # Ajoute le héros rattaché s'il y en a un
+        if attached_hero:
+            unit_data["attached_hero"] = attached_hero
+
+        st.session_state.army_list.append(unit_data)
         st.session_state.army_total_cost += total_cost
         st.rerun()
 
@@ -515,6 +556,8 @@ if st.session_state.page == "army":
             height += 40
         if u.get("options"):
             height += 20 * len(u["options"])
+        if u.get("attached_hero"):
+            height += 60
 
         components.html(f"""
         <style>
@@ -553,35 +596,28 @@ if st.session_state.page == "army":
             <div style="margin-bottom: 10px;">
                 <span class="badge">Qualité {u['quality']}+</span>
                 <span class="badge">Défense {u['defense']}+</span>
-                <span class="badge">Coriace {u['coriace']}</span>
+                <span class="badge">Coriace {u.get('coriace', 0)}</span>
             </div>
 
             <div class="title">Règles spéciales</div>
             <div style="margin-left: 15px; margin-bottom: 10px;">{", ".join(u["base_rules"])}</div>
 
             {f"""
-            <div class="title">Arme équipée</div>
-            <div style="margin-left: 15px; margin-bottom: 10px;">
-                {u.get('current_weapon', {}).get('name', 'Arme de base')} |
-                A{u.get('current_weapon', {}).get('attacks', '?')} |
-                PA({u.get('current_weapon', {}).get('armor_piercing', '?')})
-            </div>
-            """ if 'current_weapon' in u else ''}
-
-            {f"""
             <div class="title">Options sélectionnées</div>
             <div style="margin-left: 15px; margin-bottom: 10px;">
-                {', '.join(o['name'] for o in u['options'].values())}
+                {', '.join(o['name'] for o in u['options'].values() if o.get('type') != 'hero_attachment')}
             </div>
             """ if u.get("options") else ''}
 
             {f"""
-            <div class="title">Monture</div>
+            <div class="title">Héros rattaché</div>
             <div style="margin-left: 15px; margin-bottom: 10px;">
-                <strong>{u['mount']['name']}</strong> (+{u['mount'].get('cost', 0)} pts)<br>
-                {', '.join(u['mount'].get('special_rules', []))}
+                <strong>{u.get('attached_hero', {}).get('name', '')}</strong><br>
+                Qualité {u.get('attached_hero', {}).get('quality', '')}+,
+                Défense {u.get('attached_hero', {}).get('defense', '')}+<br>
+                {', '.join(u.get('attached_hero', {}).get('special_rules', []))}
             </div>
-            """ if u.get("mount") else ''}
+            """ if u.get("attached_hero") else ''}
         </div>
         """, height=height)
 
