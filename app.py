@@ -213,6 +213,13 @@ def main():
                 if match:
                     coriace_value += int(match.group(1))
 
+        # 5. Vérifier dans la monture
+        if 'mount' in unit_data and 'special_rules' in unit_data['mount']:
+            for rule in unit_data['mount']['special_rules']:
+                match = re.search(r'Coriace \((\d+)\)', rule)
+                if match:
+                    coriace_value += int(match.group(1))
+
         return coriace_value
 
     def validate_army(army_list, game_rules, total_cost, total_points):
@@ -474,6 +481,8 @@ def main():
                         current_weapon["name"] = opt["name"]
                     elif group["type"] == "mount":
                         mount_selected = opt.get("mount")
+                        if mount_selected:
+                            total_cost += mount_selected.get("cost", 0)
 
         # Section pour les améliorations d'unité (Sergent, Bannière, Musicien) en colonnes UNIQUEMENT pour les unités non-héros
         if unit.get("type", "").lower() != "hero":
@@ -515,36 +524,13 @@ def main():
 
         if st.button("➕ Ajouter à l'armée"):
             # Calcul complet de la valeur de Coriace
-            coriace_value = 0
-
-            # 1. Vérifier dans les règles spéciales
-            for rule in base_rules:
-                match = re.search(r'Coriace \((\d+)\)', rule)
-                if match:
-                    coriace_value += int(match.group(1))
-
-            # 2. Vérifier dans les options sélectionnées
-            if 'options' in options_selected:
-                for option_group in options_selected.values():
-                    if isinstance(option_group, list):
-                        for option in option_group:
-                            if 'special_rules' in option:
-                                for rule in option['special_rules']:
-                                    match = re.search(r'Coriace \((\d+)\)', rule)
-                                    if match:
-                                        coriace_value += int(match.group(1))
-                    elif 'special_rules' in option_group:
-                        for rule in option_group['special_rules']:
-                            match = re.search(r'Coriace \((\d+)\)', rule)
-                            if match:
-                                coriace_value += int(match.group(1))
-
-            # 3. Vérifier dans l'arme équipée
-            if 'special_rules' in current_weapon:
-                for rule in current_weapon['special_rules']:
-                    match = re.search(r'Coriace \((\d+)\)', rule)
-                    if match:
-                        coriace_value += int(match.group(1))
+            coriace_value = calculate_coriace_value({
+                "name": unit["name"],
+                "base_rules": base_rules,
+                "options": options_selected,
+                "current_weapon": current_weapon,
+                "mount": mount_selected
+            })
 
             unit_data = {
                 "name": unit["name"],
@@ -657,23 +643,6 @@ def main():
                 font-size: 0.9em;
                 color: #555;
             }}
-            .delete-btn {{
-                background-color: #ff4b4b;
-                color: white;
-                border: none;
-                border-radius: 20px;
-                padding: 8px 15px;
-                margin-top: 10px;
-                cursor: pointer;
-                font-weight: 500;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 5px;
-            }}
-            .delete-btn:hover {{
-                background-color: #ff3333;
-            }}
             </style>
 
             <div class="army-card">
@@ -734,7 +703,7 @@ def main():
                 </div>
                 """
 
-            # Monture (si elle existe)
+            # Monture (si elle existe) - Section spécifique
             if u.get("mount"):
                 mount = u['mount']
                 mount_rules = []
@@ -767,20 +736,12 @@ def main():
                     </div>
                     """
 
-            # Bouton de suppression
-            html_content += f"""
-            <button class="delete-btn" onclick="document.getElementById('del_{i}').click()">
-                ❌ Supprimer {u['name']}
-            </button>
-            <button id="del_{i}" style="display:none;"></button>
-            """
-
             html_content += "</div>"
 
             components.html(html_content, height=300)
 
-            # Bouton de suppression réel (caché, déclenché par le bouton dans le HTML)
-            if st.button(f"Supprimer {u['name']}", key=f"del_{i}"):
+            # Bouton de suppression UNIQUEMENT en dessous (plus de doublon)
+            if st.button(f"❌ Supprimer {u['name']}", key=f"del_{i}"):
                 st.session_state.army_total_cost -= u["cost"]
                 st.session_state.army_list.pop(i)
                 st.rerun()
@@ -955,7 +916,7 @@ def main():
                         </div>
                         """
 
-                    # Monture
+                    # Monture (si elle existe) - Section spécifique
                     if u.get("mount"):
                         mount = u['mount']
                         mount_rules = []
