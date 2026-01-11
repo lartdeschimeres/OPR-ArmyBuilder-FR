@@ -4,17 +4,15 @@ from pathlib import Path
 from collections import defaultdict
 import streamlit as st
 import streamlit.components.v1 as components
-from fpdf import FPDF
-import base64
-import os
 from datetime import datetime
+import base64
 
 # Configuration de base
 st.set_page_config(page_title="OPR Army Builder FR", layout="centered")
 BASE_DIR = Path(__file__).resolve().parent
 FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
 SAVE_DIR = BASE_DIR / "saves"
-os.makedirs(SAVE_DIR, exist_ok=True)
+SAVE_DIR.mkdir(exist_ok=True)  # Crée le dossier s'il n'existe pas
 
 # Règles spécifiques par jeu
 GAME_RULES = {
@@ -61,50 +59,6 @@ for fp in faction_files:
 
 games = sorted(set(f["game"] for f in factions))
 
-# Classe pour générer le PDF
-class ArmyPDF(FPDF):
-    def header(self):
-        self.set_font('Arial', 'B', 12)
-        self.cell(0, 10, f"Liste d'armée OPR - {st.session_state.list_name}", 0, 1, 'C')
-        self.cell(0, 10, f"{st.session_state.game} - {st.session_state.faction} - {st.session_state.army_total_cost}/{st.session_state.points} pts", 0, 1, 'C')
-        self.ln(10)
-
-    def footer(self):
-        self.set_y(-15)
-        self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, f'Page {self.page_no()}', 0, 0, 'C')
-
-    def add_unit(self, unit):
-        self.set_font('Arial', 'B', 12)
-        self.cell(0, 10, f"{unit['name']} - {unit['cost']} pts", 0, 1)
-        self.set_font('Arial', '', 10)
-
-        # Stats
-        self.cell(40, 10, f"Qualité {unit['quality']}+", 1)
-        self.cell(40, 10, f"Défense {unit['defense']}+", 1)
-        self.cell(40, 10, f"Coriace {unit.get('coriace', 0)}", 1)
-        self.ln()
-
-        # Règles spéciales
-        self.cell(0, 10, "Règles spéciales: " + ", ".join(unit["base_rules"]), 0, 1)
-
-        # Arme équipée
-        if 'current_weapon' in unit:
-            weapon = unit['current_weapon']
-            self.cell(0, 10, f"Arme: {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})", 0, 1)
-
-        # Options
-        if unit.get("options"):
-            self.cell(0, 10, "Options: " + ", ".join(o['name'] for o in unit['options'].values()), 0, 1)
-
-        # Monture
-        if unit.get("mount"):
-            mount = unit['mount']
-            self.cell(0, 10, f"Monture: {mount['name']} (+{mount.get('cost', 0)} pts)", 0, 1)
-            self.cell(0, 10, "Règles de monture: " + ", ".join(mount.get('special_rules', [])), 0, 1)
-
-        self.ln(5)
-
 # Fonction pour valider la liste d'armée
 def validate_army(army_list, game_rules, total_cost, total_points):
     errors = []
@@ -134,7 +88,7 @@ def validate_army(army_list, game_rules, total_cost, total_points):
         for unit in army_list:
             percentage = (unit["cost"] / total_points) * 100
             if percentage > game_rules["max_unit_percentage"]:
-                errors.append(f"'{unit['name']}' ({unit['cost']} pts) dépasse {game_rules['max_unit_percentage']}% du total des points de l'armée ({total_points} pts)")
+                errors.append(f"'{unit['name']}' ({unit['cost']} pts) dépasse {game_rules['max_unit_percentage']}% du total ({total_points} pts)")
 
         # 1 unité max par tranche de 150 pts
         max_units = total_points // game_rules["unit_per_points"]
@@ -166,34 +120,94 @@ def save_army():
 
     st.success(f"Liste sauvegardée sous {filename}")
 
-# Fonction pour exporter en PDF
-def export_to_pdf():
+# Fonction pour générer un export HTML (alternative au PDF)
+def export_to_html():
     if not st.session_state.army_list:
         st.warning("Aucune unité dans l'armée à exporter")
         return
 
-    pdf = ArmyPDF()
-    pdf.add_page()
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Liste d'armée OPR - {st.session_state.list_name}</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 20px; }}
+            h1 {{ color: #4a89dc; }}
+            .army-card {{ border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #f9f9f9; }}
+            .badge {{ display: inline-block; background: #4a89dc; color: white; padding: 6px 12px; border-radius: 15px; margin-right: 8px; margin-bottom: 5px; }}
+            .title {{ font-weight: bold; color: #4a89dc; margin-top: 10px; }}
+            .valid {{ border-left: 4px solid #2ecc71; }}
+            .invalid {{ border-left: 4px solid #e74c3c; }}
+        </style>
+    </head>
+    <body>
+        <h1>Liste d'armée OPR - {st.session_state.list_name}</h1>
+        <h2>{st.session_state.game} - {st.session_state.faction} - {st.session_state.army_total_cost}/{st.session_state.points} pts</h2>
+    """
 
     for unit in st.session_state.army_list:
-        pdf.add_unit(unit)
+        html_content += f"""
+        <div class="army-card {'valid' if st.session_state.is_army_valid else 'invalid'}">
+            <h3>{unit['name']} - {unit['cost']} pts</h3>
+            <div>
+                <span class="badge">Qualité {unit['quality']}+</span>
+                <span class="badge">Défense {unit['defense']}+</span>
+                <span class="badge">Coriace {unit.get('coriace', 0)}</span>
+            </div>
+            <div class="title">Règles spéciales</div>
+            <div>{', '.join(unit['base_rules'])}</div>
+        """
 
-    pdf_filename = f"{st.session_state.list_name or 'army_list'}.pdf"
-    pdf.output(pdf_filename)
+        if 'current_weapon' in unit:
+            weapon = unit['current_weapon']
+            html_content += f"""
+            <div class="title">Arme équipée</div>
+            <div>
+                {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
+            </div>
+            """
 
-    with open(pdf_filename, "rb") as f:
-        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+        if unit.get("options"):
+            html_content += f"""
+            <div class="title">Options sélectionnées</div>
+            <div>
+                {', '.join(o['name'] for o in unit['options'].values())}
+            </div>
+            """
 
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700" height="1000" type="application/pdf"></iframe>'
-    st.markdown(pdf_display, unsafe_allow_html=True)
+        if unit.get("mount"):
+            mount = unit['mount']
+            html_content += f"""
+            <div class="title">Monture</div>
+            <div>
+                <strong>{mount['name']}</strong> (+{mount.get('cost', 0)} pts)<br>
+                {', '.join(mount.get('special_rules', []))}
+            </div>
+            """
+        html_content += "</div>"
 
-    with open(pdf_filename, "rb") as f:
+    html_content += """
+    </body>
+    </html>
+    """
+
+    # Sauvegarde du HTML
+    filename = f"{st.session_state.list_name or 'army_list'}.html"
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(html_content)
+
+    # Téléchargement
+    with open(filename, "r", encoding="utf-8") as f:
         st.download_button(
-            label="Télécharger le PDF",
+            label="Télécharger le fichier HTML",
             data=f,
-            file_name=pdf_filename,
-            mime="application/pdf"
+            file_name=filename,
+            mime="text/html"
         )
+
+    # Affichage dans l'interface
+    components.html(html_content, height=600, scrolling=True)
 
 # PAGE 1 — Configuration de la liste
 if st.session_state.page == "setup":
@@ -348,7 +362,7 @@ if st.session_state.page == "army":
         <style>
         .card {{
             border:1px solid #ccc;
-            border-radius:10px;
+            border-radius:8px;
             padding:15px;
             margin-bottom:15px;
             background:#f9f9f9;
@@ -431,8 +445,8 @@ if st.session_state.page == "army":
             save_army()
 
     with col2:
-        if st.button("📄 Exporter en PDF"):
-            export_to_pdf()
+        if st.button("📄 Exporter en HTML"):
+            export_to_html()
 
     # Affichage des règles spécifiques au jeu
     if st.session_state.game in GAME_RULES:
