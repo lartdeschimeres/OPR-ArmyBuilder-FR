@@ -87,67 +87,64 @@ def main():
             return {}, []
 
     def calculate_coriace_value(unit_data):
-    """Calcule la valeur totale de Coriace pour une unité"""
-    coriace_value = 0
+        """Calcule la valeur totale de Coriace pour une unité"""
+        coriace_value = 0
 
-    try:
-        # 1. Vérifier dans les règles spéciales de base
-        if 'base_rules' in unit_data:
-            for rule in unit_data['base_rules']:
-                if isinstance(rule, str):
-                    try:
-                        match = re.search(r'Coriace \((\d+)\)', rule)
+        try:
+            # 1. Vérifier dans les règles spéciales de base
+            if 'base_rules' in unit_data:
+                for rule in unit_data['base_rules']:
+                    if isinstance(rule, str):
+                        match = re.search(r'Coriace\s*\((\d+)\)', rule)
                         if match:
-                            coriace_value += int(match.group(1))
-                    except:
-                        continue
+                            try:
+                                coriace_value += int(match.group(1))
+                            except:
+                                continue
 
-        # 2. Vérifier dans les options
-        if 'options' in unit_data:
-            for option_group in unit_data['options'].values():
-                try:
-                    if isinstance(option_group, list):
-                        for option in option_group:
-                            if isinstance(option, dict) and 'special_rules' in option:
-                                for rule in option['special_rules']:
-                                    if isinstance(rule, str):
-                                        try:
-                                            match = re.search(r'Coriace \((\d+)\)', rule)
+            # 2. Vérifier dans les options
+            if 'options' in unit_data:
+                for option_group in unit_data['options'].values():
+                    try:
+                        if isinstance(option_group, list):
+                            for option in option_group:
+                                if isinstance(option, dict) and 'special_rules' in option:
+                                    for rule in option['special_rules']:
+                                        if isinstance(rule, str):
+                                            match = re.search(r'Coriace\s*\((\d+)\)', rule)
                                             if match:
-                                                coriace_value += int(match.group(1))
+                                                try:
+                                                    coriace_value += int(match.group(1))
+                                                except:
+                                                    continue
+                        elif isinstance(option_group, dict) and 'special_rules' in option_group:
+                            for rule in option_group['special_rules']:
+                                if isinstance(rule, str):
+                                    match = re.search(r'Coriace\s*\((\d+)\)', rule)
+                                    if match:
+                                        try:
+                                            coriace_value += int(match.group(1))
                                         except:
                                             continue
-                    elif isinstance(option_group, dict) and 'special_rules' in option_group:
-                        for rule in option_group['special_rules']:
-                            if isinstance(rule, str):
-                                try:
-                                    match = re.search(r'Coriace \((\d+)\)', rule)
-                                    if match:
-                                        coriace_value += int(match.group(1))
-                                except:
-                                    continue
-                except:
-                    continue
-
-        # 3. Vérifier dans la monture
-        if 'mount' in unit_data and isinstance(unit_data['mount'], dict) and 'special_rules' in unit_data['mount']:
-            for rule in unit_data['mount']['special_rules']:
-                if isinstance(rule, str):
-                    try:
-                        match = re.search(r'Coriace \((\d+\)|\+\d+\)', rule)
-                        if match:
-                            # Extraire le nombre
-                            numbers = re.findall(r'\d+', match.group(0))
-                            if numbers:
-                                coriace_value += int(numbers[0])
                     except:
                         continue
 
-    except Exception as e:
-        st.error(f"Erreur dans calculate_coriace_value: {str(e)}")
-        return 0
+            # 3. Vérifier dans la monture
+            if 'mount' in unit_data and isinstance(unit_data['mount'], dict) and 'special_rules' in unit_data['mount']:
+                for rule in unit_data['mount']['special_rules']:
+                    if isinstance(rule, str):
+                        match = re.search(r'Coriace\s*\((\d+)\)', rule)
+                        if match:
+                            try:
+                                coriace_value += int(match.group(1))
+                            except:
+                                continue
 
-    return coriace_value
+        except Exception as e:
+            st.error(f"Erreur dans calculate_coriace_value: {str(e)}")
+            return 0
+
+        return coriace_value
 
     # Charger les factions au démarrage
     if not st.session_state["factions"] or not st.session_state["games"]:
@@ -278,7 +275,7 @@ def main():
 
         return len(errors) == 0, errors
 
-    # PAGE 1 — Connexion/Inscription (inchangée)
+    # PAGE 1 — Connexion/Inscription
     if st.session_state.page == "login":
         st.title("OPR Army Builder 🇫🇷")
         st.subheader("Connexion")
@@ -315,7 +312,7 @@ def main():
                     st.session_state.page = "setup"
                     st.rerun()
 
-    # PAGE 2 — Configuration de la liste (inchangée)
+    # PAGE 2 — Configuration de la liste
     elif st.session_state.page == "setup":
         st.title("OPR Army Builder 🇫🇷")
         st.subheader(f"Bienvenue, {st.session_state.current_player}!")
@@ -471,7 +468,7 @@ def main():
 
             st.write(f"### {group_name}")
             if group.get("description"):
-                st.caption(group["description"])
+                st.caption(group.get("description", ""))
 
             # Cas spécial pour les améliorations de rôle (choix unique)
             if "rôle" in group_name.lower() or "role" in group_name.lower():
@@ -487,9 +484,17 @@ def main():
                     total_cost += opt.get("cost", 0)
                     options_selected[group["group"]] = opt
 
-            # Remplacement d'arme (choix unique avec radio buttons)
+            # Remplacement d'arme (choix unique avec radio buttons et détails)
             elif group.get("type") == "weapon":
-                weapon_options = ["— Garder l'arme de base —"] + [o["name"] for o in group["options"]]
+                weapon_options = ["— Garder l'arme de base —"]
+                for opt in group["options"]:
+                    weapon_name = opt["name"]
+                    weapon_cost = opt.get("cost", 0)
+                    weapon_details = ""
+                    if "weapon" in opt and "special_rules" in opt["weapon"] and opt["weapon"]["special_rules"]:
+                        weapon_details = f" ({', '.join(opt['weapon']['special_rules'])})"
+                    weapon_options.append(f"{weapon_name} (+{weapon_cost} pts){weapon_details}")
+
                 choice = st.radio(
                     group["group"],
                     weapon_options,
@@ -497,16 +502,26 @@ def main():
                 )
 
                 if choice != "— Garder l'arme de base —":
-                    opt = next(o for o in group["options"] if o["name"] == choice)
+                    # Extraire le nom de l'option (sans les détails entre parenthèses)
+                    opt_name = choice.split(" (+")[0]
+                    opt = next(o for o in group["options"] if o["name"] == opt_name)
                     total_cost += opt.get("cost", 0)
                     options_selected[group["group"]] = opt
                     current_weapon = opt["weapon"].copy()
                     current_weapon["name"] = opt["name"]
                     weapon_replaced = True
 
-            # Montures (choix unique avec radio buttons)
+            # Montures (choix unique avec radio buttons et détails)
             elif group.get("type") == "mount":
-                mount_options = ["— Aucune monture —"] + [o["name"] for o in group["options"]]
+                mount_options = ["— Aucune monture —"]
+                for opt in group["options"]:
+                    mount_name = opt["name"]
+                    mount_cost = opt.get("cost", 0)
+                    mount_details = ""
+                    if "mount" in opt and "special_rules" in opt["mount"] and opt["mount"]["special_rules"]:
+                        mount_details = f" ({', '.join(opt['mount']['special_rules'])})"
+                    mount_options.append(f"{mount_name} (+{mount_cost} pts){mount_details}")
+
                 choice = st.radio(
                     group["group"],
                     mount_options,
@@ -514,7 +529,8 @@ def main():
                 )
 
                 if choice != "— Aucune monture —":
-                    opt = next(o for o in group["options"] if o["name"] == choice)
+                    opt_name = choice.split(" (+")[0]
+                    opt = next(o for o in group["options"] if o["name"] == opt_name)
                     total_cost += opt.get("cost", 0)
                     options_selected[group["group"]] = opt
                     mount_selected = opt.get("mount")
@@ -692,11 +708,6 @@ def main():
                 font-size: 0.8em;
                 margin-left: 10px;
             }}
-            .weapon-specs {{
-                font-style: italic;
-                color: #666;
-                font-size: 0.9em;
-            }}
             </style>
 
             <div class="army-card">
@@ -740,8 +751,9 @@ def main():
 
                 weapon_line = f"{weapon_name} | A{attacks} | PA({armor_piercing})"
 
+                # Ajouter les règles spéciales de l'arme SANS italique
                 if 'special_rules' in weapon and weapon['special_rules']:
-                    weapon_line += f" <span class='weapon-specs'>{', '.join(weapon['special_rules'])}</span>"
+                    weapon_line += f", {', '.join(weapon['special_rules'])}"
 
                 html_content += f"""
                 <div class="section">
@@ -844,8 +856,209 @@ def main():
 
         with col2:
             if st.button("📄 Exporter en HTML"):
-                # Code d'export HTML (inchangé)
-                pass
+                html_content = f"""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Liste d'armée OPR - {st.session_state.list_name}</title>
+                    <style>
+                        body {{ font-family: Arial, sans-serif; margin: 20px; }}
+                        h1 {{ color: #333; }}
+                        .army-card {{
+                            border: 2px solid #4a89dc;
+                            border-radius: 15px;
+                            padding: 15px;
+                            margin-bottom: 20px;
+                            background: white;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        }}
+                        .unit-header {{
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 10px;
+                        }}
+                        .unit-name {{
+                            font-size: 1.2em;
+                            font-weight: bold;
+                            color: #333;
+                            margin: 0;
+                        }}
+                        .unit-points {{
+                            color: #666;
+                            font-size: 0.9em;
+                        }}
+                        .badges-container {{
+                            display: flex;
+                            gap: 8px;
+                            margin-bottom: 15px;
+                            flex-wrap: wrap;
+                        }}
+                        .badge {{
+                            padding: 6px 12px;
+                            border-radius: 20px;
+                            font-size: 0.9em;
+                            font-weight: 500;
+                            color: white;
+                            text-align: center;
+                        }}
+                        .quality-badge {{
+                            background-color: #4a89dc;
+                        }}
+                        .defense-badge {{
+                            background-color: #4a89dc;
+                        }}
+                        .coriace-badge {{
+                            background-color: #4a89dc;
+                        }}
+                        .section {{
+                            margin-bottom: 12px;
+                        }}
+                        .section-title {{
+                            font-weight: bold;
+                            color: #4a89dc;
+                            margin-bottom: 5px;
+                            font-size: 0.95em;
+                        }}
+                        .section-content {{
+                            margin-left: 10px;
+                            font-size: 0.9em;
+                            color: #555;
+                        }}
+                        .combined-badge {{
+                            background-color: #28a745;
+                            color: white;
+                            padding: 4px 8px;
+                            border-radius: 12px;
+                            font-size: 0.8em;
+                            margin-left: 10px;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <h1>Liste d'armée OPR - {st.session_state.list_name}</h1>
+                    <h2>{st.session_state.game} - {st.session_state.faction} - {st.session_state.army_total_cost}/{st.session_state.points} pts</h2>
+                """
+
+                for u in st.session_state.army_list:
+                    coriace_value = calculate_coriace_value(u)
+
+                    html_content += f"""
+                    <div class="army-card">
+                        <div class="unit-header">
+                            <h3 class="unit-name">{u['name']}</h3>
+                            <span class="unit-points">{u['cost']} pts</span>
+                        </div>
+
+                        <div class="badges-container">
+                            <span class="badge quality-badge">Qualité {u['quality']}+</span>
+                            <span class="badge defense-badge">Défense {u['defense']}+</span>
+                    """
+
+                    if coriace_value > 0:
+                        html_content += f'<span class="badge coriace-badge">Coriace {coriace_value}</span>'
+
+                    if u.get("combined", False):
+                        html_content += '<span class="combined-badge">Unité combinée</span>'
+
+                    html_content += """
+                        </div>
+                    """
+
+                    if u.get("base_rules"):
+                        rules = [r for r in u['base_rules'] if not r.startswith("Coriace")]
+                        if rules:
+                            html_content += f"""
+                            <div class="section">
+                                <div class="section-title">Règles spéciales</div>
+                                <div class="section-content">{', '.join(rules)}</div>
+                            </div>
+                            """
+
+                    if 'current_weapon' in u:
+                        weapon = u['current_weapon']
+                        weapon_name = weapon.get('name', 'Arme de base')
+                        attacks = weapon.get('attacks', '?')
+                        armor_piercing = weapon.get('armor_piercing', '?')
+
+                        weapon_line = f"{weapon_name} | A{attacks} | PA({armor_piercing})"
+
+                        if 'special_rules' in weapon and weapon['special_rules']:
+                            weapon_line += f", {', '.join(weapon['special_rules'])}"
+
+                        html_content += f"""
+                        <div class="section">
+                            <div class="section-title">Arme équipée</div>
+                            <div class="section-content">{weapon_line}</div>
+                        </div>
+                        """
+
+                    other_options = []
+                    for group_name, opt_group in u.get("options", {}).items():
+                        if group_name not in ["Améliorations", "Remplacement d'arme", "Montures"]:
+                            if isinstance(opt_group, list):
+                                for opt in opt_group:
+                                    other_options.append(opt["name"])
+                            else:
+                                other_options.append(opt_group["name"])
+
+                    if other_options:
+                        html_content += f"""
+                        <div class="section">
+                            <div class="section-title">Options</div>
+                            <div class="section-content">{', '.join(other_options)}</div>
+                        </div>
+                        """
+
+                    if u.get("mount"):
+                        mount = u['mount']
+                        mount_rules = []
+                        if 'special_rules' in mount:
+                            mount_rules = mount['special_rules']
+
+                        html_content += f"""
+                        <div class="section">
+                            <div class="section-title">Monture</div>
+                            <div class="section-content">
+                                <strong>{mount.get('name', '')}</strong>
+                        """
+
+                        if mount_rules:
+                            html_content += f"<br>{', '.join(mount_rules)}"
+
+                        html_content += """
+                            </div>
+                        </div>
+                        """
+
+                    if "Améliorations" in u.get("options", {}) and u.get("type", "").lower() != "hero":
+                        improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
+                        if improvements:
+                            html_content += f"""
+                            <div class="section">
+                                <div class="section-title">Améliorations</div>
+                                <div class="section-content">{', '.join(improvements)}</div>
+                            </div>
+                            """
+
+                    html_content += "</div>"
+
+                html_content += """
+                </body>
+                </html>
+                """
+
+                filename = f"{st.session_state.list_name or 'army_list'}.html"
+                with open(filename, "w", encoding="utf-8") as f:
+                    f.write(html_content)
+
+                with open(filename, "r", encoding="utf-8") as f:
+                    st.download_button(
+                        label="Télécharger le fichier HTML",
+                        data=f,
+                        file_name=filename,
+                        mime="text/html"
+                    )
 
         with col3:
             if st.button("🧹 Réinitialiser la liste"):
