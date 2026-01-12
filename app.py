@@ -593,7 +593,8 @@ def main():
                 "current_weapon": current_weapon,
                 "type": unit.get("type", "Infantry"),
                 "combined": combined_unit,
-                "weapon_replaced": weapon_replaced
+                "weapon_replaced": weapon_replaced,
+                "base_weapon": default_weapon  # Stocker l'arme de base pour référence
             }
 
             # Ajouter la monture si elle existe
@@ -769,9 +770,13 @@ def main():
                 </div>
                 """
 
-            # Options (sans les changements d'armes)
+            # Options (sans l'arme de base si elle a été remplacée)
             other_options = []
             for group_name, opt_group in u.get("options", {}).items():
+                # Ne pas afficher les options d'armes si l'arme a été remplacée
+                if group_name == "Remplacement d'arme" and u.get("weapon_replaced", False):
+                    continue
+
                 if group_name not in ["Améliorations", "Remplacement d'arme", "Montures"]:
                     if isinstance(opt_group, list):
                         for opt in opt_group:
@@ -1001,6 +1006,10 @@ def main():
 
                     other_options = []
                     for group_name, opt_group in u.get("options", {}).items():
+                        # Ne pas afficher les options d'armes si l'arme a été remplacée
+                        if group_name == "Remplacement d'arme" and u.get("weapon_replaced", False):
+                            continue
+
                         if group_name not in ["Améliorations", "Remplacement d'arme", "Montures"]:
                             if isinstance(opt_group, list):
                                 for opt in opt_group:
