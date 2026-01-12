@@ -36,19 +36,21 @@
 ```bash
 git clone https://github.com/votre-utilisateur/opr-army-forge-fr.git
 ```
+
 ```bash
 cd opr-army-forge-fr
-
+```
 2. Installez les dépendances :
 
 ```bash
 pip install -r requirements.txt
-
+```
 
 3. Lancez l'application :
 
 ```bash
 streamlit run app.py
+```
 
 ---
 
@@ -63,6 +65,7 @@ opr-army-forge-fr/
 ├── players/                # Comptes joueurs (créé automatiquement)
 ├── saves/                  # Listes sauvegardées
 └── README.md               # Ce fichier
+```
 
 ---
 
