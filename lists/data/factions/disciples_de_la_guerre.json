@@ -26,13 +26,13 @@
           "type": "multiple",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
-            {"name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
-            {"name": "Marauder (Aura de Combattant imprévisible)", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
-            {"name": "Porteur de la bannière de l'armée (Effrayant (3))", "cost": 30, "special_rules": ["Effrayant (3)"]},
-            {"name": "Mage (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
-            {"name": "Seigneur de Guerre (Aura de Boost de Né pour la guerre)", "cost": 35, "special_rules": ["Aura de Boost de Né pour la guerre"]},
-            {"name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
-            {"name": "Maître Sorcier (Lanceur de sorts (3))", "cost": 60, "special_rules": ["Lanceur de sorts (3)"]}
+            {"name": "Conquérant", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
+            {"name": "Marauder", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
+            {"name": "Porteur de la bannière de l'armée", "cost": 30, "special_rules": ["Effrayant (3)"]},
+            {"name": "Mage", "cost": 35, "special_rules": ["Aura de Voile fluctuant", "Lanceur de sorts (1)"]},
+            {"name": "Seigneur de Guerre", "cost": 35, "special_rules": ["Aura de Boost de Né pour la guerre"]},
+            {"name": "Sorcier", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
+            {"name": "Maître Sorcier", "cost": 60, "special_rules": ["Lanceur de sorts (3)"]}
           ]
         },
         {
@@ -107,12 +107,12 @@
             },
             {
               "name": "Monture démoniaque",
-              "cost":75,
+              "cost": 75,
               "mount": {
                 "name": "Monture démoniaque",
                 "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Effrayant (1)", "Impact (2)", "Rapide"]
               }
-             },
+            },
             {
               "name": "Char",
               "cost": 120,
@@ -120,30 +120,31 @@
                 "name": "Char",
                 "special_rules": ["Sabots (A2)", "Coriace (6)", "Impact (4)", "Rapide"]
               }
-             },
+            },
             {
               "name": "Char bestial",
               "cost": 135,
               "mount": {
                 "name": "Char bestial",
-                "special_rules": ["Griffes lourdes (A2, PA (1)", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]
+                "special_rules": ["Griffes lourdes (A2, PA(1))", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]
               }
-             },
-             {
+            },
+            {
               "name": "Manticore",
               "cost": 155,
               "mount": {
                 "name": "Manticore",
                 "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (6)", "Effrayant (1)", "Volant"]
               }
-             },
+            },
             {
               "name": "Dragon du Ravage",
               "cost": 155,
               "mount": {
                 "name": "Dragon du Ravage",
-                "special_rules": ["Griffes lourdes (A6, PA (1)", "Piétinement (A4, PA (1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]
+                "special_rules": ["Griffes lourdes (A6, PA(1))", "Piétinement (A4, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]
               }
+            }
           ]
         }
       ]
