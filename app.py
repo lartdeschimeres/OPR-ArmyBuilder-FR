@@ -562,36 +562,6 @@ def main():
                 if selected_options:
                     options_selected[group["group"]] = selected_options
 
-        # Section pour les améliorations d'unité (Sergent, Bannière, Musicien) en colonnes UNIQUEMENT pour les unités non-héros
-        if unit.get("type", "").lower() != "hero":
-            st.divider()
-            st.subheader("Améliorations d'unité")
-
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                display_cost = 5 * weapon_cost_multiplier
-                if st.checkbox(f"Sergent (+{display_cost} pts)"):
-                    total_cost += 5 * weapon_cost_multiplier
-                    if "Améliorations" not in options_selected:
-                        options_selected["Améliorations"] = []
-                    options_selected["Améliorations"].append({"name": "Sergent", "cost": 5 * weapon_cost_multiplier})
-
-            with col2:
-                display_cost = 5 * weapon_cost_multiplier
-                if st.checkbox(f"Bannière (+{display_cost} pts)"):
-                    total_cost += 5 * weapon_cost_multiplier
-                    if "Améliorations" not in options_selected:
-                        options_selected["Améliorations"] = []
-                    options_selected["Améliorations"].append({"name": "Bannière", "cost": 5 * weapon_cost_multiplier})
-
-            with col3:
-                display_cost = 10 * weapon_cost_multiplier
-                if st.checkbox(f"Musicien (+{display_cost} pts)"):
-                    total_cost += 10 * weapon_cost_multiplier
-                    if "Améliorations" not in options_selected:
-                        options_selected["Améliorations"] = []
-                    options_selected["Améliorations"].append({"name": "Musicien", "cost": 10 * weapon_cost_multiplier})
-
         # Calcul de la valeur de Coriace
         coriace_value = calculate_coriace_value({
             "base_rules": base_rules,
@@ -820,9 +790,14 @@ def main():
                 </div>
                 """
 
-            # Améliorations (Sergent, Bannière, Musicien)
-            if "Améliorations" in u.get("options", {}) and u.get("type", "").lower() != "hero":
-                improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
+            # Améliorations (uniquement celles sélectionnées)
+            if "Améliorations" in u.get("options", {}):
+                improvements = []
+                if isinstance(u["options"]["Améliorations"], list):
+                    improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
+                elif isinstance(u["options"]["Améliorations"], dict):
+                    improvements = [u["options"]["Améliorations"]["name"]]
+
                 if improvements:
                     html_content += f"""
                     <div class="section">
@@ -1049,8 +1024,13 @@ def main():
                         </div>
                         """
 
-                    if "Améliorations" in u.get("options", {}) and u.get("type", "").lower() != "hero":
-                        improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
+                    if "Améliorations" in u.get("options", {}):
+                        improvements = []
+                        if isinstance(u["options"]["Améliorations"], list):
+                            improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
+                        elif isinstance(u["options"]["Améliorations"], dict):
+                            improvements = [u["options"]["Améliorations"]["name"]]
+
                         if improvements:
                             html_content += f"""
                             <div class="section">
