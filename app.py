@@ -547,17 +547,32 @@ def main():
                     options_selected[group["group"]] = opt
                     mount_selected = opt.get("mount")
 
-            # Améliorations d'unité (uniquement Icône du Ravage pour les unités non-héroiques)
-            elif group.get("type") == "multiple" and group.get("group") == "Améliorations d'unité" and unit.get("type", "").lower() != "hero":
-                selected_options = []
-                for opt in group["options"]:
-                    if opt["name"] == "Icône du Ravage":  # On ne montre que cette option
-                        if st.checkbox(f"{opt['name']} (+{opt['cost']} pts)"):
-                            selected_options.append(opt)
-                            total_cost += opt["cost"]
+        # Section pour les améliorations d'unité (Sergent, Bannière, Musicien) en colonnes UNIQUEMENT pour les unités non-héros
+        if unit.get("type", "").lower() != "hero":
+            st.divider()
+            st.subheader("Améliorations d'unité")
 
-                if selected_options:
-                    options_selected[group["group"]] = selected_options
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                if st.checkbox("Sergent (+5 pts)"):
+                    total_cost += 5
+                    if "Améliorations" not in options_selected:
+                        options_selected["Améliorations"] = []
+                    options_selected["Améliorations"].append({"name": "Sergent", "cost": 5})
+
+            with col2:
+                if st.checkbox("Bannière (+5 pts)"):
+                    total_cost += 5
+                    if "Améliorations" not in options_selected:
+                        options_selected["Améliorations"] = []
+                    options_selected["Améliorations"].append({"name": "Bannière", "cost": 5})
+
+            with col3:
+                if st.checkbox("Musicien (+10 pts)"):
+                    total_cost += 10
+                    if "Améliorations" not in options_selected:
+                        options_selected["Améliorations"] = []
+                    options_selected["Améliorations"].append({"name": "Musicien", "cost": 10})
 
         # Calcul de la valeur de Coriace
         coriace_value = calculate_coriace_value({
@@ -728,7 +743,7 @@ def main():
                     </div>
                     """
 
-            # Arme équipée
+            # Arme équipée (affichage simplifié sans choix)
             if 'current_weapon' in u:
                 weapon = u['current_weapon']
                 weapon_name = weapon.get('name', 'Arme de base')
@@ -737,7 +752,6 @@ def main():
 
                 weapon_line = f"{weapon_name} | A{attacks} | PA({armor_piercing})"
 
-                # Ajouter les règles spéciales de l'arme SANS italique
                 if 'special_rules' in weapon and weapon['special_rules']:
                     weapon_line += f", {', '.join(weapon['special_rules'])}"
 
@@ -788,9 +802,9 @@ def main():
                 </div>
                 """
 
-            # Améliorations (uniquement Icône du Ravage)
+            # Améliorations (Sergent, Bannière, Musicien)
             if "Améliorations" in u.get("options", {}) and u.get("type", "").lower() != "hero":
-                improvements = [opt["name"] for opt in u["options"]["Améliorations"] if opt["name"] == "Icône du Ravage"]
+                improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
                 if improvements:
                     html_content += f"""
                     <div class="section">
@@ -1018,7 +1032,7 @@ def main():
                         """
 
                     if "Améliorations" in u.get("options", {}) and u.get("type", "").lower() != "hero":
-                        improvements = [opt["name"] for opt in u["options"]["Améliorations"] if opt["name"] == "Icône du Ravage"]
+                        improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
                         if improvements:
                             html_content += f"""
                             <div class="section">
