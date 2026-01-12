@@ -35,7 +35,7 @@
 
 ```bash
 git clone https://github.com/votre-utilisateur/opr-army-forge-fr.git
-
+```
 ```bash
 cd opr-army-forge-fr
 
@@ -123,3 +123,4 @@ Ce projet est sous licence MIT.
 
 ```bash
 pip install streamlit
+```
