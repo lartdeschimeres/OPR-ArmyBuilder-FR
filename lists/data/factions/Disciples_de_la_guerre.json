@@ -177,7 +177,7 @@
                 "name": "Lance",
                 "range": "-",
                 "attacks": 1,
-                "armor_piercing": -,
+                "armor_piercing": 0,
                 "special_rules": ["Contre-charge"]
               }
             },
