@@ -29,7 +29,7 @@
             {"name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
             {"name": "Marauder (Aura de Combattant imprévisible)", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
             {"name": "Porteur de la bannière de l'armée (Effrayant (3))", "cost": 30, "special_rules": ["Effrayant (3)"]},
-            {"name": "Ensorceleur "Aura de Voile fluctuant"", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
+            {"name": "Ensorceleur (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
             {"name": "Seigneur de Guerre (Aura de Boost de Né pour la guerre)", "cost": 35, "special_rules": ["Aura de Boost de Né pour la guerre"]},
             {"name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
             {"name": "Maître Sorcier (Lanceur de sorts (3))", "cost": 60, "special_rules": ["Lanceur de sorts (3)"]}
