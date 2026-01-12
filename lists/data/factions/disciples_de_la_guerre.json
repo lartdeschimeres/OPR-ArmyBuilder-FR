@@ -1,8 +1,9 @@
 {
   "faction": "Disciples de la Guerre",
   "game": "Age of Fantasy",
-  "version": "FR-0.1",
-  "status": "stub",
+  "version": "FR-1.0",
+  "status": "complete",
+  "description": "Les Disciples de la Guerre sont une faction brutale et impitoyable, composée de guerriers fanatiques et de monstres déchaînés. Leur but est la destruction totale de leurs ennemis par tous les moyens nécessaires.",
 
   "units": [
     {
@@ -12,14 +13,12 @@
       "base_cost": 60,
       "quality": 3,
       "defense": 3,
-
       "special_rules": [
         "Attaque versatile",
         "Coriace (3)",
         "Héros",
         "Né pour la guerre"
       ],
-
       "weapons": [
         {
           "name": "Arme à une main lourde",
@@ -29,89 +28,138 @@
           "special_rules": []
         }
       ],
-
       "upgrade_groups": [
         {
           "group": "Améliorations de rôle",
-          "type": "upgrade",
+          "type": "multiple",
+          "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
-            { "name": "Conquérant (Aura d’Éclaireur)", "cost": 20, "special_rules": ["Aura d’Éclaireur"] },
+            { "name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"] },
             { "name": "Marauder (Aura de combattant imprévisible)", "cost": 30, "special_rules": ["Aura de combattant imprévisible"] },
-            { "name": "Porteur de la bannière de l’armée (Effrayant (3))", "cost": 30, "special_rules": ["Effrayant (3)"] },
+            { "name": "Porteur de la bannière de l'armée (Effrayant (3))", "cost": 30, "special_rules": ["Effrayant (3)"] },
             { "name": "Mage (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"] },
-            { "name": "Seigneur de Guerre (Aura de Boost de Né pour la guerre)", "cost": 35, "special_rules": ["Aura de Boost de Né pour la guerre"] },
+            { "name": "Seigneur de Guerre8 (Aura de Boost de Né pour la guerre)", "cost": 35, "special_rules": ["Aura de Boost de Né pour la guerre"] },
             { "name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"] },
             { "name": "Maître Sorcier (Lanceur de sorts (3))", "cost": 60, "special_rules": ["Lanceur de sorts (3)"] }
           ]
         },
-
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
+          "description": "Choisissez une arme différente pour ce héros",
           "options": [
             {
               "name": "Hallebarde lourde",
               "cost": 5,
-              "weapon": { "range": "-", "attacks": 3, "armor_piercing": 1, "special_rules": ["Perforant"] }
+              "weapon": {
+                "name": "Hallebarde lourde",
+                "range": "-",
+                "attacks": 3,
+                "armor_piercing": 1,
+                "special_rules": ["Perforant"]
+              }
             },
             {
-              "name": "Paire d’armes à une main lourdes",
+              "name": "Paire d'armes à une main lourdes",
               "cost": 10,
-              "weapon": { "range": "-", "attacks": 4, "armor_piercing": 1, "special_rules": [] }
+              "weapon": {
+                "name": "Paire d'armes à une main lourdes",
+                "range": "-",
+                "attacks": 4,
+                "armor_piercing": 1,
+                "special_rules": []
+              }
             },
             {
               "name": "Grande arme lourde",
               "cost": 15,
-              "weapon": { "range": "-", "attacks": 3, "armor_piercing": 3, "special_rules": [] }
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "-",
+                "attacks": 3,
+                "armor_piercing": 3,
+                "special_rules": []
+              }
             },
             {
               "name": "Lance lourde",
               "cost": 10,
-              "weapon": { "range": "-", "attacks": 3, "armor_piercing": 1, "special_rules": ["Percée"] }
+              "weapon": {
+                "name": "Lance lourde",
+                "range": "-",
+                "attacks": 3,
+                "armor_piercing": 1,
+                "special_rules": ["Percée"]
+              }
             }
           ]
         },
-
         {
           "group": "Montures",
           "type": "mount",
+          "description": "Ajoutez une monture à ce héros",
           "options": [
-            { "name": "Cheval", "cost": 15, "special_rules": ["Impact (1)", "Rapide"] },
+            {
+              "name": "Cheval",
+              "cost": 15,
+              "mount": {
+                "name": "Cheval",
+                "special_rules": ["Impact (1)", "Rapide"]
+              }
+            },
             {
               "name": "Grande bête",
               "cost": 65,
-              "special_rules": ["Griffes lourdes (A1, PA (1))", "Coriace (+3)", "Impact (2)", "Rapide"]
+              "mount": {
+                "name": "Grande bête",
+                "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (+3)", "Impact (2)", "Rapide"]
+              }
             },
             {
               "name": "Monture démoniaque",
               "cost": 75,
-              "special_rules": ["Griffes lourdes (A1, PA (1))", "Coriace (+3)", "Impact (2)", "Effrayant (1)", "Rapide"]
+              "mount": {
+                "name": "Monture démoniaque",
+                "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (+3)", "Impact (2)", "Effrayant (1)", "Rapide"]
+              }
             },
             {
               "name": "Char",
               "cost": 120,
-              "special_rules": ["Sabots (A2)", "Coriace (+6)", "Impact (4)", "Rapide"]
+              "mount": {
+                "name": "Char",
+                "special_rules": ["Sabots (A2)", "Coriace (+6)", "Impact (4)", "Rapide"]
+              }
             },
             {
               "name": "Char bestial",
               "cost": 135,
-              "special_rules": ["Griffes lourdes (A2, PA (1))", "Coriace (+6)", "Effrayant (1)", "Impact (4)", "Rapide"]
+              "mount": {
+                "name": "Char bestial",
+                "special_rules": ["Griffes lourdes (A2, PA(1))", "Coriace (+6)", "Effrayant (1)", "Impact (4)", "Rapide"]
+              }
             },
             {
               "name": "Manticore",
               "cost": 155,
-              "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (+6)", "Effrayant (1)", "Volant"]
+              "mount": {
+                "name": "Manticore",
+                "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (+6)", "Effrayant (1)", "Vol"]
+              }
             },
             {
               "name": "Dragon du Ravage",
               "cost": 320,
-              "special_rules": ["Griffes lourdes (A6, PA (1))", "Piétinement (A4, PA (1))", "Attaque de souffle", "Coriace (+12)", "Effrayant (2)", "Volant"]
+              "mount": {
+                "name": "Dragon du Ravage",
+                "special_rules": ["Griffes lourdes (A6, PA(1))", "Piétinement (A4, PA(1))", "Attaque de souffle", "Coriace (+12)", "Effrayant (2)", "Vol"]
+              }
             }
           ]
         }
       ]
     },
-      {
+    {
       "name": "Barbares de la Guerre [10]",
       "type": "Infantry",
       "base_cost": 100,
@@ -123,16 +171,18 @@
           "name": "Armes à une main",
           "range": "-",
           "attacks": 1,
-          "armor_piercing": 0
+          "armor_piercing": 0,
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
         {
           "group": "Remplacement d'armes",
           "type": "weapon",
+          "description": "Remplacez les armes de base par une arme spécialisée",
           "options": [
             {
-              "name": "Lance (A1, Contre-charge)",
+              "name": "Lance",
               "cost": 35,
               "weapon": {
                 "name": "Lance",
@@ -143,30 +193,253 @@
               }
             },
             {
-              "name": "Fléau (A1, PA (1))",
+              "name": "Fléau",
               "cost": 20,
               "weapon": {
                 "name": "Fléau",
                 "range": "-",
                 "attacks": 1,
-                "armor_piercing": 1
+                "armor_piercing": 1,
+                "special_rules": []
+              }
+            },
+            {
+              "name": "Hache à deux mains",
+              "cost": 25,
+              "weapon": {
+                "name": "Hache à deux mains",
+                "range": "-",
+                "attacks": 1,
+                "armor_piercing": 2,
+                "special_rules": []
               }
             }
           ]
         },
         {
-          "group": "Option",
+          "group": "Améliorations d'unité",
           "type": "multiple",
-          "description": "Options pour les figurines",
+          "description": "Améliorations disponibles pour l'unité",
           "options": [
             {
-              "name": "Icône du Ravage (Aura de Défense versatile)",
+              "name": "Icône du Ravage",
               "cost": 20,
               "special_rules": ["Aura de Défense versatile"]
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
             }
           ]
         }
       ]
+    },
+    {
+      "name": "Guerriers de la Guerre [10]",
+      "type": "Infantry",
+      "base_cost": 110,
+      "quality": 3,
+      "defense": 4,
+      "special_rules": ["Né pour la guerre"],
+      "weapons": [
+        {
+          "name": "Arme à une main et bouclier",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 0,
+          "special_rules": ["Défense (5+)"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez les armes de base par une arme spécialisée",
+          "options": [
+            {
+              "name": "Lance et bouclier",
+              "cost": 20,
+              "weapon": {
+                "name": "Lance et bouclier",
+                "range": "-",
+                "attacks": 1,
+                "armor_piercing": 0,
+                "special_rules": ["Contre-charge", "Défense (5+)"]
+              }
+            },
+            {
+              "name": "Hallebarde",
+              "cost": 25,
+              "weapon": {
+                "name": "Hallebarde",
+                "range": "-",
+                "attacks": 1,
+                "armor_piercing": 1,
+                "special_rules": ["Perforant"]
+              }
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "multiple",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cavalerie de la Guerre [5]",
+      "type": "Cavalry",
+      "base_cost": 130,
+      "quality": 3,
+      "defense": 4,
+      "special_rules": ["Né pour la guerre", "Rapide"],
+      "weapons": [
+        {
+          "name": "Lance",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 0,
+          "special_rules": ["Contre-charge"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez les armes de base par une arme spécialisée",
+          "options": [
+            {
+              "name": "Épée lourde",
+              "cost": 15,
+              "weapon": {
+                "name": "Épée lourde",
+                "range": "-",
+                "attacks": 1,
+                "armor_piercing": 1,
+                "special_rules": []
+              }
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "multiple",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chariots de la Guerre [1]",
+      "type": "War Engine",
+      "base_cost": 120,
+      "quality": 3,
+      "defense": 4,
+      "special_rules": ["Né pour la guerre", "Rapide", "Coriace (6)", "Impact (4)"],
+      "weapons": [
+        {
+          "name": "Lames de chariot",
+          "range": "-",
+          "attacks": 2,
+          "armor_piercing": 1,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Améliorations",
+          "type": "multiple",
+          "description": "Améliorations disponibles pour le chariot",
+          "options": [
+            {
+              "name": "Lames supplémentaires",
+              "cost": 20,
+              "special_rules": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Catapulte de la Guerre [1]",
+      "type": "War Engine",
+      "base_cost": 150,
+      "quality": 3,
+      "defense": 5,
+      "special_rules": ["Né pour la guerre", "Coriace (6)", "Artillerie (36)"],
+      "weapons": [
+        {
+          "name": "Projectiles",
+          "range": "36",
+          "attacks": 1,
+          "armor_piercing": 3,
+          "special_rules": ["Indirect", "Lourd"]
+        }
+      ],
+      "upgrade_groups": []
+    },
+    {
+      "name": "Géants de la Guerre [1]",
+      "type": "Monster",
+      "base_cost": 180,
+      "quality": 3,
+      "defense": 4,
+      "special_rules": ["Né pour la guerre", "Coriace (6)", "Effrayant (1)", "Grand"],
+      "weapons": [
+        {
+          "name": "Massue géante",
+          "range": "-",
+          "attacks": 6,
+          "armor_piercing": 3,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": []
     }
   ]
 }
