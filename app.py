@@ -157,7 +157,7 @@ def main():
         if total_cost > total_points:
             errors.append(f"Dépassement de {total_cost - total_points} pts (max: {total_points} pts)")
 
-        if game_rules == GAME_RULES["Age of Fantasy"]:
+        if game_rules and game_rules == GAME_RULES["Age of Fantasy"]:
             # 1. Vérification du nombre de héros
             heroes = sum(1 for u in army_list if u.get("type", "").lower() == "hero")
             max_heroes = max(1, total_points // game_rules["hero_per_points"])
@@ -622,8 +622,13 @@ def main():
                 st.session_state.points
             )
         else:
-            st.session_state.is_army_valid = False if st.session_state.army_total_cost > st.session_state.points else True
-            st.session_state.validation_errors = [f"Dépassement de {st.session_state.army_total_cost - st.session_state.points} pts"] if st.session_state.army_total_cost > st.session_state.points else []
+            st.session_state.is_army_valid = st.session_state.army_total_cost <= st.session_state.points
+            st.session_state.validation_errors = []
+            if st.session_state.army_total_cost > st.session_state.points:
+                st.session_state.is_army_valid = False
+                st.session_state.validation_errors.append(
+                    f"Dépassement de {st.session_state.army_total_cost - st.session_state.points} pts"
+                )
 
         # Barre de progression et boutons
         st.divider()
@@ -631,7 +636,7 @@ def main():
         st.progress(progress)
         st.markdown(f"**{st.session_state.army_total_cost} / {st.session_state.points} pts**")
 
-        # Avertissement si dépassement
+        # Avertissements et erreurs
         if st.session_state.army_total_cost > st.session_state.points:
             excess = st.session_state.army_total_cost - st.session_state.points
             st.warning(f"⚠️ Votre armée dépasse de {excess} pts la limite de {st.session_state.points} pts")
@@ -639,7 +644,7 @@ def main():
         if not st.session_state.is_army_valid:
             st.warning("⚠️ La liste d'armée n'est pas valide :")
             for error in st.session_state.validation_errors:
-                st.write(f"- {error}")
+                st.error(f"- {error}")
 
         # Liste de l'armée
         st.divider()
@@ -872,471 +877,232 @@ def main():
                         st.error("Erreur lors de la sauvegarde de la liste")
 
         with col2:
-            col21, col22 = st.columns(2)
-            with col21:
-                if st.button("📄 Exporter en HTML"):
-                    html_content = f"""
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>Liste d'armée OPR - {st.session_state.list_name}</title>
-                        <style>
-                            body {{ font-family: Arial, sans-serif; margin: 20px; }}
-                            h1 {{ color: #333; }}
-                            .army-card {{
-                                border: 2px solid #4a89dc;
-                                border-radius: 15px;
-                                padding: 15px;
-                                margin-bottom: 20px;
-                                background: white;
-                                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                            }}
-                            .unit-header {{
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                                margin-bottom: 10px;
-                            }}
-                            .unit-name {{
-                                font-size: 1.2em;
-                                font-weight: bold;
-                                color: #333;
+            if st.button("📄 Exporter en HTML"):
+                html_content = f"""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Liste d'armée OPR - {st.session_state.list_name}</title>
+                    <style>
+                        body {{ font-family: Arial, sans-serif; margin: 20px; }}
+                        h1 {{ color: #333; }}
+                        .army-card {{
+                            border: 2px solid #4a89dc;
+                            border-radius: 15px;
+                            padding: 15px;
+                            margin-bottom: 20px;
+                            background: white;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        }}
+                        .unit-header {{
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 10px;
+                        }}
+                        .unit-name {{
+                            font-size: 1.2em;
+                            font-weight: bold;
+                            color: #333;
+                            margin: 0;
+                        }}
+                        .unit-points {{
+                            color: #666;
+                            font-size: 0.9em;
+                        }}
+                        .badges-container {{
+                            display: flex;
+                            gap: 8px;
+                            margin-bottom: 15px;
+                            flex-wrap: wrap;
+                        }}
+                        .badge {{
+                            padding: 6px 12px;
+                            border-radius: 20px;
+                            font-size: 0.9em;
+                            font-weight: 500;
+                            color: white;
+                            text-align: center;
+                        }}
+                        .quality-badge {{
+                            background-color: #4a89dc;
+                        }}
+                        .defense-badge {{
+                            background-color: #4a89dc;
+                        }}
+                        .coriace-badge {{
+                            background-color: #4a89dc;
+                        }}
+                        .section {{
+                            margin-bottom: 12px;
+                        }}
+                        .section-title {{
+                            font-weight: bold;
+                            color: #4a89dc;
+                            margin-bottom: 5px;
+                            font-size: 0.95em;
+                        }}
+                        .section-content {{
+                            margin-left: 10px;
+                            font-size: 0.9em;
+                            color: #555;
+                        }}
+                        .combined-badge {{
+                            background-color: #28a745;
+                            color: white;
+                            padding: 4px 8px;
+                            border-radius: 12px;
+                            font-size: 0.8em;
+                            margin-left: 10px;
+                        }}
+                        @media print {{
+                            body {{
                                 margin: 0;
+                                padding: 20px;
                             }}
-                            .unit-points {{
-                                color: #666;
-                                font-size: 0.9em;
-                            }}
-                            .badges-container {{
-                                display: flex;
-                                gap: 8px;
-                                margin-bottom: 15px;
-                                flex-wrap: wrap;
-                            }}
-                            .badge {{
-                                padding: 6px 12px;
-                                border-radius: 20px;
-                                font-size: 0.9em;
-                                font-weight: 500;
-                                color: white;
-                                text-align: center;
-                            }}
-                            .quality-badge {{
-                                background-color: #4a89dc;
-                            }}
-                            .defense-badge {{
-                                background-color: #4a89dc;
-                            }}
-                            .coriace-badge {{
-                                background-color: #4a89dc;
-                            }}
-                            .section {{
-                                margin-bottom: 12px;
-                            }}
-                            .section-title {{
-                                font-weight: bold;
-                                color: #4a89dc;
-                                margin-bottom: 5px;
-                                font-size: 0.95em;
-                            }}
-                            .section-content {{
-                                margin-left: 10px;
-                                font-size: 0.9em;
-                                color: #555;
-                            }}
-                            .combined-badge {{
-                                background-color: #28a745;
-                                color: white;
-                                padding: 4px 8px;
-                                border-radius: 12px;
-                                font-size: 0.8em;
-                                margin-left: 10px;
-                            }}
-                            @media print {{
-                                body {{
-                                    margin: 0;
-                                    padding: 20px;
-                                }}
-                                .army-card {{
-                                    border: none;
-                                    box-shadow: none;
-                                    margin-bottom: 10px;
-                                    page-break-inside: avoid;
-                                }}
-                            }}
-                        </style>
-                    </head>
-                    <body>
-                        <h1>Liste d'armée OPR - {st.session_state.list_name}</h1>
-                        <h2>{st.session_state.game} - {st.session_state.faction} - {st.session_state.army_total_cost}/{st.session_state.points} pts</h2>
-                    """
-
-                    for u in st.session_state.army_list:
-                        coriace_value = calculate_coriace_value(u)
-
-                        html_content += f"""
-                        <div class="army-card">
-                            <div class="unit-header">
-                                <h3 class="unit-name">{u['name']}</h3>
-                                <span class="unit-points">{u['cost']} pts</span>
-                            </div>
-
-                            <div class="badges-container">
-                                <span class="badge quality-badge">Qualité {u['quality']}+</span>
-                                <span class="badge defense-badge">Défense {u['defense']}+</span>
-                        """
-
-                        if coriace_value > 0:
-                            html_content += f'<span class="badge coriace-badge">Coriace {coriace_value}</span>'
-
-                        if u.get("combined", False):
-                            html_content += '<span class="combined-badge">Unité combinée</span>'
-
-                        html_content += """
-                            </div>
-                        """
-
-                        if u.get("base_rules"):
-                            rules = [r for r in u['base_rules'] if not r.startswith("Coriace")]
-                            if rules:
-                                html_content += f"""
-                                <div class="section">
-                                    <div class="section-title">Règles spéciales</div>
-                                    <div class="section-content">{', '.join(rules)}</div>
-                                </div>
-                                """
-
-                        if 'current_weapon' in u:
-                            weapon = u['current_weapon']
-                            weapon_name = weapon.get('name', 'Arme de base')
-                            attacks = weapon.get('attacks', '?')
-                            armor_piercing = weapon.get('armor_piercing', '?')
-
-                            weapon_line = f"{weapon_name} | A{attacks} | PA({armor_piercing})"
-
-                            if 'special_rules' in weapon and weapon['special_rules']:
-                                weapon_line += f", {', '.join(weapon['special_rules'])}"
-
-                            html_content += f"""
-                            <div class="section">
-                                <div class="section-title">Arme équipée</div>
-                                <div class="section-content">{weapon_line}</div>
-                            </div>
-                            """
-
-                        other_options = []
-                        for group_name, opt_group in u.get("options", {}).items():
-                            # Exclure les groupes liés aux armes et aux montures
-                            if ("arme" in group_name.lower() or
-                                "weapon" in group_name.lower() or
-                                "monture" in group_name.lower() or
-                                "mount" in group_name.lower()):
-                                continue
-
-                            if isinstance(opt_group, list):
-                                for opt in opt_group:
-                                    other_options.append(opt["name"])
-                            elif isinstance(opt_group, dict):
-                                other_options.append(opt_group["name"])
-
-                        if other_options:
-                            html_content += f"""
-                            <div class="section">
-                                <div class="section-title">Options</div>
-                                <div class="section-content">{', '.join(other_options)}</div>
-                            </div>
-                            """
-
-                        if "Améliorations" in u.get("options", {}):
-                            improvements = []
-                            if isinstance(u["options"]["Améliorations"], list):
-                                improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
-                            elif isinstance(u["options"]["Améliorations"], dict):
-                                improvements = [u["options"]["Améliorations"]["name"]]
-
-                            if improvements:
-                                html_content += f"""
-                                <div class="section">
-                                    <div class="section-title">Améliorations d'unité</div>
-                                    <div class="section-content">{', '.join(improvements)}</div>
-                                </div>
-                                """
-
-                        if u.get("mount"):
-                            mount = u['mount']
-                            mount_rules = []
-                            if 'special_rules' in mount:
-                                mount_rules = mount['special_rules']
-
-                            html_content += f"""
-                            <div class="section">
-                                <div class="section-title">Monture</div>
-                                <div class="section-content">
-                                    <strong>{mount.get('name', '')}</strong>
-                            """
-
-                            if mount_rules:
-                                html_content += f"<br>{', '.join(mount_rules)}"
-
-                            html_content += """
-                                </div>
-                            </div>
-                            """
-
-                        html_content += "</div>"
-
-                    html_content += """
-                    </body>
-                    </html>
-                    """
-
-                    filename = f"{st.session_state.list_name or 'army_list'}.html"
-                    with open(filename, "w", encoding="utf-8") as f:
-                        f.write(html_content)
-
-                    with open(filename, "r", encoding="utf-8") as f:
-                        st.download_button(
-                            label="Télécharger le fichier HTML",
-                            data=f,
-                            file_name=filename,
-                            mime="text/html"
-                        )
-
-            with col22:
-                if st.button("🖨️ Imprimer la liste"):
-                    html_content = f"""
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>Liste d'armée OPR - {st.session_state.list_name}</title>
-                        <style>
-                            body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; }}
-                            h1 {{ color: #333; text-align: center; }}
-                            h2 {{ color: #555; text-align: center; }}
                             .army-card {{
-                                border: 1px solid #ddd;
-                                border-radius: 5px;
-                                padding: 10px;
-                                margin-bottom: 15px;
-                                background: white;
+                                border: none;
+                                box-shadow: none;
+                                margin-bottom: 10px;
                                 page-break-inside: avoid;
                             }}
-                            .unit-header {{
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                                margin-bottom: 8px;
-                                border-bottom: 1px solid #eee;
-                                padding-bottom: 5px;
-                            }}
-                            .unit-name {{
-                                font-size: 1.1em;
-                                font-weight: bold;
-                                color: #333;
-                                margin: 0;
-                            }}
-                            .unit-points {{
-                                color: #666;
-                                font-size: 0.9em;
-                            }}
-                            .badges-container {{
-                                display: flex;
-                                gap: 6px;
-                                margin-bottom: 10px;
-                                flex-wrap: wrap;
-                            }}
-                            .badge {{
-                                padding: 4px 8px;
-                                border-radius: 15px;
-                                font-size: 0.8em;
-                                font-weight: 500;
-                                color: white;
-                                text-align: center;
-                                background-color: #4a89dc;
-                            }}
-                            .section {{
-                                margin-bottom: 8px;
-                            }}
-                            .section-title {{
-                                font-weight: bold;
-                                color: #4a89dc;
-                                margin-bottom: 3px;
-                                font-size: 0.9em;
-                            }}
-                            .section-content {{
-                                margin-left: 10px;
-                                font-size: 0.85em;
-                                color: #555;
-                            }}
-                            @media print {{
-                                body {{
-                                    width: 100%;
-                                    margin: 0;
-                                    padding: 10px;
-                                }}
-                                .army-card {{
-                                    border: none;
-                                    box-shadow: none;
-                                    margin-bottom: 10px;
-                                    page-break-inside: avoid;
-                                }}
-                                @page {{
-                                    size: auto;
-                                    margin: 5mm;
-                                }}
-                            }}
-                        </style>
-                    </head>
-                    <body>
-                        <h1>Liste d'armée OPR - {st.session_state.list_name}</h1>
-                        <h2>{st.session_state.game} - {st.session_state.faction} - {st.session_state.army_total_cost}/{st.session_state.points} pts</h2>
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <h1>Liste d'armée OPR - {st.session_state.list_name}</h1>
+                    <h2>{st.session_state.game} - {st.session_state.faction} - {st.session_state.army_total_cost}/{st.session_state.points} pts</h2>
+                """
+
+                for u in st.session_state.army_list:
+                    coriace_value = calculate_coriace_value(u)
+
+                    html_content += f"""
+                    <div class="army-card">
+                        <div class="unit-header">
+                            <h3 class="unit-name">{u['name']}</h3>
+                            <span class="unit-points">{u['cost']} pts</span>
+                        </div>
+
+                        <div class="badges-container">
+                            <span class="badge quality-badge">Qualité {u['quality']}+</span>
+                            <span class="badge defense-badge">Défense {u['defense']}+</span>
                     """
 
-                    for u in st.session_state.army_list:
-                        coriace_value = calculate_coriace_value(u)
+                    if coriace_value > 0:
+                        html_content += f'<span class="badge coriace-badge">Coriace {coriace_value}</span>'
+
+                    if u.get("combined", False):
+                        html_content += '<span class="combined-badge">Unité combinée</span>'
+
+                    html_content += """
+                        </div>
+                    """
+
+                    if u.get("base_rules"):
+                        rules = [r for r in u['base_rules'] if not r.startswith("Coriace")]
+                        if rules:
+                            html_content += f"""
+                            <div class="section">
+                                <div class="section-title">Règles spéciales</div>
+                                <div class="section-content">{', '.join(rules)}</div>
+                            </div>
+                            """
+
+                    if 'current_weapon' in u:
+                        weapon = u['current_weapon']
+                        weapon_name = weapon.get('name', 'Arme de base')
+                        attacks = weapon.get('attacks', '?')
+                        armor_piercing = weapon.get('armor_piercing', '?')
+
+                        weapon_line = f"{weapon_name} | A{attacks} | PA({armor_piercing})"
+
+                        if 'special_rules' in weapon and weapon['special_rules']:
+                            weapon_line += f", {', '.join(weapon['special_rules'])}"
 
                         html_content += f"""
-                        <div class="army-card">
-                            <div class="unit-header">
-                                <h3 class="unit-name">{u['name']}</h3>
-                                <span class="unit-points">{u['cost']} pts</span>
-                            </div>
-
-                            <div class="badges-container">
-                                <span class="badge">Qualité {u['quality']}+</span>
-                                <span class="badge">Défense {u['defense']}+</span>
+                        <div class="section">
+                            <div class="section-title">Arme équipée</div>
+                            <div class="section-content">{weapon_line}</div>
+                        </div>
                         """
 
-                        if coriace_value > 0:
-                            html_content += f'<span class="badge">Coriace {coriace_value}</span>'
+                    other_options = []
+                    for group_name, opt_group in u.get("options", {}).items():
+                        # Exclure les groupes liés aux armes et aux montures
+                        if ("arme" in group_name.lower() or
+                            "weapon" in group_name.lower() or
+                            "monture" in group_name.lower() or
+                            "mount" in group_name.lower()):
+                            continue
 
-                        if u.get("combined", False):
-                            html_content += '<span class="badge" style="background-color: #28a745;">Unité combinée</span>'
+                        if isinstance(opt_group, list):
+                            for opt in opt_group:
+                                other_options.append(opt["name"])
+                        elif isinstance(opt_group, dict):
+                            other_options.append(opt_group["name"])
+
+                    if other_options:
+                        html_content += f"""
+                        <div class="section">
+                            <div class="section-title">Options</div>
+                            <div class="section-content">{', '.join(other_options)}</div>
+                        </div>
+                        """
+
+                    if "Améliorations" in u.get("options", {}):
+                        improvements = []
+                        if isinstance(u["options"]["Améliorations"], list):
+                            improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
+                        elif isinstance(u["options"]["Améliorations"], dict):
+                            improvements = [u["options"]["Améliorations"]["name"]]
+
+                        if improvements:
+                            html_content += f"""
+                            <div class="section">
+                                <div class="section-title">Améliorations d'unité</div>
+                                <div class="section-content">{', '.join(improvements)}</div>
+                            </div>
+                            """
+
+                    if u.get("mount"):
+                        mount = u['mount']
+                        mount_rules = []
+                        if 'special_rules' in mount:
+                            mount_rules = mount['special_rules']
+
+                        html_content += f"""
+                        <div class="section">
+                            <div class="section-title">Monture</div>
+                            <div class="section-content">
+                                <strong>{mount.get('name', '')}</strong>
+                        """
+
+                        if mount_rules:
+                            html_content += f"<br>{', '.join(mount_rules)}"
 
                         html_content += """
                             </div>
+                        </div>
                         """
 
-                        if u.get("base_rules"):
-                            rules = [r for r in u['base_rules'] if not r.startswith("Coriace")]
-                            if rules:
-                                html_content += f"""
-                                <div class="section">
-                                    <div class="section-title">Règles spéciales</div>
-                                    <div class="section-content">{', '.join(rules)}</div>
-                                </div>
-                                """
+                    html_content += "</div>"
 
-                        if 'current_weapon' in u:
-                            weapon = u['current_weapon']
-                            weapon_name = weapon.get('name', 'Arme de base')
-                            attacks = weapon.get('attacks', '?')
-                            armor_piercing = weapon.get('armor_piercing', '?')
+                html_content += """
+                </body>
+                </html>
+                """
 
-                            weapon_line = f"{weapon_name} | A{attacks} | PA({armor_piercing})"
+                filename = f"{st.session_state.list_name or 'army_list'}.html"
+                with open(filename, "w", encoding="utf-8") as f:
+                    f.write(html_content)
 
-                            if 'special_rules' in weapon and weapon['special_rules']:
-                                weapon_line += f", {', '.join(weapon['special_rules'])}"
-
-                            html_content += f"""
-                            <div class="section">
-                                <div class="section-title">Arme équipée</div>
-                                <div class="section-content">{weapon_line}</div>
-                            </div>
-                            """
-
-                        other_options = []
-                        for group_name, opt_group in u.get("options", {}).items():
-                            # Exclure les groupes liés aux armes et aux montures
-                            if ("arme" in group_name.lower() or
-                                "weapon" in group_name.lower() or
-                                "monture" in group_name.lower() or
-                                "mount" in group_name.lower()):
-                                continue
-
-                            if isinstance(opt_group, list):
-                                for opt in opt_group:
-                                    other_options.append(opt["name"])
-                            elif isinstance(opt_group, dict):
-                                other_options.append(opt_group["name"])
-
-                        if other_options:
-                            html_content += f"""
-                            <div class="section">
-                                <div class="section-title">Options</div>
-                                <div class="section-content">{', '.join(other_options)}</div>
-                            </div>
-                            """
-
-                        if "Améliorations" in u.get("options", {}):
-                            improvements = []
-                            if isinstance(u["options"]["Améliorations"], list):
-                                improvements = [opt["name"] for opt in u["options"]["Améliorations"]]
-                            elif isinstance(u["options"]["Améliorations"], dict):
-                                improvements = [u["options"]["Améliorations"]["name"]]
-
-                            if improvements:
-                                html_content += f"""
-                                <div class="section">
-                                    <div class="section-title">Améliorations d'unité</div>
-                                    <div class="section-content">{', '.join(improvements)}</div>
-                                </div>
-                                """
-
-                        if u.get("mount"):
-                            mount = u['mount']
-                            mount_rules = []
-                            if 'special_rules' in mount:
-                                mount_rules = mount['special_rules']
-
-                            html_content += f"""
-                            <div class="section">
-                                <div class="section-title">Monture</div>
-                                <div class="section-content">
-                                    <strong>{mount.get('name', '')}</strong>
-                            """
-
-                            if mount_rules:
-                                html_content += f"<br>{', '.join(mount_rules)}"
-
-                            html_content += """
-                                </div>
-                            </div>
-                            """
-
-                        html_content += "</div>"
-
-                    html_content += """
-                    <script>
-                        window.onload = function() {
-                            window.print();
-                            window.onafterprint = function() {
-                                window.close();
-                            };
-                        };
-                    </script>
-                    </body>
-                    </html>
-                    """
-
-                    filename = f"print_{st.session_state.list_name or 'army_list'}.html"
-                    with open(filename, "w", encoding="utf-8") as f:
-                        f.write(html_content)
-
-                    # Ouvrir dans un nouvel onglet pour impression
-                    with open(filename, "r", encoding="utf-8") as f:
-                        html_content = f.read()
-
-                    components.html(
-                        f"""
-                        <script>
-                        var w = window.open();
-                        w.document.open();
-                        w.document.write(`{html_content}`);
-                        w.document.close();
-                        </script>
-                        """,
-                        height=0
+                with open(filename, "r", encoding="utf-8") as f:
+                    st.download_button(
+                        label="Télécharger le fichier HTML",
+                        data=f,
+                        file_name=filename,
+                        mime="text/html"
                     )
 
         with col3:
