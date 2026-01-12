@@ -77,10 +77,10 @@ def main():
                                     "base_cost": 60,
                                     "quality": 3,
                                     "defense": 3,
-                                    "special_rules": ["Attaque versatile", "Héros", "Né pour la guerre"],
+                                    "special_rules": ["Attaque versatile", "Coriace (3)", "Héros", "Né pour la guerre"],
                                     "weapons": [
                                         {
-                                            "name": "Hallebarde lourde",
+                                            "name": "Arme à une main lourde",
                                             "range": "-",
                                             "attacks": 3,
                                             "armor_piercing": 1
@@ -88,20 +88,48 @@ def main():
                                     ],
                                     "upgrade_groups": [
                                         {
-                                            "group": "Option",
+                                            "group": "Améliorations de rôle",
                                             "type": "multiple",
+                                            "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
+                                            "options": [
+                                                {"name": "Conquérant", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
+                                                {"name": "Marauder", "cost": 30, "special_rules": ["Aura de combattant imprévisible"]},
+                                                {"name": "Porteur de la bannière de l'armée", "cost": 30, "special_rules": ["Effrayant (3)"]},
+                                                {"name": "Mage", "cost": 35, "special_rules": ["Aura de Voile fluctuant", "Lanceur de sorts (1)"]},
+                                                {"name": "Seigneur de Guerre", "cost": 35, "special_rules": ["Aura de Boost de Né pour la guerre"]},
+                                                {"name": "Sorcier", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
+                                                {"name": "Maître Sorcier", "cost": 60, "special_rules": ["Lanceur de sorts (3)"]}
+                                            ]
+                                        },
+                                        {
+                                            "group": "Remplacement d'arme",
+                                            "type": "weapon",
+                                            "description": "Choisissez une arme différente pour ce héros",
                                             "options": [
                                                 {
-                                                    "name": "Marauder (Aura de combat imprévisible)",
-                                                    "cost": 10,
-                                                    "special_rules": ["Aura de combat imprévisible"]
-                                                },
+                                                    "name": "Hallebarde lourde",
+                                                    "cost": 5,
+                                                    "weapon": {
+                                                        "name": "Hallebarde lourde",
+                                                        "range": "-",
+                                                        "attacks": 3,
+                                                        "armor_piercing": 1,
+                                                        "special_rules": ["Perforant"]
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "group": "Montures",
+                                            "type": "mount",
+                                            "description": "Ajoutez une monture à ce héros",
+                                            "options": [
                                                 {
                                                     "name": "Grande bête",
-                                                    "cost": 100,
+                                                    "cost": 65,
                                                     "mount": {
                                                         "name": "Grande bête",
-                                                        "special_rules": ["Coriace (3)", "Peur", "Mouvement rapide"]
+                                                        "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (+3)", "Impact (2)", "Rapide"]
                                                     }
                                                 }
                                             ]
@@ -127,9 +155,10 @@ def main():
                                         {
                                             "group": "Remplacement d'armes",
                                             "type": "weapon",
+                                            "description": "Remplacez les armes de base par une arme spécialisée",
                                             "options": [
                                                 {
-                                                    "name": "Lance (A1, Contre-charge)",
+                                                    "name": "Lance",
                                                     "cost": 35,
                                                     "weapon": {
                                                         "name": "Lance",
@@ -138,17 +167,6 @@ def main():
                                                         "armor_piercing": 0,
                                                         "special_rules": ["Contre-charge"]
                                                     }
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "group": "Option",
-                                            "type": "multiple",
-                                            "options": [
-                                                {
-                                                    "name": "Icône du Ravage (Aura de Défense versatile)",
-                                                    "cost": 20,
-                                                    "special_rules": ["Aura de Défense versatile"]
                                                 }
                                             ]
                                         }
@@ -492,7 +510,8 @@ def main():
             with col2:
                 if st.button("➡️ Ma liste"):
                     if st.session_state.game and st.session_state.faction:
-                        st.session_state.units = st.session_state["factions"][st.session_state.game][st.session_state.faction]["units"]
+                        faction_data = st.session_state["factions"][st.session_state.game][st.session_state.faction]
+                        st.session_state.units = faction_data["units"]
                         st.session_state.page = "army"
                         st.rerun()
                     else:
@@ -547,13 +566,27 @@ def main():
 
         # Options standards
         for group in unit.get("upgrade_groups", []):
-            group_name = "Option" if group["group"] == "Remplacement de figurine" else group["group"]
+            group_name = group["group"]
 
             st.write(f"### {group_name}")
             if group.get("description"):
                 st.caption(group["description"])
 
-            if group.get("type") == "weapon":
+            # Cas spécial pour les améliorations de rôle (choix unique)
+            if "rôle" in group_name.lower() or "role" in group_name.lower():
+                choice = st.radio(
+                    group_name,
+                    ["— Aucun —"] + [f"{o['name']} (+{o['cost']} pts)" for o in group["options"]],
+                    key=f"{unit['name']}_{group['group']}"
+                )
+
+                if choice != "— Aucun —":
+                    # Extraire le nom de l'option sans le coût
+                    opt_name = choice.split(" (+")[0]
+                    opt = next(o for o in group["options"] if o["name"] == opt_name)
+                    total_cost += opt.get("cost", 0)
+                    options_selected[group["group"]] = opt
+            elif group.get("type") == "weapon":
                 choice = st.selectbox(
                     group["group"],
                     ["— Garder l'arme de base —"] + [o["name"] for o in group["options"]],
@@ -754,6 +787,11 @@ def main():
                 font-size: 0.8em;
                 margin-left: 10px;
             }}
+            .weapon-specs {{
+                font-style: italic;
+                color: #666;
+                font-size: 0.9em;
+            }}
             </style>
 
             <div class="army-card">
@@ -788,19 +826,24 @@ def main():
                     </div>
                     """
 
-            # Arme équipée (UNIQUEMENT l'arme actuelle)
+            # Arme équipée (UNIQUEMENT l'arme actuelle avec ses règles spéciales sur la même ligne)
             if 'current_weapon' in u:
                 weapon = u['current_weapon']
+                weapon_name = weapon.get('name', 'Arme de base')
+                attacks = weapon.get('attacks', '?')
+                armor_piercing = weapon.get('armor_piercing', '?')
+
+                # Construction de la ligne d'arme avec ses règles spéciales
+                weapon_line = f"{weapon_name} | A{attacks} | PA({armor_piercing})"
+
+                # Ajouter les règles spéciales de l'arme sur la même ligne
+                if 'special_rules' in weapon and weapon['special_rules']:
+                    weapon_line += f" <span class='weapon-specs'>{', '.join(weapon['special_rules'])}</span>"
+
                 html_content += f"""
                 <div class="section">
                     <div class="section-title">Arme équipée</div>
-                    <div class="section-content">
-                        {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
-                """
-                if 'special_rules' in weapon and weapon['special_rules']:
-                    html_content += f"<br>{', '.join(weapon['special_rules'])}"
-                html_content += """
-                    </div>
+                    <div class="section-content">{weapon_line}</div>
                 </div>
                 """
 
@@ -824,7 +867,7 @@ def main():
                 </div>
                 """
 
-            # Monture (si elle existe) - Section spécifique
+            # Monture (si elle existe) - Section spécifique avec ses caractéristiques
             if u.get("mount"):
                 mount = u['mount']
                 mount_rules = []
@@ -838,6 +881,7 @@ def main():
                         <strong>{mount.get('name', '')}</strong>
                 """
 
+                # Afficher les règles spéciales de la monture
                 if mount_rules:
                     html_content += f"<br>{', '.join(mount_rules)}"
 
@@ -977,6 +1021,11 @@ def main():
                             font-size: 0.8em;
                             margin-left: 10px;
                         }}
+                        .weapon-specs {{
+                            font-style: italic;
+                            color: #666;
+                            font-size: 0.9em;
+                        }}
                     </style>
                 </head>
                 <body>
@@ -1021,16 +1070,19 @@ def main():
 
                     if 'current_weapon' in u:
                         weapon = u['current_weapon']
+                        weapon_name = weapon.get('name', 'Arme de base')
+                        attacks = weapon.get('attacks', '?')
+                        armor_piercing = weapon.get('armor_piercing', '?')
+
+                        weapon_line = f"{weapon_name} | A{attacks} | PA({armor_piercing})"
+
+                        if 'special_rules' in weapon and weapon['special_rules']:
+                            weapon_line += f" <span class='weapon-specs'>{', '.join(weapon['special_rules'])}</span>"
+
                         html_content += f"""
                         <div class="section">
                             <div class="section-title">Arme équipée</div>
-                            <div class="section-content">
-                                {weapon.get('name', 'Arme de base')} | A{weapon.get('attacks', '?')} | PA({weapon.get('armor_piercing', '?')})
-                        """
-                        if 'special_rules' in weapon and weapon['special_rules']:
-                            html_content += f"<br>{', '.join(weapon['special_rules'])}"
-                        html_content += """
-                            </div>
+                            <div class="section-content">{weapon_line}</div>
                         </div>
                         """
 
