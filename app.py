@@ -594,7 +594,8 @@ def main():
                 "type": unit.get("type", "Infantry"),
                 "combined": combined_unit,
                 "weapon_replaced": weapon_replaced,
-                "base_weapon": default_weapon  # Stocker l'arme de base pour référence
+                "base_weapon": default_weapon,
+                "selected_weapon": current_weapon if weapon_replaced else None
             }
 
             # Ajouter la monture si elle existe
@@ -770,14 +771,14 @@ def main():
                 </div>
                 """
 
-            # Options (sans l'arme de base si elle a été remplacée)
+            # Options (sans les armes, qu'elles soient de base ou de remplacement)
             other_options = []
             for group_name, opt_group in u.get("options", {}).items():
-                # Ne pas afficher les options d'armes si l'arme a été remplacée
-                if group_name == "Remplacement d'arme" and u.get("weapon_replaced", False):
+                # Exclure complètement les groupes d'armes (base ou remplacement)
+                if group_name == "Remplacement d'arme":
                     continue
 
-                if group_name not in ["Améliorations", "Remplacement d'arme", "Montures"]:
+                if group_name not in ["Améliorations", "Montures"]:
                     if isinstance(opt_group, list):
                         for opt in opt_group:
                             other_options.append(opt["name"])
@@ -1006,11 +1007,11 @@ def main():
 
                     other_options = []
                     for group_name, opt_group in u.get("options", {}).items():
-                        # Ne pas afficher les options d'armes si l'arme a été remplacée
-                        if group_name == "Remplacement d'arme" and u.get("weapon_replaced", False):
+                        # Exclure complètement les groupes d'armes (base ou remplacement)
+                        if group_name == "Remplacement d'arme":
                             continue
 
-                        if group_name not in ["Améliorations", "Remplacement d'arme", "Montures"]:
+                        if group_name not in ["Améliorations", "Montures"]:
                             if isinstance(opt_group, list):
                                 for opt in opt_group:
                                     other_options.append(opt["name"])
