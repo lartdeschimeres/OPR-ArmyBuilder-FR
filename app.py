@@ -7,6 +7,7 @@ import streamlit.components.v1 as components
 from datetime import datetime
 import hashlib
 import os
+import traceback
 
 def main():
     # Initialisation de la session
@@ -35,6 +36,33 @@ def main():
             "unit_per_points": 150,
         }
     }
+
+    def repair_army_list(army_list):
+        """Répare une liste d'armée sauvegardée si elle a des problèmes de structure"""
+        repaired_list = []
+        for unit in army_list:
+            try:
+                if not isinstance(unit, dict):
+                    continue
+
+                # Créer une copie pour ne pas modifier l'original
+                repaired_unit = unit.copy()
+
+                # Ajouter les champs manquants avec des valeurs par défaut
+                repaired_unit.setdefault("type", "Infantry")
+                repaired_unit.setdefault("base_cost", repaired_unit.get("cost", 0))
+
+                # Vérifier les champs obligatoires
+                required_keys = ["name", "cost", "quality", "defense"]
+                if all(key in repaired_unit for key in required_keys):
+                    repaired_list.append(repaired_unit)
+                else:
+                    st.warning(f"Unité ignorée: {repaired_unit.get('name', 'Inconnue')} (champs manquants)")
+            except Exception as e:
+                st.warning(f"Erreur de réparation d'unité: {str(e)}")
+                continue
+
+        return repaired_list
 
     # Initialisation de l'état de la session
     def init_session_state():
@@ -67,6 +95,9 @@ def main():
 
             # Charger les factions depuis les fichiers
             faction_files = list(FACTIONS_DIR.glob("*.json"))
+            if not faction_files:
+                st.warning(f"Aucun fichier JSON trouvé dans {FACTIONS_DIR}")
+
             for fp in faction_files:
                 try:
                     with open(fp, encoding="utf-8") as f:
@@ -351,21 +382,14 @@ def main():
                                 st.session_state.list_name = army_list['name']
                                 st.session_state.army_total_cost = army_list['total_cost']
 
-                                valid_army_list = []
-                                for unit in army_list['army_list']:
-                                    unit_required_keys = ["name", "cost", "quality", "defense", "type"]
-                                    if all(key in unit for key in unit_required_keys):
-                                        if "base_cost" not in unit:
-                                            unit["base_cost"] = unit.get("cost", 0)
-                                        valid_army_list.append(unit)
-                                    else:
-                                        st.warning(f"Unité invalide ignorée: {unit.get('name', 'Inconnue')}")
+                                # Utiliser la fonction de réparation
+                                st.session_state.army_list = repair_army_list(army_list['army_list'])
 
-                                st.session_state.army_list = valid_army_list
                                 st.session_state.page = "army"
                                 st.rerun()
                             except Exception as e:
                                 st.error(f"Erreur lors du chargement: {str(e)}")
+                                st.error(f"Détails: {traceback.format_exc()}")
 
                 with col2:
                     if st.button(f"❌ Supprimer", key=f"delete_{i}"):
@@ -381,47 +405,53 @@ def main():
         st.divider()
         st.subheader("Créer une nouvelle liste")
 
-        st.session_state.game = st.selectbox(
-            "Jeu",
-            st.session_state["games"],
-            index=0 if st.session_state["games"] else None
-        )
-
-        if st.session_state.game:
-            available_factions = list(st.session_state["factions"][st.session_state.game].keys())
-            st.session_state.faction = st.selectbox(
-                "Faction",
-                available_factions,
-                index=0 if available_factions else None
+        if not st.session_state["games"]:
+            st.error("Aucun jeu disponible. Vérifiez que vos fichiers JSON sont dans le bon dossier.")
+        else:
+            st.session_state.game = st.selectbox(
+                "Jeu",
+                st.session_state["games"],
+                index=0 if st.session_state["games"] else None
             )
 
-            st.session_state.points = st.number_input(
-                "Format de la partie (points)",
-                min_value=250,
-                step=50,
-                value=1000
-            )
+            if st.session_state.game:
+                available_factions = list(st.session_state["factions"][st.session_state.game].keys())
+                if not available_factions:
+                    st.warning(f"Aucune faction disponible pour {st.session_state.game}")
+                else:
+                    st.session_state.faction = st.selectbox(
+                        "Faction",
+                        available_factions,
+                        index=0 if available_factions else None
+                    )
 
-            st.session_state.list_name = st.text_input(
-                "Nom de la liste",
-                value="Ma liste d'armée"
-            )
+                    st.session_state.points = st.number_input(
+                        "Format de la partie (points)",
+                        min_value=250,
+                        step=250,
+                        value=1000
+                    )
 
-            col1, col2 = st.columns(2)
+                    st.session_state.list_name = st.text_input(
+                        "Nom de la liste",
+                        value="Ma liste d'armée"
+                    )
 
-            with col1:
-                if st.button("💾 Sauvegarder la configuration"):
-                    st.success("Configuration sauvegardée")
+                    col1, col2 = st.columns(2)
 
-            with col2:
-                if st.button("➡️ Ma liste"):
-                    if st.session_state.game and st.session_state.faction:
-                        faction_data = st.session_state["factions"][st.session_state.game][st.session_state.faction]
-                        st.session_state.units = faction_data["units"]
-                        st.session_state.page = "army"
-                        st.rerun()
-                    else:
-                        st.error("Veuillez sélectionner un jeu et une faction")
+                    with col1:
+                        if st.button("💾 Sauvegarder la configuration"):
+                            st.success("Configuration sauvegardée")
+
+                    with col2:
+                        if st.button("➡️ Ma liste"):
+                            if st.session_state.game and st.session_state.faction:
+                                faction_data = st.session_state["factions"][st.session_state.game][st.session_state.faction]
+                                st.session_state.units = faction_data["units"]
+                                st.session_state.page = "army"
+                                st.rerun()
+                            else:
+                                st.error("Veuillez sélectionner un jeu et une faction")
 
     # PAGE 3 — Composition de l'armée
     elif st.session_state.page == "army":
