@@ -446,7 +446,7 @@ def main():
         # Option pour unité combinée (uniquement pour les unités non-héros)
         combined_unit = False
         if unit.get("type", "").lower() != "hero":
-            combined_unit = st.checkbox("Unité combinée (x2 effectif, coût x2 hors améliorations)", value=False)
+            combined_unit = st.checkbox("Unité combinée (x2 effectif, coût x2)", value=False)
 
         total_cost = unit["base_cost"]
         if combined_unit:
@@ -457,6 +457,7 @@ def main():
         current_weapon = None
         mount_selected = None
         weapon_replaced = False
+        weapon_cost_multiplier = 2 if combined_unit else 1
 
         # Trouver l'arme de base par défaut
         default_weapon = unit.get("weapons", [{"name": "Arme non définie", "attacks": "?", "armor_piercing": "?"}])[0]
@@ -481,7 +482,8 @@ def main():
                 if choice != "— Aucun —":
                     opt_name = choice.split(" (+")[0]
                     opt = next(o for o in group["options"] if o["name"] == opt_name)
-                    total_cost += opt.get("cost", 0)
+                    cost = opt.get("cost", 0) * weapon_cost_multiplier
+                    total_cost += cost
                     options_selected[group["group"]] = opt
 
             # Remplacement d'arme (choix unique avec radio buttons et détails complets)
@@ -489,7 +491,7 @@ def main():
                 weapon_options = ["— Garder l'arme de base —"]
                 for opt in group["options"]:
                     weapon_name = opt["name"]
-                    weapon_cost = opt.get("cost", 0)
+                    weapon_cost = opt.get("cost", 0) * weapon_cost_multiplier
                     weapon_details = []
 
                     # Récupérer les détails complets de l'arme
@@ -514,7 +516,8 @@ def main():
                 if choice != "— Garder l'arme de base —":
                     opt_name = choice.split(" (+")[0]
                     opt = next(o for o in group["options"] if o["name"] == opt_name)
-                    total_cost += opt.get("cost", 0)
+                    cost = opt.get("cost", 0) * weapon_cost_multiplier
+                    total_cost += cost
                     options_selected[group["group"]] = opt
                     current_weapon = opt["weapon"].copy()
                     current_weapon["name"] = opt["name"]
@@ -547,6 +550,18 @@ def main():
                     options_selected[group["group"]] = opt
                     mount_selected = opt.get("mount")
 
+            # Options multiples (checkboxes)
+            elif group.get("type") == "multiple":
+                selected_options = []
+                for opt in group["options"]:
+                    display_cost = opt["cost"] * weapon_cost_multiplier if combined_unit else opt["cost"]
+                    if st.checkbox(f"{opt['name']} (+{display_cost} pts)", key=f"{unit['name']}_{group['group']}_{opt['name']}"):
+                        selected_options.append(opt)
+                        total_cost += opt["cost"] * weapon_cost_multiplier
+
+                if selected_options:
+                    options_selected[group["group"]] = selected_options
+
         # Section pour les améliorations d'unité (Sergent, Bannière, Musicien) en colonnes UNIQUEMENT pour les unités non-héros
         if unit.get("type", "").lower() != "hero":
             st.divider()
@@ -554,25 +569,28 @@ def main():
 
             col1, col2, col3 = st.columns(3)
             with col1:
-                if st.checkbox("Sergent (+5 pts)"):
-                    total_cost += 5
+                display_cost = 5 * weapon_cost_multiplier
+                if st.checkbox(f"Sergent (+{display_cost} pts)"):
+                    total_cost += 5 * weapon_cost_multiplier
                     if "Améliorations" not in options_selected:
                         options_selected["Améliorations"] = []
-                    options_selected["Améliorations"].append({"name": "Sergent", "cost": 5})
+                    options_selected["Améliorations"].append({"name": "Sergent", "cost": 5 * weapon_cost_multiplier})
 
             with col2:
-                if st.checkbox("Bannière (+5 pts)"):
-                    total_cost += 5
+                display_cost = 5 * weapon_cost_multiplier
+                if st.checkbox(f"Bannière (+{display_cost} pts)"):
+                    total_cost += 5 * weapon_cost_multiplier
                     if "Améliorations" not in options_selected:
                         options_selected["Améliorations"] = []
-                    options_selected["Améliorations"].append({"name": "Bannière", "cost": 5})
+                    options_selected["Améliorations"].append({"name": "Bannière", "cost": 5 * weapon_cost_multiplier})
 
             with col3:
-                if st.checkbox("Musicien (+10 pts)"):
-                    total_cost += 10
+                display_cost = 10 * weapon_cost_multiplier
+                if st.checkbox(f"Musicien (+{display_cost} pts)"):
+                    total_cost += 10 * weapon_cost_multiplier
                     if "Améliorations" not in options_selected:
                         options_selected["Améliorations"] = []
-                    options_selected["Améliorations"].append({"name": "Musicien", "cost": 10})
+                    options_selected["Améliorations"].append({"name": "Musicien", "cost": 10 * weapon_cost_multiplier})
 
         # Calcul de la valeur de Coriace
         coriace_value = calculate_coriace_value({
@@ -743,7 +761,7 @@ def main():
                     </div>
                     """
 
-            # Arme équipée (affichage simplifié sans choix)
+            # Arme équipée
             if 'current_weapon' in u:
                 weapon = u['current_weapon']
                 weapon_name = weapon.get('name', 'Arme de base')
