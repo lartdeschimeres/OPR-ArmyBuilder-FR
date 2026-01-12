@@ -87,44 +87,67 @@ def main():
             return {}, []
 
     def calculate_coriace_value(unit_data):
-        """Calcule la valeur totale de Coriace pour une unité"""
-        coriace_value = 0
+    """Calcule la valeur totale de Coriace pour une unité"""
+    coriace_value = 0
 
-        # 1. Vérifier dans les règles spéciales
+    try:
+        # 1. Vérifier dans les règles spéciales de base
         if 'base_rules' in unit_data:
             for rule in unit_data['base_rules']:
                 if isinstance(rule, str):
-                    match = re.search(r'Coriace \((\d+)\)', rule)
-                    if match:
-                        coriace_value += int(match.group(1))
+                    try:
+                        match = re.search(r'Coriace \((\d+)\)', rule)
+                        if match:
+                            coriace_value += int(match.group(1))
+                    except:
+                        continue
 
         # 2. Vérifier dans les options
         if 'options' in unit_data:
             for option_group in unit_data['options'].values():
-                if isinstance(option_group, list):
-                    for option in option_group:
-                        if isinstance(option, dict) and 'special_rules' in option:
-                            for rule in option['special_rules']:
-                                if isinstance(rule, str):
+                try:
+                    if isinstance(option_group, list):
+                        for option in option_group:
+                            if isinstance(option, dict) and 'special_rules' in option:
+                                for rule in option['special_rules']:
+                                    if isinstance(rule, str):
+                                        try:
+                                            match = re.search(r'Coriace \((\d+)\)', rule)
+                                            if match:
+                                                coriace_value += int(match.group(1))
+                                        except:
+                                            continue
+                    elif isinstance(option_group, dict) and 'special_rules' in option_group:
+                        for rule in option_group['special_rules']:
+                            if isinstance(rule, str):
+                                try:
                                     match = re.search(r'Coriace \((\d+)\)', rule)
                                     if match:
                                         coriace_value += int(match.group(1))
-                elif isinstance(option_group, dict) and 'special_rules' in option_group:
-                    for rule in option_group['special_rules']:
-                        if isinstance(rule, str):
-                            match = re.search(r'Coriace \((\d+)\)', rule)
-                            if match:
-                                coriace_value += int(match.group(1))
+                                except:
+                                    continue
+                except:
+                    continue
 
         # 3. Vérifier dans la monture
         if 'mount' in unit_data and isinstance(unit_data['mount'], dict) and 'special_rules' in unit_data['mount']:
             for rule in unit_data['mount']['special_rules']:
                 if isinstance(rule, str):
-                    match = re.search(r'Coriace \((\+?\d+\))', rule)
-                    if match:
-                        coriace_value += int(match.group(1).replace('+', ''))
+                    try:
+                        match = re.search(r'Coriace \((\d+\)|\+\d+\)', rule)
+                        if match:
+                            # Extraire le nombre
+                            numbers = re.findall(r'\d+', match.group(0))
+                            if numbers:
+                                coriace_value += int(numbers[0])
+                    except:
+                        continue
 
-        return coriace_value
+    except Exception as e:
+        st.error(f"Erreur dans calculate_coriace_value: {str(e)}")
+        return 0
+
+    return coriace_value
 
     # Charger les factions au démarrage
     if not st.session_state["factions"] or not st.session_state["games"]:
