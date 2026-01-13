@@ -1,12 +1,21 @@
+import json
 import streamlit as st
 import re
+from pathlib import Path
 from copy import deepcopy
 
 st.set_page_config(page_title="OPR Army Forge FR", layout="wide")
 
-# --------------------------------------------------
+# ==================================================
+# PATHS
+# ==================================================
+
+BASE_DIR = Path(__file__).resolve().parent
+FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
+
+# ==================================================
 # SESSION STATE
-# --------------------------------------------------
+# ==================================================
 
 if "page" not in st.session_state:
     st.session_state.page = "setup"
@@ -14,11 +23,8 @@ if "page" not in st.session_state:
 if "army" not in st.session_state:
     st.session_state.army = []
 
-if "game" not in st.session_state:
-    st.session_state.game = None
-
-if "faction" not in st.session_state:
-    st.session_state.faction = None
+if "faction_data" not in st.session_state:
+    st.session_state.faction_data = None
 
 if "list_name" not in st.session_state:
     st.session_state.list_name = ""
@@ -27,9 +33,9 @@ if "points_limit" not in st.session_state:
     st.session_state.points_limit = 2000
 
 
-# --------------------------------------------------
+# ==================================================
 # UTILITAIRES
-# --------------------------------------------------
+# ==================================================
 
 def extract_coriace(rules):
     total = 0
@@ -40,43 +46,12 @@ def extract_coriace(rules):
     return total
 
 
-def format_rules(rules):
-    return ", ".join(sorted(set(rules))) if rules else "Aucune"
-
-
-# --------------------------------------------------
-# DONNÉES EXEMPLE (stub faction)
-# --------------------------------------------------
-
-UNIT_TEMPLATE = {
-    "name": "Maître de la Guerre Élu",
-    "type": "Hero",
-    "base_cost": 60,
-    "quality": 4,
-    "defense": 4,
-    "base_rules": [
-        "Héros",
-        "Né pour la guerre",
-        "Coriace (3)"
-    ],
-    "option_groups": {
-        "role": [
-            {"name": "Seigneur de Guerre", "cost": 35},
-            {"name": "Conquérant", "cost": 20}
-        ],
-        "mount": [
-            {
-                "name": "Dragon du Ravage",
-                "cost": 320,
-                "rules": [
-                    "Coriace (+12)",
-                    "Volant",
-                    "Effrayant (2)"
-                ]
-            }
-        ]
-    }
-}
+def load_factions():
+    factions = []
+    for fp in FACTIONS_DIR.glob("*.json"):
+        with open(fp, encoding="utf-8") as f:
+            factions.append(json.load(f))
+    return factions
 
 
 # ==================================================
@@ -86,33 +61,31 @@ UNIT_TEMPLATE = {
 if st.session_state.page == "setup":
     st.title("⚙️ Création de la liste")
 
-    col1, col2 = st.columns(2)
+    if not FACTIONS_DIR.exists():
+        st.error(f"Dossier introuvable : {FACTIONS_DIR}")
+        st.stop()
 
-    with col1:
-        st.session_state.game = st.selectbox(
-            "Jeu",
-            ["Age of Fantasy", "Grimdark Future"]
-        )
+    factions = load_factions()
 
-        st.session_state.faction = st.selectbox(
-            "Faction",
-            ["Disciples de la Guerre", "Sœurs Bénies", "Autre faction"]
-        )
+    games = sorted(set(f["game"] for f in factions))
+    selected_game = st.selectbox("Jeu", games)
 
-    with col2:
-        st.session_state.list_name = st.text_input(
-            "Nom de la liste",
-            value=st.session_state.list_name
-        )
+    available_factions = [f for f in factions if f["game"] == selected_game]
+    faction_names = [f["faction"] for f in available_factions]
 
-        st.session_state.points_limit = st.number_input(
-            "Limite de points",
-            min_value=250,
-            step=250,
-            value=st.session_state.points_limit
-        )
+    selected_faction_name = st.selectbox("Faction", faction_names)
+    selected_faction = next(f for f in available_factions if f["faction"] == selected_faction_name)
 
-    if st.button("➡️ Créer / Continuer la liste"):
+    st.session_state.list_name = st.text_input("Nom de la liste", st.session_state.list_name)
+    st.session_state.points_limit = st.number_input(
+        "Limite de points",
+        min_value=250,
+        step=250,
+        value=st.session_state.points_limit
+    )
+
+    if st.button("➡️ Créer / Continuer"):
+        st.session_state.faction_data = selected_faction
         st.session_state.page = "army"
         st.rerun()
 
@@ -122,12 +95,13 @@ if st.session_state.page == "setup":
 # ==================================================
 
 if st.session_state.page == "army":
-    st.title(f"📜 {st.session_state.list_name or 'Ma liste'}")
+    faction = st.session_state.faction_data
+    units = faction["units"]
 
+    st.title(f"📜 {st.session_state.list_name or 'Ma liste'}")
     st.caption(
-        f"Jeu : {st.session_state.game} | "
-        f"Faction : {st.session_state.faction} | "
-        f"Format : {st.session_state.points_limit} pts"
+        f"{faction['game']} | {faction['faction']} | "
+        f"{st.session_state.points_limit} pts"
     )
 
     if st.button("⬅️ Retour configuration"):
@@ -143,31 +117,38 @@ if st.session_state.page == "army":
     with col_left:
         st.header("Ajouter une unité")
 
-        unit = deepcopy(UNIT_TEMPLATE)
-        st.subheader(unit["name"])
+        unit_names = [u["name"] for u in units]
+        selected_name = st.selectbox("Unité", unit_names)
+        base_unit = next(u for u in units if u["name"] == selected_name)
+        unit = deepcopy(base_unit)
 
-        selected_options = []
+        total_cost = unit["base_cost"]
+        final_rules = list(unit.get("special_rules", []))
+        selected_options = {}
         selected_mount = None
-        extra_cost = 0
 
-        for group, options in unit["option_groups"].items():
-            names = ["Aucune"] + [o["name"] for o in options]
-            choice = st.selectbox(group.capitalize(), names, key=f"{group}_select")
+        st.subheader("Options")
+
+        for group in unit.get("upgrade_groups", []):
+            options = ["Aucune"] + [o["name"] for o in group["options"]]
+            choice = st.selectbox(group["group"], options, key=f"{unit['name']}_{group['group']}")
 
             if choice != "Aucune":
-                opt = next(o for o in options if o["name"] == choice)
-                extra_cost += opt["cost"]
+                opt = next(o for o in group["options"] if o["name"] == choice)
+                total_cost += opt.get("cost", 0)
 
-                if group == "mount":
+                if group["type"] == "mount":
                     selected_mount = opt
                 else:
-                    selected_options.append(opt)
+                    selected_options[group["group"]] = opt
 
-        total_cost = unit["base_cost"] + extra_cost
+                if "special_rules" in opt:
+                    final_rules.extend(opt["special_rules"])
 
         if st.button("➕ Ajouter à l'armée"):
             st.session_state.army.append({
                 "profile": unit,
+                "rules": final_rules,
                 "options": selected_options,
                 "mount": selected_mount,
                 "cost": total_cost
@@ -194,26 +175,24 @@ if st.session_state.page == "army":
                         st.subheader(profile["name"])
 
                         q, d, c = st.columns(3)
-
                         q.metric("Qualité", f"{profile['quality']}+")
                         d.metric("Défense", f"{profile['defense']}+")
 
-                        base_coriace = extract_coriace(profile["base_rules"])
-                        mount_coriace = extract_coriace(u["mount"]["rules"]) if u["mount"] else 0
-                        c.metric("Coriace total", base_coriace + mount_coriace)
+                        coriace_total = extract_coriace(u["rules"])
+                        c.metric("Coriace total", coriace_total)
 
                         st.markdown("**Règles spéciales**")
-                        st.caption(format_rules(profile["base_rules"]))
+                        st.caption(", ".join(sorted(set(u["rules"]))))
 
                         if u["options"]:
                             st.markdown("**Options sélectionnées**")
-                            st.caption(", ".join(o["name"] for o in u["options"]))
+                            st.caption(", ".join(opt["name"] for opt in u["options"].values()))
 
                         if u["mount"]:
                             st.markdown("**Monture**")
                             st.caption(
                                 f"{u['mount']['name']} — "
-                                + format_rules(u["mount"]["rules"])
+                                + ", ".join(u['mount'].get("special_rules", []))
                             )
 
                     with cols[1]:
