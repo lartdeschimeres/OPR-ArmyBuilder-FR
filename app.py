@@ -5,9 +5,178 @@ from collections import defaultdict
 import streamlit as st
 import streamlit.components.v1 as components
 from datetime import datetime
-import hashlib
-import os
-import traceback
+
+def localstorage_get(key):
+    """Récupère une valeur du LocalStorage via JavaScript."""
+    get_js = f"""
+    <script>
+    const value = localStorage.getItem('{key}');
+    const input = window.parent.document.createElement('input');
+    input.style.display = 'none';
+    input.id = 'localstorage_value';
+    input.value = value || 'null';
+    window.parent.document.body.appendChild(input);
+    </script>
+    """
+    components.html(get_js, height=0)
+
+    js = """
+    <script>
+    const value = document.getElementById('localstorage_value').value;
+    window.parent.document.getElementById('localstorage_value').remove();
+    </script>
+    """
+    components.html(js, height=0)
+
+    # Utilise un input caché pour récupérer la valeur
+    value = st.text_input("localstorage_value", key="localstorage_value", label_visibility="collapsed")
+    return value
+
+def localstorage_set(key, value):
+    """Stocke une valeur dans le LocalStorage via JavaScript."""
+    set_js = f"""
+    <script>
+    localStorage.setItem('{key}', {json.dumps(value)});
+    </script>
+    """
+    components.html(set_js, height=0)
+
+def save_army_list(army_list_data, player_name="default"):
+    """Sauvegarde une liste d'armée dans le LocalStorage."""
+    army_lists = json.loads(localstorage_get(f"army_lists_{player_name}") or "[]")
+    army_lists.append(army_list_data)
+    localstorage_set(f"army_lists_{player_name}", army_lists)
+
+def load_army_lists(player_name="default"):
+    """Charge les listes d'armées depuis le LocalStorage."""
+    return json.loads(localstorage_get(f"army_lists_{player_name}") or "[]")
+
+def delete_army_list(player_name, list_index):
+    """Supprime une liste d'armée du LocalStorage."""
+    army_lists = json.loads(localstorage_get(f"army_lists_{player_name}") or "[]")
+    if list_index < 0 or list_index >= len(army_lists):
+        return False
+    army_lists.pop(list_index)
+    localstorage_set(f"army_lists_{player_name}", army_lists)
+    return True
+
+def export_data(player_name="default"):
+    """Exporte les données vers un fichier JSON."""
+    army_lists = json.loads(localstorage_get(f"army_lists_{player_name}") or "[]")
+    if not army_lists:
+        st.warning("Aucune donnée à exporter.")
+        return
+
+    data = {
+        "player_name": player_name,
+        "army_lists": army_lists,
+        "date": datetime.now().isoformat()
+    }
+
+    filename = f"opr_army_builder_{player_name}_{datetime.now().strftime('%Y%m%d')}.json"
+    json_str = json.dumps(data, indent=2, ensure_ascii=False)
+    st.download_button(
+        label="💾 Exporter mes données",
+        data=json_str,
+        file_name=filename,
+        mime="application/json"
+    )
+
+def import_data():
+    """Importe des données depuis un fichier JSON."""
+    uploaded_file = st.file_uploader("📁 Importer un fichier de sauvegarde", type=["json"])
+    if uploaded_file is not None:
+        try:
+            data = json.load(uploaded_file)
+            player_name = data.get("player_name", "default")
+            localstorage_set(f"army_lists_{player_name}", data["army_lists"])
+            st.session_state.current_player = player_name
+            st.session_state.player_army_lists = data["army_lists"]
+            st.success(f"Données importées pour le profil '{player_name}' !")
+            st.rerun()
+        except Exception as e:
+            st.error(f"Erreur lors de l'import: {str(e)}")
+
+def repair_army_list(army_list):
+    """Répare une liste d'armée sauvegardée si elle a des problèmes de structure."""
+    repaired_list = []
+    for unit in army_list:
+        try:
+            if not isinstance(unit, dict):
+                continue
+            repaired_unit = unit.copy()
+            repaired_unit.setdefault("type", "Infantry")
+            repaired_unit.setdefault("base_cost", repaired_unit.get("cost", 0))
+            required_keys = ["name", "cost", "quality", "defense"]
+            if all(key in repaired_unit for key in required_keys):
+                repaired_list.append(repaired_unit)
+        except Exception as e:
+            continue
+    return repaired_list
+
+def extract_coriace(rules):
+    """Extrait la valeur de Coriace à partir des règles."""
+    total = 0
+    for r in rules:
+        m = re.search(r"Coriace\s*\(?\+?(\d+)\)?", r)
+        if m:
+            total += int(m.group(1))
+    return total
+
+def calculate_total_coriace(unit_data):
+    """Calcule la valeur totale de Coriace pour une unité (inclut armes, montures et améliorations)."""
+    total = 0
+
+    # Règles de base
+    total += extract_coriace(unit_data.get("rules", []))
+
+    # Monture
+    if unit_data.get("mount"):
+        total += extract_coriace(unit_data["mount"].get("special_rules", []))
+
+    # Armes
+    for weapon in unit_data.get("weapons", []):
+        total += extract_coriace(weapon.get("special_rules", []))
+
+    # Options
+    for option_group in unit_data.get("options", {}).values():
+        if isinstance(option_group, list):
+            for option in option_group:
+                if isinstance(option, dict):
+                    total += extract_coriace(option.get("special_rules", []))
+        elif isinstance(option_group, dict):
+            total += extract_coriace(option_group.get("special_rules", []))
+
+    return total
+
+def validate_army(army_list, game_rules, total_cost, total_points):
+    """Valide une liste d'armée selon les règles du jeu."""
+    errors = []
+    if not army_list:
+        errors.append("Aucune unité dans l'armée")
+        return False, errors
+    if total_cost > total_points:
+        errors.append(f"Dépassement de {total_cost - total_points} pts (max: {total_points} pts)")
+    if game_rules:
+        heroes = sum(1 for u in army_list if u.get("type", "").lower() == "hero")
+        max_heroes = max(1, total_points // game_rules["hero_per_points"])
+        if heroes > max_heroes:
+            errors.append(f"Trop de héros ({heroes}/{max_heroes} max)")
+        unit_counts = defaultdict(int)
+        for unit in army_list:
+            unit_counts[unit["name"]] += 1
+        max_copies = 1 + (total_points // 750)
+        for unit_name, count in unit_counts.items():
+            if count > max_copies:
+                errors.append(f"Trop de copies de '{unit_name}' ({count}/{max_copies} max)")
+        for unit in army_list:
+            percentage = (unit["cost"] / total_points) * 100
+            if percentage > game_rules["max_unit_percentage"]:
+                errors.append(f"'{unit['name']}' dépasse {game_rules['max_unit_percentage']}% du total")
+        max_units = total_points // game_rules["unit_per_points"]
+        if len(army_list) > max_units:
+            errors.append(f"Trop d'unités ({len(army_list)}/{max_units} max)")
+    return len(errors) == 0, errors
 
 def main():
     # Initialisation de la session
@@ -17,15 +186,10 @@ def main():
     # Configuration de la page
     st.set_page_config(page_title="OPR Army Builder FR", layout="centered")
 
-    # Définir les chemins
+    # Définir les chemins locaux (pour les factions)
     BASE_DIR = Path(__file__).resolve().parent
     FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
-    SAVE_DIR = BASE_DIR / "saves"
-    PLAYERS_DIR = BASE_DIR / "players"
-
-    # Créer les dossiers s'ils n'existent pas
-    for dir_path in [SAVE_DIR, PLAYERS_DIR, FACTIONS_DIR]:
-        dir_path.mkdir(exist_ok=True, parents=True)
+    FACTIONS_DIR.mkdir(exist_ok=True, parents=True)
 
     # Règles spécifiques par jeu
     GAME_RULES = {
@@ -37,34 +201,6 @@ def main():
         }
     }
 
-    def repair_army_list(army_list):
-        """Répare une liste d'armée sauvegardée si elle a des problèmes de structure"""
-        repaired_list = []
-        for unit in army_list:
-            try:
-                if not isinstance(unit, dict):
-                    continue
-
-                # Créer une copie pour ne pas modifier l'original
-                repaired_unit = unit.copy()
-
-                # Ajouter les champs manquants avec des valeurs par défaut
-                repaired_unit.setdefault("type", "Infantry")
-                repaired_unit.setdefault("base_cost", repaired_unit.get("cost", 0))
-
-                # Vérifier les champs obligatoires
-                required_keys = ["name", "cost", "quality", "defense"]
-                if all(key in repaired_unit for key in required_keys):
-                    repaired_list.append(repaired_unit)
-                else:
-                    st.warning(f"Unité ignorée: {repaired_unit.get('name', 'Inconnue')} (champs manquants)")
-            except Exception as e:
-                st.warning(f"Erreur de réparation d'unité: {str(e)}")
-                continue
-
-        return repaired_list
-
-    # Initialisation de l'état de la session
     def init_session_state():
         defaults = {
             "game": None,
@@ -75,7 +211,7 @@ def main():
             "army_total_cost": 0,
             "is_army_valid": True,
             "validation_errors": [],
-            "current_player": None,
+            "current_player": "default",
             "player_army_lists": [],
             "units": [],
             "factions": {},
@@ -137,269 +273,49 @@ def main():
             st.error(f"Erreur critique lors du chargement: {str(e)}")
             return {}, []
 
-    def calculate_coriace_value(unit_data):
-        """Calcule la valeur totale de Coriace pour une unité"""
-        coriace_value = 0
-
-        try:
-            # 1. Vérifier dans les règles spéciales de base
-            if 'base_rules' in unit_data:
-                for rule in unit_data['base_rules']:
-                    if isinstance(rule, str):
-                        match = re.search(r'Coriace\s*\((\d+)\)', rule)
-                        if match:
-                            try:
-                                coriace_value += int(match.group(1))
-                            except:
-                                continue
-
-            # 2. Vérifier dans les options
-            if 'options' in unit_data:
-                for option_group in unit_data['options'].values():
-                    try:
-                        if isinstance(option_group, list):
-                            for option in option_group:
-                                if isinstance(option, dict) and 'special_rules' in option:
-                                    for rule in option['special_rules']:
-                                        if isinstance(rule, str):
-                                            match = re.search(r'Coriace\s*\((\d+)\)', rule)
-                                            if match:
-                                                try:
-                                                    coriace_value += int(match.group(1))
-                                                except:
-                                                    continue
-                        elif isinstance(option_group, dict) and 'special_rules' in option_group:
-                            for rule in option_group['special_rules']:
-                                if isinstance(rule, str):
-                                    match = re.search(r'Coriace\s*\((\d+)\)', rule)
-                                    if match:
-                                        try:
-                                            coriace_value += int(match.group(1))
-                                        except:
-                                            continue
-                    except:
-                        continue
-
-            # 3. Vérifier dans la monture
-            if 'mount' in unit_data and isinstance(unit_data['mount'], dict) and 'special_rules' in unit_data['mount']:
-                for rule in unit_data['mount']['special_rules']:
-                    if isinstance(rule, str):
-                        match = re.search(r'Coriace\s*\((\d+)\)', rule)
-                        if match:
-                            try:
-                                coriace_value += int(match.group(1))
-                            except:
-                                continue
-
-        except Exception as e:
-            st.error(f"Erreur dans calculate_coriace_value: {str(e)}")
-            return 0
-
-        return coriace_value
-
-    def validate_army(army_list, game_rules, total_cost, total_points):
-        errors = []
-
-        if not army_list:
-            errors.append("Aucune unité dans l'armée")
-            return False, errors
-
-        # Vérification du dépassement de points
-        if total_cost > total_points:
-            errors.append(f"Dépassement de {total_cost - total_points} pts (max: {total_points} pts)")
-
-        if game_rules and game_rules == GAME_RULES["Age of Fantasy"]:
-            # 1. Vérification du nombre de héros
-            heroes = sum(1 for u in army_list if u.get("type", "").lower() == "hero")
-            max_heroes = max(1, total_points // game_rules["hero_per_points"])
-            if heroes > max_heroes:
-                errors.append(f"Trop de héros ({heroes}/{max_heroes} max pour {total_points} pts)")
-
-            # 2. Vérification du nombre de copies d'une même unité
-            unit_counts = defaultdict(int)
-            for unit in army_list:
-                unit_counts[unit["name"]] += 1
-
-            max_copies = 1 + (total_points // 750)
-            for unit_name, count in unit_counts.items():
-                if count > max_copies:
-                    errors.append(f"Trop de copies de '{unit_name}' ({count}/{max_copies} max)")
-
-            # 3. Vérification du pourcentage maximum par unité
-            for unit in army_list:
-                percentage = (unit["cost"] / total_points) * 100
-                if percentage > game_rules["max_unit_percentage"]:
-                    errors.append(f"'{unit['name']}' ({unit['cost']} pts) dépasse {game_rules['max_unit_percentage']}% du total ({total_points} pts)")
-
-            # 4. Vérification du nombre maximum d'unités
-            max_units = total_points // game_rules["unit_per_points"]
-            if len(army_list) > max_units:
-                errors.append(f"Trop d'unités ({len(army_list)}/{max_units} max pour {total_points} pts)")
-
-        return len(errors) == 0, errors
-
-    # Fonctions pour la gestion des comptes joueurs
-    def hash_password(password):
-        return hashlib.sha256(password.encode()).hexdigest()
-
-    def create_player(username, password):
-        player_file = PLAYERS_DIR / f"{username}.json"
-        if player_file.exists():
-            return False, "Ce nom d'utilisateur existe déjà"
-
-        player_data = {
-            "username": username,
-            "password": hash_password(password),
-            "army_lists": []
-        }
-
-        try:
-            with open(player_file, "w", encoding="utf-8") as f:
-                json.dump(player_data, f, ensure_ascii=False, indent=2)
-            return True, "Compte créé avec succès"
-        except Exception as e:
-            return False, f"Erreur lors de la création du compte: {str(e)}"
-
-    def verify_player(username, password):
-        player_file = PLAYERS_DIR / f"{username}.json"
-        if not player_file.exists():
-            return False, "Nom d'utilisateur ou mot de passe incorrect"
-
-        try:
-            with open(player_file, encoding="utf-8") as f:
-                player_data = json.load(f)
-
-            if player_data["password"] != hash_password(password):
-                return False, "Nom d'utilisateur ou mot de passe incorrect"
-
-            return True, "Connexion réussie"
-        except Exception as e:
-            return False, f"Erreur lors de la vérification: {str(e)}"
-
-    def load_player_army_lists(username):
-        player_file = PLAYERS_DIR / f"{username}.json"
-        if not player_file.exists():
-            return []
-
-        try:
-            with open(player_file, encoding="utf-8") as f:
-                player_data = json.load(f)
-            return player_data.get("army_lists", [])
-        except Exception as e:
-            st.error(f"Erreur lors du chargement des listes: {str(e)}")
-            return []
-
-    def save_player_army_list(username, army_list_data):
-        player_file = PLAYERS_DIR / f"{username}.json"
-        if not player_file.exists():
-            return False
-
-        try:
-            with open(player_file, encoding="utf-8") as f:
-                player_data = json.load(f)
-
-            player_data["army_lists"].append(army_list_data)
-
-            with open(player_file, "w", encoding="utf-8") as f:
-                json.dump(player_data, f, ensure_ascii=False, indent=2)
-
-            return True
-        except Exception as e:
-            st.error(f"Erreur lors de la sauvegarde: {str(e)}")
-            return False
-
-    def delete_player_army_list(username, list_index):
-        player_file = PLAYERS_DIR / f"{username}.json"
-        if not player_file.exists():
-            return False
-
-        try:
-            with open(player_file, encoding="utf-8") as f:
-                player_data = json.load(f)
-
-            if list_index < 0 or list_index >= len(player_data["army_lists"]):
-                return False
-
-            player_data["army_lists"].pop(list_index)
-
-            with open(player_file, "w", encoding="utf-8") as f:
-                json.dump(player_data, f, ensure_ascii=False, indent=2)
-
-            return True
-        except Exception as e:
-            st.error(f"Erreur lors de la suppression: {str(e)}")
-            return False
-
     # Charger les factions au démarrage
     if not st.session_state["factions"] or not st.session_state["games"]:
         st.session_state["factions"], st.session_state["games"] = load_factions()
 
-        # Vérification après chargement
-        if not st.session_state["games"]:
-            st.error("Aucun jeu n'a pu être chargé. Vérifiez vos fichiers JSON.")
-        else:
-            st.write(f"Jeux disponibles: {', '.join(st.session_state['games'])}")
-            if "Age of Fantasy" in st.session_state["factions"]:
-                st.write(f"Factions pour Age of Fantasy: {list(st.session_state['factions']['Age of Fantasy'].keys())}")
-
-    # PAGE 1 — Connexion/Inscription
+    # PAGE 1 — Accueil (sans login, avec pseudo optionnel)
     if st.session_state.page == "login":
         st.title("OPR Army Builder 🇫🇷")
-        st.subheader("Connexion")
+        st.subheader("Bienvenue !")
 
-        tab1, tab2 = st.tabs(["Connexion", "Inscription"])
+        # Champ optionnel pour un pseudo
+        player_name = st.text_input("Pseudo (optionnel)", value=st.session_state.current_player)
 
-        with tab1:
-            username = st.text_input("Nom d'utilisateur")
-            password = st.text_input("Mot de passe", type="password")
-
-            if st.button("Se connecter"):
-                success, message = verify_player(username, password)
-                if success:
-                    st.session_state.current_player = username
-                    st.session_state.player_army_lists = load_player_army_lists(username)
-                    st.session_state.page = "setup"
-                    st.rerun()
-                else:
-                    st.error(message)
-
-        with tab2:
-            new_username = st.text_input("Nouveau nom d'utilisateur")
-            new_password = st.text_input("Nouveau mot de passe", type="password")
-            confirm_password = st.text_input("Confirmer le mot de passe", type="password")
-
-            if new_password != confirm_password:
-                st.warning("Les mots de passe ne correspondent pas")
-
-            if st.button("Créer un compte") and new_password == confirm_password:
-                success, message = create_player(new_username, new_password)
-                st.info(message)
-                if success:
-                    st.session_state.current_player = new_username
-                    st.session_state.page = "setup"
-                    st.rerun()
+        if st.button("Commencer"):
+            st.session_state.current_player = player_name
+            st.session_state.player_army_lists = load_army_lists(player_name)
+            st.session_state.page = "setup"
+            st.rerun()
 
     # PAGE 2 — Configuration de la liste
     elif st.session_state.page == "setup":
         st.title("OPR Army Builder 🇫🇷")
         st.subheader(f"Bienvenue, {st.session_state.current_player}!")
 
-        if st.button("🚪 Déconnexion"):
-            st.session_state.current_player = None
-            st.session_state.page = "login"
-            st.rerun()
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Changer de pseudo"):
+                st.session_state.page = "login"
+                st.rerun()
 
-        # Bouton pour recharger les factions
-        if st.button("Recharger les factions"):
-            st.session_state["factions"], st.session_state["games"] = load_factions()
-            st.rerun()
+        col1, col2 = st.columns(2)
+        with col1:
+            export_data(st.session_state.current_player)
+        with col2:
+            import_data()
 
-        # Vérification des jeux disponibles
-        if not st.session_state["games"]:
-            st.error("Aucun jeu trouvé. Vérifiez que vos fichiers JSON sont dans le bon dossier.")
-            st.write("Chemin attendu:", FACTIONS_DIR.absolute())
-            st.write("Fichiers présents:", [f.name for f in FACTIONS_DIR.glob("*") if f.is_file()])
-            st.stop()
+        st.info("""
+        💡 **Sauvegarde et synchronisation** :
+        Vos listes sont sauvegardées **localement dans votre navigateur**.
+        Pour les retrouver sur un autre appareil :
+        1. Exportez vos données (bouton ci-dessus).
+        2. Transférez le fichier (e-mail, cloud, clé USB).
+        3. Importez-le sur l'autre appareil.
+        """)
 
         st.subheader("Mes listes d'armées sauvegardées")
 
@@ -411,31 +327,22 @@ def main():
                         st.write(f"Créée le: {army_list['date'][:10]}")
                         if st.button(f"Charger cette liste", key=f"load_{i}"):
                             try:
-                                required_keys = ["game", "faction", "points", "army_list", "total_cost", "name"]
-                                if not all(key in army_list for key in required_keys):
-                                    st.error("Données de liste incomplètes")
-                                    continue
-
                                 st.session_state.game = army_list['game']
                                 st.session_state.faction = army_list['faction']
                                 st.session_state.points = army_list['points']
                                 st.session_state.list_name = army_list['name']
                                 st.session_state.army_total_cost = army_list['total_cost']
-
-                                # Utiliser la fonction de réparation
                                 st.session_state.army_list = repair_army_list(army_list['army_list'])
-
                                 st.session_state.page = "army"
                                 st.rerun()
                             except Exception as e:
                                 st.error(f"Erreur lors du chargement: {str(e)}")
-                                st.error(f"Détails: {traceback.format_exc()}")
 
                 with col2:
                     if st.button(f"❌ Supprimer", key=f"delete_{i}"):
-                        if delete_player_army_list(st.session_state.current_player, i):
-                            st.session_state.player_army_lists = load_player_army_lists(st.session_state.current_player)
-                            st.success(f"Liste '{army_list['name']}' supprimée avec succès!")
+                        if delete_army_list(st.session_state.current_player, i):
+                            st.session_state.player_army_lists = load_army_lists(st.session_state.current_player)
+                            st.success(f"Liste supprimée avec succès!")
                             st.rerun()
                         else:
                             st.error("Erreur lors de la suppression de la liste")
@@ -445,59 +352,38 @@ def main():
         st.divider()
         st.subheader("Créer une nouvelle liste")
 
-        # Sélection du jeu avec vérification
-        game_options = st.session_state["games"]
-        if "Age of Fantasy" not in game_options:
-            game_options = ["Age of Fantasy"] + game_options  # Forcer l'affichage
+        if not st.session_state["games"]:
+            st.error("Aucun jeu disponible. Vérifiez que vos fichiers JSON sont dans le bon dossier.")
+        else:
+            st.session_state.game = st.selectbox(
+                "Jeu",
+                st.session_state["games"],
+                index=0 if st.session_state["games"] else None
+            )
 
-        st.session_state.game = st.selectbox(
-            "Jeu",
-            game_options,
-            index=0 if game_options else None,
-            format_func=lambda x: "Age of Fantasy" if x == "Age of Fantasy" else x
-        )
-
-        if st.session_state.game:
-            # Vérification des factions disponibles
-            if st.session_state.game in st.session_state["factions"]:
+            if st.session_state.game:
                 available_factions = list(st.session_state["factions"][st.session_state.game].keys())
                 if not available_factions:
                     st.warning(f"Aucune faction disponible pour {st.session_state.game}")
                 else:
-                    # Vérification spécifique pour Disciples de la Guerre
-                    has_disciples = "Disciples de la Guerre" in available_factions
-                    if not has_disciples:
-                        st.warning("La faction 'Disciples de la Guerre' n'est pas disponible pour ce jeu.")
-
                     st.session_state.faction = st.selectbox(
                         "Faction",
                         available_factions,
                         index=0 if available_factions else None
                     )
-            else:
-                st.error(f"Aucune faction trouvée pour le jeu {st.session_state.game}")
-                st.session_state.faction = None
 
-            if st.session_state.faction:
-                st.session_state.points = st.number_input(
-                    "Format de la partie (points)",
-                    min_value=250,
-                    step=250,
-                    value=1000
-                )
+                    st.session_state.points = st.number_input(
+                        "Format de la partie (points)",
+                        min_value=250,
+                        step=250,
+                        value=1000
+                    )
 
-                st.session_state.list_name = st.text_input(
-                    "Nom de la liste",
-                    value="Ma liste d'armée"
-                )
+                    st.session_state.list_name = st.text_input(
+                        "Nom de la liste",
+                        value="Ma liste d'armée"
+                    )
 
-                col1, col2 = st.columns(2)
-
-                with col1:
-                    if st.button("💾 Sauvegarder la configuration"):
-                        st.success("Configuration sauvegardée")
-
-                with col2:
                     if st.button("➡️ Ma liste"):
                         if st.session_state.game and st.session_state.faction:
                             faction_data = st.session_state["factions"][st.session_state.game][st.session_state.faction]
@@ -518,8 +404,7 @@ def main():
                 st.session_state.page = "setup"
                 st.rerun()
         with col2:
-            if st.button("🚪 Déconnexion"):
-                st.session_state.current_player = None
+            if st.button("🚪 Quitter"):
                 st.session_state.page = "login"
                 st.rerun()
 
@@ -655,10 +540,11 @@ def main():
                     options_selected[group["group"]] = selected_options
 
         # Calcul de la valeur de Coriace
-        coriace_value = calculate_coriace_value({
+        coriace_value = calculate_total_coriace({
             "base_rules": base_rules,
             "options": options_selected,
-            "mount": mount_selected
+            "mount": mount_selected,
+            "weapons": [current_weapon]
         })
 
         st.markdown(f"### 💰 Coût : **{total_cost} pts**")
@@ -736,7 +622,7 @@ def main():
 
         for i, u in enumerate(st.session_state.army_list):
             # Calcul de la valeur totale de Coriace
-            coriace_value = calculate_coriace_value(u)
+            coriace_value = calculate_total_coriace(u)
 
             # Génération du HTML pour la fiche
             html_content = f"""
@@ -940,8 +826,6 @@ def main():
             if st.button("💾 Sauvegarder la liste"):
                 if not st.session_state.list_name:
                     st.warning("Veuillez donner un nom à votre liste avant de sauvegarder")
-                elif not st.session_state.current_player:
-                    st.warning("Vous devez être connecté pour sauvegarder une liste")
                 else:
                     army_list_data = {
                         "name": st.session_state.list_name,
@@ -952,13 +836,9 @@ def main():
                         "total_cost": st.session_state.army_total_cost,
                         "date": datetime.now().isoformat()
                     }
-
-                    success = save_player_army_list(st.session_state.current_player, army_list_data)
-                    if success:
-                        st.success(f"Liste '{st.session_state.list_name}' sauvegardée avec succès!")
-                        st.session_state.player_army_lists = load_player_army_lists(st.session_state.current_player)
-                    else:
-                        st.error("Erreur lors de la sauvegarde de la liste")
+                    save_army_list(army_list_data, st.session_state.current_player)
+                    st.session_state.player_army_lists = load_army_lists(st.session_state.current_player)
+                    st.success(f"Liste '{st.session_state.list_name}' sauvegardée avec succès!")
 
         with col2:
             if st.button("📄 Exporter en HTML"):
@@ -1059,7 +939,7 @@ def main():
                 """
 
                 for u in st.session_state.army_list:
-                    coriace_value = calculate_coriace_value(u)
+                    coriace_value = calculate_total_coriace(u)
 
                     html_content += f"""
                     <div class="army-card">
@@ -1113,7 +993,6 @@ def main():
 
                     other_options = []
                     for group_name, opt_group in u.get("options", {}).items():
-                        # Exclure les groupes liés aux armes et aux montures
                         if ("arme" in group_name.lower() or
                             "weapon" in group_name.lower() or
                             "monture" in group_name.lower() or
