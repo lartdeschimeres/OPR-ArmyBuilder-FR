@@ -1,230 +1,184 @@
-import json
-import re
-from pathlib import Path
 import streamlit as st
+import re
+from copy import deepcopy
 
-# -------------------------------------------------
-# CONFIG
-# -------------------------------------------------
-st.set_page_config(page_title="OPR Army Builder FR", layout="centered")
+st.set_page_config(page_title="OPR Army Forge FR", layout="wide")
 
-BASE_DIR = Path(__file__).resolve().parent
-FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
+# --------------------------------------------------
+# UTILITAIRES
+# --------------------------------------------------
 
-# -------------------------------------------------
-# OUTILS
-# -------------------------------------------------
 def extract_coriace(rules):
-    value = 0
+    """Extrait la valeur Coriace depuis une liste de règles"""
+    total = 0
     for r in rules:
-        if isinstance(r, str):
-            m = re.search(r"Coriace\s*\((\d+)\)", r)
-            if m:
-                value += int(m.group(1))
-    return value
-
-def calculate_coriace(unit):
-    total = extract_coriace(unit.get("base_rules", []))
-
-    for opt in unit.get("options", {}).values():
-        if isinstance(opt, list):
-            for o in opt:
-                total += extract_coriace(o.get("special_rules", []))
-        elif isinstance(opt, dict):
-            total += extract_coriace(opt.get("special_rules", []))
-
-    if unit.get("mount"):
-        total += extract_coriace(unit["mount"].get("special_rules", []))
-
+        m = re.search(r"Coriace\s*\(?\+?(\d+)\)?", r)
+        if m:
+            total += int(m.group(1))
     return total
 
-# -------------------------------------------------
-# SESSION INIT
-# -------------------------------------------------
-if "page" not in st.session_state:
-    st.session_state.page = "setup"
-if "army_list" not in st.session_state:
-    st.session_state.army_list = []
-if "army_total_cost" not in st.session_state:
-    st.session_state.army_total_cost = 0
 
-# -------------------------------------------------
-# CHARGEMENT FACTIONS
-# -------------------------------------------------
-@st.cache_data
-def load_factions():
-    factions = {}
-    games = set()
+def format_rules(rules):
+    return ", ".join(sorted(set(rules))) if rules else "Aucune"
 
-    for fp in FACTIONS_DIR.glob("*.json"):
-        with open(fp, encoding="utf-8") as f:
-            data = json.load(f)
-            game = data["game"]
-            factions.setdefault(game, {})
-            factions[game][data["faction"]] = data
-            games.add(game)
 
-    return factions, sorted(games)
+# --------------------------------------------------
+# DONNÉES EXEMPLE (à remplacer par JSON faction)
+# --------------------------------------------------
 
-factions, games = load_factions()
+UNIT_TEMPLATE = {
+    "name": "Maître de la Guerre Élu",
+    "type": "Hero",
+    "base_cost": 60,
+    "quality": 4,
+    "defense": 4,
+    "base_rules": [
+        "Héros",
+        "Né pour la guerre",
+        "Coriace (3)"
+    ],
+    "weapons": [
+        {"name": "Arme lourde", "attacks": 3, "ap": 1}
+    ],
+    "option_groups": {
+        "role": [
+            {"name": "Seigneur de Guerre", "cost": 35},
+            {"name": "Conquérant", "cost": 20}
+        ],
+        "mount": [
+            {
+                "name": "Dragon du Ravage",
+                "cost": 320,
+                "rules": [
+                    "Coriace (+12)",
+                    "Volant",
+                    "Effrayant (2)"
+                ]
+            }
+        ]
+    }
+}
 
-# =================================================
-# PAGE SETUP
-# =================================================
-if st.session_state.page == "setup":
-    st.title("OPR Army Builder 🇫🇷")
 
-    game = st.selectbox("Jeu", games)
-    faction = st.selectbox("Faction", factions[game].keys())
-    points = st.number_input("Format de la partie (pts)", 250, 5000, 1000, step=250)
-    list_name = st.text_input("Nom de la liste", "Ma liste")
+# --------------------------------------------------
+# SESSION STATE
+# --------------------------------------------------
 
-    if st.button("➡️ Ma liste"):
-        st.session_state.game = game
-        st.session_state.faction = faction
-        st.session_state.points = points
-        st.session_state.list_name = list_name
-        st.session_state.units = factions[game][faction]["units"]
-        st.session_state.page = "army"
-        st.rerun()
+if "army" not in st.session_state:
+    st.session_state.army = []
 
-# =================================================
-# PAGE ARMY
-# =================================================
-elif st.session_state.page == "army":
-    st.title(st.session_state.list_name)
-    st.caption(f"{st.session_state.game} — {st.session_state.faction}")
+if "current_unit" not in st.session_state:
+    st.session_state.current_unit = None
 
-    if st.button("⬅️ Retour"):
-        st.session_state.page = "setup"
-        st.rerun()
 
-    st.divider()
-    st.subheader("Ajouter une unité")
+# --------------------------------------------------
+# INTERFACE
+# --------------------------------------------------
 
-    unit = st.selectbox(
-        "Unité",
-        st.session_state.units,
-        format_func=lambda u: f"{u['name']} ({u['base_cost']} pts)"
-    )
+st.title("🔥 OPR Army Forge – FR")
 
-    total_cost = unit["base_cost"]
-    base_rules = list(unit.get("special_rules", []))
-    options_selected = {}
-    current_weapon = unit.get("weapons", [{}])[0].copy()
-    mount_selected = None
+col_left, col_right = st.columns([1, 2])
 
-    # -----------------------------
-    # OPTIONS
-    # -----------------------------
-    for group in unit.get("upgrade_groups", []):
-        st.markdown(f"### {group['group']}")
+# --------------------------------------------------
+# AJOUT D’UNITÉ
+# --------------------------------------------------
 
-        # Rôle (radio)
-        if "rôle" in group["group"].lower():
-            choice = st.radio(
-                group["group"],
-                ["— Aucun —"] + [o["name"] for o in group["options"]],
-                key=f"{unit['name']}_{group['group']}"
-            )
-            if choice != "— Aucun —":
-                opt = next(o for o in group["options"] if o["name"] == choice)
-                total_cost += opt["cost"]
-                options_selected[group["group"]] = opt
+with col_left:
+    st.header("Ajouter une unité")
 
-        # Arme
-        elif group.get("type") == "weapon":
-            choice = st.radio(
-                group["group"],
-                ["— Arme de base —"] + [o["name"] for o in group["options"]],
-                key=f"{unit['name']}_{group['group']}"
-            )
-            if choice != "— Arme de base —":
-                opt = next(o for o in group["options"] if o["name"] == choice)
-                total_cost += opt["cost"]
-                current_weapon = opt["weapon"].copy()
-                current_weapon["name"] = opt["name"]
+    unit = deepcopy(UNIT_TEMPLATE)
 
-        # Monture
-        elif group.get("type") == "mount":
-            choice = st.radio(
-                group["group"],
-                ["— Aucune —"] + [o["name"] for o in group["options"]],
-                key=f"{unit['name']}_{group['group']}"
-            )
-            if choice != "— Aucune —":
-                opt = next(o for o in group["options"] if o["name"] == choice)
-                total_cost += opt["cost"]
-                mount_selected = opt
+    st.subheader(unit["name"])
 
-        # Options multiples
-        elif group.get("type") == "multiple":
-            selected = []
-            for opt in group["options"]:
-                if st.checkbox(f"{opt['name']} (+{opt['cost']} pts)"):
-                    total_cost += opt["cost"]
-                    selected.append(opt)
-            if selected:
-                options_selected[group["group"]] = selected
+    # Sélecteurs d’options
+    selected_options = []
+    selected_mount = None
+    extra_cost = 0
 
-    coriace = calculate_coriace({
-        "base_rules": base_rules,
-        "options": options_selected,
-        "mount": mount_selected
-    })
+    for group, options in unit["option_groups"].items():
+        names = ["Aucune"] + [o["name"] for o in options]
+        choice = st.selectbox(group.capitalize(), names, key=group)
 
-    st.markdown(f"### 💰 Coût : **{total_cost} pts**")
-    if coriace:
-        st.markdown(f"**Coriace totale : {coriace}**")
+        if choice != "Aucune":
+            opt = next(o for o in options if o["name"] == choice)
+            extra_cost += opt["cost"]
 
-    if st.button("➕ Ajouter à l'armée"):
-        st.session_state.army_list.append({
-            "name": unit["name"],
-            "cost": total_cost,
-            "quality": unit["quality"],
-            "defense": unit["defense"],
-            "base_rules": base_rules,
-            "options": options_selected,
-            "current_weapon": current_weapon,
-            "mount": mount_selected
+            if group == "mount":
+                selected_mount = opt
+            else:
+                selected_options.append(opt)
+
+    total_cost = unit["base_cost"] + extra_cost
+
+    if st.button("Ajouter à l'armée"):
+        st.session_state.army.append({
+            "profile": unit,
+            "options": selected_options,
+            "mount": selected_mount,
+            "cost": total_cost
         })
-        st.session_state.army_total_cost += total_cost
-        st.rerun()
 
-    # =================================================
-    # LISTE D’ARMÉE
-    # =================================================
-    st.divider()
-    st.subheader("Liste de l’armée")
 
-    for i, u in enumerate(st.session_state.army_list):
-        coriace = calculate_coriace(u)
+# --------------------------------------------------
+# LISTE DE L’ARMÉE
+# --------------------------------------------------
 
-        st.markdown(f"""
-        **{u['name']}** — {u['cost']} pts  
-        Qualité {u['quality']}+ | Défense {u['defense']}+ {"| Coriace "+str(coriace) if coriace else ""}
-        """)
+with col_right:
+    st.header("📜 Liste de l’armée")
 
-        if u.get("base_rules"):
-            st.caption("Règles spéciales : " + ", ".join(u["base_rules"]))
+    if not st.session_state.army:
+        st.info("Aucune unité ajoutée.")
+    else:
+        for i, u in enumerate(st.session_state.army):
+            profile = u["profile"]
 
-        if u.get("current_weapon"):
-            w = u["current_weapon"]
-            st.caption(f"Arme : {w.get('name')} | A{w.get('attacks')} | PA({w.get('armor_piercing')})")
+            with st.container(border=True):
+                cols = st.columns([3, 1])
 
-        if u.get("options"):
-            st.caption("Options : " + ", ".join(
-                o["name"] if isinstance(o, dict) else opt["name"]
-                for g in u["options"].values()
-                for opt in (g if isinstance(g, list) else [g])
-            ))
+                # -------------------------------
+                # PROFIL
+                # -------------------------------
+                with cols[0]:
+                    st.subheader(profile["name"])
 
-        if u.get("mount"):
-            st.caption("Monture : " + u["mount"]["name"])
+                    q_col, d_col, c_col = st.columns(3)
 
-        if st.button("❌ Supprimer", key=f"del_{i}"):
-            st.session_state.army_total_cost -= u["cost"]
-            st.session_state.army_list.pop(i)
-            st.rerun()
+                    with q_col:
+                        st.metric("Qualité", f"{profile['quality']}+")
 
-    st.markdown(f"### Total : **{st.session_state.army_total_cost} / {st.session_state.points} pts**")
+                    with d_col:
+                        st.metric("Défense", f"{profile['defense']}+")
+
+                    # Coriace total
+                    base_coriace = extract_coriace(profile["base_rules"])
+                    mount_coriace = extract_coriace(u["mount"]["rules"]) if u["mount"] else 0
+                    total_coriace = base_coriace + mount_coriace
+
+                    with c_col:
+                        st.metric("Coriace total", total_coriace)
+
+                    # RÈGLES SPÉCIALES (BASE UNIQUEMENT)
+                    st.markdown("**Règles spéciales**")
+                    st.caption(format_rules(profile["base_rules"]))
+
+                    # OPTIONS SÉLECTIONNÉES
+                    if u["options"]:
+                        st.markdown("**Options sélectionnées**")
+                        st.caption(", ".join(opt["name"] for opt in u["options"]))
+
+                    # MONTURE
+                    if u["mount"]:
+                        st.markdown("**Monture**")
+                        st.caption(
+                            f"{u['mount']['name']} — "
+                            + format_rules(u["mount"]["rules"])
+                        )
+
+                # -------------------------------
+                # COÛT & SUPPRESSION
+                # -------------------------------
+                with cols[1]:
+                    st.metric("Coût", u["cost"])
+                    if st.button("🗑 Supprimer", key=f"del_{i}"):
+                        st.session_state.army.pop(i)
+                        st.rerun()
