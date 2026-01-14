@@ -6,14 +6,13 @@ import streamlit as st
 import streamlit.components.v1 as components
 from datetime import datetime
 import os
-import base64
 
 # ======================
 # Gestion du LocalStorage
 # ======================
 
 def localstorage_get(key):
-    """Récupère une valeur du LocalStorage avec gestion d'erreur."""
+    """Récupère une valeur du LocalStorage."""
     try:
         get_js = f"""
         <script>
@@ -26,19 +25,13 @@ def localstorage_get(key):
         </script>
         """
         components.html(get_js, height=0)
-
-        value = st.text_input(
-            f"localstorage_value_{key}",
-            key=f"localstorage_value_{key}",
-            label_visibility="collapsed"
-        )
+        value = st.text_input(f"localstorage_value_{key}", key=f"localstorage_value_{key}", label_visibility="collapsed")
         return None if value == "null" else value
-    except Exception as e:
-        st.error(f"Erreur LocalStorage (lecture): {e}")
+    except:
         return None
 
 def localstorage_set(key, value):
-    """Stocke une valeur dans le LocalStorage avec vérification."""
+    """Stocke une valeur dans le LocalStorage."""
     try:
         set_js = f"""
         <script>
@@ -46,11 +39,11 @@ def localstorage_set(key, value):
         </script>
         """
         components.html(set_js, height=0)
-    except Exception as e:
-        st.error(f"Erreur LocalStorage (écriture): {e}")
+    except:
+        pass
 
 def load_army_lists(player_name="default"):
-    """Charge les listes d'armées avec vérification."""
+    """Charge les listes d'armées."""
     try:
         data = localstorage_get(f"army_lists_{player_name}")
         return json.loads(data) if data else []
@@ -58,59 +51,92 @@ def load_army_lists(player_name="default"):
         return []
 
 def save_army_list(army_list_data, player_name="default"):
-    """Sauvegarde une liste avec vérification."""
+    """Sauvegarde une liste d'armée."""
     try:
         current_lists = load_army_lists(player_name)
         current_lists.append(army_list_data)
         localstorage_set(f"army_lists_{player_name}", current_lists)
         return True
-    except Exception as e:
-        st.error(f"Erreur sauvegarde: {e}")
+    except:
         return False
 
 def delete_army_list(player_name, list_index):
-    """Supprime une liste avec vérification."""
+    """Supprime une liste d'armée."""
     try:
         current_lists = load_army_lists(player_name)
         if 0 <= list_index < len(current_lists):
             current_lists.pop(list_index)
             localstorage_set(f"army_lists_{player_name}", current_lists)
             return True
-        return False
-    except Exception as e:
-        st.error(f"Erreur suppression: {e}")
-        return False
+    except:
+        pass
+    return False
 
 # ======================
 # Génération de fichiers
 # ======================
 
 def generate_html(army_data):
-    """Génère le contenu HTML pour une liste d'armée."""
+    """Génère le HTML pour une liste d'armée."""
     html = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <title>Liste OPR - {army_data['name']}</title>
         <style>
-            body {{ font-family: Arial, sans-serif; margin: 20px; color: #333; }}
-            .army-title {{ color: #2c3e50; margin-bottom: 5px; }}
-            .army-subtitle {{ color: #7f8c8d; margin-bottom: 20px; }}
-            .unit-card {{ border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #f9f9f9; }}
-            .unit-header {{ display: flex; justify-content: space-between; margin-bottom: 10px; }}
-            .unit-name {{ font-size: 1.2em; font-weight: bold; }}
-            .unit-cost {{ color: #e74c3c; font-weight: bold; }}
-            .stats {{ display: flex; gap: 20px; margin: 10px 0; }}
-            .stat {{ text-align: center; flex: 1; }}
-            .stat-value {{ font-weight: bold; font-size: 1.1em; }}
-            .stat-label {{ font-size: 0.9em; color: #7f8c8d; }}
-            .section-title {{ font-weight: bold; color: #3498db; margin: 10px 0 5px; border-bottom: 1px dashed #ddd; }}
-            .weapons-table {{ width: 100%; border-collapse: collapse; margin: 10px 0; }}
-            .weapons-table th, .weapons-table td {{ border: 1px solid #ddd; padding: 8px; text-align: left; }}
-            .weapons-table th {{ background-color: #f2f2f2; }}
-            .rules-list {{ margin-left: 20px; color: #555; }}
-            .upgrade-item {{ display: flex; justify-content: space-between; margin-bottom: 3px; }}
-            @media print {{ body {{ margin: 0; padding: 20px; }} }}
+            body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+            .army-title { color: #2c3e50; margin-bottom: 5px; }
+            .army-subtitle { color: #7f8c8d; margin-bottom: 20px; }
+            .unit-card {
+                border: 1px solid #ddd; border-radius: 8px;
+                padding: 15px; margin-bottom: 20px; background: #f9f9f9;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .unit-header {
+                display: flex; justify-content: space-between;
+                margin-bottom: 10px; padding-bottom: 5px;
+                border-bottom: 1px solid #eee;
+            }
+            .unit-name { font-size: 1.2em; font-weight: bold; }
+            .unit-cost { color: #e74c3c; font-weight: bold; }
+            .stats {
+                display: flex; gap: 20px; margin: 10px 0;
+                flex-wrap: wrap;
+            }
+            .stat {
+                text-align: center; flex: 1; min-width: 80px;
+                background: #f0f8ff; padding: 8px; border-radius: 5px;
+            }
+            .stat-value { font-weight: bold; font-size: 1.1em; }
+            .stat-label { font-size: 0.8em; color: #555; }
+            .section-title {
+                font-weight: bold; color: #3498db;
+                margin: 12px 0 8px; border-bottom: 1px dashed #ddd;
+                padding-bottom: 3px;
+            }
+            .weapons-table {
+                width: 100%; border-collapse: collapse;
+                margin: 10px 0; font-size: 0.9em;
+            }
+            .weapons-table th, .weapons-table td {
+                border: 1px solid #ddd; padding: 8px;
+                text-align: center;
+            }
+            .weapons-table th { background-color: #f2f2f2; }
+            .rules-list { margin-left: 20px; color: #555; }
+            .upgrade-item {
+                display: flex; justify-content: space-between;
+                margin-bottom: 3px; padding: 3px 0;
+            }
+            .combined-badge {
+                background: #27ae60; color: white;
+                padding: 2px 6px; border-radius: 4px;
+                font-size: 0.8em; margin-left: 10px;
+            }
+            @media print {
+                body { margin: 0; padding: 20px; }
+                .unit-card { border: none; box-shadow: none; }
+            }
         </style>
     </head>
     <body>
@@ -123,29 +149,34 @@ def generate_html(army_data):
         html += f"""
         <div class="unit-card">
             <div class="unit-header">
-                <div class="unit-name">{unit['name']}{' <span style="background: #27ae60; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em;">Unité combinée</span>' if unit.get('combined') else ''}</div>
+                <div>
+                    <span class="unit-name">{unit['name']}</span>
+                    {'<span class="combined-badge">Unité combinée</span>' if unit.get('combined') else ''}
+                </div>
                 <div class="unit-cost">{unit['cost']} pts</div>
             </div>
 
             <div class="stats">
                 <div class="stat">
                     <div class="stat-value">{unit['quality']}+</div>
-                    <div class="stat-label">Qualité</div>
+                    <div class="stat-label">Qua</div>
                 </div>
                 <div class="stat">
                     <div class="stat-value">{unit['defense']}+</div>
-                    <div class="stat-label">Défense</div>
+                    <div class="stat-label">Déf</div>
                 </div>
+                {f'''
                 <div class="stat">
                     <div class="stat-value">{coriace}</div>
                     <div class="stat-label">Coriace</div>
                 </div>
+                ''' if coriace > 0 else ''}
             </div>
         """
 
-        # Règles spéciales
+        # Règles spéciales (sans Coriace(0))
         if 'base_rules' in unit:
-            rules = [r for r in unit['base_rules'] if not r.startswith("Coriace")]
+            rules = [r for r in unit['base_rules'] if not r.startswith("Coriace(0)") and not r == "Coriace(0)"]
             if rules:
                 html += f"""
                 <div class="section-title">Règles spéciales</div>
@@ -159,10 +190,17 @@ def generate_html(army_data):
             <div class="section-title">Armes</div>
             <table class="weapons-table">
                 <thead>
-                    <tr><th>Nom</th><th>ATK</th><th>AP</th><th>Règles spéciales</th></tr>
+                    <tr>
+                        <th>Nom</th>
+                        <th>RNG</th>
+                        <th>ATK</th>
+                        <th>AP</th>
+                        <th>SPE</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <tr>
+                        <td>{}</td>
                         <td>{}</td>
                         <td>{}</td>
                         <td>{}</td>
@@ -172,9 +210,10 @@ def generate_html(army_data):
             </table>
             """.format(
                 weapon.get('name', 'Arme de base'),
+                weapon.get('range', '-'),
                 weapon.get('attacks', '?'),
                 weapon.get('armor_piercing', '?'),
-                ', '.join(weapon.get('special_rules', []))
+                ', '.join(weapon.get('special_rules', [])) or '-'
             )
 
         # Monture
@@ -186,24 +225,23 @@ def generate_html(army_data):
                 <span><strong>{mount.get('name', '')}</strong></span>
             </div>
             """
-            if 'special_rules' in mount:
+            if 'special_rules' in mount and mount['special_rules']:
                 html += f"""
                 <div class="rules-list">{', '.join(mount['special_rules'])}</div>
                 """
 
         # Améliorations
-        if 'options' in unit:
+        if 'options' in unit and unit['options']:
             html += '<div class="section-title">Améliorations</div>'
             for group_name, opts in unit['options'].items():
                 if isinstance(opts, list):
                     for opt in opts:
-                        if isinstance(opt, dict):
-                            html += f"""
-                            <div class="upgrade-item">
-                                <span>- {opt.get('name', '')}</span>
-                                <span>+{opt.get('cost', 0)} pts</span>
-                            </div>
-                            """
+                        html += f"""
+                        <div class="upgrade-item">
+                            <span>- {opt.get('name', '')}</span>
+                            <span>+{opt.get('cost', 0)} pts</span>
+                        </div>
+                        """
                 elif isinstance(opts, dict):
                     html += f"""
                     <div class="upgrade-item">
@@ -214,20 +252,17 @@ def generate_html(army_data):
 
         html += "</div>"
 
-    html += """
-    </body>
-    </html>
-    """
+    html += "</body></html>"
     return html
 
 def auto_export(army_data, filename_prefix):
-    """Génère et télécharge automatiquement HTML et JSON."""
+    """Exporte automatiquement HTML et JSON."""
     try:
-        # Générer HTML
+        # HTML
         html_content = generate_html(army_data)
         html_filename = f"{filename_prefix}.html"
 
-        # Générer JSON
+        # JSON
         json_data = {
             "name": army_data['name'],
             "game": army_data['game'],
@@ -235,16 +270,12 @@ def auto_export(army_data, filename_prefix):
             "points": army_data['points'],
             "army_list": army_data['army_list'],
             "total_cost": army_data['total_cost'],
-            "date": datetime.now().isoformat(),
-            "metadata": {
-                "version": "1.0",
-                "coriace_total": sum(calculate_total_coriace(u) for u in army_data['army_list'])
-            }
+            "date": datetime.now().isoformat()
         }
         json_filename = f"{filename_prefix}_{datetime.now().strftime('%Y%m%d')}.json"
         json_str = json.dumps(json_data, indent=2, ensure_ascii=False)
 
-        # Créer les boutons de téléchargement
+        # Boutons de téléchargement
         col1, col2 = st.columns(2)
         with col1:
             st.download_button(
@@ -262,26 +293,26 @@ def auto_export(army_data, filename_prefix):
             )
 
     except Exception as e:
-        st.error(f"Erreur export: {e}")
+        st.error(f"Erreur d'export: {e}")
 
 # ======================
 # Calculs et validations
 # ======================
 
 def extract_coriace(rules):
-    """Extrait la valeur de Coriace depuis les règles."""
+    """Extrait la valeur de Coriace (ignore Coriace(0))."""
     if not isinstance(rules, list):
         return 0
     total = 0
     for rule in rules:
         if isinstance(rule, str):
             match = re.search(r"Coriace\s*\(?(\d+)\)?", rule)
-            if match:
+            if match and int(match.group(1)) > 0:  # Ignore Coriace(0)
                 total += int(match.group(1))
     return total
 
 def calculate_total_coriace(unit):
-    """Calcule la Coriace totale pour une unité."""
+    """Calcule la Coriace totale (ignore les valeurs 0)."""
     total = 0
 
     # Règles de base
@@ -308,10 +339,10 @@ def calculate_total_coriace(unit):
         if 'special_rules' in unit['current_weapon']:
             total += extract_coriace(unit['current_weapon']['special_rules'])
 
-    return total
+    return total if total > 0 else None  # Retourne None si 0
 
 def validate_army(army_list, game_rules, total_cost, total_points):
-    """Valide une liste d'armée selon les règles du jeu."""
+    """Valide une liste d'armée."""
     errors = []
 
     if not army_list:
@@ -319,7 +350,7 @@ def validate_army(army_list, game_rules, total_cost, total_points):
         return False, errors
 
     if total_cost > total_points:
-        errors.append(f"Dépassement de {total_cost - total_points} pts (max: {total_points})")
+        errors.append(f"Dépassement de {total_cost - total_points} pts")
 
     if game_rules:
         heroes = sum(1 for u in army_list if u.get('type', '').lower() == 'hero')
@@ -351,8 +382,7 @@ def main():
 
     st.set_page_config(
         page_title="OPR Army Builder FR",
-        layout="wide",
-        initial_sidebar_state="collapsed"
+        layout="wide"
     )
 
     # Chemins des données
@@ -396,7 +426,7 @@ def main():
 
         return factions, sorted(games)
 
-    # Charger les factions au démarrage
+    # Charger les factions
     if "factions" not in st.session_state or "games" not in st.session_state:
         st.session_state.factions, st.session_state.games = load_factions()
 
@@ -448,19 +478,14 @@ def main():
                     )
 
         # Import de fichiers
-        uploaded_file = st.file_uploader(
-            "📥 Importer un fichier JSON",
-            type=["json"],
-            key="json_importer"
-        )
+        uploaded_file = st.file_uploader("📥 Importer un fichier JSON", type=["json"])
 
         if uploaded_file:
             try:
                 data = json.load(uploaded_file)
                 if isinstance(data, dict) and "army_lists" in data:
                     player_name = data.get("player_name", st.session_state.current_player)
-                    save_success = save_army_list(data, player_name)
-                    if save_success:
+                    if save_army_list(data, player_name):
                         st.session_state.current_player = player_name
                         st.session_state.player_army_lists = data["army_lists"]
                         st.success("✅ Fichier importé avec succès!")
@@ -475,8 +500,8 @@ def main():
         # Info sauvegarde
         st.info("""
         💡 **Sauvegarde automatique**:
-        - Vos listes sont enregistrées dans votre navigateur
-        - Pour les transférer: 1) Exportez-les 2) Envoyez le fichier 3) Importez-le sur un autre appareil
+        Vos listes sont enregistrées dans votre navigateur.
+        Pour les transférer: 1) Exportez-les 2) Envoyez le fichier 3) Importez-le sur un autre appareil
         """)
 
         # Listes sauvegardées
@@ -496,7 +521,6 @@ def main():
 
                         if st.button(f"Charger cette liste", key=f"load_{i}"):
                             try:
-                                # Vérifier que la faction existe
                                 if (army['game'] in st.session_state.factions and
                                     army['faction'] in st.session_state.factions[army['game']]):
 
@@ -510,7 +534,7 @@ def main():
                                     st.session_state.page = "army"
                                     st.rerun()
                                 else:
-                                    st.error("Faction introuvable. Vérifiez vos fichiers de données.")
+                                    st.error("Faction introuvable")
                             except Exception as e:
                                 st.error(f"Erreur chargement: {e}")
 
@@ -587,39 +611,50 @@ def main():
             format_func=lambda u: f"{u['name']} ({u['base_cost']} pts)"
         )
 
-        # Options de l'unité
+        # Affichage des stats de base
+        st.markdown(f"**{unit['name']}** - {unit['base_cost']} pts")
+        col1, col2 = st.columns(2)
+        col1.metric("Qua", f"{unit['quality']}+")
+        col2.metric("Déf", f"{unit['defense']}+")
+
+        # Option unité combinée
         combined = False
         if unit.get('type', '').lower() != 'hero':
             combined = st.checkbox("Unité combinée (+100% coût)", value=False)
 
-        cost = unit['base_cost'] * 2 if combined else unit['base_cost']
+        cost = unit["base_cost"] * 2 if combined else unit["base_cost"]
         base_rules = unit.get('special_rules', [])
-        current_weapon = unit.get('weapons', [{}])[0]
+        current_weapon = unit.get('weapons', [{}])[0].copy()
         selected_options = {}
         mount = None
 
-        # Options par catégorie
-        for group in unit.get('upgrade_groups', []):
-            st.subheader(group['group'])
+        # Armes de base
+        st.markdown("**Armes de base**")
+        for weapon in unit.get("weapons", []):
+            st.caption(f"- {weapon.get('name', 'Arme non définie')} (A{weapon.get('attacks', '?')}, PA{weapon.get('armor_piercing', '?')})")
 
-            if group.get('type') == 'multiple':
+        # Options par catégorie
+        for group in unit.get("upgrade_groups", []):
+            st.subheader(group["group"])
+
+            if group.get("type") == "multiple":
                 # Options multiples (cases à cocher)
-                for opt in group.get('options', []):
-                    opt_cost = opt['cost'] * (2 if combined else 1)
+                for opt in group.get("options", []):
+                    opt_cost = opt["cost"] * (2 if combined else 1)
                     if st.checkbox(
                         f"{opt['name']} (+{opt_cost} pts)",
                         key=f"{unit['name']}_{group['group']}_{opt['name']}"
                     ):
-                        if group['group'] not in selected_options:
-                            selected_options[group['group']] = []
-                        selected_options[group['group']].append(opt)
+                        if group["group"] not in selected_options:
+                            selected_options[group["group"]] = []
+                        selected_options[group["group"]].append(opt)
                         cost += opt_cost
 
-            elif group.get('type') == 'weapon':
+            elif group.get("type") == "weapon":
                 # Choix d'arme (boutons radio)
                 weapon_options = ["Arme de base"]
-                for opt in group.get('options', []):
-                    opt_cost = opt.get('cost', 0) * (2 if combined else 1)
+                for opt in group.get("options", []):
+                    opt_cost = opt.get("cost", 0) * (2 if combined else 1)
                     weapon_options.append(f"{opt['name']} (+{opt_cost} pts)")
 
                 selected = st.radio(
@@ -630,14 +665,14 @@ def main():
 
                 if selected != "Arme de base":
                     opt_name = selected.split(" (+")[0]
-                    opt = next(o for o in group['options'] if o['name'] == opt_name)
-                    cost += opt.get('cost', 0) * (2 if combined else 1)
-                    current_weapon = opt.get('weapon', {})
+                    opt = next(o for o in group["options"] if o["name"] == opt_name)
+                    cost += opt.get("cost", 0) * (2 if combined else 1)
+                    current_weapon = opt.get("weapon", {})
 
-            elif group.get('type') == 'mount':
+            elif group.get("type") == "mount":
                 # Choix de monture
                 mount_options = ["Aucune monture"]
-                for opt in group.get('options', []):
+                for opt in group.get("options", []):
                     mount_options.append(f"{opt['name']} (+{opt.get('cost', 0)} pts)")
 
                 selected = st.radio(
@@ -648,9 +683,9 @@ def main():
 
                 if selected != "Aucune monture":
                     opt_name = selected.split(" (+")[0]
-                    opt = next(o for o in group['options'] if o['name'] == opt_name)
-                    cost += opt.get('cost', 0)
-                    mount = opt.get('mount')
+                    opt = next(o for o in group["options"] if o["name"] == opt_name)
+                    cost += opt.get("cost", 0)
+                    mount = opt.get("mount")
 
         st.markdown(f"**Coût total: {cost} pts**")
 
@@ -674,7 +709,7 @@ def main():
             st.session_state.army_total_cost += cost
             st.rerun()
 
-        # Affichage de l'armée
+        # Affichage de l'armée (style fiche unité)
         st.divider()
         st.subheader("Liste de l'armée")
 
@@ -683,31 +718,37 @@ def main():
 
         for i, unit in enumerate(st.session_state.army_list):
             with st.container():
+                coriace = calculate_total_coriace(unit)
+
+                # En-tête de l'unité
                 st.markdown(f"### {unit['name']} [{unit['cost']} pts]")
                 if unit.get('combined'):
-                    st.markdown("**Unité combinée** (x2 effectif)")
+                    st.markdown('**<span style="background: #27ae60; color: white; padding: 2px 6px; border-radius: 4px;">Unité combinée</span>**', unsafe_allow_html=True)
 
-                col1, col2, col3 = st.columns(3)
-                col1.metric("Qualité", f"{unit['quality']}+")
-                col2.metric("Défense", f"{unit['defense']}+")
-                col3.metric("Coriace", calculate_total_coriace(unit))
+                # Stats principales (Qua/Déf/Coriace)
+                stats_col1, stats_col2, stats_col3 = st.columns(3)
+                stats_col1.metric("Qua", f"{unit['quality']}+")
+                stats_col2.metric("Déf", f"{unit['defense']}+")
+                if coriace:
+                    stats_col3.metric("Coriace", coriace)
 
                 # Règles spéciales
                 if 'base_rules' in unit:
-                    rules = [r for r in unit['base_rules'] if not r.startswith("Coriace")]
+                    rules = [r for r in unit['base_rules'] if not r.startswith("Coriace(0)") and not r == "Coriace(0)"]
                     if rules:
                         st.markdown("**Règles spéciales**")
                         st.caption(", ".join(rules))
 
-                # Armes
+                # Armes (tableau)
                 if 'current_weapon' in unit:
                     weapon = unit['current_weapon']
                     st.markdown("**Armes**")
                     st.table({
                         "Nom": [weapon.get('name', 'Arme de base')],
+                        "RNG": [weapon.get('range', '-')],
                         "ATK": [weapon.get('attacks', '?')],
                         "AP": [weapon.get('armor_piercing', '?')],
-                        "Règles": [', '.join(weapon.get('special_rules', []))]
+                        "SPE": [', '.join(weapon.get('special_rules', [])) or '-']
                     })
 
                 # Monture
@@ -715,11 +756,11 @@ def main():
                     mount = unit['mount']
                     st.markdown("**Monture**")
                     st.caption(f"**{mount.get('name', '')}**")
-                    if 'special_rules' in mount:
+                    if 'special_rules' in mount and mount['special_rules']:
                         st.caption(", ".join(mount['special_rules']))
 
                 # Améliorations
-                if 'options' in unit:
+                if 'options' in unit and unit['options']:
                     st.markdown("**Améliorations**")
                     for opts in unit['options'].values():
                         if isinstance(opts, list):
