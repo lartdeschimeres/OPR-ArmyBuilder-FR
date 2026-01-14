@@ -200,7 +200,7 @@
           "description": "Améliorations disponibles pour l'unité",
           "options": [
             {
-              "name": "Icône du Ravage",
+              "name": "Icône du Ravage (Aura de Défense versatile)",
               "cost": 20,
               "special_rules": ["Aura de Défense versatile"]
             },
