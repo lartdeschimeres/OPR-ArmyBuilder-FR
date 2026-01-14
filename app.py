@@ -151,55 +151,67 @@ def generate_html(army_data):
 
     for unit in army_data['army_list']:
         coriace = calculate_total_coriace(unit)
+        unit_name = unit.get('name', 'Unité sans nom')
+        unit_cost = unit.get('cost', 0)
+        unit_quality = unit.get('quality', 3)
+        unit_defense = unit.get('defense', 3)
+
         html_content += f"""
         <div class="unit-card">
             <div class="unit-header">
                 <div>
-                    <span class="unit-name">{unit['name']} [{len(unit.get('models', ['10']))}]</span>
+                    <span class="unit-name">{unit_name} [{len(unit.get('models', ['10']))}]</span>
                     {'<span class="combined-badge">Unité combinée</span>' if unit.get('combined') else ''}
                 </div>
-                <div class="unit-cost">[{unit['cost']} pts]</div>
+                <div class="unit-cost">[{unit_cost} pts]</div>
             </div>
 
             <div class="stats">
                 <div class="stat">
-                    <div class="stat-value">{unit['quality']}+</div>
+                    <div class="stat-value">{unit_quality}+</div>
                     <div class="stat-label">Qua</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value">{unit['defense']}+</div>
+                    <div class="stat-value">{unit_defense}+</div>
                     <div class="stat-label">Déf</div>
                 </div>
-                {'<div class="stat"><div class="stat-value">' + str(coriace) + '</div><div class="stat-label">Coriace</div></div>' if coriace else ''}
+        """
+
+        if coriace:
+            html_content += f"""
+                <div class="stat">
+                    <div class="stat-value">{coriace}</div>
+                    <div class="stat-label">Coriace</div>
+                </div>
+            """
+
+        html_content += """
             </div>
         """
 
-        # Règles spéciales (avec parenthèses pour les valeurs)
-        if 'base_rules' in unit:
+        # Règles spéciales
+        if 'base_rules' in unit and unit['base_rules']:
             rules = []
             for rule in unit['base_rules']:
-                # Ajouter des parenthèses aux règles avec des valeurs numériques
-                if "(" in rule and ")" in rule:
-                    rules.append(rule)
-                elif re.search(r"\d+", rule):
-                    # Si la règle contient un nombre mais pas de parenthèses, on en ajoute
-                    match = re.search(r"(\D+)(\d+)", rule)
-                    if match:
-                        rules.append(f"{match.group(1)}({match.group(2)})")
-                    else:
-                        rules.append(rule)
-                else:
-                    rules.append(rule)
+                rules.append(format_special_rule(rule))
 
             if rules:
-                html_content += f"""
+                html_content += """
                 <div class="section-title">Règles spéciales</div>
-                <div class="rules-list">{', '.join(rules)}</div>
+                <div class="rules-list">
+                """ + ", ".join(rules) + """
+                </div>
                 """
 
-        # Armes (sans le "0" à gauche)
+        # Armes
         if 'current_weapon' in unit:
             weapon = unit['current_weapon']
+            weapon_name = weapon.get('name', 'Arme de base')
+            weapon_range = weapon.get('range', '-')
+            weapon_attacks = weapon.get('attacks', '?')
+            weapon_ap = weapon.get('armor_piercing', '?')
+            weapon_special = ', '.join(weapon.get('special_rules', [])) or '-'
+
             html_content += """
             <div class="section-title">Armes</div>
             <table class="weapons-table">
@@ -214,11 +226,11 @@ def generate_html(army_data):
                 </thead>
                 <tbody>
                     <tr>
-                        <td>""" + weapon.get('name', 'Arme de base') + """</td>
-                        <td>""" + str(weapon.get('range', '-')) + """</td>
-                        <td>""" + str(weapon.get('attacks', '?')) + """</td>
-                        <td>""" + str(weapon.get('armor_piercing', '?')) + """</td>
-                        <td>""" + (', '.join(weapon.get('special_rules', [])) or '-') + """</td>
+                        <td>""" + weapon_name + """</td>
+                        <td>""" + weapon_range + """</td>
+                        <td>""" + str(weapon_attacks) + """</td>
+                        <td>""" + str(weapon_ap) + """</td>
+                        <td>""" + weapon_special + """</td>
                     </tr>
                 </tbody>
             </table>
@@ -227,47 +239,41 @@ def generate_html(army_data):
         # Monture
         if 'mount' in unit:
             mount = unit['mount']
+            mount_name = mount.get('name', '')
+            mount_rules = ', '.join(mount.get('special_rules', [])) if 'special_rules' in mount else ''
+
             html_content += f"""
             <div class="section-title">Monture</div>
             <div class="upgrade-item">
-                <span><strong>{mount.get('name', '')}</strong></span>
+                <span><strong>{mount_name}</strong></span>
             </div>
             """
-            if 'special_rules' in mount and mount['special_rules']:
+
+            if mount_rules:
                 html_content += f"""
-                <div class="rules-list">{', '.join(mount['special_rules'])}</div>
+                <div class="rules-list">{mount_rules}</div>
                 """
 
-        # Améliorations (avec parenthèses pour les règles spéciales)
+        # Améliorations
         if 'options' in unit and unit['options']:
             html_content += '<div class="section-title">Améliorations</div>'
+
             for group_name, opts in unit['options'].items():
                 if isinstance(opts, list):
                     for opt in opts:
-                        # Formater le nom de l'amélioration avec parenthèses si nécessaire
                         opt_name = opt.get('name', '')
-                        if "(" not in opt_name and re.search(r"\d+", opt_name):
-                            match = re.search(r"(\D+)(\d+)", opt_name)
-                            if match:
-                                opt_name = f"{match.group(1)}({match.group(2)})"
-
+                        formatted_name = format_special_rule(opt_name)
                         html_content += f"""
                         <div class="upgrade-item">
-                            <span>• {opt_name}</span>
-                            <span>+{opt.get('cost', 0)} pts</span>
+                            <span>• {formatted_name}</span>
                         </div>
                         """
                 elif isinstance(opts, dict):
                     opt_name = opts.get('name', '')
-                    if "(" not in opt_name and re.search(r"\d+", opt_name):
-                        match = re.search(r"(\D+)(\d+)", opt_name)
-                        if match:
-                            opt_name = f"{match.group(1)}({match.group(2)})"
-
+                    formatted_name = format_special_rule(opt_name)
                     html_content += f"""
                     <div class="upgrade-item">
-                        <span>• {opt_name}</span>
-                        <span>+{opts.get('cost', 0)} pts</span>
+                        <span>• {formatted_name}</span>
                     </div>
                     """
 
@@ -322,6 +328,21 @@ def auto_export(army_data, filename_prefix):
 # ======================
 # Calculs et validations
 # ======================
+
+def format_special_rule(rule):
+    """Formate une règle spéciale avec parenthèses si nécessaire."""
+    if not isinstance(rule, str):
+        return str(rule)
+
+    # Si la règle contient déjà des parenthèses, on la retourne telle quelle
+    if "(" in rule and ")" in rule:
+        return rule
+
+    # Sinon, on cherche un nombre et on ajoute des parenthèses
+    match = re.search(r"(\D+)(\d+)", rule)
+    if match:
+        return f"{match.group(1)}({match.group(2)})"
+    return rule
 
 def extract_coriace(rules):
     """Extrait la valeur de Coriace (ignore Coriace(0))."""
@@ -392,25 +413,6 @@ def validate_army(army_list, game_rules, total_cost, total_points):
                 errors.append(f"Trop de copies de '{name}' ({count}/{max_copies} max)")
 
     return len(errors) == 0, errors
-
-# ======================
-# Fonction pour formater les règles spéciales
-# ======================
-
-def format_special_rule(rule):
-    """Formate une règle spéciale avec parenthèses si nécessaire."""
-    if not isinstance(rule, str):
-        return str(rule)
-
-    # Si la règle contient déjà des parenthèses, on la retourne telle quelle
-    if "(" in rule and ")" in rule:
-        return rule
-
-    # Sinon, on cherche un nombre et on ajoute des parenthèses
-    match = re.search(r"(\D+)(\d+)", rule)
-    if match:
-        return f"{match.group(1)}({match.group(2)})"
-    return rule
 
 # ======================
 # Application principale
@@ -756,7 +758,7 @@ def main():
             st.session_state.army_total_cost += cost
             st.rerun()
 
-        # Affichage de l'armée (style fiche unité comme dans l'image)
+        # Affichage de l'armée
         st.divider()
         st.subheader("Liste de l'armée")
 
@@ -767,46 +769,45 @@ def main():
             with st.container():
                 coriace = calculate_total_coriace(unit)
 
-                # En-tête de l'unité (comme dans l'image)
+                # En-tête de l'unité
                 st.markdown(f"### {unit['name']} [{len(unit.get('models', ['10']))}] [{unit['cost']} pts]")
 
-                # Stats (Qua/Déf/Coriace)
+                # Stats
                 stats_col1, stats_col2, stats_col3 = st.columns(3)
                 stats_col1.metric("Qua", f"{unit['quality']}+")
                 stats_col2.metric("Déf", f"{unit['defense']}+")
                 if coriace:
                     stats_col3.metric("Coriace", coriace)
 
-                # Règles spéciales (avec parenthèses)
+                # Règles spéciales
                 if 'base_rules' in unit and unit['base_rules']:
                     st.markdown("**Règles spéciales**")
                     st.caption(", ".join(unit['base_rules']))
 
-                # Armes (tableau sans "0" à gauche)
+                # Armes
                 if 'current_weapon' in unit:
                     weapon = unit['current_weapon']
                     st.markdown("**Armes**")
 
-                    # Création du tableau HTML personnalisé
-                    weapons_html = """
+                    weapons_html = f"""
                     <style>
-                    .custom-weapons-table {
+                    .custom-weapons-table {{
                         width: 100%;
                         border-collapse: collapse;
                         margin: 10px 0;
                         font-size: 0.9em;
-                    }
-                    .custom-weapons-table th, .custom-weapons-table td {
+                    }}
+                    .custom-weapons-table th, .custom-weapons-table td {{
                         border: 1px solid #ddd;
                         padding: 8px;
                         text-align: center;
-                    }
-                    .custom-weapons-table th {
+                    }}
+                    .custom-weapons-table th {{
                         background-color: #f2f2f2;
-                    }
-                    .custom-weapons-table td:first-child {
+                    }}
+                    .custom-weapons-table td:first-child {{
                         text-align: left;
-                    }
+                    }}
                     </style>
                     <table class="custom-weapons-table">
                         <thead>
@@ -820,38 +821,26 @@ def main():
                         </thead>
                         <tbody>
                             <tr>
-                                <td>{}</td>
-                                <td>{}</td>
-                                <td>{}</td>
-                                <td>{}</td>
-                                <td>{}</td>
+                                <td>{weapon.get('name', 'Arme de base')}</td>
+                                <td>{weapon.get('range', '-')}</td>
+                                <td>{weapon.get('attacks', '?')}</td>
+                                <td>{weapon.get('armor_piercing', '?')}</td>
+                                <td>{', '.join(weapon.get('special_rules', [])) or '-'}</td>
                             </tr>
                         </tbody>
                     </table>
-                    """.format(
-                        weapon.get('name', 'Arme de base'),
-                        weapon.get('range', '-'),
-                        weapon.get('attacks', '?'),
-                        weapon.get('armor_piercing', '?'),
-                        ', '.join(weapon.get('special_rules', [])) or '-'
-                    )
-
+                    """
                     components.html(weapons_html, height=100)
 
-                # Améliorations (avec puce et parenthèses)
+                # Améliorations
                 if 'options' in unit and unit['options']:
                     st.markdown("**Améliorations**")
                     for opts in unit['options'].values():
                         if isinstance(opts, list):
                             for opt in opts:
-                                # Formater le nom avec parenthèses si nécessaire
-                                opt_name = opt.get('name', '')
-                                formatted_name = format_special_rule(opt_name)
-                                st.caption(f"• {formatted_name}")
+                                st.caption(f"• {opt.get('name', '')}")
                         elif isinstance(opts, dict):
-                            opt_name = opts.get('name', '')
-                            formatted_name = format_special_rule(opt_name)
-                            st.caption(f"• {formatted_name}")
+                            st.caption(f"• {opts.get('name', '')}")
 
                 if st.button(f"Supprimer", key=f"del_{i}"):
                     st.session_state.army_total_cost -= unit['cost']
