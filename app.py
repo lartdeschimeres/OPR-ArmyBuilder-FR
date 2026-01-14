@@ -27,7 +27,8 @@ def localstorage_get(key):
         components.html(get_js, height=0)
         value = st.text_input(f"localstorage_value_{key}", key=f"localstorage_value_{key}", label_visibility="collapsed")
         return None if value == "null" else value
-    except:
+    except Exception as e:
+        st.error(f"Erreur LocalStorage: {e}")
         return None
 
 def localstorage_set(key, value):
@@ -35,19 +36,20 @@ def localstorage_set(key, value):
     try:
         set_js = f"""
         <script>
-        localStorage.setItem('{key}', {json.dumps(value)});
+        localStorage.setItem('{key}', JSON.stringify({json.dumps(value)}));
         </script>
         """
         components.html(set_js, height=0)
-    except:
-        pass
+    except Exception as e:
+        st.error(f"Erreur LocalStorage: {e}")
 
 def load_army_lists(player_name="default"):
     """Charge les listes d'armées."""
     try:
         data = localstorage_get(f"army_lists_{player_name}")
         return json.loads(data) if data else []
-    except:
+    except Exception as e:
+        st.error(f"Erreur chargement listes: {e}")
         return []
 
 def save_army_list(army_list_data, player_name="default"):
@@ -57,7 +59,8 @@ def save_army_list(army_list_data, player_name="default"):
         current_lists.append(army_list_data)
         localstorage_set(f"army_lists_{player_name}", current_lists)
         return True
-    except:
+    except Exception as e:
+        st.error(f"Erreur sauvegarde: {e}")
         return False
 
 def delete_army_list(player_name, list_index):
@@ -68,9 +71,10 @@ def delete_army_list(player_name, list_index):
             current_lists.pop(list_index)
             localstorage_set(f"army_lists_{player_name}", current_lists)
             return True
-    except:
-        pass
-    return False
+        return False
+    except Exception as e:
+        st.error(f"Erreur suppression: {e}")
+        return False
 
 # ======================
 # Génération de fichiers
@@ -78,65 +82,65 @@ def delete_army_list(player_name, list_index):
 
 def generate_html(army_data):
     """Génère le HTML pour une liste d'armée."""
-    html = f"""
+    html_content = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <title>Liste OPR - {army_data['name']}</title>
         <style>
-            body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
-            .army-title { color: #2c3e50; margin-bottom: 5px; }
-            .army-subtitle { color: #7f8c8d; margin-bottom: 20px; }
-            .unit-card {
+            body {{ font-family: Arial, sans-serif; margin: 20px; color: #333; }}
+            .army-title {{ color: #2c3e50; margin-bottom: 5px; }}
+            .army-subtitle {{ color: #7f8c8d; margin-bottom: 20px; }}
+            .unit-card {{
                 border: 1px solid #ddd; border-radius: 8px;
                 padding: 15px; margin-bottom: 20px; background: #f9f9f9;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            .unit-header {
+            }}
+            .unit-header {{
                 display: flex; justify-content: space-between;
                 margin-bottom: 10px; padding-bottom: 5px;
                 border-bottom: 1px solid #eee;
-            }
-            .unit-name { font-size: 1.2em; font-weight: bold; }
-            .unit-cost { color: #e74c3c; font-weight: bold; }
-            .stats {
+            }}
+            .unit-name {{ font-size: 1.2em; font-weight: bold; }}
+            .unit-cost {{ color: #e74c3c; font-weight: bold; }}
+            .stats {{
                 display: flex; gap: 20px; margin: 10px 0;
                 flex-wrap: wrap;
-            }
-            .stat {
+            }}
+            .stat {{
                 text-align: center; flex: 1; min-width: 80px;
                 background: #f0f8ff; padding: 8px; border-radius: 5px;
-            }
-            .stat-value { font-weight: bold; font-size: 1.1em; }
-            .stat-label { font-size: 0.8em; color: #555; }
-            .section-title {
+            }}
+            .stat-value {{ font-weight: bold; font-size: 1.1em; }}
+            .stat-label {{ font-size: 0.8em; color: #555; }}
+            .section-title {{
                 font-weight: bold; color: #3498db;
                 margin: 12px 0 8px; border-bottom: 1px dashed #ddd;
                 padding-bottom: 3px;
-            }
-            .weapons-table {
+            }}
+            .weapons-table {{
                 width: 100%; border-collapse: collapse;
                 margin: 10px 0; font-size: 0.9em;
-            }
-            .weapons-table th, .weapons-table td {
+            }}
+            .weapons-table th, .weapons-table td {{
                 border: 1px solid #ddd; padding: 8px;
                 text-align: center;
-            }
-            .weapons-table th { background-color: #f2f2f2; }
-            .rules-list { margin-left: 20px; color: #555; }
-            .upgrade-item {
+            }}
+            .weapons-table th {{ background-color: #f2f2f2; }}
+            .rules-list {{ margin-left: 20px; color: #555; }}
+            .upgrade-item {{
                 display: flex; justify-content: space-between;
                 margin-bottom: 3px; padding: 3px 0;
-            }
-            .combined-badge {
+            }}
+            .combined-badge {{
                 background: #27ae60; color: white;
                 padding: 2px 6px; border-radius: 4px;
                 font-size: 0.8em; margin-left: 10px;
-            }
-            @media print {
-                body { margin: 0; padding: 20px; }
-                .unit-card { border: none; box-shadow: none; }
-            }
+            }}
+            @media print {{
+                body {{ margin: 0; padding: 20px; }}
+                .unit-card {{ border: none; box-shadow: none; }}
+            }}
         </style>
     </head>
     <body>
@@ -146,7 +150,7 @@ def generate_html(army_data):
 
     for unit in army_data['army_list']:
         coriace = calculate_total_coriace(unit)
-        html += f"""
+        html_content += f"""
         <div class="unit-card">
             <div class="unit-header">
                 <div>
@@ -165,20 +169,15 @@ def generate_html(army_data):
                     <div class="stat-value">{unit['defense']}+</div>
                     <div class="stat-label">Déf</div>
                 </div>
-                {f'''
-                <div class="stat">
-                    <div class="stat-value">{coriace}</div>
-                    <div class="stat-label">Coriace</div>
-                </div>
-                ''' if coriace > 0 else ''}
+                {'<div class="stat"><div class="stat-value">' + str(coriace) + '</div><div class="stat-label">Coriace</div></div>' if coriace else ''}
             </div>
         """
 
-        # Règles spéciales (sans Coriace(0))
+        # Règles spéciales
         if 'base_rules' in unit:
-            rules = [r for r in unit['base_rules'] if not r.startswith("Coriace(0)") and not r == "Coriace(0)"]
+            rules = [r for r in unit['base_rules'] if not r.startswith("Coriace(0)") and r != "Coriace(0)"]
             if rules:
-                html += f"""
+                html_content += f"""
                 <div class="section-title">Règles spéciales</div>
                 <div class="rules-list">{', '.join(rules)}</div>
                 """
@@ -186,7 +185,7 @@ def generate_html(army_data):
         # Armes
         if 'current_weapon' in unit:
             weapon = unit['current_weapon']
-            html += """
+            html_content += """
             <div class="section-title">Armes</div>
             <table class="weapons-table">
                 <thead>
@@ -200,60 +199,57 @@ def generate_html(army_data):
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{}</td>
-                        <td>{}</td>
-                        <td>{}</td>
-                        <td>{}</td>
-                        <td>{}</td>
+                        <td>""" + weapon.get('name', 'Arme de base') + """</td>
+                        <td>""" + str(weapon.get('range', '-')) + """</td>
+                        <td>""" + str(weapon.get('attacks', '?')) + """</td>
+                        <td>""" + str(weapon.get('armor_piercing', '?')) + """</td>
+                        <td>""" + (', '.join(weapon.get('special_rules', [])) or '-') + """</td>
                     </tr>
                 </tbody>
             </table>
-            """.format(
-                weapon.get('name', 'Arme de base'),
-                weapon.get('range', '-'),
-                weapon.get('attacks', '?'),
-                weapon.get('armor_piercing', '?'),
-                ', '.join(weapon.get('special_rules', [])) or '-'
-            )
+            """
 
         # Monture
         if 'mount' in unit:
             mount = unit['mount']
-            html += f"""
+            html_content += f"""
             <div class="section-title">Monture</div>
             <div class="upgrade-item">
                 <span><strong>{mount.get('name', '')}</strong></span>
             </div>
             """
             if 'special_rules' in mount and mount['special_rules']:
-                html += f"""
+                html_content += f"""
                 <div class="rules-list">{', '.join(mount['special_rules'])}</div>
                 """
 
         # Améliorations
         if 'options' in unit and unit['options']:
-            html += '<div class="section-title">Améliorations</div>'
+            html_content += '<div class="section-title">Améliorations</div>'
             for group_name, opts in unit['options'].items():
                 if isinstance(opts, list):
                     for opt in opts:
-                        html += f"""
+                        html_content += f"""
                         <div class="upgrade-item">
                             <span>- {opt.get('name', '')}</span>
                             <span>+{opt.get('cost', 0)} pts</span>
                         </div>
                         """
                 elif isinstance(opts, dict):
-                    html += f"""
+                    html_content += f"""
                     <div class="upgrade-item">
                         <span>- {opts.get('name', '')}</span>
                         <span>+{opts.get('cost', 0)} pts</span>
                     </div>
                     """
 
-        html += "</div>"
+        html_content += "</div>"
 
-    html += "</body></html>"
-    return html
+    html_content += """
+    </body>
+    </html>
+    """
+    return html_content
 
 def auto_export(army_data, filename_prefix):
     """Exporte automatiquement HTML et JSON."""
@@ -293,7 +289,7 @@ def auto_export(army_data, filename_prefix):
             )
 
     except Exception as e:
-        st.error(f"Erreur d'export: {e}")
+        st.error(f"Erreur export: {e}")
 
 # ======================
 # Calculs et validations
@@ -339,7 +335,7 @@ def calculate_total_coriace(unit):
         if 'special_rules' in unit['current_weapon']:
             total += extract_coriace(unit['current_weapon']['special_rules'])
 
-    return total if total > 0 else None  # Retourne None si 0
+    return total if total > 0 else None
 
 def validate_army(army_list, game_rules, total_cost, total_points):
     """Valide une liste d'armée."""
@@ -377,12 +373,13 @@ def main():
     # Initialisation
     if "page" not in st.session_state:
         st.session_state.page = "login"
-        st.session_state.current_player = "default"
+        st.session_state.current_player = "Simon"  # Pseudo par défaut pour Simon
         st.session_state.player_army_lists = []
 
     st.set_page_config(
-        page_title="OPR Army Builder FR",
-        layout="wide"
+        page_title="OPR Army Builder FR - Simon Joinville Fouquet",
+        layout="wide",
+        initial_sidebar_state="collapsed"
     )
 
     # Chemins des données
@@ -433,10 +430,10 @@ def main():
     # PAGE 1: Accueil
     if st.session_state.page == "login":
         st.title("OPR Army Builder 🇫🇷")
-        st.subheader("Bienvenue!")
+        st.subheader(f"Bienvenue, Simon!")
 
         player_name = st.text_input(
-            "Pseudo (optionnel)",
+            "Pseudo",
             value=st.session_state.current_player
         )
 
@@ -500,8 +497,11 @@ def main():
         # Info sauvegarde
         st.info("""
         💡 **Sauvegarde automatique**:
-        Vos listes sont enregistrées dans votre navigateur.
-        Pour les transférer: 1) Exportez-les 2) Envoyez le fichier 3) Importez-le sur un autre appareil
+        Vos listes sont enregistrées dans votre navigateur (LocalStorage).
+        Pour les transférer:
+        1. Exportez-les (bouton ci-dessus)
+        2. Envoyez le fichier par e-mail/cloud
+        3. Importez-le sur un autre appareil
         """)
 
         # Listes sauvegardées
@@ -571,7 +571,7 @@ def main():
 
             list_name = st.text_input(
                 "Nom de la liste",
-                value=f"Liste {datetime.now().strftime('%Y%m%d')}"
+                value=f"Liste_{datetime.now().strftime('%Y%m%d')}"
             )
 
             if st.button("Créer la liste") and game and faction:
@@ -631,7 +631,7 @@ def main():
         # Armes de base
         st.markdown("**Armes de base**")
         for weapon in unit.get("weapons", []):
-            st.caption(f"- {weapon.get('name', 'Arme non définie')} (A{weapon.get('attacks', '?')}, PA{weapon.get('armor_piercing', '?')})")
+            st.caption(f"- {weapon.get('name', 'Arme de base')} (A{weapon.get('attacks', '?')}, PA{weapon.get('armor_piercing', '?')})")
 
         # Options par catégorie
         for group in unit.get("upgrade_groups", []):
@@ -734,7 +734,7 @@ def main():
 
                 # Règles spéciales
                 if 'base_rules' in unit:
-                    rules = [r for r in unit['base_rules'] if not r.startswith("Coriace(0)") and not r == "Coriace(0)"]
+                    rules = [r for r in unit['base_rules'] if not r.startswith("Coriace(0)") and r != "Coriace(0)"]
                     if rules:
                         st.markdown("**Règles spéciales**")
                         st.caption(", ".join(rules))
