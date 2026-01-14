@@ -5,6 +5,7 @@ from collections import defaultdict
 import streamlit as st
 import streamlit.components.v1 as components
 from datetime import datetime
+import os
 
 # Compteur global pour éviter les conflits de clés dans le LocalStorage
 if "localstorage_counter" not in st.session_state:
@@ -70,7 +71,44 @@ def delete_army_list(player_name, list_index):
     localstorage_set(f"army_lists_{player_name}", army_lists)
     return True
 
-def export_data_html(army_list_data):
+def export_data(player_name="default"):
+    """Exporte les données vers un fichier JSON."""
+    army_lists = json.loads(localstorage_get(f"army_lists_{player_name}") or "[]")
+    if not army_lists:
+        st.warning("Aucune donnée à exporter.")
+        return
+
+    data = {
+        "player_name": player_name,
+        "army_lists": army_lists,
+        "date": datetime.now().isoformat()
+    }
+
+    filename = f"opr_army_builder_{player_name}_{datetime.now().strftime('%Y%m%d')}.json"
+    json_str = json.dumps(data, indent=2, ensure_ascii=False)
+    st.download_button(
+        label="💾 Exporter mes données",
+        data=json_str,
+        file_name=filename,
+        mime="application/json"
+    )
+
+def import_data():
+    """Importe des données depuis un fichier JSON."""
+    uploaded_file = st.file_uploader("📁 Importer un fichier de sauvegarde", type=["json"])
+    if uploaded_file is not None:
+        try:
+            data = json.load(uploaded_file)
+            player_name = data.get("player_name", "default")
+            localstorage_set(f"army_lists_{player_name}", data["army_lists"])
+            st.session_state.current_player = player_name
+            st.session_state.player_army_lists = data["army_lists"]
+            st.success(f"Données importées pour le profil '{player_name}' !")
+            st.rerun()
+        except Exception as e:
+            st.error(f"Erreur lors de l'import: {str(e)}")
+
+def generate_html_content(army_list_data):
     """Génère le contenu HTML pour une liste d'armée."""
     html_content = f"""
     <!DOCTYPE html>
@@ -343,6 +381,58 @@ def validate_army(army_list, game_rules, total_cost, total_points):
             errors.append(f"Trop d'unités ({len(army_list)}/{max_units} max)")
     return len(errors) == 0, errors
 
+def auto_export(army_list_data, list_name):
+    """Génère et télécharge automatiquement les fichiers HTML et JSON."""
+    # Générer le HTML
+    html_content = generate_html_content(army_list_data)
+    html_filename = f"{list_name or 'army_list'}.html"
+    with open(html_filename, "w", encoding="utf-8") as f:
+        f.write(html_content)
+
+    # Générer le JSON
+    json_data = {
+        "name": army_list_data['name'],
+        "game": army_list_data['game'],
+        "faction": army_list_data['faction'],
+        "points": army_list_data['points'],
+        "army_list": army_list_data['army_list'],
+        "total_cost": army_list_data['total_cost'],
+        "date": datetime.now().isoformat(),
+        "metadata": {
+            "version": "1.0",
+            "source": "OPR Army Builder",
+            "coriace_total": sum(calculate_total_coriace(u) for u in army_list_data['army_list'])
+        }
+    }
+    json_filename = f"{list_name or 'army_list'}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    json_str = json.dumps(json_data, indent=2, ensure_ascii=False)
+
+    # Créer un conteneur pour les boutons de téléchargement
+    download_container = st.container()
+    with download_container:
+        col1, col2 = st.columns(2)
+        with col1:
+            with open(html_filename, "r", encoding="utf-8") as f:
+                st.download_button(
+                    label="📄 Télécharger le HTML",
+                    data=f,
+                    file_name=html_filename,
+                    mime="text/html"
+                )
+        with col2:
+            st.download_button(
+                label="📁 Télécharger le JSON",
+                data=json_str,
+                file_name=json_filename,
+                mime="application/json"
+            )
+
+    # Supprimer les fichiers temporaires après téléchargement
+    try:
+        os.remove(html_filename)
+    except:
+        pass
+
 def main():
     # Initialisation de la session
     if "page" not in st.session_state:
@@ -466,7 +556,7 @@ def main():
         col1, col2 = st.columns(2)
         with col1:
             # Bouton pour exporter toutes les listes en JSON
-            if st.button("💾 Exporter toutes mes listes en JSON"):
+            if st.button("💾 Exporter toutes mes listes"):
                 army_lists = load_army_lists(st.session_state.current_player)
                 if not army_lists:
                     st.warning("Aucune liste à exporter.")
@@ -540,49 +630,19 @@ def main():
                                 st.error(f"Erreur lors du chargement: {str(e)}")
 
                 with col2:
-                    if st.button(f"📄 Exporter en HTML", key=f"export_html_{i}"):
-                        html_content = export_data_html(army_list)
-                        filename = f"{army_list['name'] or 'army_list'}.html"
-                        with open(filename, "w", encoding="utf-8") as f:
-                            f.write(html_content)
-                        with open(filename, "r", encoding="utf-8") as f:
-                            st.download_button(
-                                label="Télécharger le HTML",
-                                data=f,
-                                file_name=filename,
-                                mime="text/html",
-                                key=f"download_html_{i}"
-                            )
-
-                with col3:
-                    if st.button(f"📁 Exporter en JSON", key=f"export_json_{i}"):
-                        json_data = {
+                    if st.button(f"📄 Exporter", key=f"export_{i}"):
+                        army_list_data = {
                             "name": army_list['name'],
                             "game": army_list['game'],
                             "faction": army_list['faction'],
                             "points": army_list['points'],
                             "army_list": army_list['army_list'],
                             "total_cost": army_list['total_cost'],
-                            "date": army_list['date'],
-                            "metadata": {
-                                "version": "1.0",
-                                "source": "OPR Army Builder",
-                                "coriace_total": sum(calculate_total_coriace(u) for u in army_list['army_list'])
-                            }
+                            "date": army_list['date']
                         }
+                        auto_export(army_list_data, army_list['name'])
 
-                        json_filename = f"{army_list['name'] or 'army_list'}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-                        json_str = json.dumps(json_data, indent=2, ensure_ascii=False)
-
-                        st.download_button(
-                            label="Télécharger le JSON",
-                            data=json_str,
-                            file_name=json_filename,
-                            mime="application/json",
-                            key=f"download_json_{i}"
-                        )
-
-                with col4:
+                with col3:
                     if st.button(f"❌ Supprimer", key=f"delete_{i}"):
                         if delete_army_list(st.session_state.current_player, i):
                             st.session_state.player_army_lists = load_army_lists(st.session_state.current_player)
@@ -922,7 +982,7 @@ def main():
                 st.warning(f"⚠️ Votre armée dépasse de {total_points - st.session_state.points} points !")
 
         # Boutons de sauvegarde/export
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3 = st.columns(3)
         with col1:
             if st.button("💾 Sauvegarder la liste"):
                 if not st.session_state.list_name:
@@ -942,54 +1002,22 @@ def main():
                     st.success(f"Liste '{st.session_state.list_name}' sauvegardée avec succès!")
 
         with col2:
-            if st.button("📄 Exporter en HTML"):
-                army_list_data = {
-                    "name": st.session_state.list_name,
-                    "game": st.session_state.game,
-                    "faction": st.session_state.faction,
-                    "points": st.session_state.points,
-                    "army_list": st.session_state.army_list,
-                    "total_cost": st.session_state.army_total_cost,
-                    "date": datetime.now().isoformat()
-                }
-                html_content = export_data_html(army_list_data)
-                filename = f"{st.session_state.list_name or 'army_list'}.html"
-                with open(filename, "w", encoding="utf-8") as f:
-                    f.write(html_content)
-                with open(filename, "r", encoding="utf-8") as f:
-                    st.download_button(
-                        label="Télécharger le HTML",
-                        data=f,
-                        file_name=filename,
-                        mime="text/html"
-                    )
+            if st.button("📄 Exporter en HTML/JSON"):
+                if not st.session_state.list_name:
+                    st.warning("Veuillez donner un nom à votre liste avant d'exporter")
+                else:
+                    army_list_data = {
+                        "name": st.session_state.list_name,
+                        "game": st.session_state.game,
+                        "faction": st.session_state.faction,
+                        "points": st.session_state.points,
+                        "army_list": st.session_state.army_list,
+                        "total_cost": st.session_state.army_total_cost,
+                        "date": datetime.now().isoformat()
+                    }
+                    auto_export(army_list_data, st.session_state.list_name)
 
         with col3:
-            if st.button("📁 Exporter en JSON"):
-                army_list_data = {
-                    "name": st.session_state.list_name,
-                    "game": st.session_state.game,
-                    "faction": st.session_state.faction,
-                    "points": st.session_state.points,
-                    "army_list": st.session_state.army_list,
-                    "total_cost": st.session_state.army_total_cost,
-                    "date": datetime.now().isoformat(),
-                    "metadata": {
-                        "version": "1.0",
-                        "source": "OPR Army Builder",
-                        "coriace_total": sum(calculate_total_coriace(u) for u in st.session_state.army_list)
-                    }
-                }
-                json_filename = f"{st.session_state.list_name or 'army_list'}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-                json_str = json.dumps(army_list_data, indent=2, ensure_ascii=False)
-                st.download_button(
-                    label="Télécharger le JSON",
-                    data=json_str,
-                    file_name=json_filename,
-                    mime="application/json"
-                )
-
-        with col4:
             if st.button("🧹 Réinitialiser la liste"):
                 st.session_state.army_list = []
                 st.session_state.army_total_cost = 0
