@@ -6,30 +6,40 @@ import streamlit as st
 import streamlit.components.v1 as components
 from datetime import datetime
 
+# Compteur global pour éviter les conflits de clés
+if "localstorage_counter" not in st.session_state:
+    st.session_state.localstorage_counter = 0
+
+def get_unique_key():
+    """Génère une clé unique pour éviter les conflits."""
+    st.session_state.localstorage_counter += 1
+    return f"localstorage_value_{st.session_state.localstorage_counter}"
+
 def localstorage_get(key):
     """Récupère une valeur du LocalStorage via JavaScript."""
+    unique_key = get_unique_key()
     get_js = f"""
     <script>
     const value = localStorage.getItem('{key}');
     const input = window.parent.document.createElement('input');
     input.style.display = 'none';
-    input.id = 'localstorage_value';
+    input.id = '{unique_key}';
     input.value = value || 'null';
     window.parent.document.body.appendChild(input);
     </script>
     """
     components.html(get_js, height=0)
 
-    js = """
+    js = f"""
     <script>
-    const value = document.getElementById('localstorage_value').value;
-    window.parent.document.getElementById('localstorage_value').remove();
+    const value = document.getElementById('{unique_key}').value;
+    window.parent.document.getElementById('{unique_key}').remove();
     </script>
     """
     components.html(js, height=0)
 
     # Utilise un input caché pour récupérer la valeur
-    value = st.text_input("localstorage_value", key="localstorage_value", label_visibility="collapsed")
+    value = st.text_input("hidden_input", key=unique_key, label_visibility="collapsed")
     return value
 
 def localstorage_set(key, value):
@@ -993,6 +1003,7 @@ def main():
 
                     other_options = []
                     for group_name, opt_group in u.get("options", {}).items():
+                        # Exclure les groupes liés aux armes et aux montures
                         if ("arme" in group_name.lower() or
                             "weapon" in group_name.lower() or
                             "monture" in group_name.lower() or
