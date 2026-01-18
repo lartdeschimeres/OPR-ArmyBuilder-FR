@@ -1,230 +1,233 @@
-import streamlit as st
 import json
-import os
 import re
 from pathlib import Path
-from copy import deepcopy
+from datetime import datetime
+import hashlib
+import streamlit as st
 import streamlit.components.v1 as components
 
-# =============================
-# CONFIG
-# =============================
+# ======================================================
+# CONFIGURATION STREAMLIT
+# ======================================================
 
 st.set_page_config(
-    page_title="OPR Army Forge FR",
-    layout="wide"
+    page_title="OPR Army Builder FR",
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
-BASE_DIR = Path(__file__).resolve().parent
-FACTIONS_PATH = BASE_DIR / "lists" / "data" / "factions"
-
-# =============================
-# LOCAL STORAGE
-# =============================
+# ======================================================
+# LOCAL STORAGE (STABLE)
+# ======================================================
 
 def localstorage_get(key):
-    js = f"""
-    <script>
-        const value = localStorage.getItem("{key}");
-        const input = document.getElementById("{key}");
-        if (input) {{
-            input.value = value || "";
-        }}
-    </script>
-    """
-    components.html(js, height=0)
-    return st.text_input("", key=key, label_visibility="collapsed") or None
-
+    components.html(
+        f"""
+        <script>
+        const val = localStorage.getItem("{key}");
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.id = "{key}";
+        input.value = val ?? "";
+        document.body.appendChild(input);
+        </script>
+        """,
+        height=0
+    )
+    return st.session_state.get(key)
 
 def localstorage_set(key, value):
-    js = f"""
-    <script>
+    components.html(
+        f"""
+        <script>
         localStorage.setItem("{key}", `{json.dumps(value, ensure_ascii=False)}`);
-    </script>
-    """
-    components.html(js, height=0)
+        </script>
+        """,
+        height=0
+    )
 
-# =============================
-# UTILITAIRES
-# =============================
+# ======================================================
+# CORIACE
+# ======================================================
 
 def extract_coriace(rules):
     total = 0
-    for r in rules:
-        match = re.search(r"Coriace\s*\(?\+?(\d+)\)?", r)
-        if match:
-            total += int(match.group(1))
+    for r in rules or []:
+        m = re.search(r"Coriace\s*\(?(\d+)\)?", r)
+        if m:
+            total += int(m.group(1))
     return total
 
+def calculate_total_coriace(unit):
+    total = extract_coriace(unit.get("base_rules", []))
+    for opts in unit.get("options", {}).values():
+        for o in opts if isinstance(opts, list) else [opts]:
+            total += extract_coriace(o.get("special_rules", []))
+    if unit.get("mount"):
+        total += extract_coriace(unit["mount"].get("special_rules", []))
+    return total if total > 0 else None
 
+# ======================================================
+# CHARGEMENT DES FACTIONS (POINT CRITIQUE)
+# ======================================================
+
+BASE_DIR = Path(__file__).resolve().parent
+FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
+
+if not FACTIONS_DIR.exists():
+    st.error(f"❌ Dossier factions introuvable : {FACTIONS_DIR}")
+    st.stop()
+
+@st.cache_data
 def load_factions():
     factions = {}
-    if not FACTIONS_PATH.exists():
-        st.error(f"Dossier factions introuvable : {FACTIONS_PATH}")
-        return factions
+    games = set()
 
-    for file in FACTIONS_PATH.glob("*.json"):
-        with open(file, encoding="utf-8") as f:
-            data = json.load(f)
-            factions[data["faction"]] = data
-    return factions
+    for file in FACTIONS_DIR.glob("*.json"):
+        try:
+            with open(file, encoding="utf-8") as f:
+                data = json.load(f)
+                game = data.get("game")
+                faction = data.get("faction")
+                if game and faction:
+                    factions.setdefault(game, {})[faction] = data
+                    games.add(game)
+        except Exception as e:
+            st.warning(f"Erreur chargement {file.name} : {e}")
 
+    return factions, sorted(games)
 
-def load_army_lists(player):
-    data = localstorage_get(f"army_lists_{player}")
-    if not data:
-        return []
+# ======================================================
+# MAIN
+# ======================================================
 
-    try:
-        parsed = json.loads(data)
-        return parsed.get("army_lists", [])
-    except Exception:
-        return []
+def main():
 
+    if "page" not in st.session_state:
+        st.session_state.page = "setup"
+        st.session_state.player = "Simon"
+        st.session_state.army_list = []
+        st.session_state.army_cost = 0
 
-def save_army_list(player, army):
-    lists = load_army_lists(player)
-    lists.append(army)
-    localstorage_set(
-        f"army_lists_{player}",
-        {"army_lists": lists}
-    )
+    factions, games = load_factions()
 
-# =============================
-# SESSION INIT
-# =============================
+    # ==================================================
+    # PAGE SETUP
+    # ==================================================
 
-if "page" not in st.session_state:
-    st.session_state.page = "setup"
+    if st.session_state.page == "setup":
+        st.title("OPR Army Builder 🇫🇷")
 
-if "army" not in st.session_state:
-    st.session_state.army = {
-        "name": "",
-        "game": "",
-        "faction": "",
-        "points": 2000,
-        "units": []
-    }
+        game = st.selectbox("Jeu", games)
+        faction = st.selectbox("Faction", list(factions[game].keys()))
 
-PLAYER = "default_player"
+        points = st.number_input("Points", 250, 5000, 1000, 250)
+        name = st.text_input("Nom de la liste", f"Liste_{datetime.now().strftime('%Y%m%d')}")
 
-# =============================
-# PAGE 1 — SETUP
-# =============================
-
-if st.session_state.page == "setup":
-    st.title("⚔️ OPR Army Forge FR")
-
-    factions = load_factions()
-    if not factions:
-        st.stop()
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.session_state.army["name"] = st.text_input(
-            "Nom de la liste",
-            st.session_state.army["name"]
-        )
-        st.session_state.army["points"] = st.number_input(
-            "Limite de points",
-            min_value=100,
-            step=100,
-            value=st.session_state.army["points"]
-        )
-
-    with col2:
-        st.session_state.army["game"] = st.selectbox(
-            "Jeu",
-            ["Grimdark Future", "Age of Fantasy"]
-        )
-
-        st.session_state.army["faction"] = st.selectbox(
-            "Faction",
-            list(factions.keys())
-        )
-
-    st.divider()
-
-    colA, colB = st.columns(2)
-
-    with colA:
-        if st.button("💾 Sauvegarder la liste"):
-            save_army_list(PLAYER, deepcopy(st.session_state.army))
-            st.success("Liste sauvegardée")
-
-    with colB:
-        if st.button("➡️ Ma liste"):
+        if st.button("Créer la liste"):
+            st.session_state.game = game
+            st.session_state.faction = faction
+            st.session_state.points = points
+            st.session_state.list_name = name
+            st.session_state.units = factions[game][faction]["units"]
+            st.session_state.army_list = []
+            st.session_state.army_cost = 0
             st.session_state.page = "army"
             st.rerun()
 
-# =============================
-# PAGE 2 — ARMY BUILDER
-# =============================
+    # ==================================================
+    # PAGE ARMÉE
+    # ==================================================
 
-if st.session_state.page == "army":
-    st.title(f"📜 {st.session_state.army['name']}")
+    if st.session_state.page == "army":
+        st.title(st.session_state.list_name)
+        st.caption(f"{st.session_state.game} • {st.session_state.faction} • {st.session_state.army_cost}/{st.session_state.points} pts")
 
-    factions = load_factions()
-    faction = factions[st.session_state.army["faction"]]
+        if st.button("⬅ Retour"):
+            st.session_state.page = "setup"
+            st.rerun()
 
-    st.subheader("➕ Ajouter une unité")
+        st.divider()
+        st.subheader("Ajouter une unité")
 
-    unit_templates = faction.get("units", [])
-    unit_names = [u["name"] for u in unit_templates]
+        unit = st.selectbox(
+            "Unité",
+            st.session_state.units,
+            format_func=lambda u: f"{u['name']} ({u['base_cost']} pts)"
+        )
 
-    selected_unit = st.selectbox("Unité", unit_names)
+        cost = unit["base_cost"]
+        selected_options = {}
+        mount = None
+        weapon = unit["weapons"][0]
 
-    if st.button("Ajouter l’unité"):
-        base = next(u for u in unit_templates if u["name"] == selected_unit)
-        unit = deepcopy(base)
-        unit["selected_options"] = []
-        unit["selected_mount"] = None
-        st.session_state.army["units"].append(unit)
-        st.rerun()
+        for group in unit.get("upgrade_groups", []):
+            st.markdown(f"**{group['group']}**")
 
-    st.divider()
+            if group["type"] == "multiple":
+                for opt in group["options"]:
+                    if st.checkbox(f"{opt['name']} (+{opt['cost']} pts)"):
+                        selected_options.setdefault(group["group"], []).append(opt)
+                        cost += opt["cost"]
 
-    total_points = 0
+            elif group["type"] == "weapon":
+                choices = ["Arme de base"] + [o["name"] for o in group["options"]]
+                choice = st.radio("Arme", choices)
+                if choice != "Arme de base":
+                    opt = next(o for o in group["options"] if o["name"] == choice)
+                    weapon = opt["weapon"]
+                    cost += opt.get("cost", 0)
 
-    for idx, u in enumerate(st.session_state.army["units"]):
-        with st.container(border=True):
-            colL, colR = st.columns([4, 1])
+            elif group["type"] == "mount":
+                choices = ["Aucune"] + [o["name"] for o in group["options"]]
+                choice = st.radio("Monture", choices)
+                if choice != "Aucune":
+                    opt = next(o for o in group["options"] if o["name"] == choice)
+                    mount = opt["mount"]
+                    cost += opt.get("cost", 0)
 
-            with colL:
-                st.subheader(u["name"])
+        st.markdown(f"### Coût : {cost} pts")
 
-                base_coriace = extract_coriace(u.get("special_rules", []))
-                mount_coriace = extract_coriace(
-                    u["selected_mount"]["special_rules"]
-                ) if u.get("selected_mount") else 0
+        if st.button("Ajouter à l'armée"):
+            st.session_state.army_list.append({
+                "name": unit["name"],
+                "quality": unit["quality"],
+                "defense": unit["defense"],
+                "cost": cost,
+                "base_rules": unit.get("special_rules", []),
+                "current_weapon": weapon,
+                "options": selected_options,
+                "mount": mount
+            })
+            st.session_state.army_cost += cost
+            st.rerun()
 
-                st.markdown(
-                    f"""
-                    **Qualité :** Q{u['quality']}+  
-                    **Défense :** D{u['defense']}+  
-                    **Coriace total :** 🛡️ {base_coriace + mount_coriace}
-                    """
-                )
+        st.divider()
+        st.subheader("Liste de l'armée")
 
-                st.markdown("### ✨ Règles spéciales")
-                for r in u.get("special_rules", []):
-                    st.markdown(f"- {r}")
+        for i, u in enumerate(st.session_state.army_list):
+            coriace = calculate_total_coriace(u)
+            st.markdown(f"### {u['name']} [{u['cost']} pts]")
+            st.caption(f"Q{u['quality']}+ / D{u['defense']}+" + (f" • Coriace {coriace}" if coriace else ""))
 
-                st.markdown("### 🔪 Armes")
-                for w in u.get("weapons", []):
-                    st.markdown(
-                        f"- **{w['name']}** A{w['attacks']} PA({w['armor_piercing']})"
-                    )
+            if u.get("base_rules"):
+                st.markdown("**Règles spéciales**")
+                st.caption(", ".join(u["base_rules"]))
 
-            with colR:
-                if st.button("❌ Supprimer", key=f"del_{idx}"):
-                    st.session_state.army["units"].pop(idx)
-                    st.rerun()
+            if u.get("mount"):
+                st.markdown("**Monture**")
+                st.caption(u["mount"]["name"])
 
-    st.divider()
-    st.subheader(f"🧮 Total : {total_points} pts")
+            if u.get("options"):
+                st.markdown("**Options**")
+                for g in u["options"].values():
+                    for o in g:
+                        st.caption(o["name"])
 
-    if st.button("⬅️ Retour"):
-        st.session_state.page = "setup"
-        st.rerun()
+            if st.button("Supprimer", key=f"del_{i}"):
+                st.session_state.army_cost -= u["cost"]
+                st.session_state.army_list.pop(i)
+                st.rerun()
+
+if __name__ == "__main__":
+    main()
