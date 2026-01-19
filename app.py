@@ -105,12 +105,49 @@ def format_weapon_details(weapon):
     armor_piercing = weapon.get('armor_piercing', '?')
     special_rules = weapon.get('special_rules', [])
 
-    details = f"{name} | A{attacks} PA({armor_piercing})"
+    details = f"{name} (A{attacks}, AP({armor_piercing})"
 
     if special_rules:
-        details += " | " + ", ".join(special_rules)
+        details += ", " + ", ".join(special_rules)
+
+    details += ")"
 
     return details
+
+def format_unit_option(u):
+    """Formate l'affichage des unités dans la liste déroulante selon le format demandé"""
+    # Nom [nombre]
+    name_part = f"{u['name']} [1]"
+
+    # QuaX+ DefY+
+    qua_def = f"Qua {u['quality']}+ Def {u['defense']}+"
+
+    # Liste des armes
+    weapons_part = ""
+    if 'weapons' in u and u['weapons']:
+        weapons = []
+        for weapon in u['weapons']:
+            weapons.append(format_weapon_details(weapon))
+        weapons_part = " | ".join(weapons)
+
+    # Règles spéciales
+    rules_part = ""
+    if 'special_rules' in u and u['special_rules']:
+        rules_part = ", ".join(u['special_rules'])
+
+    # Construction du format final
+    result = f"{name_part} - {qua_def}"
+
+    if weapons_part:
+        result += f" - {weapons_part}"
+
+    if rules_part:
+        result += f" - {rules_part}"
+
+    # Ajout du coût à droite
+    result += f" {u['base_cost']}pts"
+
+    return result
 
 # ======================================================
 # LOCAL STORAGE
@@ -281,32 +318,13 @@ elif st.session_state.page == "army":
     st.divider()
     st.subheader("Ajouter une unité")
 
-    # Formatage personnalisé pour la sélection d'unité
-    def format_unit_option(u):
-        """Formate l'affichage des unités dans la liste déroulante"""
-        base_info = f"{u['name']} ({u['base_cost']} pts)"
-
-        # Ajout des caractéristiques principales
-        qua_def = f" | Qua {u['quality']}+ / Déf {u['defense']}+"
-        base_info += qua_def
-
-        # Ajout des règles spéciales
-        if 'special_rules' in u and u['special_rules']:
-            rules = ", ".join(u['special_rules'])
-            base_info += f" | {rules}"
-
-        # Ajout des armes
-        if 'weapons' in u and u['weapons']:
-            weapon = u['weapons'][0]
-            weapon_info = format_weapon_details(weapon)
-            base_info += f" | {weapon_info}"
-
-        return base_info
-
+    # Sélection de l'unité avec le nouveau format
     unit = st.selectbox(
         "Unité disponible",
         st.session_state.units,
-        format_func=format_unit_option
+        format_func=format_unit_option,
+        index=0,
+        key="unit_select"
     )
 
     # Initialisation
@@ -508,6 +526,7 @@ elif st.session_state.page == "army":
                 .weapon {{ margin: 10px 0; }}
                 table {{ width: 100%; border-collapse: collapse; margin: 10px 0; }}
                 th, td {{ border: 1px solid #ddd; padding: 8px; text-align: center; }}
+                .cost {{ float: right; color: #666; }}
             </style>
         </head>
         <body>
@@ -520,16 +539,19 @@ elif st.session_state.page == "army":
             html_content += f"""
             <div class="unit">
                 <div class="unit-header">
-                    {unit['name']} ({unit['cost']} pts) | Qua {unit['quality']}+ / Déf {unit['defense']}+
+                    {unit['name']} <span class="cost">({unit['cost']} pts)</span>
+                </div>
+                <div class="stats">
+                    Qua {unit['quality']}+ / Def {unit['defense']}+
                 </div>
             """
 
             if unit.get('rules'):
-                html_content += f'<div class="rules"><strong>Règles spéciales:</strong> {", ".join(unit["rules"])}</div>'
+                html_content += f'<div class="rules">{", ".join(unit["rules"])}</div>'
 
             if 'weapon' in unit:
                 weapon_details = format_weapon_details(unit['weapon'])
-                html_content += f'<div class="weapon"><strong>Arme:</strong> {weapon_details}</div>'
+                html_content += f'<div class="weapon">{weapon_details}</div>'
 
             if unit.get('options'):
                 for group_name, opts in unit['options'].items():
