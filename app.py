@@ -21,7 +21,7 @@ FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
 FACTIONS_DIR.mkdir(parents=True, exist_ok=True)
 
 # ======================================================
-# FONCTIONS UTILITAIRES (définies en premier)
+# FONCTIONS UTILITAIRES
 # ======================================================
 def format_special_rule(rule):
     """Formate les règles spéciales avec parenthèses"""
@@ -38,7 +38,7 @@ def extract_coriace_value(rule):
     """Extrait la valeur numérique de Coriace d'une règle"""
     if not isinstance(rule, str):
         return 0
-    match = re.search(r"Coriace\s*$?(\d+)$?", rule)
+    match = re.search(r"Coriace\s*\(?(\d+)\)?", rule)
     if match:
         return int(match.group(1))
     return 0
@@ -491,4 +491,54 @@ elif st.session_state.page == "army":
                 if "special_rules" in u["mount"]:
                     st.caption(", ".join(u["mount"]["special_rules"]))
 
-            if st.button(f"Supprimer", key=f
+            if st.button(f"Supprimer {u['name']}", key=f"del_{i}"):
+                st.session_state.army_cost -= u["cost"]
+                st.session_state.army_list.pop(i)
+                st.rerun()
+
+    # Sauvegarde/Export
+    st.divider()
+    col1, col2, col3, col4 = st.columns(4)
+
+    army_data = {
+        "name": st.session_state.list_name,
+        "game": st.session_state.game,
+        "faction": st.session_state.faction,
+        "points": st.session_state.points,
+        "total_cost": st.session_state.army_cost,
+        "army_list": st.session_state.army_list,
+        "date": datetime.now().isoformat()
+    }
+
+    with col1:
+        if st.button("Sauvegarder"):
+            saved_lists = ls_get("opr_saved_lists")
+            current_lists = json.loads(saved_lists) if saved_lists else []
+            if not isinstance(current_lists, list):
+                current_lists = []
+            current_lists.append(army_data)
+            ls_set("opr_saved_lists", current_lists)
+            st.success("Liste sauvegardée!")
+
+    with col2:
+        st.download_button(
+            "Export JSON",
+            json.dumps(army_data, indent=2, ensure_ascii=False),
+            file_name=f"{st.session_state.list_name}.json",
+            mime="application/json"
+        )
+
+    with col3:
+        html_content = generate_html(army_data)
+        st.download_button(
+            "Export HTML",
+            html_content,
+            file_name=f"{st.session_state.list_name}.html",
+            mime="text/html"
+        )
+
+    with col4:
+        if st.button("Réinitialiser"):
+            st.session_state.army_list = []
+            st.session_state.army_cost = 0
+            st.rerun()
