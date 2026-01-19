@@ -96,7 +96,7 @@ def calculate_total_coriace(unit_data, combined=False):
     return total if total > 0 else None
 
 def format_weapon_details(weapon):
-    """Formate les détails d'une arme pour l'affichage (sans répétition du nom)"""
+    """Formate les détails d'une arme pour l'affichage"""
     if not weapon:
         return "Arme non spécifiée"
 
@@ -141,7 +141,7 @@ def format_mount_details(mount):
     return details
 
 def format_unit_option(u):
-    """Formate l'affichage des unités dans la liste déroulante selon le format demandé"""
+    """Formate l'affichage des unités dans la liste déroulante"""
     # Nom [1]
     name_part = f"{u['name']} [1]"
 
@@ -153,8 +153,9 @@ def format_unit_option(u):
     if 'weapons' in u and u['weapons']:
         weapons = []
         for weapon in u['weapons']:
+            weapon_name = weapon.get('name', '')
             weapon_details = format_weapon_details(weapon)
-            weapons.append(f"{weapon.get('name', '')} ({weapon_details})")
+            weapons.append(f"{weapon_name} ({weapon_details})")
         weapons_part = " | ".join(weapons)
 
     # Règles spéciales
@@ -345,7 +346,7 @@ elif st.session_state.page == "army":
     st.divider()
     st.subheader("Ajouter une unité")
 
-    # Sélection de l'unité avec le nouveau format
+    # Sélection de l'unité
     unit = st.selectbox(
         "Unité disponible",
         st.session_state.units,
@@ -361,6 +362,7 @@ elif st.session_state.page == "army":
     mount = None
     combined = False
     weapon_cost = 0
+    mount_cost = 0
     upgrades_cost = 0
 
     # Unité combinée (pas pour les héros)
@@ -372,12 +374,12 @@ elif st.session_state.page == "army":
         st.markdown(f"**{group['group']}**")
 
         if group["type"] == "weapon":
-            # Formatage des options d'armes avec détails (sans répétition du nom)
+            # Formatage des options d'armes
             weapon_options = ["Arme de base"]
             for o in group["options"]:
                 weapon_name = o["name"]
                 weapon_details = format_weapon_details(o["weapon"])
-                cost_diff = o["cost"] * (2 if combined else 1)
+                cost_diff = o["cost"]
                 weapon_options.append(f"{weapon_name} ({weapon_details}) (+{cost_diff} pts)")
 
             selected = st.radio("Arme", weapon_options, key=f"{unit['name']}_weapon")
@@ -388,11 +390,11 @@ elif st.session_state.page == "army":
                 weapon_cost = opt["cost"]
 
         elif group["type"] == "mount":
-            # Formatage des options de monture avec détails
+            # Formatage des options de monture
             mount_options = ["Aucune monture"]
             for o in group["options"]:
                 mount_details = format_mount_details(o)
-                cost_diff = o["cost"] * (2 if combined else 1)
+                cost_diff = o["cost"]
                 mount_options.append(f"{mount_details} (+{cost_diff} pts)")
 
             selected = st.radio("Monture", mount_options, key=f"{unit['name']}_mount")
@@ -400,11 +402,12 @@ elif st.session_state.page == "army":
                 opt_name = selected.split(" (+")[0]
                 opt = next(o for o in group["options"] if o["name"] == opt_name)
                 mount = opt
+                mount_cost = opt["cost"]
 
         else:  # Améliorations d'unité (checkbox multiples)
             if group["group"] == "Améliorations de rôle":
                 option_names = ["Aucune"] + [
-                    f"{o['name']} (+{o['cost'] * (2 if combined else 1)} pts)" for o in group["options"]
+                    f"{o['name']} (+{o['cost']} pts)" for o in group["options"]
                 ]
                 selected = st.radio(group["group"], option_names, key=f"{unit['name']}_{group['group']}")
                 if selected != "Aucune":
@@ -413,27 +416,23 @@ elif st.session_state.page == "army":
                     if group["group"] not in selected_options:
                         selected_options[group["group"]] = []
                     selected_options[group["group"]].append(opt)
+                    upgrades_cost += opt["cost"]
             else:
                 # Utilisation de checkbox pour les améliorations d'unité
                 st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
-                selected_upgrades = []
                 for o in group["options"]:
-                    if st.checkbox(f"{o['name']} (+{o['cost'] * (2 if combined else 1)} pts)", key=f"{unit['name']}_{group['group']}_{o['name']}"):
-                        selected_upgrades.append(o)
-                        upgrades_cost += o["cost"] * (2 if combined else 1)
+                    if st.checkbox(f"{o['name']} (+{o['cost']} pts)", key=f"{unit['name']}_{group['group']}_{o['name']}"):
+                        if group["group"] not in selected_options:
+                            selected_options[group["group"]] = []
+                        selected_options[group["group"]].append(o)
+                        upgrades_cost += o["cost"]
 
-                if selected_upgrades:
-                    if group["group"] not in selected_options:
-                        selected_options[group["group"]] = []
-                    selected_options[group["group"]].extend(selected_upgrades)
+    # Calcul du coût CORRIGÉ pour les héros et unités combinées
+    cost = base_cost + weapon_cost + mount_cost + upgrades_cost
 
-    # Calcul du coût selon la nouvelle règle pour les unités combinées
-    cost = base_cost + weapon_cost
-    if combined:
-        cost = (base_cost + weapon_cost) * 2
-
-    # Ajout des améliorations (non doublées même pour les unités combinées)
-    cost += upgrades_cost
+    if combined and unit.get('type', '').lower() != 'hero':
+        # Pour les unités combinées (non héros), on double (base + arme) et on ajoute les améliorations
+        cost = (base_cost + weapon_cost) * 2 + mount_cost + upgrades_cost
 
     # Calcul de la Coriace TOTALE
     total_coriace = calculate_total_coriace({
@@ -445,6 +444,19 @@ elif st.session_state.page == "army":
     }, combined)
 
     st.markdown(f"**Coût total: {cost} pts**")
+
+    # Affichage du détail du calcul
+    with st.expander("Voir le détail du calcul"):
+        st.write(f"- Coût de base: {base_cost} pts")
+        if weapon_cost > 0:
+            st.write(f"- Arme: +{weapon_cost} pts")
+        if mount_cost > 0:
+            st.write(f"- Monture: +{mount_cost} pts")
+        if upgrades_cost > 0:
+            st.write(f"- Améliorations: +{upgrades_cost} pts")
+        if combined and unit.get('type', '').lower() != 'hero':
+            st.write(f"- Unité combinée: ×2 sur (base + arme)")
+        st.write(f"**Total: {cost} pts**")
 
     if st.button("Ajouter à l'armée"):
         unit_data = {
