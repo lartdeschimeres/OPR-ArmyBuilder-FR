@@ -69,8 +69,11 @@ def calculate_total_coriace(unit_data, combined=False):
 
     # 2. Monture (toujours ajoutée, spécialement importante pour les héros)
     if 'mount' in unit_data and unit_data['mount']:
-        if 'rules' in unit_data['mount']:
-            total += calculate_coriace_from_rules(unit_data['mount']['rules'])
+    # Certaines montures ont leurs règles dans "rules" au lieu de "special_rules"
+    if 'special_rules' in unit_data['mount']:
+        total += calculate_coriace_from_rules(unit_data['mount']['special_rules'])
+    if 'rules' in unit_data['mount']:
+        total += calculate_coriace_from_rules(unit_data['mount']['rules'])
 
     # 3. Améliorations
     if 'options' in unit_data:
