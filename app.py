@@ -177,6 +177,13 @@ def format_unit_option(u):
 
     return result
 
+def find_option_by_name(options, name):
+    """Trouve une option par son nom de manière sécurisée"""
+    try:
+        return next((o for o in options if o.get("name") == name), None)
+    except Exception:
+        return None
+
 # ======================================================
 # LOCAL STORAGE
 # ======================================================
@@ -382,12 +389,13 @@ elif st.session_state.page == "army":
                 cost_diff = o["cost"]
                 weapon_options.append(f"{weapon_name} ({weapon_details}) (+{cost_diff} pts)")
 
-            selected = st.radio("Arme", weapon_options, key=f"{unit['name']}_weapon")
-            if selected != "Arme de base":
-                opt_name = selected.split(" (")[0]
-                opt = next(o for o in group["options"] if o["name"] == opt_name)
-                weapon = opt["weapon"]
-                weapon_cost = opt["cost"]
+            selected_weapon = st.radio("Arme", weapon_options, key=f"{unit['name']}_weapon")
+            if selected_weapon != "Arme de base":
+                opt_name = selected_weapon.split(" (")[0]
+                opt = find_option_by_name(group["options"], opt_name)
+                if opt:
+                    weapon = opt["weapon"]
+                    weapon_cost = opt["cost"]
 
         elif group["type"] == "mount":
             # Formatage des options de monture
@@ -397,12 +405,13 @@ elif st.session_state.page == "army":
                 cost_diff = o["cost"]
                 mount_options.append(f"{mount_details} (+{cost_diff} pts)")
 
-            selected = st.radio("Monture", mount_options, key=f"{unit['name']}_mount")
-            if selected != "Aucune monture":
-                opt_name = selected.split(" (+")[0]
-                opt = next(o for o in group["options"] if o["name"] == opt_name)
-                mount = opt
-                mount_cost = opt["cost"]
+            selected_mount = st.radio("Monture", mount_options, key=f"{unit['name']}_mount")
+            if selected_mount != "Aucune monture":
+                opt_name = selected_mount.split(" (+")[0]
+                opt = find_option_by_name(group["options"], opt_name)
+                if opt:
+                    mount = opt
+                    mount_cost = opt["cost"]
 
         else:  # Améliorations d'unité (checkbox multiples)
             if group["group"] == "Améliorations de rôle":
@@ -412,11 +421,12 @@ elif st.session_state.page == "army":
                 selected = st.radio(group["group"], option_names, key=f"{unit['name']}_{group['group']}")
                 if selected != "Aucune":
                     opt_name = selected.split(" (+")[0]
-                    opt = next(o for o in group["options"] if o["name"] == opt_name)
-                    if group["group"] not in selected_options:
-                        selected_options[group["group"]] = []
-                    selected_options[group["group"]].append(opt)
-                    upgrades_cost += opt["cost"]
+                    opt = find_option_by_name(group["options"], opt_name)
+                    if opt:
+                        if group["group"] not in selected_options:
+                            selected_options[group["group"]] = []
+                        selected_options[group["group"]].append(opt)
+                        upgrades_cost += opt["cost"]
             else:
                 # Utilisation de checkbox pour les améliorations d'unité
                 st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
@@ -424,8 +434,10 @@ elif st.session_state.page == "army":
                     if st.checkbox(f"{o['name']} (+{o['cost']} pts)", key=f"{unit['name']}_{group['group']}_{o['name']}"):
                         if group["group"] not in selected_options:
                             selected_options[group["group"]] = []
-                        selected_options[group["group"]].append(o)
-                        upgrades_cost += o["cost"]
+                        # Vérifier si l'option n'est pas déjà sélectionnée
+                        if not any(opt.get("name") == o["name"] for opt in selected_options.get(group["group"], [])):
+                            selected_options[group["group"]].append(o)
+                            upgrades_cost += o["cost"]
 
     # Calcul du coût CORRIGÉ pour les héros et unités combinées
     cost = base_cost + weapon_cost + mount_cost + upgrades_cost
