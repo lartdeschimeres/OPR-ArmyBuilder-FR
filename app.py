@@ -53,14 +53,21 @@ def calculate_coriace_from_rules(rules):
     return total
 
 def calculate_total_coriace(unit_data, combined=False):
-    """Calcule la Coriace TOTALE d'une unité"""
+    """
+    Calcule la Coriace TOTALE d'une unité en prenant en compte:
+    - Règles de base (spécialement important pour les héros)
+    - Monture (toujours ajoutée pour les héros)
+    - Améliorations
+    - Armes
+    - Unités combinées (si applicable, mais pas pour les héros)
+    """
     total = 0
 
-    # 1. Règles de base de l'unité
+    # 1. Règles de base de l'unité (toujours comptées)
     if 'special_rules' in unit_data:
         total += calculate_coriace_from_rules(unit_data['special_rules'])
 
-    # 2. Monture
+    # 2. Monture (toujours ajoutée, spécialement importante pour les héros)
     if 'mount' in unit_data and unit_data['mount']:
         if 'special_rules' in unit_data['mount']:
             total += calculate_coriace_from_rules(unit_data['mount']['special_rules'])
@@ -85,83 +92,6 @@ def calculate_total_coriace(unit_data, combined=False):
         total += base_coriace
 
     return total if total > 0 else None
-
-def generate_html(army_data):
-    """Génère le HTML pour export"""
-    html_content = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Liste OPR - {army_data['name']}</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 20px; }}
-            .unit {{ border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px; }}
-            .stats {{ display: flex; gap: 20px; margin: 10px 0; }}
-            .stat {{ text-align: center; flex: 1; }}
-            table {{ width: 100%; border-collapse: collapse; margin: 10px 0; }}
-            th, td {{ border: 1px solid #ddd; padding: 8px; text-align: center; }}
-            .total-coriace {{ font-size: 1.2em; font-weight: bold; margin: 15px 0; color: #d63031; }}
-        </style>
-    </head>
-    <body>
-        <h1>Liste d'armée OPR - {army_data['name']}</h1>
-        <h2>{army_data['game']} • {army_data['faction']} • {army_data['total_cost']}/{army_data['points']} pts</h2>
-    """
-
-    # Calcul de la Coriace totale de l'armée
-    total_army_coriace = 0
-    for unit in army_data['army_list']:
-        if unit.get('coriace'):
-            total_army_coriace += unit['coriace']
-
-    html_content += f"<div class='total-coriace'>Coriace totale de l'armée: {total_army_coriace}</div>"
-
-    for unit in army_data['army_list']:
-        coriace = unit.get('coriace')
-        html_content += f"""
-        <div class="unit">
-            <h3>{unit['name']} [{unit['cost']} pts]</h3>
-            <div class="stats">
-                <div class="stat"><strong>Qua:</strong> {unit['quality']}+</div>
-                <div class="stat"><strong>Déf:</strong> {unit['defense']}+</div>
-                {'<div class="stat"><strong>Coriace:</strong> ' + str(coriace) + '</div>' if coriace else ''}
-            </div>
-        """
-
-        if unit.get('rules'):
-            html_content += f"<p><strong>Règles spéciales:</strong> {', '.join(unit['rules'])}</p>"
-
-        if 'weapon' in unit:
-            html_content += f"""
-            <p><strong>Armes:</strong></p>
-            <table>
-                <tr><th>Nom</th><th>ATK</th><th>AP</th><th>Règles spéciales</th></tr>
-                <tr>
-                    <td>{unit['weapon'].get('name', '-')}</td>
-                    <td>{unit['weapon'].get('attacks', '-')}</td>
-                    <td>{unit['weapon'].get('armor_piercing', '-')}</td>
-                    <td>{', '.join(unit['weapon'].get('special_rules', [])) or '-'}</td>
-                </tr>
-            </table>
-            """
-
-        if unit.get('options'):
-            html_content += "<p><strong>Améliorations:</strong></p><ul>"
-            for opts in unit['options'].values():
-                if isinstance(opts, list):
-                    for opt in opts:
-                        html_content += f"<li>{format_special_rule(opt.get('name', ''))}</li>"
-            html_content += "</ul>"
-
-        if unit.get('mount'):
-            html_content += f"<p><strong>Monture:</strong> {unit['mount']['name']}</p>"
-            if 'special_rules' in unit['mount']:
-                html_content += f"<p>Règles: {', '.join(unit['mount']['special_rules'])}</p>"
-
-        html_content += "</div>"
-
-    html_content += "</body></html>"
-    return html_content
 
 # ======================================================
 # LOCAL STORAGE
@@ -395,7 +325,8 @@ elif st.session_state.page == "army":
         'special_rules': unit.get('special_rules', []),
         'mount': mount,
         'options': selected_options,
-        'weapon': weapon
+        'weapon': weapon,
+        'type': unit.get('type', '')
     }, combined)
 
     st.markdown(f"**Coût total: {cost} pts**")
@@ -505,7 +436,81 @@ elif st.session_state.page == "army":
         )
 
     with col3:
-        html_content = generate_html(army_data)
+        # Génération HTML
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Liste OPR - {army_data['name']}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 20px; }}
+                .unit {{ border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px; }}
+                .stats {{ display: flex; gap: 20px; margin: 10px 0; }}
+                .stat {{ text-align: center; flex: 1; }}
+                table {{ width: 100%; border-collapse: collapse; margin: 10px 0; }}
+                th, td {{ border: 1px solid #ddd; padding: 8px; text-align: center; }}
+                .total-coriace {{ font-size: 1.2em; font-weight: bold; margin: 15px 0; color: #d63031; }}
+            </style>
+        </head>
+        <body>
+            <h1>Liste d'armée OPR - {army_data['name']}</h1>
+            <h2>{army_data['game']} • {army_data['faction']} • {army_data['total_cost']}/{army_data['points']} pts</h2>
+        """
+
+        # Calcul de la Coriace totale de l'armée pour l'HTML
+        total_army_coriace_html = 0
+        for unit in army_data['army_list']:
+            if unit.get('coriace'):
+                total_army_coriace_html += unit['coriace']
+
+        html_content += f"<div class='total-coriace'>Coriace totale de l'armée: {total_army_coriace_html}</div>"
+
+        for unit in army_data['army_list']:
+            coriace = unit.get('coriace')
+            html_content += f"""
+            <div class="unit">
+                <h3>{unit['name']} [{unit['cost']} pts]</h3>
+                <div class="stats">
+                    <div class="stat"><strong>Qua:</strong> {unit['quality']}+</div>
+                    <div class="stat"><strong>Déf:</strong> {unit['defense']}+</div>
+                    {'<div class="stat"><strong>Coriace:</strong> ' + str(coriace) + '</div>' if coriace else ''}
+                </div>
+            """
+
+            if unit.get('rules'):
+                html_content += f"<p><strong>Règles spéciales:</strong> {', '.join(unit['rules'])}</p>"
+
+            if 'weapon' in unit:
+                html_content += f"""
+                <p><strong>Armes:</strong></p>
+                <table>
+                    <tr><th>Nom</th><th>ATK</th><th>AP</th><th>Règles spéciales</th></tr>
+                    <tr>
+                        <td>{unit['weapon'].get('name', '-')}</td>
+                        <td>{unit['weapon'].get('attacks', '-')}</td>
+                        <td>{unit['weapon'].get('armor_piercing', '-')}</td>
+                        <td>{', '.join(unit['weapon'].get('special_rules', [])) or '-'}</td>
+                    </tr>
+                </table>
+                """
+
+            if unit.get('options'):
+                html_content += "<p><strong>Améliorations:</strong></p><ul>"
+                for opts in unit['options'].values():
+                    if isinstance(opts, list):
+                        for opt in opts:
+                            html_content += f"<li>{format_special_rule(opt.get('name', ''))}</li>"
+                html_content += "</ul>"
+
+            if unit.get('mount'):
+                html_content += f"<p><strong>Monture:</strong> {unit['mount']['name']}</p>"
+                if 'special_rules' in unit['mount']:
+                    html_content += f"<p>Règles: {', '.join(unit['mount']['special_rules'])}</p>"
+
+            html_content += "</div>"
+
+        html_content += "</body></html>"
+
         st.download_button(
             "Export HTML",
             html_content,
