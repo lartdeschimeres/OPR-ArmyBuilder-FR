@@ -186,6 +186,13 @@ def format_unit_option(u):
     result += f" {u['base_cost']}pts"
     return result
 
+def find_option_by_name(options, name):
+    """Trouve une option par son nom de manière sécurisée"""
+    try:
+        return next((o for o in options if o.get("name") == name), None)
+    except Exception:
+        return None
+
 # ======================================================
 # LOCAL STORAGE
 # ======================================================
@@ -418,21 +425,6 @@ elif st.session_state.page == "army":
     # Calcul du coût CORRIGÉ pour tous les types d'unités
     cost = base_cost + weapon_cost + mount_cost + upgrades_cost
 
-    # Affichage de la coriace calculée pour vérification
-    total_coriace = calculate_total_coriace({
-        'special_rules': unit.get('special_rules', []),
-        'mount': mount,
-        'options': selected_options,
-        'weapon': weapon,
-        'type': unit.get('type', '')
-    })
-
-    # Vérification spécifique pour les héros avec monture
-    if unit.get('type', '').lower() == 'hero' and mount:
-        hero_coriace = get_coriace_from_rules(unit.get('special_rules', []))
-        mount_special_rules, mount_coriace = get_mount_details(mount)
-        st.markdown(f"**Vérification Coriace:** Héros: {hero_coriace} + Monture: {mount_coriace} = {total_coriace}")
-
     st.markdown(f"**Coût total: {cost} pts**")
 
     if st.button("Ajouter à l'armée"):
@@ -445,7 +437,13 @@ elif st.session_state.page == "army":
             "weapon": weapon,
             "options": selected_options,
             "mount": mount,
-            "coriace": total_coriace,
+            "coriace": calculate_total_coriace({
+                'special_rules': unit.get('special_rules', []),
+                'mount': mount,
+                'options': selected_options,
+                'weapon': weapon,
+                'type': unit.get('type', '')
+            }),
             "combined": combined if unit.get("type", "").lower() != "hero" else False,
             "type": unit.get("type", "")
         }
@@ -497,7 +495,7 @@ elif st.session_state.page == "army":
 
     # Sauvegarde/Export
     st.divider()
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4, col5 = st.columns(5)
 
     army_data = {
         "name": st.session_state.list_name,
@@ -528,7 +526,8 @@ elif st.session_state.page == "army":
         )
 
     with col3:
-        html_content = f"""
+        # Export HTML standard
+        html_content_standard = f"""
         <!DOCTYPE html>
         <html>
         <head>
@@ -547,7 +546,7 @@ elif st.session_state.page == "army":
 
         for unit in army_data['army_list']:
             coriace = unit.get('coriace')
-            html_content += f"""
+            html_content_standard += f"""
             <div class="unit">
                 <div class="unit-header">
                     {unit['name']} ({unit['cost']} pts)
@@ -555,40 +554,316 @@ elif st.session_state.page == "army":
             """
 
             if unit.get('rules'):
-                html_content += f'<div><strong>Règles spéciales:</strong> {", ".join(unit["rules"])}</div>'
+                html_content_standard += f'<div><strong>Règles spéciales:</strong> {", ".join(unit["rules"])}</div>'
 
             if 'weapon' in unit:
                 weapon_name = unit['weapon'].get('name', 'Arme non nommée')
                 weapon_details = format_weapon_details(unit['weapon'])
-                html_content += f'<div><strong>Arme:</strong> {weapon_name} ({weapon_details})</div>'
+                html_content_standard += f'<div><strong>Arme:</strong> {weapon_name} ({weapon_details})</div>'
 
             if unit.get('options'):
                 for group_name, opts in unit['options'].items():
                     if isinstance(opts, list) and opts:
-                        html_content += f'<div><strong>{group_name}:</strong>'
+                        html_content_standard += f'<div><strong>{group_name}:</strong>'
                         for opt in opts:
-                            html_content += f'<div>• {opt.get("name", "")}</div>'
-                        html_content += '</div>'
+                            html_content_standard += f'<div>• {opt.get("name", "")}</div>'
+                        html_content_standard += '</div>'
 
             if unit.get('mount'):
                 mount_details = format_mount_details(unit["mount"])
-                html_content += f'<div><strong>Monture:</strong> {mount_details}</div>'
+                html_content_standard += f'<div><strong>Monture:</strong> {mount_details}</div>'
 
             if unit.get('coriace'):
-                html_content += f'<div class="coriace"><strong>Coriace:</strong> {unit["coriace"]}</div>'
+                html_content_standard += f'<div class="coriace"><strong>Coriace:</strong> {unit["coriace"]}</div>'
 
-            html_content += "</div>"
+            html_content_standard += "</div>"
 
-        html_content += "</body></html>"
+        html_content_standard += "</body></html>"
 
         st.download_button(
-            "Export HTML",
-            html_content,
+            "Export HTML Standard",
+            html_content_standard,
             file_name=f"{st.session_state.list_name}.html",
             mime="text/html"
         )
 
     with col4:
+        # NOUVEAU EXPORT HTML AU FORMAT FICHE
+        html_content_fiche = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Fiches OPR - {army_data['name']}</title>
+            <meta charset="UTF-8">
+            <style>
+                body {{
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    background-color: #f5f5f5;
+                }}
+                .army-title {{
+                    text-align: center;
+                    color: #333;
+                    margin-bottom: 30px;
+                }}
+                .army-info {{
+                    text-align: center;
+                    margin-bottom: 30px;
+                    color: #666;
+                }}
+                .unit-card {{
+                    background-color: white;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    margin-bottom: 20px;
+                    overflow: hidden;
+                    width: 100%;
+                }}
+                .unit-header {{
+                    background-color: #2c3e50;
+                    color: white;
+                    padding: 15px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }}
+                .unit-name {{
+                    font-size: 1.5em;
+                    font-weight: bold;
+                }}
+                .unit-cost {{
+                    background-color: #3498db;
+                    padding: 5px 10px;
+                    border-radius: 4px;
+                    font-weight: bold;
+                }}
+                .unit-stats {{
+                    display: flex;
+                    padding: 15px;
+                    background-color: #f8f9fa;
+                    border-bottom: 1px solid #eee;
+                }}
+                .stat-badge {{
+                    background-color: #3498db;
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 4px;
+                    margin-right: 10px;
+                    font-weight: bold;
+                    text-align: center;
+                    min-width: 80px;
+                }}
+                .stat-value {{
+                    font-size: 1.2em;
+                }}
+                .stat-label {{
+                    font-size: 0.8em;
+                    display: block;
+                    margin-bottom: 3px;
+                }}
+                .unit-details {{
+                    padding: 15px;
+                }}
+                .section-title {{
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                    color: #2c3e50;
+                    border-bottom: 1px solid #eee;
+                    padding-bottom: 5px;
+                }}
+                .weapon-table {{
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 15px;
+                }}
+                .weapon-table th {{
+                    background-color: #f8f9fa;
+                    text-align: left;
+                    padding: 8px;
+                    border-bottom: 1px solid #ddd;
+                }}
+                .weapon-table td {{
+                    padding: 8px;
+                    border-bottom: 1px solid #eee;
+                }}
+                .rules-list {{
+                    margin: 10px 0;
+                    padding-left: 20px;
+                }}
+                .rules-list li {{
+                    margin-bottom: 5px;
+                }}
+                .special-rules {{
+                    font-style: italic;
+                    color: #555;
+                    margin-bottom: 15px;
+                }}
+                @media print {{
+                    .unit-card {{
+                        page-break-inside: avoid;
+                        break-inside: avoid;
+                    }}
+                }}
+            </style>
+        </head>
+        <body>
+            <h1 class="army-title">OPR Army Builder - {army_data['name']}</h1>
+            <div class="army-info">
+                <strong>Jeu:</strong> {army_data['game']} |
+                <strong>Faction:</strong> {army_data['faction']} |
+                <strong>Points:</strong> {army_data['total_cost']}/{army_data['points']}
+            </div>
+        """
+
+        for unit in army_data['army_list']:
+            # Récupérer les données de l'unité
+            unit_name = unit['name']
+            unit_cost = unit['cost']
+            quality = unit.get('quality', '?')
+            defense = unit.get('defense', '?')
+            coriace = unit.get('coriace', None)
+
+            # Règles spéciales
+            rules = unit.get('rules', [])
+            special_rules = ", ".join(rules) if rules else "Aucune"
+
+            # Armes
+            weapon_name = "Arme de base"
+            weapon_attacks = "?"
+            weapon_ap = "?"
+            weapon_special = []
+            if 'weapon' in unit and unit['weapon']:
+                weapon_name = unit['weapon'].get('name', 'Arme non nommée')
+                weapon_attacks = unit['weapon'].get('attacks', '?')
+                weapon_ap = unit['weapon'].get('armor_piercing', '?')
+                weapon_special = unit['weapon'].get('special_rules', [])
+
+            # Monture
+            mount_details = ""
+            if 'mount' in unit and unit['mount']:
+                mount_details = format_mount_details(unit['mount'])
+
+            # Améliorations
+            upgrades = []
+            if 'options' in unit and unit['options']:
+                for group_name, opts in unit['options'].items():
+                    if isinstance(opts, list):
+                        for opt in opts:
+                            upgrades.append(opt.get('name', ''))
+
+            # Génération de la fiche unité
+            html_content_fiche += f"""
+            <div class="unit-card">
+                <div class="unit-header">
+                    <div class="unit-name">{unit_name}</div>
+                    <div class="unit-cost">{unit_cost}pts</div>
+                </div>
+
+                <div class="unit-stats">
+            """
+
+            # Ajout des stats Quality et Defense
+            html_content_fiche += f"""
+                    <div class="stat-badge">
+                        <div class="stat-label">Quality</div>
+                        <div class="stat-value">{quality}+</div>
+                    </div>
+                    <div class="stat-badge">
+                        <div class="stat-label">Defense</div>
+                        <div class="stat-value">{defense}+</div>
+            """
+            # Ajout de Tough si Coriace existe
+            if coriace:
+                html_content_fiche += f"""
+                    <div class="stat-badge">
+                        <div class="stat-label">Tough</div>
+                        <div class="stat-value">{coriace}</div>
+                    </div>
+                """
+
+            html_content_fiche += """
+                </div>
+
+                <div class="unit-details">
+                    <div class="special-rules">{special_rules}</div>
+            """
+
+            # Section Armes
+            html_content_fiche += """
+                    <div class="section-title">Weapon</div>
+                    <table class="weapon-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>RNG</th>
+                                <th>ATK</th>
+                                <th>AP</th>
+                                <th>SPE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{weapon_name}</td>
+                                <td>-</td>
+                                <td>{weapon_attacks}</td>
+                                <td>{weapon_ap}</td>
+                                <td>{', '.join(weapon_special) if weapon_special else '-'}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            """
+
+            # Section Améliorations si elles existent
+            if upgrades:
+                html_content_fiche += """
+                    <div class="section-title">Upgrade</div>
+                    <table class="weapon-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>SPE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                """
+                for upgrade in upgrades:
+                    html_content_fiche += f"""
+                            <tr>
+                                <td>{upgrade}</td>
+                                <td>-</td>
+                            </tr>
+                    """
+                html_content_fiche += """
+                        </tbody>
+                    </table>
+                """
+
+            # Section Monture si elle existe
+            if mount_details and mount_details != "Aucune monture":
+                html_content_fiche += f"""
+                    <div class="section-title">Mount</div>
+                    <p>{mount_details}</p>
+                """
+
+            html_content_fiche += """
+                </div>
+            </div>
+            """
+
+        html_content_fiche += """
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            "Export Fiches Unités",
+            html_content_fiche,
+            file_name=f"{st.session_state.list_name}_fiches.html",
+            mime="text/html"
+        )
+
+    with col5:
         if st.button("Réinitialiser"):
             st.session_state.army_list = []
             st.session_state.army_cost = 0
