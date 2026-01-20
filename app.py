@@ -186,13 +186,6 @@ def format_unit_option(u):
     result += f" {u['base_cost']}pts"
     return result
 
-def find_option_by_name(options, name):
-    """Trouve une option par son nom de manière sécurisée"""
-    try:
-        return next((o for o in options if o.get("name") == name), None)
-    except Exception:
-        return None
-
 # ======================================================
 # LOCAL STORAGE
 # ======================================================
@@ -374,41 +367,28 @@ elif st.session_state.page == "army":
             selected_weapon = st.radio("Arme", weapon_options, key=f"{unit['name']}_weapon")
             if selected_weapon != "Arme de base":
                 opt_name = selected_weapon.split(" (")[0]
-                opt = find_option_by_name(group["options"], opt_name)
+                opt = next((o for o in group["options"] if o["name"] == opt_name), None)
                 if opt:
                     weapon = opt["weapon"]
                     weapon_cost = opt["cost"]
 
         elif group["type"] == "mount":
-            # Formatage des options de monture
-            mount_options = ["Aucune monture"]
-            for o in group["options"]:
-                mount_details = format_mount_details(o)
-                cost_diff = o["cost"]
-                mount_options.append(f"{mount_details} (+{cost_diff} pts)")
-
+            # NOUVELLE IMPLEMENTATION POUR LES MONTURES
             mount_labels = ["Aucune monture"]
             mount_map = {}
 
             for o in group["options"]:
-                label = f"{o['name']} (+{o['cost']} pts)"
+                mount_details = format_mount_details(o)
+                label = f"{mount_details} (+{o['cost']} pts)"
                 mount_labels.append(label)
                 mount_map[label] = o
 
             selected_mount = st.radio("Monture", mount_labels, key=f"{unit['name']}_mount")
-            
+
             if selected_mount != "Aucune monture":
                 opt = mount_map[selected_mount]
                 mount = opt
                 mount_cost = opt["cost"]
-                
-                selected_mount = st.radio("Monture", mount_options, key=f"{unit['name']}_mount")
-                        if selected_mount != "Aucune monture":
-                            opt_name = selected_mount.split(" (")[0]
-                            opt = find_option_by_name(group["options"], opt_name)
-                            if opt:
-                                mount = opt
-                                mount_cost = opt["cost"]
 
         else:  # Améliorations d'unité (checkbox multiples)
             if group["group"] == "Améliorations de rôle":
@@ -418,7 +398,7 @@ elif st.session_state.page == "army":
                 selected = st.radio(group["group"], option_names, key=f"{unit['name']}_{group['group']}")
                 if selected != "Aucune":
                     opt_name = selected.split(" (+")[0]
-                    opt = find_option_by_name(group["options"], opt_name)
+                    opt = next((o for o in group["options"] if o["name"] == opt_name), None)
                     if opt:
                         if group["group"] not in selected_options:
                             selected_options[group["group"]] = []
@@ -438,7 +418,7 @@ elif st.session_state.page == "army":
     # Calcul du coût CORRIGÉ pour tous les types d'unités
     cost = base_cost + weapon_cost + mount_cost + upgrades_cost
 
-    # Calcul de la Coriace TOTALE
+    # Affichage de la coriace calculée pour vérification
     total_coriace = calculate_total_coriace({
         'special_rules': unit.get('special_rules', []),
         'mount': mount,
@@ -447,16 +427,13 @@ elif st.session_state.page == "army":
         'type': unit.get('type', '')
     })
 
-    # Affichage des informations de vérification
-    st.markdown(f"**Coût total: {cost} pts**")
-
     # Vérification spécifique pour les héros avec monture
     if unit.get('type', '').lower() == 'hero' and mount:
         hero_coriace = get_coriace_from_rules(unit.get('special_rules', []))
         mount_special_rules, mount_coriace = get_mount_details(mount)
-        st.markdown(f"**Vérification:**")
-        st.markdown(f"- Coût: {base_cost} (base) + {weapon_cost} (arme) + {mount_cost} (monture) + {upgrades_cost} (améliorations) = {cost}")
-        st.markdown(f"- Coriace: {hero_coriace} (héros) + {mount_coriace} (monture) = {total_coriace}")
+        st.markdown(f"**Vérification Coriace:** Héros: {hero_coriace} + Monture: {mount_coriace} = {total_coriace}")
+
+    st.markdown(f"**Coût total: {cost} pts**")
 
     if st.button("Ajouter à l'armée"):
         unit_data = {
