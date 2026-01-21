@@ -31,11 +31,6 @@ GAME_CONFIG = {
         "min_points": 250,
         "default_points": 1000,
         "point_step": 250,
-        "unit_types": ["infantry", "cavalry", "hero", "monster", "war_machine"],
-        "special_rules": ["Coriace", "Héros", "Attaque Versatile", "Volant", "Effrayant",
-                        "Magique", "Né pour la Guerre", "Aura de Commandement"],
-        "weapon_types": ["Épée", "Lance", "Hache", "Arc", "Arbalète", "Massue"],
-        "max_units": 50,
         "description": "Jeu de bataille rangée dans un univers fantasy médiéval",
         # Règles spécifiques à Age of Fantasy
         "hero_limit": 375,  # 1 Héros par tranche de 375 pts
@@ -49,12 +44,6 @@ GAME_CONFIG = {
         "min_points": 200,
         "default_points": 800,
         "point_step": 200,
-        "unit_types": ["infantry", "vehicle", "walker", "hero", "battle_suit"],
-        "special_rules": ["Blindage", "Tir Rapide", "Furtif", "Bouclier Énergie",
-                        "Arme Lourde", "Téléportation"],
-        "weapon_types": ["Fusil Laser", "Bolter", "Canon Plasma", "Lance-Missiles",
-                        "Arme Énergie", "Lame Puissance"],
-        "max_units": 40,
         "description": "Jeu de bataille futuriste avec unités mécanisées",
         # Règles spécifiques à Grimdark Future
         "hero_limit": 400,  # 1 Héros par tranche de 400 pts
@@ -65,13 +54,13 @@ GAME_CONFIG = {
 }
 
 # ======================================================
-# FONCTIONS POUR LES RÈGLES SPÉCIFIQUES À AGE OF FANTASY
+# FONCTIONS POUR LES RÈGLES SPÉCIFIQUES
 # ======================================================
 def check_hero_limit(army_list, total_points, game_config):
-    """Vérifie la limite de héros pour Age of Fantasy"""
+    """Vérifie la limite de héros"""
     if game_config.get("hero_limit"):
         max_heroes = math.floor(total_points / game_config["hero_limit"])
-        hero_count = sum(1 for unit in army_list if unit.get("type", "").lower() == "hero")
+        hero_count = sum(1 for unit in army_list if "Héros" in unit.get("rules", []))
 
         if hero_count > max_heroes:
             st.error(f"Limite de héros dépassée! Maximum autorisé: {max_heroes} (1 héros par {game_config['hero_limit']} pts)")
@@ -79,7 +68,7 @@ def check_hero_limit(army_list, total_points, game_config):
     return True
 
 def check_unit_copy_rule(army_list, total_points, game_config):
-    """Vérifie la règle des copies d'unités pour Age of Fantasy"""
+    """Vérifie la règle des copies d'unités"""
     if game_config.get("unit_copy_rule"):
         x_value = math.floor(total_points / game_config["unit_copy_rule"])
         max_copies = 1 + x_value
@@ -104,7 +93,7 @@ def check_unit_copy_rule(army_list, total_points, game_config):
     return True
 
 def check_unit_max_cost(army_list, total_points, game_config):
-    """Vérifie qu'aucune unité ne dépasse 35% du total des points"""
+    """Vérifie qu'aucune unité ne dépasse le ratio maximum de coût"""
     if game_config.get("unit_max_cost_ratio"):
         max_cost = total_points * game_config["unit_max_cost_ratio"]
 
@@ -128,14 +117,13 @@ def validate_army_rules(army_list, total_points, game):
     """Valide toutes les règles spécifiques au jeu"""
     game_config = GAME_CONFIG.get(game, {})
 
-    # Vérification des règles spécifiques à Age of Fantasy
     if game in GAME_CONFIG:
         return (check_hero_limit(army_list, total_points, game_config) and
                 check_unit_copy_rule(army_list, total_points, game_config) and
                 check_unit_max_cost(army_list, total_points, game_config) and
                 check_unit_per_points(army_list, total_points, game_config))
 
-    return True  # Pas de règles spécifiques pour les autres jeux
+    return True
 
 # ======================================================
 # FONCTIONS UTILITAIRES
@@ -208,7 +196,7 @@ def calculate_total_coriace(unit_data, combined=False):
     if 'weapon' in unit_data and 'special_rules' in unit_data['weapon']:
         total += get_coriace_from_rules(unit_data['weapon']['special_rules'])
 
-    if combined and unit_data.get('type', '').lower() != 'hero':
+    if combined and "Héros" not in unit_data.get('rules', []):
         base_coriace = get_coriace_from_rules(unit_data.get('special_rules', []))
         total += base_coriace
 
@@ -370,7 +358,6 @@ def load_factions():
                     "base_cost": 60,
                     "quality": 3,
                     "defense": 3,
-                    "type": "infantry",
                     "special_rules": [],
                     "weapons": [{
                         "name": "Épée",
@@ -422,8 +409,6 @@ if st.session_state.page == "setup":
             st.markdown(f"""
             **Description**: {config['description']}
             - **Points**: {config['min_points']} à {config['max_points']} (défaut: {config['default_points']})
-            - **Types d'unités**: {', '.join(config['unit_types'])}
-            - **Unités max**: {config['max_units']}
             """)
 
             # Affichage des règles spécifiques
@@ -505,8 +490,6 @@ if st.session_state.page == "setup":
     st.markdown(f"""
     **Configuration actuelle pour {game_config['display_name']}:**
     - Points: {game_config['min_points']} à {game_config['max_points']}
-    - Types d'unités disponibles: {', '.join(game_config['unit_types'])}
-    - Unités max par armée: {game_config['max_units']}
     """)
 
     # Affichage des règles spécifiques
@@ -553,7 +536,6 @@ if st.session_state.page == "setup":
         st.session_state.faction = st.selectbox("Faction", factions_by_game[game].keys())
         st.session_state.points = points
         st.session_state.list_name = list_name
-        st.session_state.max_units = game_config["max_units"]
         st.session_state.units = factions_by_game[game][st.session_state.faction]["units"]
         st.session_state.army_list = []
         st.session_state.army_cost = 0
@@ -591,11 +573,6 @@ elif st.session_state.page == "army":
         key="unit_select"
     )
 
-    # Vérification du type d'unité
-    if unit.get("type", "") not in game_config["unit_types"]:
-        st.error(f"Ce type d'unité ({unit.get('type', 'inconnu')}) n'est pas autorisé pour {game_config['display_name']}")
-        st.stop()
-
     # Vérification du coût maximum
     max_cost = st.session_state.points * game_config["unit_max_cost_ratio"]
     if unit["base_cost"] > max_cost:
@@ -613,7 +590,7 @@ elif st.session_state.page == "army":
     upgrades_cost = 0
 
     # Unité combinée (pas pour les héros)
-    if unit.get("type", "").lower() != "hero":
+    if "Héros" not in unit.get("rules", []):
         combined = st.checkbox("Unité combinée", value=False)
 
     # Options de l'unité
@@ -707,7 +684,7 @@ elif st.session_state.page == "army":
                                 total_coriace += get_coriace_from_rules(opt['special_rules'])
             if 'special_rules' in weapon and isinstance(weapon.get('special_rules'), list):
                 total_coriace += get_coriace_from_rules(weapon['special_rules'])
-            if combined and unit.get('type', '').lower() != 'hero':
+            if combined and "Héros" not in unit.get('rules', []):
                 if 'special_rules' in unit and isinstance(unit.get('special_rules'), list):
                     base_coriace = get_coriace_from_rules(unit['special_rules'])
                     total_coriace += base_coriace
@@ -724,8 +701,7 @@ elif st.session_state.page == "army":
                 "options": selected_options,
                 "mount": mount,
                 "coriace": total_coriace,
-                "combined": combined if unit.get("type", "").lower() != "hero" else False,
-                "type": unit.get("type", "")
+                "combined": combined,
             }
 
             # Vérification des règles avant d'ajouter
