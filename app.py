@@ -11,6 +11,7 @@ import re
 # ======================================================
 st.set_page_config(
     page_title="OPR Army Forge FR - Simon Joinville Fouquet",
+    page_title="OPR Army Forge FR",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -71,55 +72,24 @@ def get_mount_details(mount):
 
     return special_rules, coriace
 
-def calculate_total_coriace(unit_data, combined=False):
-    """Calcule la Coriace totale d'une unité"""
-    total = 0
-
-    # Règles de base de l'unité
-    if 'special_rules' in unit_data:
-        total += get_coriace_from_rules(unit_data['special_rules'])
-
-    # Monture
-    if 'mount' in unit_data and unit_data['mount']:
-        special_rules, mount_coriace = get_mount_details(unit_data['mount'])
-        total += mount_coriace
-
-    # Améliorations
-    if 'options' in unit_data:
-        for opts in unit_data['options'].values():
-            if isinstance(opts, list):
-                for opt in opts:
-                    if 'special_rules' in opt:
-                        total += get_coriace_from_rules(opt['special_rules'])
-            elif isinstance(opts, dict) and 'special_rules' in opts:
-                total += get_coriace_from_rules(opts['special_rules'])
-
-    # Armes
-    if 'weapon' in unit_data and 'special_rules' in unit_data['weapon']:
-        total += get_coriace_from_rules(unit_data['weapon']['special_rules'])
-
-    # Pour les unités combinées (mais PAS pour les héros)
-    if combined and unit_data.get('type', '').lower() != 'hero':
-        base_coriace = get_coriace_from_rules(unit_data.get('special_rules', []))
-        total += base_coriace
-
-    return total if total > 0 else None
-
 def format_weapon_details(weapon):
     """Formate les détails d'une arme pour l'affichage"""
     if not weapon:
-        return {"name": "Arme non spécifiée", "attacks": "?", "ap": "?", "special": []}
+        return {
+            "name": "Arme non spécifiée",
+            "attacks": "?",
+            "ap": "?",
+            "special": []
+        }
 
-    attacks = weapon.get('attacks', '?')
-    armor_piercing = weapon.get('armor_piercing', '?')
-    special_rules = weapon.get('special_rules', [])
-
-    return {
+    weapon_data = {
         "name": weapon.get('name', 'Arme non nommée'),
-        "attacks": attacks,
-        "ap": armor_piercing,
-        "special": special_rules
+        "attacks": weapon.get('attacks', '?'),
+        "ap": weapon.get('armor_piercing', '?'),
+        "special": weapon.get('special_rules', [])
     }
+
+    return weapon_data
 
 def format_mount_details(mount):
     """Formate les détails d'une monture pour l'affichage"""
@@ -152,7 +122,7 @@ def format_mount_details(mount):
     if 'weapons' in mount_data and mount_data['weapons']:
         for weapon in mount_data['weapons']:
             weapon_details = format_weapon_details(weapon)
-            details += " | " + f"{weapon.get('name', 'Arme')} (A{weapon_details['attacks']}, PA({weapon_details['ap']})"
+            details += " | " + f"{weapon_details['name']} (A{weapon_details['attacks']}, PA({weapon_details['ap']})"
             if weapon_details['special']:
                 details += ", " + ", ".join(weapon_details['special'])
             details += ")"
@@ -162,7 +132,6 @@ def format_mount_details(mount):
 def format_unit_option(u):
     """Formate l'affichage des unités dans la liste déroulante"""
     name_part = f"{u['name']} [1]"
-    qua_def = f"Qua {u['quality']}+"
 
     # Calcul de la Coriace
     coriace = get_coriace_from_rules(u.get('special_rules', []))
@@ -170,20 +139,21 @@ def format_unit_option(u):
         _, mount_coriace = get_mount_details(u['mount'])
         coriace += mount_coriace
 
-    # Ajout de la Défense et Coriace
-    defense = u.get('defense', '?')
-    qua_def_coriace = f"Qua {u['quality']}+ / Déf {defense}"
+    # Ajout de la Qualité, Défense et Coriace
+    qua_def_coriace = f"Qua {u['quality']}+ / Déf {u.get('defense', '?')}+"
     if coriace > 0:
         qua_def_coriace += f" / Coriace {coriace}"
 
+    # Armes
     weapons_part = ""
     if 'weapons' in u and u['weapons']:
         weapons = []
         for weapon in u['weapons']:
             weapon_details = format_weapon_details(weapon)
-            weapons.append(f"{weapon.get('name', 'Arme')} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''})")
+            weapons.append(f"{weapon_details['name']} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''})")
         weapons_part = " | ".join(weapons)
 
+    # Règles spéciales
     rules_part = ""
     if 'special_rules' in u and u['special_rules']:
         rules_part = ", ".join(u['special_rules'])
@@ -292,28 +262,14 @@ if "page" not in st.session_state:
 if st.session_state.page == "setup":
     st.title("OPR Army Forge FR")
 
-    # Chargement des listes sauvegardées depuis GitHub (simulé)
-    st.subheader("Charger une liste sauvegardée depuis GitHub")
+    # Section pour charger depuis GitHub
+    with st.expander("Charger une liste depuis GitHub"):
+        github_repo = st.text_input("URL du dépôt GitHub", "https://github.com/SimonJoinvilleFouquet/opr-army-forge")
+        github_file = st.text_input("Chemin du fichier", "listes/mes_listes.json")
 
-    # Pour Simon qui travaille sur GitHub, on simule le chargement depuis un dépôt
-    github_repo = st.text_input("URL du dépôt GitHub (ex: https://github.com/utilisateur/opr-listes)", "")
-    github_file = st.text_input("Chemin du fichier (ex: listes/mes_listes.json)", "")
-
-    if st.button("Charger depuis GitHub") and github_repo and github_file:
-        try:
-            # En environnement réel, vous utiliseriez l'API GitHub ici
-            # Pour cette démo, on simule avec un fichier local
+        if st.button("Charger depuis GitHub"):
             st.warning("Fonctionnalité GitHub simulée. En environnement réel, cette fonction chargerait directement depuis GitHub.")
             st.info("Pour l'instant, utilisez l'import JSON classique ci-dessous.")
-
-            # Dans une vraie implémentation, vous utiliseriez:
-            # import requests
-            # response = requests.get(f"https://raw.githubusercontent.com/{github_repo.split('/')[-2]}/{github_repo.split('/')[-1]}/main/{github_file}")
-            # data = response.json()
-        except Exception as e:
-            st.error(f"Erreur de chargement: {e}")
-
-    st.divider()
 
     if not games:
         st.error("Aucun jeu trouvé")
@@ -463,13 +419,16 @@ elif st.session_state.page == "army":
     st.markdown(f"**Coût total: {cost} pts**")
 
     if st.button("Ajouter à l'armée"):
+        # Préparation des données de l'unité
+        unit_weapon = format_weapon_details(weapon)
+
         unit_data = {
             "name": unit["name"],
             "cost": cost,
             "quality": unit["quality"],
             "defense": unit["defense"],
             "rules": [format_special_rule(r) for r in unit.get("special_rules", [])],
-            "weapon": weapon,
+            "weapon": unit_weapon,  # On stocke les données formatées
             "options": selected_options,
             "mount": mount,
             "coriace": calculate_total_coriace({
@@ -510,8 +469,8 @@ elif st.session_state.page == "army":
 
             # Affichage des armes avec leurs caractéristiques
             if 'weapon' in u and u['weapon']:
-                weapon_details = format_weapon_details(u['weapon'])
-                st.markdown(f"**Arme:** {weapon_details['name']} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''})")
+                weapon_info = u['weapon']  # On utilise directement les données formatées
+                st.markdown(f"**Arme:** {weapon_info['name']} (A{weapon_info['attacks']}, PA({weapon_info['ap']}){', ' + ', '.join(weapon_info['special']) if weapon_info['special'] else ''})")
 
             # Affichage des améliorations
             if u.get("options"):
@@ -684,7 +643,7 @@ elif st.session_state.page == "army":
             special_rules = ", ".join(rules) if rules else "Aucune"
 
             # Armes
-            weapon_info = format_weapon_details(unit.get('weapon', {}))
+            weapon_info = unit.get('weapon', {})
 
             html_content_standard += f"""
             <div class="unit-container">
@@ -720,29 +679,30 @@ elif st.session_state.page == "army":
                 html_content_standard += f'<div class="special-rules"><strong>Règles spéciales:</strong> {special_rules}</div>'
 
             # Armes
-            html_content_standard += """
-                <div class="section-title">Arme</div>
-                <table class="weapon-table">
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>PORT</th>
-                            <th>ATK</th>
-                            <th>PA</th>
-                            <th>SPE</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{weapon_info['name']}</td>
-                            <td>-</td>
-                            <td>{weapon_info['attacks']}</td>
-                            <td>{weapon_info['ap']}</td>
-                            <td>{', '.join(weapon_info['special']) if weapon_info['special'] else '-'}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            """
+            if weapon_info:
+                html_content_standard += """
+                    <div class="section-title">Arme</div>
+                    <table class="weapon-table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>PORT</th>
+                                <th>ATK</th>
+                                <th>PA</th>
+                                <th>SPE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{weapon_info['name']}</td>
+                                <td>-</td>
+                                <td>{weapon_info['attacks']}</td>
+                                <td>{weapon_info['ap']}</td>
+                                <td>{', '.join(weapon_info['special']) if weapon_info['special'] else '-'}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                """
 
             # Améliorations
             if 'options' in unit and unit['options']:
@@ -912,7 +872,14 @@ elif st.session_state.page == "army":
             special_rules = ", ".join(rules) if rules else "Aucune"
 
             # Armes
-            weapon_info = format_weapon_details(unit.get('weapon', {}))
+            weapon_info = unit.get('weapon', {})
+            if not weapon_info or not isinstance(weapon_info, dict):
+                weapon_info = {
+                    "name": "Arme non spécifiée",
+                    "attacks": "?",
+                    "ap": "?",
+                    "special": []
+                }
 
             # Monture
             mount_details = ""
