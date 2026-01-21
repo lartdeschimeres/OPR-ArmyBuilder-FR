@@ -7,10 +7,10 @@ import re
 import base64
 
 # ======================================================
-# CONFIGURATION
+# CONFIGURATION POUR SIMON
 # ======================================================
 st.set_page_config(
-    page_title="OPR Army Forge FR",
+    page_title="OPR Army Forge FR - Simon Joinville Fouquet",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -24,7 +24,7 @@ FACTIONS_DIR.mkdir(parents=True, exist_ok=True)
 # FONCTIONS UTILITAIRES
 # ======================================================
 def format_special_rule(rule):
-    """Formate les règles spéciales"""
+    """Formate les règles spéciales avec parenthèses"""
     if not isinstance(rule, str):
         return str(rule)
     if "(" in rule and ")" in rule:
@@ -35,7 +35,7 @@ def format_special_rule(rule):
     return rule
 
 def extract_coriace_value(rule):
-    """Extrait la valeur de Coriace"""
+    """Extrait la valeur numérique de Coriace d'une règle"""
     if not isinstance(rule, str):
         return 0
     match = re.search(r"Coriace\s*\(?(\d+)\)?", rule)
@@ -51,6 +51,25 @@ def get_coriace_from_rules(rules):
     for rule in rules:
         total += extract_coriace_value(rule)
     return total
+
+def get_mount_details(mount):
+    """Récupère les détails d'une monture"""
+    if not mount:
+        return None, 0
+
+    mount_data = mount
+    if 'mount' in mount:
+        mount_data = mount['mount']
+
+    # Récupérer les règles spéciales
+    special_rules = []
+    if 'special_rules' in mount_data and isinstance(mount_data['special_rules'], list):
+        special_rules = mount_data['special_rules']
+
+    # Calculer la coriace de la monture
+    coriace = get_coriace_from_rules(special_rules)
+
+    return special_rules, coriace
 
 def calculate_total_coriace(unit_data, combined=False):
     """Calcule la Coriace totale d'une unité"""
@@ -87,7 +106,7 @@ def calculate_total_coriace(unit_data, combined=False):
     return total if total > 0 else None
 
 def format_weapon_details(weapon):
-    """Formate les détails d'une arme"""
+    """Formate les détails d'une arme pour l'affichage"""
     if not weapon:
         return {
             "name": "Arme non spécifiée",
@@ -101,25 +120,6 @@ def format_weapon_details(weapon):
         "ap": weapon.get('armor_piercing', '?'),
         "special": weapon.get('special_rules', [])
     }
-
-def get_mount_details(mount):
-    """Récupère les détails d'une monture"""
-    if not mount:
-        return None, 0
-
-    mount_data = mount
-    if 'mount' in mount:
-        mount_data = mount['mount']
-
-    # Récupérer les règles spéciales
-    special_rules = []
-    if 'special_rules' in mount_data and isinstance(mount_data['special_rules'], list):
-        special_rules = mount_data['special_rules']
-
-    # Calculer la coriace de la monture
-    coriace = get_coriace_from_rules(special_rules)
-
-    return special_rules, coriace
 
 def format_mount_details(mount):
     """Formate les détails d'une monture pour l'affichage"""
@@ -559,8 +559,8 @@ elif st.session_state.page == "army":
 
             # Affichage des armes avec leurs caractéristiques
             if 'weapon' in u and u['weapon']:
-                weapon_info = u['weapon']
-                st.markdown(f"**Arme:** {weapon_info['name']} (A{weapon_info['attacks']}, PA({weapon_info['ap']}){', ' + ', '.join(weapon_info['special']) if weapon_info['special'] else ''})")
+                weapon_details = format_weapon_details(u['weapon'])
+                st.markdown(f"**Arme:** {weapon_details['name']} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''})")
 
             # Affichage des améliorations
             if u.get("options"):
@@ -612,8 +612,8 @@ elif st.session_state.page == "army":
             mime="application/json"
         )
 
-        with col3:
-        # EXPORT HTML CORRIGÉ
+    with col3:
+        # EXPORT HTML (anciennement "fiches")
         html_content = f"""
 <!DOCTYPE html>
 <html>
@@ -733,7 +733,7 @@ elif st.session_state.page == "army":
             rules = unit.get('rules', [])
             special_rules = ", ".join(rules) if rules else "Aucune"
 
-            # Armes - CORRECTION PRINCIPALE ICI
+            # Armes
             weapon_info = unit.get('weapon', {})
             if not isinstance(weapon_info, dict):
                 weapon_info = {
@@ -743,22 +743,18 @@ elif st.session_state.page == "army":
                     "special": []
                 }
 
-            # Formatage des règles spéciales de l'arme
-            weapon_special = weapon_info.get('special', [])
-            if not isinstance(weapon_special, list):
-                weapon_special = []
-
-            # Échappement des valeurs pour le HTML
-            weapon_name = str(weapon_info.get('name', 'Arme non nommée')).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            weapon_attacks = str(weapon_info.get('attacks', '?')).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            weapon_ap = str(weapon_info.get('ap', '?')).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            weapon_special_str = ', '.join(weapon_special) if weapon_special else '-'
-            weapon_special_str = str(weapon_special_str).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            # Échappement des caractères spéciaux
+            unit_name = str(unit['name']).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            weapon_name = str(weapon_info['name']).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            weapon_attacks = str(weapon_info['attacks']).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            weapon_ap = str(weapon_info['ap']).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            weapon_special = ', '.join(weapon_info['special']) if weapon_info['special'] else '-'
+            weapon_special = str(weapon_special).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
 
             html_content += f"""
         <div class="unit-container">
             <div class="unit-header">
-                {unit['name'].replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')}
+                {unit_name}
                 <span class="unit-cost">{unit['cost']} pts</span>
             </div>
 
@@ -789,7 +785,7 @@ elif st.session_state.page == "army":
             if rules:
                 html_content += f'<div class="special-rules"><strong>Règles spéciales:</strong> {special_rules.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}</div>'
 
-            # Armes - TABLEAU CORRIGÉ
+            # Armes
             html_content += f"""
             <div class="section-title">Arme</div>
             <table class="weapon-table">
@@ -808,7 +804,7 @@ elif st.session_state.page == "army":
                         <td>-</td>
                         <td>{weapon_attacks}</td>
                         <td>{weapon_ap}</td>
-                        <td>{weapon_special_str}</td>
+                        <td>{weapon_special}</td>
                     </tr>
                 </tbody>
             </table>
@@ -818,15 +814,17 @@ elif st.session_state.page == "army":
             if 'options' in unit and unit['options']:
                 for group_name, opts in unit['options'].items():
                     if isinstance(opts, list) and opts:
-                        html_content += f'<div class="section-title">{group_name.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}:</div>'
+                        group_name_clean = str(group_name).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                        html_content += f'<div class="section-title">{group_name_clean}:</div>'
                         for opt in opts:
-                            opt_name = opt.get("name", "").replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                            opt_name = str(opt.get("name", "")).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                             html_content += f'<div>• {opt_name}</div>'
 
             # Monture
             if 'mount' in unit and unit['mount']:
                 mount_details = format_mount_details(unit["mount"])
-                html_content += f'<div class="section-title">Monture</div><p>{mount_details.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}</p>'
+                mount_details_clean = str(mount_details).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                html_content += f'<div class="section-title">Monture</div><p>{mount_details_clean}</p>'
 
             html_content += "</div>"
 
@@ -841,4 +839,3 @@ elif st.session_state.page == "army":
             file_name=f"{st.session_state.list_name}.html",
             mime="text/html"
         )
-
