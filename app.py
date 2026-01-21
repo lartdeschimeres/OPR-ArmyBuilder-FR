@@ -8,10 +8,10 @@ import base64
 import math
 
 # ======================================================
-# CONFIGURATION POUR SIMON
+# CONFIGURATION
 # ======================================================
 st.set_page_config(
-    page_title="OPR Army Forge FR - Simon Joinville Fouquet",
+    page_title="OPR Army Forge FR",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -22,7 +22,7 @@ FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
 FACTIONS_DIR.mkdir(parents=True, exist_ok=True)
 
 # ======================================================
-# CONFIGURATION DES JEUX ET LEURS LIMITATIONS (INTÉGRÉ DANS LE CODE)
+# CONFIGURATION DES JEUX ET LEURS LIMITATIONS
 # ======================================================
 GAME_CONFIG = {
     "Age of Fantasy": {
@@ -32,14 +32,13 @@ GAME_CONFIG = {
         "default_points": 1000,
         "point_step": 250,
         "unit_types": ["infantry", "cavalry", "hero", "monster", "war_machine"],
-        
         "description": "Jeu de bataille rangée dans un univers fantasy médiéval",
         # Règles spécifiques à Age of Fantasy
         "hero_limit": 375,  # 1 Héros par tranche de 375 pts
         "unit_copy_rule": 750,  # 1+X copies où X=1 pour 750 pts
         "unit_max_cost_ratio": 0.35,  # Aucune unité ne peut valoir plus de 35% du total
-        "unit_per_points": 150  # 1 unité max par tranche de 150 pts
-    },
+        "unit_per_points": 150,  # 1 unité maximum par tranche de 150 pts
+    },  # <-- Virgule ajoutée ici
     "Grimdark Future": {
         "display_name": "Grimdark Future",
         "max_points": 10000,
@@ -48,11 +47,11 @@ GAME_CONFIG = {
         "point_step": 250,
         "unit_types": ["infantry", "vehicle", "walker", "hero", "battle_suit"],
         "description": "Jeu de bataille futuriste avec unités mécanisées"
-        # Règles spécifiques à Age of Fantasy
+        # Règles spécifiques à Grimdark Future
         "hero_limit": 375,  # 1 Héros par tranche de 375 pts
         "unit_copy_rule": 750,  # 1+X copies où X=1 pour 750 pts
         "unit_max_cost_ratio": 0.35,  # Aucune unité ne peut valoir plus de 35% du total
-        "unit_per_points": 150  # 1 unité max par tranche de 150 pts
+        "unit_per_points": 150,  # 1 unité maximum par tranche de 150 pts
     }
 }
 
