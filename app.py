@@ -20,8 +20,6 @@ st.set_page_config(
 # Chemins des fichiers
 BASE_DIR = Path(__file__).resolve().parent
 FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
-
-# Créer le dossier s'il n'existe pas
 os.makedirs(FACTIONS_DIR, exist_ok=True)
 
 # ======================================================
@@ -45,15 +43,112 @@ GAME_CONFIG = {
 # ======================================================
 # FONCTIONS POUR LES RÈGLES SPÉCIFIQUES
 # ======================================================
-# [Conservez vos fonctions de règles existantes]
+def check_hero_limit(army_list, army_points, game_config):
+    """Vérifie la limite de héros"""
+    if game_config.get("hero_limit"):
+        max_heroes = math.floor(army_points / game_config["hero_limit"])
+        hero_count = sum(1 for unit in army_list if unit.get("type") == "hero")
+        return hero_count <= max_heroes
+    return True
+
+def check_unit_max_cost(army_list, army_points, game_config, new_unit_cost=None):
+    """Vérifie qu'aucune unité ne dépasse le ratio maximum de coût"""
+    if not game_config.get("unit_max_cost_ratio"):
+        return True
+
+    max_cost = army_points * game_config["unit_max_cost_ratio"]
+
+    # Vérifier les unités existantes
+    for unit in army_list:
+        if unit["cost"] > max_cost:
+            return False
+
+    # Vérifier la nouvelle unité si fournie
+    if new_unit_cost and new_unit_cost > max_cost:
+        return False
+
+    return True
 
 # ======================================================
 # FONCTIONS UTILITAIRES
 # ======================================================
-# [Conservez vos fonctions utilitaires existantes]
+def format_unit_option(u):
+    """Formate l'affichage des unités dans la liste déroulante"""
+    name_part = f"{u['name']}"
+
+    # Pour les héros, toujours afficher [1]
+    if u.get('type') == "hero":
+        name_part += " [1]"
+    else:
+        # Pour les unités normales, afficher la taille de base
+        base_size = u.get('size', 10)
+        name_part += f" [{base_size}]"
+
+    qua_def = f"Qua {u['quality']}+ / Déf {u.get('defense', '?')}"
+
+    weapons_part = ""
+    if 'weapons' in u and u['weapons']:
+        weapon = u['weapons'][0]
+        weapons_part = f"{weapon.get('name', 'Arme')} (A{weapon.get('attacks', '?')}, PA({weapon.get('armor_piercing', '?')}))"
+
+    rules_part = ""
+    if 'special_rules' in u and u['special_rules']:
+        rules_part = ", ".join(u['special_rules'])
+
+    result = f"{name_part} - {qua_def}"
+
+    if weapons_part:
+        result += f" - {weapons_part}"
+
+    if rules_part:
+        result += f" - {rules_part}"
+
+    result += f" {u['base_cost']}pts"
+    return result
 
 # ======================================================
-# CHARGEMENT DES FACTIONS (version corrigée)
+# LOCAL STORAGE
+# ======================================================
+def ls_get(key):
+    """Récupère une valeur du LocalStorage"""
+    try:
+        unique_key = f"{key}_{hashlib.md5(str(datetime.now().timestamp()).encode()).hexdigest()[:8]}"
+        st.markdown(
+            f"""
+            <script>
+            const value = localStorage.getItem("{key}");
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.id = "{unique_key}";
+            input.value = value || "";
+            document.body.appendChild(input);
+            </script>
+            """,
+            unsafe_allow_html=True
+        )
+        return st.text_input("", key=unique_key, label_visibility="collapsed")
+    except Exception:
+        return None
+
+def ls_set(key, value):
+    """Stocke une valeur dans le LocalStorage"""
+    try:
+        if not isinstance(value, str):
+            value = json.dumps(value)
+        escaped_value = value.replace("'", "\\'").replace('"', '\\"')
+        st.markdown(
+            f"""
+            <script>
+            localStorage.setItem("{key}", `{escaped_value}`);
+            </script>
+            """,
+            unsafe_allow_html=True
+        )
+    except Exception:
+        pass
+
+# ======================================================
+# CHARGEMENT DES FACTIONS
 # ======================================================
 @st.cache_data
 def load_factions():
@@ -99,10 +194,7 @@ def load_factions():
                 }
             ]
         }
-
-        # Sauvegarde du fichier par défaut
-        default_file = FACTIONS_DIR / "default.json"
-        with open(default_file, "w", encoding="utf-8") as f:
+        with open(FACTIONS_DIR / "default.json", "w", encoding="utf-8") as f:
             json.dump(default_faction, f, indent=2)
 
     # Chargement des factions existantes
@@ -117,8 +209,8 @@ def load_factions():
                         factions[game] = {}
                     factions[game][faction] = data
                     games.add(game)
-        except Exception as e:
-            st.warning(f"Erreur chargement {fp.name}: {e}")
+        except Exception:
+            continue
 
     # Si aucun jeu trouvé, on utilise Age of Fantasy par défaut
     if not games:
@@ -156,9 +248,7 @@ def load_factions():
 # ======================================================
 try:
     factions_by_game, games = load_factions()
-except Exception as e:
-    st.error(f"Erreur de chargement des factions: {str(e)}")
-    # Utilisation de valeurs par défaut en cas d'erreur
+except Exception:
     factions_by_game = {
         "Age of Fantasy": {
             "Disciples de la Guerre": {
@@ -190,7 +280,6 @@ if "page" not in st.session_state:
     st.session_state.page = "setup"
     st.session_state.army_list = []
     st.session_state.army_cost = 0
-    st.session_state.current_player = "Simon"
 
 # ======================================================
 # PAGE 1 – CONFIGURATION
@@ -211,7 +300,7 @@ if st.session_state.page == "setup":
     st.subheader("Mes listes sauvegardées")
 
     # Chargement des listes sauvegardées
-    saved_lists = ls_get("opr_saved_lists") if 'ls_get' in locals() else None
+    saved_lists = ls_get("opr_saved_lists")
     if saved_lists:
         try:
             saved_lists = json.loads(saved_lists)
@@ -232,8 +321,8 @@ if st.session_state.page == "setup":
                             st.session_state.units = factions_by_game[saved_list["game"]][saved_list["faction"]]["units"]
                             st.session_state.page = "army"
                             st.rerun()
-        except Exception as e:
-            st.error(f"Erreur chargement listes: {e}")
+        except Exception:
+            pass
 
     if not games:
         st.error("Aucun jeu trouvé")
@@ -272,7 +361,7 @@ if st.session_state.page == "setup":
             st.session_state.page = "army"
             st.rerun()
         except Exception as e:
-            st.error(f"Erreur d'import: {e}")
+            st.error(f"Erreur d'import: {str(e)}")
 
     if st.button("Créer une nouvelle liste"):
         st.session_state.game = game
@@ -286,14 +375,15 @@ if st.session_state.page == "setup":
         st.rerun()
 
 # ======================================================
-# PAGE 2 – CONSTRUCTEUR D'ARMÉE (version corrigée)
+# PAGE 2 – CONSTRUCTEUR D'ARMÉE
 # ======================================================
 elif st.session_state.page == "army":
     st.title(st.session_state.list_name)
     st.caption(f"{st.session_state.game} • {st.session_state.faction} • {st.session_state.army_cost}/{st.session_state.points} pts")
 
-    # Vérification des règles spécifiques au jeu
-    game_config = GAME_CONFIG.get(st.session_state.game, GAME_CONFIG["Age of Fantasy"])
+    if st.button("⬅ Retour"):
+        st.session_state.page = "setup"
+        st.rerun()
 
     # Ajout d'une unité
     st.divider()
@@ -303,22 +393,14 @@ elif st.session_state.page == "army":
     unit = st.selectbox(
         "Unité disponible",
         st.session_state.units,
-        format_func=lambda u: f"{u['name']} [{u.get('size', 10)}] - Qua {u['quality']}+ / Déf {u['defense']}+ - {u['base_cost']}pts",
+        format_func=format_unit_option,
         index=0,
         key="unit_select"
     )
 
-    # Récupération de la taille de base de l'unité
+    # Récupération des données de base
     base_size = unit.get('size', 10)
     base_cost = unit["base_cost"]
-
-    # Initialisation
-    weapon = unit.get("weapons", [{}])[0]
-    selected_options = {}
-    mount = None
-    weapon_cost = 0
-    mount_cost = 0
-    upgrades_cost = 0
 
     # Gestion des unités combinées - CORRECTION DÉFINITIVE POUR LES HÉROS
     if unit.get("type") == "hero":
@@ -328,10 +410,10 @@ elif st.session_state.page == "army":
 
     # Calcul du coût final
     if combined and unit.get("type") != "hero":
-        final_cost = (base_cost + weapon_cost) * 2 + mount_cost + upgrades_cost
+        final_cost = (base_cost) * 2  # On double le coût de base pour les unités combinées
         unit_size = base_size * 2
     else:
-        final_cost = base_cost + weapon_cost + mount_cost + upgrades_cost
+        final_cost = base_cost
         unit_size = base_size
 
     st.markdown(f"**Coût total: {final_cost} pts**")
@@ -346,11 +428,9 @@ elif st.session_state.page == "army":
                 "base_cost": base_cost,
                 "size": unit_size,
                 "quality": unit["quality"],
-                "defense": unit["defense"],
+                "defense": unit.get("defense", 3),
                 "rules": unit.get("special_rules", []),
-                "weapon": weapon,
-                "options": selected_options,
-                "mount": mount,
+                "weapon": unit.get("weapons", [{}])[0],
                 "combined": combined and unit.get("type") != "hero",
             }
 
@@ -370,7 +450,7 @@ elif st.session_state.page == "army":
 
     for i, u in enumerate(st.session_state.army_list):
         with st.container():
-            unit_header = f"### {u['name']} [{u.get('size', 10)}] ({u['cost']} pts) | Qua {u['quality']}+ / Déf {u['defense']}+"
+            unit_header = f"### {u['name']} [{u.get('size', 10)}] ({u['cost']} pts) | Qua {u['quality']}+ / Déf {u.get('defense', '?')}+"
             if u.get("type") == "hero":
                 unit_header += " | 🌟 Héros"
             st.markdown(unit_header)
@@ -405,7 +485,7 @@ elif st.session_state.page == "army":
         if st.button("Sauvegarder"):
             saved_lists = []
             try:
-                existing_lists = ls_get("opr_saved_lists") if 'ls_get' in locals() else None
+                existing_lists = ls_get("opr_saved_lists")
                 if existing_lists:
                     saved_lists = json.loads(existing_lists)
             except:
@@ -424,4 +504,88 @@ elif st.session_state.page == "army":
             json.dumps(army_data, indent=2, ensure_ascii=False),
             file_name=f"{st.session_state.list_name}.json",
             mime="application/json"
+        )
+
+        # Export HTML
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Liste OPR - {army_data['name']}</title>
+            <meta charset="UTF-8">
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    margin: 20px;
+                    color: #333;
+                }}
+                .army-title {{
+                    text-align: center;
+                    margin-bottom: 20px;
+                    color: #2c3e50;
+                }}
+                .unit-container {{
+                    background-color: white;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    margin-bottom: 20px;
+                    padding: 20px;
+                }}
+                .unit-header {{
+                    font-size: 1.5em;
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                    color: #2c3e50;
+                }}
+                .hero-badge {{
+                    background-color: gold;
+                    color: black;
+                    padding: 2px 8px;
+                    border-radius: 10px;
+                    margin-left: 10px;
+                    font-weight: bold;
+                }}
+            </style>
+        </head>
+        <body>
+            <h1 class="army-title">Liste d'armée OPR - {army_data['name']}</h1>
+            <div class="army-info">
+                <strong>Jeu:</strong> {army_data['game']} |
+                <strong>Faction:</strong> {army_data['faction']} |
+                <strong>Points:</strong> {army_data['total_cost']}/{army_data['points']}
+            </div>
+        """
+
+        for unit in army_data['army_list']:
+            unit_name = f"{unit['name']} [{unit.get('size', 10)}]"
+            hero_badge = '<span class="hero-badge">HÉROS</span>' if unit.get('type') == "hero" else ""
+
+            html_content += f"""
+            <div class="unit-container">
+                <div class="unit-header">
+                    {unit_name} ({unit['cost']} pts)
+                    {hero_badge}
+                </div>
+                <div>Qualité: {unit['quality']}+ / Défense: {unit.get('defense', '?')}+</div>
+            """
+
+            if unit.get('rules'):
+                rules_text = ", ".join(unit['rules'])
+                html_content += f"<div><strong>Règles spéciales:</strong> {rules_text}</div>"
+
+            if 'weapon' in unit and unit['weapon']:
+                html_content += f"<div><strong>Arme:</strong> {unit['weapon'].get('name', 'Arme non nommée')} (A{unit['weapon'].get('attacks', '?')}, PA({unit['weapon'].get('armor_piercing', '?')}))</div>"
+
+            html_content += "</div>"
+
+        html_content += """
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            "Exporter en HTML",
+            html_content,
+            file_name=f"{st.session_state.list_name}.html",
+            mime="text/html"
         )
