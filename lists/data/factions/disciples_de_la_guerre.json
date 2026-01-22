@@ -8,6 +8,7 @@
     {
       "name": "Maître de la Guerre Élu",
       "type": "Hero",
+      "size": 1,
       "base_cost": 60,
       "quality": 3,
       "defense": 3,
@@ -150,8 +151,9 @@
       ]
     },
     {
-      "name": "Barbares de la Guerre [10]",
+      "name": "Barbares de la Guerre",
       "type": "Unit",
+      "size": 10,
       "base_cost": 100,
       "quality": 5,
       "defense": 5,
