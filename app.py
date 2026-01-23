@@ -40,7 +40,7 @@ GAME_CONFIG = {
 }
 
 # ======================================================
-# FONCTIONS UTILITAIRES (CORRIGÉES)
+# FONCTIONS UTILITAIRES
 # ======================================================
 def format_special_rule(rule):
     """Formate les règles spéciales avec parenthèses"""
@@ -60,26 +60,24 @@ def format_weapon_details(weapon):
             "name": "Arme non spécifiée",
             "attacks": 1,
             "ap": 0,
-            "special": []
+            "special": [],
+            "formatted": "Arme non spécifiée (ATK: 1, PA: 0)"
         }
 
-    # Formatage complet des caractéristiques de l'arme
-    details = weapon.get('name', 'Arme non nommée') + " ("
-    details += f"ATK: {weapon.get('attacks', 1)}, "
-    details += f"PA: {weapon.get('armor_piercing', 0)}"
-
-    if weapon.get('special_rules'):
-        details += ", " + ", ".join(weapon.get('special_rules'))
-
-    details += ")"
-
-    return {
+    weapon_details = {
         "name": weapon.get('name', 'Arme non nommée'),
         "attacks": weapon.get('attacks', 1),
         "ap": weapon.get('armor_piercing', 0),
         "special": weapon.get('special_rules', []),
-        "formatted": details
     }
+
+    # Formatage complet des caractéristiques
+    details = f"{weapon_details['name']} (ATK: {weapon_details['attacks']}, PA: {weapon_details['ap']})"
+    if weapon_details['special']:
+        details += ", " + ", ".join(weapon_details['special'])
+
+    weapon_details['formatted'] = details
+    return weapon_details
 
 def format_mount_details(mount):
     """Formate les détails d'une monture"""
@@ -145,9 +143,10 @@ def format_unit_option(u):
     """
 
 def format_unit_display(u):
-    """Formate l'affichage des unités DÉJÀ AJOUTÉES"""
+    """Formate l'affichage des unités DÉJÀ AJOUTÉES comme dans votre capture"""
     name_part = f"{u['name']} [{u.get('size', 10)}]"
 
+    # Qualité/Défense
     qua_def = f"Qualité: {u['quality']}+ | Défense: {u.get('defense', '?')}+"
 
     # Règles spéciales
@@ -179,7 +178,7 @@ def format_unit_display(u):
         </div>
         """
 
-    # Options
+    # Options/Améliorations
     options_part = ""
     if 'options' in u and u['options']:
         for group_name, opts in u['options'].items():
@@ -205,7 +204,7 @@ def format_unit_display(u):
             {cost_part}
         </div>
         <div style='margin-top: 5px;'>
-            <strong>{qua_def}</strong>
+            <div style='margin: 5px 0;'>{qua_def}</div>
             {rules_part}
             {weapon_part}
             {mount_part}
@@ -317,10 +316,10 @@ def ls_set(key, value):
         pass
 
 # ======================================================
-# FONCTION POUR GÉNÉRER L'EXPORT HTML
+# FONCTION POUR GÉNÉRER L'EXPORT HTML (AMÉLIORÉE)
 # ======================================================
 def generate_html_export(army_data, factions_by_game):
-    """Génère un export HTML avec toutes les corrections demandées"""
+    """Génère un export HTML qui correspond exactement à vos captures d'écran"""
     faction_data = factions_by_game[army_data['game']][army_data['faction']]
     rules_descriptions = faction_data.get('special_rules_descriptions', {})
 
@@ -354,9 +353,12 @@ def generate_html_export(army_data, factions_by_game):
             """
         rules_legend += "</table></div>"
 
-    # Générer les unités
+    # Générer les unités avec le format exact de votre capture
     units_html = ""
     for unit in army_data['army_list']:
+        # Qualité/Défense
+        qua_def = f"Qualité: {unit['quality']}+ | Défense: {unit.get('defense', '?')}+"
+
         # Règles spéciales
         rules_list = ""
         if 'rules' in unit and unit['rules']:
@@ -386,7 +388,7 @@ def generate_html_export(army_data, factions_by_game):
             </div>
             """
 
-        # Options
+        # Options/Améliorations
         options_html = ""
         if 'options' in unit and unit['options']:
             for group_name, opts in unit['options'].items():
@@ -407,19 +409,13 @@ def generate_html_export(army_data, factions_by_game):
                             border-radius: 4px; font-weight: bold;">{unit['cost']} pts</div>
             </div>
 
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
-                <div style="background-color: #f8f9fa; padding: 5px 10px; border-radius: 4px;">
-                    Qualité: {unit['quality']}+
-                </div>
-                <div style="background-color: #f8f9fa; padding: 5px 10px; border-radius: 4px;">
-                    Défense: {unit.get('defense', '?')}+
-                </div>
+            <div style="margin-top: 5px;">
+                <div style="margin: 5px 0;">{qua_def}</div>
+                {rules_list}
+                {weapon_html}
+                {mount_html}
+                {options_html}
             </div>
-
-            {rules_list}
-            {weapon_html}
-            {mount_html}
-            {options_html}
         </div>
         """
 
@@ -525,7 +521,8 @@ def load_factions():
                     "Attaque venimeuse": "Les blessures infligées par cette unité ne peuvent pas être régénérées.",
                     "Perforant": "Ignore 1 point de défense supplémentaire.",
                     "Volant": "Peut voler par-dessus les obstacles et les unités.",
-                    "Effrayant(1)": "Les unités ennemies à 6\" doivent passer un test de moral ou reculer de 3\"."
+                    "Effrayant(1)": "Les unités ennemies à 6\" doivent passer un test de moral ou reculer de 3\".",
+                    "Lanceur de sorts (3)": "Peut lancer 3 sorts par tour."
                 },
                 "units": [
                     {
@@ -570,6 +567,17 @@ def load_factions():
                                                 }
                                             ]
                                         }
+                                    }
+                                ]
+                            },
+                            {
+                                "group": "Améliorations de rôle",
+                                "type": "upgrades",
+                                "options": [
+                                    {
+                                        "name": "Porteur de la bannière de l'armée",
+                                        "cost": 60,
+                                        "special_rules": ["Effrayant(3)"]
                                     }
                                 ]
                             }
