@@ -94,7 +94,7 @@ def show_points_progress(current_points, max_points):
         st.success("✅ Liste valide! Vous avez atteint exactement votre limite de points.")
 
 # ======================================================
-# FONCTIONS POUR LES RÈGLES SPÉCIFIQUES (corrigées)
+# FONCTIONS POUR LES RÈGLES SPÉCIFIQUES
 # ======================================================
 def check_army_points(army_list, army_points):
     """Vérifie que le total des points ne dépasse pas la limite choisie"""
@@ -466,7 +466,7 @@ def show_unit_with_tabs(unit, rules_descriptions):
                             st.markdown(description)
 
 # ======================================================
-# CHARGEMENT DES FACTIONS (corrigé)
+# CHARGEMENT DES FACTIONS (version corrigée)
 # ======================================================
 @st.cache_data
 def load_factions():
@@ -474,8 +474,114 @@ def load_factions():
     factions = {}
     games = set()
 
-   # Vérifier si le dossier factions existe et contient des fichiers
-    if FACTIONS_DIR.exists() and list(FACTIONS_DIR.glob("*.json")):
+    # Factions par défaut
+    default_factions = {
+        "Age of Fantasy": {
+            "Disciples de la Guerre": {
+                "game": "Age of Fantasy",
+                "faction": "Disciples de la Guerre",
+                "special_rules_descriptions": {
+                    "Éclaireur": "Cette unité peut se déplacer à travers les terrains difficiles sans pénalité et ignore les obstacles lors de ses déplacements.",
+                    "Furieux": "Cette unité relance les dés de 1 lors des tests d'attaque au corps à corps.",
+                    "Né pour la guerre": "Cette unité peut relancer un dé de 1 lors des tests de moral.",
+                    "Héros": "Cette unité est un personnage important qui peut inspirer les troupes autour de lui. Les héros ne peuvent pas être combinés.",
+                    "Coriace(1)": "Cette unité ignore 1 point de dégât par phase.",
+                    "Magique(1)": "Les armes de cette unité ignorent 1 point de défense grâce à leur nature magique.",
+                    "Contre-charge": "Cette unité obtient +1 à ses jets de dégât lors d'une charge."
+                },
+                "units": [
+                    {
+                        "name": "Barbares de la Guerre",
+                        "type": "unit",
+                        "size": 10,
+                        "base_cost": 50,
+                        "quality": 3,
+                        "defense": 5,
+                        "special_rules": ["Éclaireur", "Furieux", "Né pour la guerre"],
+                        "weapons": [{
+                            "name": "Armes à une main",
+                            "attacks": 1,
+                            "armor_piercing": 0,
+                            "special_rules": []
+                        }],
+                        "upgrade_groups": [
+                            {
+                                "group": "Remplacement d'armes",
+                                "type": "weapon",
+                                "options": [
+                                    {
+                                        "name": "Lance",
+                                        "cost": 35,
+                                        "weapon": {
+                                            "name": "Lance",
+                                            "attacks": 1,
+                                            "armor_piercing": 0,
+                                            "special_rules": ["Contre-charge"]
+                                        }
+                                    },
+                                    {
+                                        "name": "Fléau",
+                                        "cost": 20,
+                                        "weapon": {
+                                            "name": "Fléau",
+                                            "attacks": 1,
+                                            "armor_piercing": 1,
+                                            "special_rules": []
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "group": "Améliorations d'unité",
+                                "type": "upgrades",
+                                "options": [
+                                    {
+                                        "name": "Icône du Ravage",
+                                        "cost": 20,
+                                        "special_rules": ["Aura de Défense versatile"]
+                                    },
+                                    {
+                                        "name": "Sergent",
+                                        "cost": 5,
+                                        "special_rules": []
+                                    },
+                                    {
+                                        "name": "Bannière",
+                                        "cost": 5,
+                                        "special_rules": []
+                                    },
+                                    {
+                                        "name": "Musicien",
+                                        "cost": 10,
+                                        "special_rules": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Maître de la Guerre Élu",
+                        "type": "hero",
+                        "size": 1,
+                        "base_cost": 150,
+                        "quality": 3,
+                        "defense": 5,
+                        "special_rules": ["Héros", "Éclaireur", "Furieux"],
+                        "weapons": [{
+                            "name": "Arme héroïque",
+                            "attacks": 2,
+                            "armor_piercing": 1,
+                            "special_rules": ["Magique(1)"]
+                        }]
+                    }
+                ]
+            }
+        }
+    }
+
+    # Charger les factions depuis les fichiers
+    files_found = False
+    if FACTIONS_DIR.exists():
         for fp in FACTIONS_DIR.glob("*.json"):
             try:
                 with open(fp, encoding="utf-8") as f:
@@ -483,14 +589,30 @@ def load_factions():
                     game = data.get("game")
                     faction = data.get("faction")
                     if game and faction:
-                        factions.setdefault(game, {})[faction] = data
+                        if game not in factions:
+                            factions[game] = {}
+                        factions[game][faction] = data
                         games.add(game)
+                        files_found = True
             except Exception as e:
                 st.warning(f"Erreur chargement {fp.name}: {e}")
-    else:
-        # Si aucun fichier n'existe, utiliser les factions par défaut
+
+    # Si aucun fichier n'a été trouvé, utiliser les factions par défaut
+    if not files_found:
         factions = default_factions
         games = set(factions.keys())
+        st.info("Aucun fichier de faction trouvé. Utilisation des factions par défaut.")
+
+        # Créer un fichier par défaut
+        try:
+            default_file = FACTIONS_DIR / "disciples_de_la_guerre.json"
+            with open(default_file, "w", encoding="utf-8") as f:
+                json.dump(default_factions["Age of Fantasy"]["Disciples de la Guerre"], f, indent=2)
+            st.info(f"Fichier de faction par défaut créé: {default_file.name}")
+        except Exception as e:
+            st.warning(f"Impossible de créer le fichier par défaut: {e}")
+    else:
+        st.info(f"Chargé {sum(len(f) for f in factions.values())} factions depuis les fichiers")
 
     return factions, sorted(games) if games else list(GAME_CONFIG.keys())
 
