@@ -4,10 +4,8 @@ from pathlib import Path
 from datetime import datetime
 import hashlib
 import re
-import base64
-import math
-import os
 import copy
+import math
 
 # ======================================================
 # CONFIGURATION POUR SIMON
@@ -102,13 +100,6 @@ def check_army_points(army_list, army_points):
         return False, f"Limite de points dépassée! Maximum autorisé: {army_points} pts. Total actuel: {total} pts"
     return True, ""
 
-def can_add_unit(current_points, unit_cost, max_points):
-    """Vérifie qu'ajouter une unité ne dépasse pas la limite"""
-    if current_points + unit_cost > max_points:
-        remaining = max_points - current_points
-        return False, f"Ajouter cette unité dépasserait votre limite de {max_points} pts. Il vous reste {remaining} pts."
-    return True, ""
-
 def check_hero_limit(army_list, army_points, game_config):
     """Vérifie la limite de héros"""
     if game_config.get("hero_limit"):
@@ -170,30 +161,7 @@ def validate_army_rules(army_list, army_points, game):
         valid, msg = check_unit_per_points(army_list, army_points, game_config)
         if not valid: errors.append(msg)
 
-    if errors:
-        return False, errors
-    return True, []
-
-def can_add_unit_with_rules(unit_cost, army_list, army_points, game):
-    """Vérifie si une unité peut être ajoutée en respectant toutes les règles"""
-    game_config = GAME_CONFIG.get(game, {})
-    errors = []
-
-    valid, msg = can_add_unit(sum(u["cost"] for u in army_list), unit_cost, army_points)
-    if not valid: errors.append(msg)
-
-    valid, msg = check_unit_max_cost(unit_cost, army_points, game_config)
-    if not valid: errors.append(msg)
-
-    test_army = copy.deepcopy(army_list)
-    test_army.append({"cost": unit_cost, "name": "test", "type": "unit"})
-
-    valid, rule_errors = validate_army_rules(test_army, army_points, game)
-    if not valid: errors.extend(rule_errors)
-
-    if errors:
-        return False, errors
-    return True, []
+    return len(errors) == 0, errors
 
 # ======================================================
 # FONCTIONS UTILITAIRES
@@ -228,38 +196,9 @@ def get_mount_details(mount):
     """Récupère les détails d'une monture"""
     if not mount:
         return None, 0
-
     mount_data = mount['mount'] if 'mount' in mount else mount
     special_rules = mount_data.get('special_rules', [])
     return special_rules, get_coriace_from_rules(special_rules)
-
-def calculate_total_coriace(unit_data, combined=False):
-    """Calcule la Coriace totale d'une unité"""
-    total = 0
-
-    if 'special_rules' in unit_data:
-        total += get_coriace_from_rules(unit_data['special_rules'])
-
-    if 'mount' in unit_data and unit_data['mount']:
-        _, mount_coriace = get_mount_details(unit_data['mount'])
-        total += mount_coriace
-
-    if 'options' in unit_data:
-        for opts in unit_data['options'].values():
-            if isinstance(opts, list):
-                for opt in opts:
-                    if 'special_rules' in opt:
-                        total += get_coriace_from_rules(opt['special_rules'])
-            elif isinstance(opts, dict) and 'special_rules' in opts:
-                total += get_coriace_from_rules(opts['special_rules'])
-
-    if 'weapon' in unit_data and 'special_rules' in unit_data['weapon']:
-        total += get_coriace_from_rules(unit_data['weapon']['special_rules'])
-
-    if combined and unit_data.get('type') != "hero":
-        total += get_coriace_from_rules(unit_data.get('special_rules', []))
-
-    return total if total > 0 else None
 
 def format_weapon_details(weapon):
     """Formate les détails d'une arme pour l'affichage"""
@@ -505,7 +444,6 @@ def load_factions():
             except Exception as e:
                 st.warning(f"Erreur chargement {fp.name}: {e}")
 
-    # Si des fichiers ont été chargés, les utiliser
     if files_loaded > 0:
         st.info(f"Chargé {files_loaded} factions depuis les fichiers")
     else:
@@ -513,7 +451,6 @@ def load_factions():
         factions = default_factions
         games = set(factions.keys())
 
-    # Vérifier que Age of Fantasy a au moins une faction
     if "Age of Fantasy" not in factions or not factions["Age of Fantasy"]:
         if "Age of Fantasy" not in factions:
             factions["Age of Fantasy"] = {}
@@ -533,8 +470,8 @@ if "page" not in st.session_state:
     st.session_state.army_list = []
     st.session_state.army_cost = 0
     st.session_state.current_player = "Simon"
-    st.session_state.history = []  # Historique pour l'annulation
-    st.session_state.undo_disabled = True  # Bouton Annuler désactivé au début
+    st.session_state.history = []
+    st.session_state.undo_disabled = True
 
 # ======================================================
 # PAGE 1 – CONFIGURATION
@@ -571,7 +508,7 @@ if st.session_state.page == "setup":
                             st.session_state.army_cost = saved_list["total_cost"]
                             st.session_state.units = factions_by_game[saved_list["game"]][saved_list["faction"]]["units"]
                             st.session_state.page = "army"
-                            st.session_state.history = []  # Réinitialiser l'historique
+                            st.session_state.history = []
                             st.session_state.undo_disabled = True
                             st.rerun()
         except Exception as e:
@@ -622,7 +559,7 @@ if st.session_state.page == "setup":
             st.session_state.army_cost = total_cost
             st.session_state.units = factions_by_game[data["game"]][data["faction"]]["units"]
             st.session_state.page = "army"
-            st.session_state.history = []  # Réinitialiser l'historique
+            st.session_state.history = []
             st.session_state.undo_disabled = True
             st.rerun()
         except Exception as e:
@@ -636,7 +573,7 @@ if st.session_state.page == "setup":
         st.session_state.units = factions_by_game[game][faction]["units"]
         st.session_state.army_list = []
         st.session_state.army_cost = 0
-        st.session_state.history = []  # Réinitialiser l'historique
+        st.session_state.history = []
         st.session_state.undo_disabled = True
         st.session_state.page = "army"
         st.rerun()
@@ -696,12 +633,6 @@ elif st.session_state.page == "army":
     base_size = unit.get('size', 10)
     base_cost = unit["base_cost"]
 
-    # Vérification du coût maximum
-    valid, msg = check_unit_max_cost(base_cost, st.session_state.points, GAME_CONFIG[st.session_state.game])
-    if not valid:
-        st.error(msg)
-        st.stop()
-
     weapon = unit.get("weapons", [{}])[0]
     selected_options = {}
     mount = None
@@ -759,9 +690,8 @@ elif st.session_state.page == "army":
                 if st.checkbox(f"{o['name']} (+{o['cost']} pts)", key=f"{unit['name']}_{group['group']}_{o['name']}"):
                     if group["group"] not in selected_options:
                         selected_options[group["group"]] = []
-                    if not any(opt.get("name") == o["name"] for opt in selected_options.get(group["group"], [])):
-                        selected_options[group["group"]] = [o]
-                        upgrades_cost = o["cost"]
+                    selected_options[group["group"]] = [o]
+                    upgrades_cost = o["cost"]
 
     if combined and unit.get("type") != "hero":
         final_cost = (base_cost + weapon_cost) * 2 + mount_cost + upgrades_cost
@@ -769,18 +699,6 @@ elif st.session_state.page == "army":
     else:
         final_cost = base_cost + weapon_cost + mount_cost + upgrades_cost
         unit_size = base_size
-
-    valid, errors = can_add_unit_with_rules(
-        final_cost,
-        st.session_state.army_list,
-        st.session_state.points,
-        st.session_state.game
-    )
-
-    if not valid:
-        for error in errors:
-            st.error(error)
-        st.stop()
 
     st.markdown(f"**Coût total: {final_cost} pts**")
     st.markdown(f"**Taille de l'unité: {unit_size} figurines**")
@@ -820,6 +738,21 @@ elif st.session_state.page == "army":
                 "combined": combined and unit.get("type") != "hero",
             }
 
+            # Ajouter temporairement l'unité pour vérifier les règles
+            test_army = copy.deepcopy(st.session_state.army_list)
+            test_army.append(unit_data)
+            test_cost = st.session_state.army_cost + final_cost
+
+            # Vérifier les règles APRES l'ajout
+            valid, errors = validate_army_rules(test_army, st.session_state.points, st.session_state.game)
+
+            if not valid:
+                for error in errors:
+                    st.error(error)
+                # Ne pas ajouter l'unité si les règles ne sont pas respectées
+                st.stop()
+
+            # Si tout est valide, ajouter l'unité
             st.session_state.army_list.append(unit_data)
             st.session_state.army_cost += final_cost
             st.rerun()
