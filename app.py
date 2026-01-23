@@ -40,19 +40,8 @@ GAME_CONFIG = {
 }
 
 # ======================================================
-# FONCTIONS UTILITAIRES
+# FONCTIONS UTILITAIRES (CORRIGÉES)
 # ======================================================
-def format_special_rule(rule):
-    """Formate les règles spéciales avec parenthèses"""
-    if not isinstance(rule, str):
-        return str(rule)
-    if "(" in rule and ")" in rule:
-        return rule
-    match = re.search(r"(\D+)(\d+)", rule)
-    if match:
-        return f"{match.group(1)}({match.group(2)})"
-    return rule
-
 def format_weapon_details(weapon):
     """Formate les détails d'une arme avec toutes ses caractéristiques"""
     if not weapon:
@@ -143,7 +132,7 @@ def format_unit_option(u):
     """
 
 def format_unit_display(u):
-    """Formate l'affichage des unités DÉJÀ AJOUTÉES comme dans votre capture"""
+    """Formate l'affichage des unités DÉJÀ AJOUTÉES avec le style exact de vos captures"""
     name_part = f"{u['name']} [{u.get('size', 10)}]"
 
     # Qualité/Défense
@@ -316,7 +305,7 @@ def ls_set(key, value):
         pass
 
 # ======================================================
-# FONCTION POUR GÉNÉRER L'EXPORT HTML (AMÉLIORÉE)
+# FONCTION POUR GÉNÉRER L'EXPORT HTML (CORRIGÉE)
 # ======================================================
 def generate_html_export(army_data, factions_by_game):
     """Génère un export HTML qui correspond exactement à vos captures d'écran"""
@@ -353,7 +342,7 @@ def generate_html_export(army_data, factions_by_game):
             """
         rules_legend += "</table></div>"
 
-    # Générer les unités avec le format exact de votre capture
+    # Générer les unités avec le format exact de vos captures
     units_html = ""
     for unit in army_data['army_list']:
         # Qualité/Défense
@@ -709,7 +698,7 @@ if st.session_state.page == "setup":
         st.rerun()
 
 # ======================================================
-# PAGE 2 – CONSTRUCTEUR D'ARMÉE
+# PAGE 2 – CONSTRUCTEUR D'ARMÉE (CORRIGÉE)
 # ======================================================
 elif st.session_state.page == "army":
     st.title(st.session_state.list_name)
@@ -892,7 +881,26 @@ elif st.session_state.page == "army":
         st.info("Ajoutez des unités pour commencer")
 
     for i, u in enumerate(st.session_state.army_list):
-        st.markdown(format_unit_display(u), unsafe_allow_html=True)
+        # Affichage corrigé pour correspondre exactement à vos captures
+        with st.container():
+            st.markdown(f"""
+            <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <h4 style="margin: 0;">{u['name']} [{u.get('size', 10)}]</h4>
+                    <span style="background-color: #3498db; color: white; padding: 2px 6px; border-radius: 3px;">
+                        {u.get('cost', '?')} pts
+                    </span>
+                </div>
+                <div style="margin-top: 5px;">
+                    <div style="margin: 5px 0;">Qualité: {u['quality']}+ | Défense: {u.get('defense', '?')}+</div>
+                    {'<div style="margin: 5px 0;"><strong>Règles spéciales:</strong> ' + ', '.join(u['rules']) + '</div>' if 'rules' in u and u['rules'] else ''}
+                    {'<div style="margin: 5px 0;"><strong>Arme:</strong> ' + format_weapon_details(u['weapon'])['formatted'] + '</div>' if 'weapon' in u and u['weapon'] else ''}
+                    {'<div style="margin: 5px 0;"><strong>Monture:</strong> ' + format_mount_details(u['mount']) + '</div>' if 'mount' in u and u['mount'] else ''}
+                    {''.join([f'<div style="margin: 5px 0;"><strong>{group_name}:</strong> {", ".join(opt.get("name", "") for opt in opts)}</div>'
+                             for group_name, opts in u.get('options', {}).items() if opts])}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
         if st.button(f"Supprimer {u['name']}", key=f"del_{i}"):
             st.session_state.history.append({
