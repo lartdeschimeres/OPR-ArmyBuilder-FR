@@ -42,8 +42,8 @@ GAME_CONFIG = {
         "display_name": "Grimdark Future",
         "max_points": 10000,
         "min_points": 200,
-        "default_points": 1000,
-        "point_step": 250,
+        "default_points": 800,
+        "point_step": 200,
         "description": "Jeu de bataille futuriste",
         "hero_limit": 375,  # 1 Héros par tranche de 375 pts
         "unit_copy_rule": 750,  # 1+X copies où X=1 pour 750 pts
@@ -94,23 +94,21 @@ def show_points_progress(current_points, max_points):
         st.success("✅ Liste valide! Vous avez atteint exactement votre limite de points.")
 
 # ======================================================
-# FONCTIONS POUR LES RÈGLES SPÉCIFIQUES
+# FONCTIONS POUR LES RÈGLES SPÉCIFIQUES (corrigées)
 # ======================================================
 def check_army_points(army_list, army_points):
     """Vérifie que le total des points ne dépasse pas la limite choisie"""
     total = sum(unit["cost"] for unit in army_list)
     if total > army_points:
-        st.error(f"Limite de points dépassée! Maximum autorisé: {army_points} pts. Total actuel: {total} pts")
-        return False
-    return True
+        return False, f"Limite de points dépassée! Maximum autorisé: {army_points} pts. Total actuel: {total} pts"
+    return True, ""
 
 def can_add_unit(current_points, unit_cost, max_points):
     """Vérifie qu'ajouter une unité ne dépasse pas la limite de points"""
     if current_points + unit_cost > max_points:
         remaining = max_points - current_points
-        st.error(f"Ajouter cette unité dépasserait votre limite de {max_points} pts. Il vous reste {remaining} pts.")
-        return False
-    return True
+        return False, f"Ajouter cette unité dépasserait votre limite de {max_points} pts. Il vous reste {remaining} pts."
+    return True, ""
 
 def check_hero_limit(army_list, army_points, game_config):
     """Vérifie la limite de héros"""
@@ -119,9 +117,8 @@ def check_hero_limit(army_list, army_points, game_config):
         hero_count = sum(1 for unit in army_list if unit.get("type") == "hero")
 
         if hero_count > max_heroes:
-            st.error(f"Limite de héros dépassée! Maximum autorisé: {max_heroes} (1 héros par {game_config['hero_limit']} pts)")
-            return False
-    return True
+            return False, f"Limite de héros dépassée! Maximum autorisé: {max_heroes} (1 héros par {game_config['hero_limit']} pts)"
+    return True, ""
 
 def check_unit_copy_rule(army_list, army_points, game_config):
     """Vérifie la règle des copies d'unités"""
@@ -132,77 +129,80 @@ def check_unit_copy_rule(army_list, army_points, game_config):
         unit_counts = {}
         for unit in army_list:
             unit_name = unit["name"]
-            count_key = unit_name
-
-            if count_key in unit_counts:
-                unit_counts[count_key] += 1
+            if unit_name in unit_counts:
+                unit_counts[unit_name] += 1
             else:
-                unit_counts[count_key] = 1
+                unit_counts[unit_name] = 1
 
         for unit_name, count in unit_counts.items():
             if count > max_copies:
-                st.error(f"Trop de copies de l'unité! Maximum autorisé: {max_copies} (1+{x_value} pour {game_config['unit_copy_rule']} pts)")
-                return False
-    return True
+                return False, f"Trop de copies de l'unité! Maximum autorisé: {max_copies} (1+{x_value} pour {game_config['unit_copy_rule']} pts)"
+    return True, ""
 
 def check_unit_max_cost(unit_cost, army_points, game_config):
     """Vérifie qu'une unité ne dépasse pas le ratio maximum de coût"""
-    if not game_config.get("unit_max_cost_ratio"):
-        return True
-
-    max_cost = army_points * game_config["unit_max_cost_ratio"]
-
-    if unit_cost > max_cost:
-        st.error(f"Cette unité ({unit_cost} pts) dépasse la limite de {int(max_cost)} pts ({int(game_config['unit_max_cost_ratio']*100)}% du total)")
-        return False
-
-    return True
+    if game_config.get("unit_max_cost_ratio"):
+        max_cost = army_points * game_config["unit_max_cost_ratio"]
+        if unit_cost > max_cost:
+            return False, f"Cette unité ({unit_cost} pts) dépasse la limite de {int(max_cost)} pts ({int(game_config['unit_max_cost_ratio']*100)}% du total)"
+    return True, ""
 
 def check_unit_per_points(army_list, army_points, game_config):
     """Vérifie le nombre maximum d'unités par tranche de points"""
     if game_config.get("unit_per_points"):
         max_units = math.floor(army_points / game_config["unit_per_points"])
-
         if len(army_list) > max_units:
-            st.error(f"Trop d'unités! Maximum autorisé: {max_units} (1 unité par {game_config['unit_per_points']} pts)")
-            return False
-    return True
+            return False, f"Trop d'unités! Maximum autorisé: {max_units} (1 unité par {game_config['unit_per_points']} pts)"
+    return True, ""
 
 def validate_army_rules(army_list, army_points, game):
     """Valide toutes les règles spécifiques au jeu"""
     game_config = GAME_CONFIG.get(game, {})
+    errors = []
 
     if game in GAME_CONFIG:
         # Vérification de la limite de points totale
         total_cost = sum(unit["cost"] for unit in army_list)
-
         if total_cost > army_points:
-            st.error(f"Limite de points dépassée! Maximum autorisé: {army_points} pts. Total actuel: {total_cost} pts")
-            return False
+            errors.append(f"Limite de points dépassée! Maximum autorisé: {army_points} pts. Total actuel: {total_cost} pts")
 
-        return (check_hero_limit(army_list, army_points, game_config) and
-                check_unit_copy_rule(army_list, army_points, game_config) and
-                check_unit_per_points(army_list, army_points, game_config))
+        # Vérification des autres règles
+        valid, msg = check_hero_limit(army_list, army_points, game_config)
+        if not valid: errors.append(msg)
 
-    return True
+        valid, msg = check_unit_copy_rule(army_list, army_points, game_config)
+        if not valid: errors.append(msg)
+
+        valid, msg = check_unit_per_points(army_list, army_points, game_config)
+        if not valid: errors.append(msg)
+
+    if errors:
+        return False, errors
+    return True, []
 
 def can_add_unit_with_rules(unit_cost, army_list, army_points, game):
     """Vérifie si une unité peut être ajoutée en respectant toutes les règles"""
     game_config = GAME_CONFIG.get(game, {})
+    errors = []
 
     # Vérification de la limite de points
-    if not can_add_unit(sum(u["cost"] for u in army_list), unit_cost, army_points):
-        return False
+    valid, msg = can_add_unit(sum(u["cost"] for u in army_list), unit_cost, army_points)
+    if not valid: errors.append(msg)
 
     # Vérification du coût maximum par unité
-    if not check_unit_max_cost(unit_cost, army_points, game_config):
-        return False
+    valid, msg = check_unit_max_cost(unit_cost, army_points, game_config)
+    if not valid: errors.append(msg)
 
     # Vérification des autres règles avec l'unité ajoutée
     test_army = army_list.copy()
-    test_army.append({"cost": unit_cost, "name": "test", "type": "unit"})  # Unité test
+    test_army.append({"cost": unit_cost, "name": "test", "type": "unit"})
 
-    return validate_army_rules(test_army, army_points, game)
+    valid, rule_errors = validate_army_rules(test_army, army_points, game)
+    if not valid: errors.extend(rule_errors)
+
+    if errors:
+        return False, errors
+    return True, []
 
 # ======================================================
 # FONCTIONS UTILITAIRES
@@ -466,7 +466,7 @@ def show_unit_with_tabs(unit, rules_descriptions):
                             st.markdown(description)
 
 # ======================================================
-# CHARGEMENT DES FACTIONS
+# CHARGEMENT DES FACTIONS (corrigé)
 # ======================================================
 @st.cache_data
 def load_factions():
@@ -474,120 +474,233 @@ def load_factions():
     factions = {}
     games = set()
 
-    # Création d'un fichier de faction par défaut si le dossier est vide
-    if not list(FACTIONS_DIR.glob("*.json")):
-        default_faction = {
-            "game": "Age of Fantasy",
-            "faction": "Faction test",
-            "special_rules_descriptions": {
-                "Éclaireur": "Cette unité peut se déplacer à travers les terrains difficiles sans pénalité et ignore les obstacles lors de ses déplacements.",
-                "Furieux": "Cette unité relance les dés de 1 lors des tests d'attaque au corps à corps.",
-                "Héros": "Cette unité est un personnage important qui peut inspirer les troupes autour de lui. Les héros ne peuvent pas être combinés.",
-                "Coriace(1)": "Cette unité ignore 1 point de dégât par phase.",
-                "Magique(1)": "Les armes de cette unité ignorent 1 point de défense grâce à leur nature magique.",
-                "Contre-charge": "Cette unité obtient +1 à ses jets de dégât lors d'une charge."
-            },
-            "units": [
-                {
-                    "name": "Troupe d'infanterie",
-                    "type": "unit",
-                    "size": 10,
-                    "base_cost": 50,
-                    "quality": 3,
-                    "defense": 5,
-                    "special_rules": ["Éclaireur", "Furieux", "Né pour la guerre"],
-                    "weapons": [{
-                        "name": "Armes à une main",
-                        "attacks": 1,
-                        "armor_piercing": 0,
-                        "special_rules": []
-                    }],
-                    "upgrade_groups": [
-                        {
-                            "group": "Remplacement d'armes",
-                            "type": "weapon",
-                            "options": [
-                                {
-                                    "name": "Lance",
-                                    "cost": 35,
-                                    "weapon": {
+    # Création de factions par défaut pour Age of Fantasy
+    default_factions = {
+        "Age of Fantasy": {
+            "Disciples de la Guerre": {
+                "game": "Age of Fantasy",
+                "faction": "Disciples de la Guerre",
+                "special_rules_descriptions": {
+                    "Éclaireur": "Cette unité peut se déplacer à travers les terrains difficiles sans pénalité et ignore les obstacles lors de ses déplacements.",
+                    "Furieux": "Cette unité relance les dés de 1 lors des tests d'attaque au corps à corps.",
+                    "Né pour la guerre": "Cette unité peut relancer un dé de 1 lors des tests de moral.",
+                    "Héros": "Cette unité est un personnage important qui peut inspirer les troupes autour de lui. Les héros ne peuvent pas être combinés.",
+                    "Coriace(1)": "Cette unité ignore 1 point de dégât par phase.",
+                    "Magique(1)": "Les armes de cette unité ignorent 1 point de défense grâce à leur nature magique.",
+                    "Contre-charge": "Cette unité obtient +1 à ses jets de dégât lors d'une charge."
+                },
+                "units": [
+                    {
+                        "name": "Barbares de la Guerre",
+                        "type": "unit",
+                        "size": 10,
+                        "base_cost": 50,
+                        "quality": 3,
+                        "defense": 5,
+                        "special_rules": ["Éclaireur", "Furieux", "Né pour la guerre"],
+                        "weapons": [{
+                            "name": "Armes à une main",
+                            "attacks": 1,
+                            "armor_piercing": 0,
+                            "special_rules": []
+                        }],
+                        "upgrade_groups": [
+                            {
+                                "group": "Remplacement d'armes",
+                                "type": "weapon",
+                                "options": [
+                                    {
                                         "name": "Lance",
-                                        "attacks": 1,
-                                        "armor_piercing": 0,
-                                        "special_rules": ["Contre-charge"]
-                                    }
-                                },
-                                {
-                                    "name": "Fléau",
-                                    "cost": 20,
-                                    "weapon": {
+                                        "cost": 35,
+                                        "weapon": {
+                                            "name": "Lance",
+                                            "attacks": 1,
+                                            "armor_piercing": 0,
+                                            "special_rules": ["Contre-charge"]
+                                        }
+                                    },
+                                    {
                                         "name": "Fléau",
-                                        "attacks": 1,
-                                        "armor_piercing": 1,
+                                        "cost": 20,
+                                        "weapon": {
+                                            "name": "Fléau",
+                                            "attacks": 1,
+                                            "armor_piercing": 1,
+                                            "special_rules": []
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "group": "Améliorations d'unité",
+                                "type": "upgrades",
+                                "options": [
+                                    {
+                                        "name": "Icône du Ravage",
+                                        "cost": 20,
+                                        "special_rules": ["Aura de Défense versatile"]
+                                    },
+                                    {
+                                        "name": "Sergent",
+                                        "cost": 5,
+                                        "special_rules": []
+                                    },
+                                    {
+                                        "name": "Bannière",
+                                        "cost": 5,
+                                        "special_rules": []
+                                    },
+                                    {
+                                        "name": "Musicien",
+                                        "cost": 10,
                                         "special_rules": []
                                     }
-                                }
-                            ]
-                        },
-                        {
-                            "group": "Améliorations d'unité",
-                            "type": "upgrades",
-                            "options": [
-                                {
-                                    "name": "Icône du Ravage",
-                                    "cost": 20,
-                                    "special_rules": ["Aura de Défense versatile"]
-                                },
-                                {
-                                    "name": "Sergent",
-                                    "cost": 5,
-                                    "special_rules": []
-                                },
-                                {
-                                    "name": "Bannière",
-                                    "cost": 5,
-                                    "special_rules": []
-                                },
-                                {
-                                    "name": "Musicien",
-                                    "cost": 10,
-                                    "special_rules": []
-                                }
-                            ]
-                        }
-                    ]
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Maître de la Guerre Élu",
+                        "type": "hero",
+                        "size": 1,
+                        "base_cost": 150,
+                        "quality": 3,
+                        "defense": 5,
+                        "special_rules": ["Héros", "Éclaireur", "Furieux"],
+                        "weapons": [{
+                            "name": "Arme héroïque",
+                            "attacks": 2,
+                            "armor_piercing": 1,
+                            "special_rules": ["Magique(1)"]
+                        }]
+                    }
+                ]
+            },
+            "Royaumes des Nains": {
+                "game": "Age of Fantasy",
+                "faction": "Royaumes des Nains",
+                "special_rules_descriptions": {
+                    "Éclaireur": "Cette unité peut se déplacer à travers les terrains difficiles sans pénalité.",
+                    "Résistant": "Cette unité ignore 1 point de dégât par phase.",
+                    "Artisan": "Cette unité peut réparer les machines de guerre.",
+                    "Héros": "Cette unité est un personnage important qui peut inspirer les troupes autour de lui."
                 },
-                {
-                    "name": "Héros",
-                    "type": "hero",
-                    "size": 1,
-                    "base_cost": 150,
-                    "quality": 3,
-                    "defense": 5,
-                    "special_rules": ["Héros", "Éclaireur", "Furieux"],
-                    "weapons": [{
-                        "name": "Arme héroïque",
-                        "attacks": 2,
-                        "armor_piercing": 1,
-                        "special_rules": ["Magique(1)"]
-                    }]
-                }
-            ]
+                "units": [
+                    {
+                        "name": "Guerriers Nains",
+                        "type": "unit",
+                        "size": 10,
+                        "base_cost": 60,
+                        "quality": 3,
+                        "defense": 6,
+                        "special_rules": ["Résistant"],
+                        "weapons": [{
+                            "name": "Hache de guerre",
+                            "attacks": 1,
+                            "armor_piercing": 0,
+                            "special_rules": []
+                        }]
+                    },
+                    {
+                        "name": "Seigneur Nain",
+                        "type": "hero",
+                        "size": 1,
+                        "base_cost": 180,
+                        "quality": 3,
+                        "defense": 6,
+                        "special_rules": ["Héros", "Résistant"],
+                        "weapons": [{
+                            "name": "Marteau de guerre",
+                            "attacks": 2,
+                            "armor_piercing": 1,
+                            "special_rules": []
+                        }]
+                    }
+                ]
+            },
+            "Forêts Elfiques": {
+                "game": "Age of Fantasy",
+                "faction": "Forêts Elfiques",
+                "special_rules_descriptions": {
+                    "Éclaireur": "Cette unité peut se déplacer rapidement en forêt.",
+                    "Tir précis": "Cette unité obtient +1 pour toucher à distance.",
+                    "Héros": "Cette unité est un personnage important.",
+                    "Magique(1)": "Les armes de cette unité ignorent 1 point de défense."
+                },
+                "units": [
+                    {
+                        "name": "Archers Elfiques",
+                        "type": "unit",
+                        "size": 10,
+                        "base_cost": 70,
+                        "quality": 3,
+                        "defense": 4,
+                        "special_rules": ["Éclaireur", "Tir précis"],
+                        "weapons": [{
+                            "name": "Arc long",
+                            "attacks": 1,
+                            "armor_piercing": 0,
+                            "special_rules": []
+                        }]
+                    },
+                    {
+                        "name": "Prince Elfe",
+                        "type": "hero",
+                        "size": 1,
+                        "base_cost": 200,
+                        "quality": 3,
+                        "defense": 5,
+                        "special_rules": ["Héros", "Éclaireur"],
+                        "weapons": [{
+                            "name": "Épée elfique",
+                            "attacks": 2,
+                            "armor_piercing": 1,
+                            "special_rules": ["Magique(1)"]
+                        }]
+                    }
+                ]
+            }
+        },
+        "Grimdark Future": {
+            "Fédération Humaine": {
+                "game": "Grimdark Future",
+                "faction": "Fédération Humaine",
+                "units": [
+                    {
+                        "name": "Soldats Fédéraux",
+                        "type": "unit",
+                        "size": 10,
+                        "base_cost": 60,
+                        "quality": 3,
+                        "defense": 5,
+                        "weapons": [{
+                            "name": "Fusil à plasma",
+                            "attacks": 1,
+                            "armor_piercing": 1
+                        }]
+                    }
+                ]
+            }
         }
-        with open(FACTIONS_DIR / "default.json", "w", encoding="utf-8") as f:
-            json.dump(default_faction, f, indent=2)
+    }
 
-    for fp in FACTIONS_DIR.glob("*.json"):
-        try:
-            with open(fp, encoding="utf-8") as f:
-                data = json.load(f)
-                game = data.get("game")
-                faction = data.get("faction")
-                if game and faction:
-                    factions.setdefault(game, {})[faction] = data
-                    games.add(game)
-        except Exception as e:
-            st.warning(f"Erreur chargement {fp.name}: {e}")
+    # Vérifier si le dossier factions existe et contient des fichiers
+    if FACTIONS_DIR.exists() and list(FACTIONS_DIR.glob("*.json")):
+        for fp in FACTIONS_DIR.glob("*.json"):
+            try:
+                with open(fp, encoding="utf-8") as f:
+                    data = json.load(f)
+                    game = data.get("game")
+                    faction = data.get("faction")
+                    if game and faction:
+                        factions.setdefault(game, {})[faction] = data
+                        games.add(game)
+            except Exception as e:
+                st.warning(f"Erreur chargement {fp.name}: {e}")
+    else:
+        # Si aucun fichier n'existe, utiliser les factions par défaut
+        factions = default_factions
+        games = set(factions.keys())
 
     return factions, sorted(games) if games else list(GAME_CONFIG.keys())
 
@@ -608,6 +721,23 @@ if "page" not in st.session_state:
 # ======================================================
 if st.session_state.page == "setup":
     st.title("OPR Army Forge FR")
+
+    # Affichage des informations sur les jeux disponibles
+    st.subheader("Jeux disponibles")
+    for game_key, config in GAME_CONFIG.items():
+        with st.expander(f"📖 {config['display_name']}"):
+            st.markdown(f"""
+            **Description**: {config['description']}
+            - **Points**: {config['min_points']} à {config['max_points']} (défaut: {config['default_points']})
+            """)
+
+            st.markdown(f"""
+            **Règles spécifiques:**
+            - 1 Héros par tranche de {config['hero_limit']} pts d'armée
+            - 1+X copies de la même unité (X=1 pour {config['unit_copy_rule']} pts d'armée)
+            - Aucune unité ne peut valoir plus de {int(config['unit_max_cost_ratio']*100)}% du total des points
+            - 1 unité maximum par tranche de {config['unit_per_points']} pts d'armée
+            """)
 
     # Liste des listes sauvegardées
     st.subheader("Mes listes sauvegardées")
@@ -650,7 +780,7 @@ if st.session_state.page == "setup":
         available_factions = list(factions_by_game[game].keys())
         faction = st.selectbox("Faction", available_factions)
     else:
-        st.warning("Aucune faction disponible pour ce jeu")
+        st.warning(f"Aucune faction disponible pour {game}")
         faction = None
 
     # Sélection des points
@@ -743,10 +873,6 @@ elif st.session_state.page == "army":
     base_size = unit.get('size', 10)
     base_cost = unit["base_cost"]
 
-    # Vérification du coût maximum AVANT les améliorations
-    if not check_unit_max_cost(base_cost, st.session_state.points, GAME_CONFIG[st.session_state.game]):
-        st.stop()
-
     # Initialisation
     weapon = unit.get("weapons", [{}])[0]
     selected_options = {}
@@ -824,19 +950,23 @@ elif st.session_state.page == "army":
 
     # Calcul du coût final
     if combined and unit.get("type") != "hero":
-        # Pour les unités combinées, on double le coût de base + armes seulement
         final_cost = (base_cost + weapon_cost) * 2 + mount_cost + upgrades_cost
         unit_size = base_size * 2
     else:
         final_cost = base_cost + weapon_cost + mount_cost + upgrades_cost
         unit_size = base_size
 
-    # Vérification du coût maximum par unité
-    if not check_unit_max_cost(final_cost, st.session_state.points, GAME_CONFIG[st.session_state.game]):
-        st.stop()
+    # Vérification des règles avant ajout
+    valid, errors = can_add_unit_with_rules(
+        final_cost,
+        st.session_state.army_list,
+        st.session_state.points,
+        st.session_state.game
+    )
 
-    # Vérification que l'ajout de cette unité ne dépasse pas la limite de points
-    if not can_add_unit(st.session_state.army_cost, final_cost, st.session_state.points):
+    if not valid:
+        for error in errors:
+            st.error(error)
         st.stop()
 
     st.markdown(f"**Coût total: {final_cost} pts**")
