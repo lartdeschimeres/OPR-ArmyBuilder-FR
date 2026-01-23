@@ -42,8 +42,8 @@ GAME_CONFIG = {
         "display_name": "Grimdark Future",
         "max_points": 10000,
         "min_points": 200,
-        "default_points": 800,
-        "point_step": 200,
+        "default_points": 1000,
+        "point_step": 250,
         "description": "Jeu de bataille futuriste",
         "hero_limit": 375,  # 1 Héros par tranche de 375 pts
         "unit_copy_rule": 750,  # 1+X copies où X=1 pour 750 pts
@@ -478,11 +478,10 @@ def load_factions():
     if not list(FACTIONS_DIR.glob("*.json")):
         default_faction = {
             "game": "Age of Fantasy",
-            "faction": "Disciples de la Guerre",
+            "faction": "Faction test",
             "special_rules_descriptions": {
                 "Éclaireur": "Cette unité peut se déplacer à travers les terrains difficiles sans pénalité et ignore les obstacles lors de ses déplacements.",
                 "Furieux": "Cette unité relance les dés de 1 lors des tests d'attaque au corps à corps.",
-                "Né pour la guerre": "Cette unité peut relancer un dé de 1 lors des tests de moral.",
                 "Héros": "Cette unité est un personnage important qui peut inspirer les troupes autour de lui. Les héros ne peuvent pas être combinés.",
                 "Coriace(1)": "Cette unité ignore 1 point de dégât par phase.",
                 "Magique(1)": "Les armes de cette unité ignorent 1 point de défense grâce à leur nature magique.",
@@ -490,7 +489,7 @@ def load_factions():
             },
             "units": [
                 {
-                    "name": "Barbares de la Guerre",
+                    "name": "Troupe d'infanterie",
                     "type": "unit",
                     "size": 10,
                     "base_cost": 50,
@@ -559,7 +558,7 @@ def load_factions():
                     ]
                 },
                 {
-                    "name": "Maître de la Guerre Élu",
+                    "name": "Héros",
                     "type": "hero",
                     "size": 1,
                     "base_cost": 150,
@@ -609,24 +608,6 @@ if "page" not in st.session_state:
 # ======================================================
 if st.session_state.page == "setup":
     st.title("OPR Army Forge FR")
-
-    # Affichage des informations sur les jeux disponibles
-    st.subheader("Jeux disponibles")
-    for game_key, config in GAME_CONFIG.items():
-        with st.expander(f"📖 {config['display_name']}"):
-            st.markdown(f"""
-            **Description**: {config['description']}
-            - **Points**: {config['min_points']} à {config['max_points']} (défaut: {config['default_points']})
-            """)
-
-            if game_key == "Age of Fantasy":
-                st.markdown(f"""
-                **Règles spécifiques à Age of Fantasy:**
-                - 1 Héros par tranche de {config['hero_limit']} pts d'armée
-                - 1+X copies de la même unité (X=1 pour {config['unit_copy_rule']} pts d'armée
-                - Aucune unité ne peut valoir plus de {int(config['unit_max_cost_ratio']*100)}% du total des points
-                - 1 unité maximum par tranche de {config['unit_per_points']} pts d'armée
-                """)
 
     # Liste des listes sauvegardées
     st.subheader("Mes listes sauvegardées")
