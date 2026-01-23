@@ -52,6 +52,149 @@ GAME_CONFIG = {
 }
 
 # ======================================================
+# FONCTIONS UTILITAIRES
+# ======================================================
+def format_special_rule(rule):
+    """Formate les règles spéciales avec parenthèses"""
+    if not isinstance(rule, str):
+        return str(rule)
+    if "(" in rule and ")" in rule:
+        return rule
+    match = re.search(r"(\D+)(\d+)", rule)
+    if match:
+        return f"{match.group(1)}({match.group(2)})"
+    return rule
+
+def extract_coriace_value(rule):
+    """Extrait la valeur numérique de Coriace d'une règle"""
+    if not isinstance(rule, str):
+        return 0
+    match = re.search(r"Coriace\s*\(?(\d+)\)?", rule)
+    if match:
+        return int(match.group(1))
+    return 0
+
+def get_coriace_from_rules(rules):
+    """Calcule la Coriace depuis une liste de règles"""
+    if not rules or not isinstance(rules, list):
+        return 0
+    return sum(extract_coriace_value(rule) for rule in rules)
+
+def get_mount_details(mount):
+    """Récupère les détails d'une monture"""
+    if not mount:
+        return None, 0
+    mount_data = mount['mount'] if 'mount' in mount else mount
+    special_rules = mount_data.get('special_rules', [])
+    return special_rules, get_coriace_from_rules(special_rules)
+
+def calculate_total_coriace(unit_data, combined=False):
+    """Calcule la Coriace totale d'une unité"""
+    total = 0
+
+    # Coriace de base de l'unité
+    if 'special_rules' in unit_data:
+        total += get_coriace_from_rules(unit_data['special_rules'])
+
+    # Coriace de la monture
+    if 'mount' in unit_data and unit_data['mount']:
+        _, mount_coriace = get_mount_details(unit_data['mount'])
+        total += mount_coriace
+
+    # Coriace des options
+    if 'options' in unit_data:
+        for opts in unit_data['options'].values():
+            if isinstance(opts, list):
+                for opt in opts:
+                    if 'special_rules' in opt:
+                        total += get_coriace_from_rules(opt['special_rules'])
+            elif isinstance(opts, dict) and 'special_rules' in opts:
+                total += get_coriace_from_rules(opts['special_rules'])
+
+    # Coriace de l'arme
+    if 'weapon' in unit_data and 'special_rules' in unit_data['weapon']:
+        total += get_coriace_from_rules(unit_data['weapon']['special_rules'])
+
+    # Coriace supplémentaire pour les unités combinées
+    if combined and unit_data.get('type') != "hero":
+        total += get_coriace_from_rules(unit_data.get('special_rules', []))
+
+    return total if total > 0 else None
+
+def format_weapon_details(weapon):
+    """Formate les détails d'une arme pour l'affichage"""
+    if not weapon:
+        return {"name": "Arme non spécifiée", "attacks": "?", "ap": "?", "special": []}
+    return {
+        "name": weapon.get('name', 'Arme non nommée'),
+        "attacks": weapon.get('attacks', '?'),
+        "ap": weapon.get('armor_piercing', '?'),
+        "special": weapon.get('special_rules', [])
+    }
+
+def format_mount_details(mount):
+    """Formate les détails d'une monture pour l'affichage"""
+    if not mount:
+        return "Aucune monture"
+
+    mount_data = mount['mount'] if 'mount' in mount else mount
+    details = mount_data.get('name', 'Monture non nommée')
+
+    if 'quality' in mount_data or 'defense' in mount_data:
+        details += " ("
+        if 'quality' in mount_data:
+            details += f"Qua{mount_data['quality']}+"
+        if 'defense' in mount_data:
+            details += f" Déf{mount_data['defense']}+"
+        details += ")"
+
+    if 'special_rules' in mount_data and mount_data['special_rules']:
+        details += " | " + ", ".join(mount_data['special_rules'])
+
+    if 'weapons' in mount_data and mount_data['weapons']:
+        for weapon in mount_data['weapons']:
+            weapon_details = format_weapon_details(weapon)
+            details += f" | {weapon.get('name', 'Arme')} (A{weapon_details['attacks']}, PA({weapon_details['ap']})"
+            if weapon_details['special']:
+                details += ", " + ", ".join(weapon_details['special'])
+            details += ")"
+
+    return details
+
+def format_unit_option(u):
+    """Formate l'affichage des unités dans la liste déroulante"""
+    name_part = f"{u['name']}"
+    name_part += " [1]" if u.get('type') == "hero" else f" [{u.get('size', 10)}]"
+
+    coriace = get_coriace_from_rules(u.get('special_rules', []))
+    if 'mount' in u and u['mount']:
+        _, mount_coriace = get_mount_details(u['mount'])
+        coriace += mount_coriace
+
+    qua_def_coriace = f"Qua {u['quality']}+ / Déf {u.get('defense', '?')}"
+    if coriace > 0:
+        qua_def_coriace += f" / Coriace {coriace}"
+
+    weapons_part = ""
+    if 'weapons' in u and u['weapons']:
+        weapons = []
+        for weapon in u['weapons']:
+            weapon_details = format_weapon_details(weapon)
+            weapons.append(f"{weapon.get('name', 'Arme')} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''})")
+        weapons_part = " | ".join(weapons)
+
+    rules_part = ", ".join(u['special_rules']) if 'special_rules' in u and u['special_rules'] else ""
+
+    result = f"{name_part} - {qua_def_coriace}"
+    if weapons_part:
+        result += f" - {weapons_part}"
+    if rules_part:
+        result += f" - {rules_part}"
+    result += f" {u['base_cost']}pts"
+
+    return result
+
+# ======================================================
 # FONCTION POUR AFFICHER LA BARRE DE PROGRESSION
 # ======================================================
 def show_points_progress(current_points, max_points):
@@ -162,116 +305,6 @@ def validate_army_rules(army_list, army_points, game):
         if not valid: errors.append(msg)
 
     return len(errors) == 0, errors
-
-# ======================================================
-# FONCTIONS UTILITAIRES
-# ======================================================
-def format_special_rule(rule):
-    """Formate les règles spéciales avec parenthèses"""
-    if not isinstance(rule, str):
-        return str(rule)
-    if "(" in rule and ")" in rule:
-        return rule
-    match = re.search(r"(\D+)(\d+)", rule)
-    if match:
-        return f"{match.group(1)}({match.group(2)})"
-    return rule
-
-def extract_coriace_value(rule):
-    """Extrait la valeur numérique de Coriace d'une règle"""
-    if not isinstance(rule, str):
-        return 0
-    match = re.search(r"Coriace\s*\(?(\d+)\)?", rule)
-    if match:
-        return int(match.group(1))
-    return 0
-
-def get_coriace_from_rules(rules):
-    """Calcule la Coriace depuis une liste de règles"""
-    if not rules or not isinstance(rules, list):
-        return 0
-    return sum(extract_coriace_value(rule) for rule in rules)
-
-def get_mount_details(mount):
-    """Récupère les détails d'une monture"""
-    if not mount:
-        return None, 0
-    mount_data = mount['mount'] if 'mount' in mount else mount
-    special_rules = mount_data.get('special_rules', [])
-    return special_rules, get_coriace_from_rules(special_rules)
-
-def format_weapon_details(weapon):
-    """Formate les détails d'une arme pour l'affichage"""
-    if not weapon:
-        return {"name": "Arme non spécifiée", "attacks": "?", "ap": "?", "special": []}
-    return {
-        "name": weapon.get('name', 'Arme non nommée'),
-        "attacks": weapon.get('attacks', '?'),
-        "ap": weapon.get('armor_piercing', '?'),
-        "special": weapon.get('special_rules', [])
-    }
-
-def format_mount_details(mount):
-    """Formate les détails d'une monture pour l'affichage"""
-    if not mount:
-        return "Aucune monture"
-
-    mount_data = mount['mount'] if 'mount' in mount else mount
-    details = mount_data.get('name', 'Monture non nommée')
-
-    if 'quality' in mount_data or 'defense' in mount_data:
-        details += " ("
-        if 'quality' in mount_data:
-            details += f"Qua{mount_data['quality']}+"
-        if 'defense' in mount_data:
-            details += f" Déf{mount_data['defense']}+"
-        details += ")"
-
-    if 'special_rules' in mount_data and mount_data['special_rules']:
-        details += " | " + ", ".join(mount_data['special_rules'])
-
-    if 'weapons' in mount_data and mount_data['weapons']:
-        for weapon in mount_data['weapons']:
-            weapon_details = format_weapon_details(weapon)
-            details += f" | {weapon.get('name', 'Arme')} (A{weapon_details['attacks']}, PA({weapon_details['ap']})"
-            if weapon_details['special']:
-                details += ", " + ", ".join(weapon_details['special'])
-            details += ")"
-
-    return details
-
-def format_unit_option(u):
-    """Formate l'affichage des unités dans la liste déroulante"""
-    name_part = f"{u['name']}"
-    name_part += " [1]" if u.get('type') == "hero" else f" [{u.get('size', 10)}]"
-
-    coriace = get_coriace_from_rules(u.get('special_rules', []))
-    if 'mount' in u and u['mount']:
-        _, mount_coriace = get_mount_details(u['mount'])
-        coriace += mount_coriace
-
-    qua_def_coriace = f"Qua {u['quality']}+ / Déf {u.get('defense', '?')}"
-    if coriace > 0:
-        qua_def_coriace += f" / Coriace {coriace}"
-
-    weapons_part = ""
-    if 'weapons' in u and u['weapons']:
-        weapons = []
-        for weapon in u['weapons']:
-            weapon_details = format_weapon_details(weapon)
-            weapons.append(f"{weapon.get('name', 'Arme')} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''})")
-        weapons_part = " | ".join(weapons)
-
-    rules_part = ", ".join(u['special_rules']) if 'special_rules' in u and u['special_rules'] else ""
-
-    result = f"{name_part} - {qua_def_coriace}"
-    if weapons_part:
-        result += f" - {weapons_part}"
-    if rules_part:
-        result += f" - {rules_part}"
-    result += f" {u['base_cost']}pts"
-
-    return result
 
 # ======================================================
 # LOCAL STORAGE
@@ -713,14 +746,17 @@ elif st.session_state.page == "army":
             st.session_state.undo_disabled = False
 
             weapon_data = format_weapon_details(weapon)
-            total_coriace = calculate_total_coriace({
+
+            # Calculer la coriace totale
+            unit_data_for_coriace = {
                 "special_rules": unit.get('special_rules', []),
                 "mount": mount,
                 "options": selected_options,
                 "weapon": weapon,
                 "type": unit.get('type'),
                 "combined": combined
-            })
+            }
+            total_coriace = calculate_total_coriace(unit_data_for_coriace)
 
             unit_data = {
                 "name": unit["name"],
@@ -749,7 +785,6 @@ elif st.session_state.page == "army":
             if not valid:
                 for error in errors:
                     st.error(error)
-                # Ne pas ajouter l'unité si les règles ne sont pas respectées
                 st.stop()
 
             # Si tout est valide, ajouter l'unité
