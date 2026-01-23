@@ -606,7 +606,7 @@ elif st.session_state.page == "army":
     # Gestion des unités combinées - CORRECTION DÉFINITIVE POUR LES HÉROS
     if unit.get("type") == "hero":
         combined = False  # Les héros ne peuvent JAMAIS être combinés
-        st.markdown("**Les héros ne peuvent pas être combinés**")
+        # On n'affiche RIEN pour les héros, pas même un message
     else:
         combined = st.checkbox("Unité combinée", value=False)
 
@@ -670,15 +670,15 @@ elif st.session_state.page == "army":
                             selected_options[group["group"]].append(o)
                             upgrades_cost += o["cost"]
 
-    # Calcul du coût final et de la taille - MODIFICATION POUR LES EFFECTIFS
+    # Calcul du coût final et de la taille
     if combined and unit.get("type") != "hero":
         final_cost = (base_cost + weapon_cost) * 2 + mount_cost + upgrades_cost
-        unit_size = base_size * 2  # x2 pour les unités combinées
+        unit_size = base_size * 2
     else:
         final_cost = base_cost + weapon_cost + mount_cost + upgrades_cost
-        unit_size = base_size  # Taille normale pour les héros et unités non combinées
+        unit_size = base_size
 
-    # Affichage de la taille finale de l'unité - MODIFICATION POUR LES EFFECTIFS
+    # Affichage de la taille finale de l'unité
     if unit.get("type") == "hero":
         st.markdown(f"**Taille finale: 1** (les héros sont toujours des unités individuelles)")
     else:
@@ -716,7 +716,7 @@ elif st.session_state.page == "army":
                 "type": unit.get("type", "unit"),
                 "cost": final_cost,
                 "base_cost": base_cost,
-                "size": unit_size,  # Taille finale (1 pour héros, x2 pour unités combinées)
+                "size": unit_size,
                 "quality": unit["quality"],
                 "defense": unit["defense"],
                 "rules": [format_special_rule(r) for r in unit.get("special_rules", [])],
@@ -724,7 +724,7 @@ elif st.session_state.page == "army":
                 "options": selected_options,
                 "mount": mount,
                 "coriace": total_coriace,
-                "combined": combined and unit.get("type") != "hero",  # On ne marque pas les héros comme combinés
+                "combined": combined and unit.get("type") != "hero",
             }
 
             # Vérification des règles avant d'ajouter
@@ -742,7 +742,7 @@ elif st.session_state.page == "army":
         except Exception as e:
             st.error(f"Erreur lors de la création de l'unité: {str(e)}")
 
-    # Liste de l'armée - MODIFICATION POUR L'AFFICHAGE DES EFFECTIFS
+    # Liste de l'armée
     st.divider()
     st.subheader("Liste de l'armée")
 
@@ -755,7 +755,7 @@ elif st.session_state.page == "army":
             if u.get("coriace"):
                 qua_def_coriace += f" / Coriace {u['coriace']}"
 
-            # Affichage du nom avec la taille FINAL de l'unité - MODIFICATION POUR LES EFFECTIFS
+            # Affichage du nom avec la taille FINAL de l'unité
             unit_header = f"### {u['name']} [{u.get('size', 1)}] ({u['cost']} pts) | {qua_def_coriace}"
             if u.get("type") == "hero":
                 unit_header += " | 🌟 Héros"
@@ -955,7 +955,7 @@ elif st.session_state.page == "army":
                     "special": []
                 }
 
-            # Affichage du nom avec la taille FINAL de l'unité - MODIFICATION POUR LES EFFECTIFS
+            # Affichage du nom avec la taille FINAL de l'unité
             unit_name = f"{unit['name']} [{unit.get('size', 1)}]"
             unit_name = str(unit_name).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
 
