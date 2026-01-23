@@ -4,6 +4,15 @@
   "version": "FR-1.0",
   "status": "complete",
   "description": "Les Disciples de la Guerre sont une faction brutale et impitoyable, composée de guerriers fanatiques et de monstres déchaînés.",
+  "special_rules_descriptions": {
+        "Éclaireur": "Cette unité peut se déplacer à travers les terrains difficiles sans pénalité et ignore les obstacles lors de ses déplacements.",
+        "Furieux": "Cette unité relance les dés de 1 lors des tests d'attaque au corps à corps.",
+        "Né pour la guerre": "Cette unité peut relancer un dé de 1 lors des tests de moral.",
+        "Héros": "Cette unité est un personnage important qui peut inspirer les troupes autour de lui. Les héros ne peuvent pas être combinés.",
+        "Coriace(1)": "Cette unité ignore 1 point de dégât par phase.",
+        "Magique(1)": "Les armes de cette unité ignorent 1 point de défense grâce à leur nature magique.",
+        "Contre-charge": "Cette unité obtient +1 à ses jets de dégât lors d'une charge."
+    },
   "units": [
     {
       "name": "Maître de la Guerre Élu",
