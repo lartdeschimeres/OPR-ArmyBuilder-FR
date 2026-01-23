@@ -1,0 +1,49 @@
+{
+    "game": "Age of Fantasy",
+    "faction": "Disciples de la Guerre",
+    "special_rules_descriptions": {
+        "Éclaireur": "Cette unité peut se déplacer à travers les terrains difficiles sans pénalité et ignore les obstacles lors de ses déplacements.",
+        "Furieux": "Cette unité relance les dés de 1 lors des tests d'attaque au corps à corps.",
+        "Né pour la guerre": "Cette unité peut relancer un dé de 1 lors des tests de moral.",
+        "Héros": "Cette unité est un personnage important qui peut inspirer les troupes autour de lui. Les héros ne peuvent pas être combinés.",
+        "Coriace(1)": "Cette unité ignore 1 point de dégât par phase.",
+        "Magique(1)": "Les armes de cette unité ignorent 1 point de défense grâce à leur nature magique.",
+        "Contre-charge": "Cette unité obtient +1 à ses jets de dégât lors d'une charge."
+    },
+    "units": [
+        {
+            "name": "Barbares de la Guerre",
+            "type": "unit",
+            "size": 10,
+            "base_cost": 50,
+            "quality": 3,
+            "defense": 5,
+            "special_rules": ["Éclaireur", "Furieux", "Né pour la guerre"],
+            "weapons": [
+                {
+                    "name": "Armes à une main",
+                    "attacks": 1,
+                    "armor_piercing": 0,
+                    "special_rules": []
+                }
+            ]
+        },
+        {
+            "name": "Maître de la Guerre Élu",
+            "type": "hero",
+            "size": 1,
+            "base_cost": 150,
+            "quality": 3,
+            "defense": 5,
+            "special_rules": ["Héros", "Éclaireur", "Furieux"],
+            "weapons": [
+                {
+                    "name": "Arme héroïque",
+                    "attacks": 2,
+                    "armor_piercing": 1,
+                    "special_rules": ["Magique(1)"]
+                }
+            ]
+        }
+    ]
+}
