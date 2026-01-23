@@ -41,9 +41,9 @@ GAME_CONFIG = {
     "Grimdark Future": {
         "display_name": "Grimdark Future",
         "max_points": 10000,
-        "min_points": 250,
-        "default_points": 1000,
-        "point_step": 250,
+        "min_points": 200,
+        "default_points": 800,
+        "point_step": 200,
         "description": "Jeu de bataille futuriste",
         "hero_limit": 375,
         "unit_copy_rule": 750,
@@ -375,13 +375,44 @@ def ls_set(key, value):
         pass
 
 # ======================================================
-# CHARGEMENT DES FACTIONS (version optimisée)
+# CHARGEMENT DES FACTIONS (version corrigée)
 # ======================================================
 @st.cache_data
 def load_factions():
     """Charge les factions depuis les fichiers JSON"""
     factions = {}
     games = set()
+
+    # Factions par défaut
+    default_factions = {
+        "Age of Fantasy": {
+            "Disciples de la Guerre": {
+                "game": "Age of Fantasy",
+                "faction": "Disciples de la Guerre",
+                "special_rules_descriptions": {
+                    "Éclaireur": "Déplacement facilité en terrain difficile.",
+                    "Furieux": "Relance les 1 en attaque.",
+                    "Héros": "Personnage inspirant."
+                },
+                "units": [
+                    {
+                        "name": "Troupe d'infanterie",
+                        "type": "unit",
+                        "size": 10,
+                        "base_cost": 50,
+                        "quality": 3,
+                        "defense": 5,
+                        "special_rules": ["Éclaireur", "Furieux"],
+                        "weapons": [{
+                            "name": "Armes à une main",
+                            "attacks": 1,
+                            "armor_piercing": 0
+                        }]
+                    }
+                ]
+            }
+        }
+    }
 
     # Charger les factions depuis les fichiers
     files_loaded = 0
@@ -481,7 +512,6 @@ if st.session_state.page == "setup":
     if game in factions_by_game and factions_by_game[game]:
         available_factions = list(factions_by_game[game].keys())
         faction = st.selectbox("Faction", available_factions)
-        st.info(f"Faction sélectionnée: {faction}")
     else:
         st.error(f"Aucune faction disponible pour {game}")
         faction = None
@@ -586,6 +616,7 @@ elif st.session_state.page == "army":
     else:
         combined = st.checkbox("Unité combinée", value=False)
 
+    # Gestion des montures (corrigée)
     for group in unit.get("upgrade_groups", []):
         st.markdown(f"**{group['group']}**")
 
@@ -609,13 +640,19 @@ elif st.session_state.page == "army":
 
             for o in group["options"]:
                 mount_details = format_mount_details(o)
-                mount_labels.append(f"{mount_details} (+{o['cost']} pts)")
-                mount_map[mount_details] = o
+                label = f"{mount_details} (+{o['cost']} pts)"
+                mount_labels.append(label)
+                mount_map[label] = o  # Utilisation du label complet comme clé
 
             selected_mount = st.radio("Monture", mount_labels, key=f"{unit['name']}_mount")
-            if selected_mount != "Aucune monture":
+
+            # Vérification que la sélection existe dans mount_map
+            if selected_mount != "Aucune monture" and selected_mount in mount_map:
                 mount = mount_map[selected_mount]
                 mount_cost = mount["cost"]
+            else:
+                mount = None
+                mount_cost = 0
 
         else:
             st.write("Sélectionnez les améliorations:")
@@ -623,8 +660,9 @@ elif st.session_state.page == "army":
                 if st.checkbox(f"{o['name']} (+{o['cost']} pts)", key=f"{unit['name']}_{group['group']}_{o['name']}"):
                     if group["group"] not in selected_options:
                         selected_options[group["group"]] = []
-                    selected_options[group["group"]].append(o)
-                    upgrades_cost += o["cost"]
+                    if not any(opt.get("name") == o["name"] for opt in selected_options.get(group["group"], [])):
+                        selected_options[group["group"]].append(o)
+                        upgrades_cost += o["cost"]
 
     if combined and unit.get("type") != "hero":
         final_cost = (base_cost + weapon_cost) * 2 + mount_cost + upgrades_cost
