@@ -12,11 +12,11 @@
     },
     "units": [
         {
-            "name": "Barbares de la Guerre",
+            "name": "Troupe d'infanterie",
             "type": "unit",
             "size": 10,
             "base_cost": 50,
-            "quality": 3,
+            "quality": 4,
             "defense": 5,
             "special_rules": ["Éclaireur", "Furieux", "Né pour la guerre"],
             "weapons": [
@@ -29,12 +29,12 @@
             ]
         },
         {
-            "name": "Maître de la Guerre Élu",
+            "name": "Héros",
             "type": "hero",
             "size": 1,
             "base_cost": 150,
             "quality": 3,
-            "defense": 5,
+            "defense": 4,
             "special_rules": ["Héros", "Éclaireur", "Furieux"],
             "weapons": [
                 {
