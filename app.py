@@ -33,10 +33,10 @@ GAME_CONFIG = {
         "default_points": 1000,
         "point_step": 250,
         "description": "Jeu de bataille dans un univers fantasy médiéval",
-        "hero_limit": 375,
-        "unit_copy_rule": 750,
-        "unit_max_cost_ratio": 0.35,
-        "unit_per_points": 150
+        "hero_limit": 375,  # 1 Héros par tranche de 375 pts
+        "unit_copy_rule": 750,  # 1+X copies où X=1 pour 750 pts
+        "unit_max_cost_ratio": 0.35,  # 35% du total des points
+        "unit_per_points": 150  # 1 unité maximum par tranche de 150 pts
     },
     "Grimdark Future": {
         "display_name": "Grimdark Future",
@@ -45,21 +45,64 @@ GAME_CONFIG = {
         "default_points": 800,
         "point_step": 200,
         "description": "Jeu de bataille futuriste",
-        "hero_limit": 375,
-        "unit_copy_rule": 750,
-        "unit_max_cost_ratio": 0.35,
-        "unit_per_points": 150
+        "hero_limit": 375,  # 1 Héros par tranche de 375 pts
+        "unit_copy_rule": 750,  # 1+X copies où X=1 pour 750 pts
+        "unit_max_cost_ratio": 0.35,  # 35% du total des points
+        "unit_per_points": 150  # 1 unité maximum par tranche de 150 pts
     }
 }
 
 # ======================================================
+# FONCTION POUR AFFICHER LA BARRE DE PROGRESSION
+# ======================================================
+def show_points_progress(current_points, max_points):
+    """Affiche une barre de progression pour les points avec couleur dynamique"""
+    if max_points <= 0:
+        progress = 0
+    else:
+        progress = min(100, (current_points / max_points) * 100)
+
+    remaining_points = max_points - current_points
+
+    # Déterminer la couleur en fonction du pourcentage
+    if progress < 70:
+        color = "#4CAF50"  # Vert
+    elif progress < 90:
+        color = "#FFC107"  # Orange
+    else:
+        color = "#F44336"  # Rouge
+
+    st.markdown(
+        f"""
+        <div style="width: 100%; margin: 10px 0 20px 0;">
+            <div style="background-color: #e0e0e0; border-radius: 4px; height: 20px; margin-bottom: 5px;">
+                <div style="width: {progress}%; background-color: {color}; border-radius: 4px; height: 100%; transition: width 0.3s;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.9em;">
+                <span><strong>{current_points}/{max_points} pts</strong> ({int(progress)}%)</span>
+                <span><strong>Reste:</strong> {remaining_points} pts</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# ======================================================
 # FONCTIONS POUR LES RÈGLES SPÉCIFIQUES
 # ======================================================
-def check_army_points(army_list, army_points, game_config):
+def check_army_points(army_list, army_points):
     """Vérifie que le total des points ne dépasse pas la limite choisie"""
     total = sum(unit["cost"] for unit in army_list)
     if total > army_points:
         st.error(f"Limite de points dépassée! Maximum autorisé: {army_points} pts. Total actuel: {total} pts")
+        return False
+    return True
+
+def check_add_unit_points(current_points, unit_cost, max_points):
+    """Vérifie qu'ajouter une unité ne dépasse pas la limite de points"""
+    if current_points + unit_cost > max_points:
+        remaining = max_points - current_points
+        st.error(f"Ajouter cette unité dépasserait votre limite de {max_points} pts. Il vous reste {remaining} pts.")
         return False
     return True
 
@@ -118,7 +161,6 @@ def check_unit_per_points(army_list, army_points, game_config):
     """Vérifie le nombre maximum d'unités par tranche de points"""
     if game_config.get("unit_per_points"):
         max_units = math.floor(army_points / game_config["unit_per_points"])
-
         if len(army_list) > max_units:
             st.error(f"Trop d'unités! Maximum autorisé: {max_units} (1 unité par {game_config['unit_per_points']} pts)")
             return False
@@ -129,12 +171,19 @@ def validate_army_rules(army_list, army_points, game, new_unit_cost=None):
     game_config = GAME_CONFIG.get(game, {})
 
     if game in GAME_CONFIG:
+        # Vérification de la limite de points totale
         total_cost = sum(unit["cost"] for unit in army_list)
         if new_unit_cost:
             total_cost += new_unit_cost
 
         if total_cost > army_points:
             st.error(f"Limite de points dépassée! Maximum autorisé: {army_points} pts. Total actuel: {total_cost} pts")
+            return False
+
+        # Vérification du coût maximum par unité
+        max_cost = army_points * game_config["unit_max_cost_ratio"]
+        if new_unit_cost and new_unit_cost > max_cost:
+            st.error(f"Cette unité ({new_unit_cost} pts) dépasse la limite de {int(max_cost)} pts ({int(game_config['unit_max_cost_ratio']*100)}% du total)")
             return False
 
         return (check_hero_limit(army_list, army_points, game_config) and
@@ -363,40 +412,6 @@ def ls_set(key, value):
         )
     except Exception as e:
         st.error(f"Erreur LocalStorage: {e}")
-
-# ======================================================
-# FONCTION POUR AFFICHER LA BARRE DE PROGRESSION
-# ======================================================
-def show_points_progress(current_points, max_points):
-    """Affiche une barre de progression pour les points avec couleur dynamique"""
-    if max_points <= 0:
-        progress = 0
-    else:
-        progress = min(100, (current_points / max_points) * 100)
-
-    remaining_points = max_points - current_points
-
-    if progress < 70:
-        color = "#4CAF50"  # Vert
-    elif progress < 90:
-        color = "#FFC107"  # Orange
-    else:
-        color = "#F44336"  # Rouge
-
-    st.markdown(
-        f"""
-        <div style="width: 100%; margin: 10px 0 20px 0;">
-            <div style="background-color: #e0e0e0; border-radius: 4px; height: 20px; margin-bottom: 5px;">
-                <div style="width: {progress}%; background-color: {color}; border-radius: 4px; height: 100%; transition: width 0.3s;"></div>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.9em;">
-                <span><strong>{current_points}/{max_points} pts</strong> ({int(progress)}%)</span>
-                <span><strong>Reste:</strong> {remaining_points} pts</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
 
 # ======================================================
 # FONCTIONS D'AFFICHAGE AVEC ONGLETS
@@ -819,19 +834,21 @@ elif st.session_state.page == "army":
 
     # Calcul du coût final
     if combined and unit.get("type") != "hero":
+        # Pour les unités combinées, on double le coût de base + armes seulement
         final_cost = (base_cost + weapon_cost) * 2 + mount_cost + upgrades_cost
         unit_size = base_size * 2
     else:
         final_cost = base_cost + weapon_cost + mount_cost + upgrades_cost
         unit_size = base_size
 
-    # Vérification que l'ajout de cette unité ne dépasse pas la limite de points
-    if st.session_state.army_cost + final_cost > st.session_state.points:
-        st.error(f"Ajouter cette unité dépasserait votre limite de {st.session_state.points} pts. Il vous reste {st.session_state.points - st.session_state.army_cost} pts.")
+    # Vérification du coût maximum par unité
+    max_cost = st.session_state.points * GAME_CONFIG[st.session_state.game]["unit_max_cost_ratio"]
+    if final_cost > max_cost:
+        st.error(f"Cette unité ({final_cost} pts) dépasse la limite de {int(max_cost)} pts ({int(GAME_CONFIG[st.session_state.game]['unit_max_cost_ratio']*100)}% du total)")
         st.stop()
 
-    # Vérification finale du coût maximum
-    if not check_unit_max_cost(st.session_state.army_list, st.session_state.points, GAME_CONFIG[st.session_state.game], final_cost):
+    # Vérification que l'ajout de cette unité ne dépasse pas la limite de points
+    if not check_add_unit_points(st.session_state.army_cost, final_cost, st.session_state.points):
         st.stop()
 
     st.markdown(f"**Coût total: {final_cost} pts**")
@@ -878,12 +895,18 @@ elif st.session_state.page == "army":
                 "combined": combined and unit.get("type") != "hero",
             }
 
-            # Vérification des règles avant d'ajouter
+            # Vérification finale avant ajout
             test_army = st.session_state.army_list.copy()
             test_army.append(unit_data)
             test_total = st.session_state.army_cost + final_cost
 
-            if not validate_army_rules(test_army, st.session_state.points, st.session_state.game, final_cost):
+            if test_total > st.session_state.points:
+                st.error(f"Ajouter cette unité dépasserait votre limite de {st.session_state.points} pts. Il vous reste {st.session_state.points - st.session_state.army_cost} pts.")
+                st.stop()
+
+            # Vérification du coût maximum par unité
+            if final_cost > st.session_state.points * GAME_CONFIG[st.session_state.game]["unit_max_cost_ratio"]:
+                st.error(f"Cette unité ({final_cost} pts) dépasse la limite de {int(st.session_state.points * GAME_CONFIG[st.session_state.game]['unit_max_cost_ratio'])} pts ({int(GAME_CONFIG[st.session_state.game]['unit_max_cost_ratio']*100)}% du total)")
                 st.stop()
 
             st.session_state.army_list.append(unit_data)
