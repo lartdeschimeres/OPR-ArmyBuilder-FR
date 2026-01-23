@@ -8,10 +8,10 @@ import base64
 import math
 
 # ======================================================
-# CONFIGURATION POUR SIMON
+# CONFIGURATION POUR SIMON JOINVILLE FOUQUET
 # ======================================================
 st.set_page_config(
-    page_title="OPR Army Forge FR",
+    page_title="OPR Army Forge FR - Simon Joinville Fouquet",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -128,7 +128,7 @@ def validate_army_rules(army_list, army_points, game, new_unit_cost=None):
     return True
 
 # ======================================================
-# FONCTIONS UTILITAIRES (MODIFIÉES)
+# FONCTIONS UTILITAIRES
 # ======================================================
 def format_special_rule(rule):
     """Formate les règles spéciales avec parenthèses"""
@@ -174,35 +174,6 @@ def get_mount_details(mount):
 
     coriace = get_coriace_from_rules(special_rules)
     return special_rules, coriace
-
-def calculate_total_coriace(unit_data, combined=False):
-    """Calcule la Coriace totale d'une unité"""
-    total = 0
-
-    if 'special_rules' in unit_data:
-        total += get_coriace_from_rules(unit_data['special_rules'])
-
-    if 'mount' in unit_data and unit_data['mount']:
-        _, mount_coriace = get_mount_details(unit_data['mount'])
-        total += mount_coriace
-
-    if 'options' in unit_data:
-        for opts in unit_data['options'].values():
-            if isinstance(opts, list):
-                for opt in opts:
-                    if 'special_rules' in opt:
-                        total += get_coriace_from_rules(opt['special_rules'])
-            elif isinstance(opts, dict) and 'special_rules' in opts:
-                total += get_coriace_from_rules(opts['special_rules'])
-
-    if 'weapon' in unit_data and 'special_rules' in unit_data['weapon']:
-        total += get_coriace_from_rules(unit_data['weapon']['special_rules'])
-
-    if combined and unit_data.get('type') != "hero":
-        base_coriace = get_coriace_from_rules(unit_data.get('special_rules', []))
-        total += base_coriace
-
-    return total if total > 0 else None
 
 def format_weapon_details(weapon):
     """Formate les détails d'une arme pour l'affichage"""
@@ -254,10 +225,10 @@ def format_mount_details(mount):
     return details
 
 def format_unit_option(u):
-    """Formate l'affichage des unités dans la liste déroulante - MODIFIÉ POUR LES EFFECTIFS"""
+    """Formate l'affichage des unités dans la liste déroulante"""
     name_part = f"{u['name']}"
 
-    # Gestion des effectifs - MODIFICATION PRINCIPALE
+    # Gestion des effectifs
     if u.get('type') == "hero":
         name_part += " [1]"  # Les héros sont toujours [1]
     else:
@@ -361,8 +332,8 @@ def load_factions():
                 {
                     "name": "Barbares de la Guerre",
                     "type": "unit",
-                    "size": 10,  # Taille de base
-                    "base_cost": 50,  # Coût pour 10 figurines
+                    "size": 10,
+                    "base_cost": 50,
                     "quality": 3,
                     "defense": 5,
                     "special_rules": ["Éclaireur", "Furieux", "Né pour la guerre"],
@@ -430,7 +401,7 @@ def load_factions():
                 {
                     "name": "Maître de la Guerre Élu",
                     "type": "hero",
-                    "size": 1,  # Les héros sont des unités individuelles
+                    "size": 1,
                     "base_cost": 150,
                     "quality": 3,
                     "defense": 5,
@@ -470,7 +441,7 @@ if "page" not in st.session_state:
     st.session_state.page = "setup"
     st.session_state.army_list = []
     st.session_state.army_cost = 0
-    st.session_state.current_player = "Simon"
+    st.session_state.current_player = "Simon Joinville Fouquet"
 
 # ======================================================
 # PAGE 1 – CONFIGURATION
@@ -576,7 +547,7 @@ if st.session_state.page == "setup":
     if st.button("Créer une nouvelle liste"):
         st.session_state.game = game
         st.session_state.faction = st.selectbox("Faction", factions_by_game[game].keys())
-        st.session_state.points = points  # Stockage des points totaux
+        st.session_state.points = points
         st.session_state.list_name = list_name
         st.session_state.units = factions_by_game[game][st.session_state.faction]["units"]
         st.session_state.army_list = []
@@ -585,7 +556,7 @@ if st.session_state.page == "setup":
         st.rerun()
 
 # ======================================================
-# PAGE 2 – CONSTRUCTEUR D'ARMÉE (MODIFIÉE)
+# PAGE 2 – CONSTRUCTEUR D'ARMÉE (CORRIGÉE)
 # ======================================================
 elif st.session_state.page == "army":
     st.title(st.session_state.list_name)
@@ -632,7 +603,7 @@ elif st.session_state.page == "army":
     mount_cost = 0
     upgrades_cost = 0
 
-    # Gestion des unités combinées - MODIFICATION POUR LES HÉROS
+    # Gestion des unités combinées - CORRECTION DÉFINITIVE POUR LES HÉROS
     if unit.get("type") == "hero":
         combined = False  # Les héros ne peuvent JAMAIS être combinés
         st.markdown("**Les héros ne peuvent pas être combinés**")
@@ -1014,7 +985,7 @@ elif st.session_state.page == "army":
                 </div>
                 <div class="stat-badge">
                     <div class="stat-label">Défense</div>
-                    <div class="stat-value">{unit['defense']}+</div>
+                    <div class="stat-value">{unit.get('defense', '?')}+</div>
                 </div>
 """
 
