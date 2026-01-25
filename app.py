@@ -745,7 +745,7 @@ elif st.session_state.page == "unit_options":
 
                 if weapon_map[selected_weapon]:
                     options['weapon'] = weapon_map[selected_weapon]['weapon']
-                    ptions['weapon_cost'] = weapon_map[selected_weapon]['cost']
+                    options['weapon_cost'] = weapon_map[selected_weapon]['cost']
                 else:
                     options['weapon_cost'] = 0
     
@@ -756,12 +756,19 @@ elif st.session_state.page == "unit_options":
                 st.markdown(f"<h3 class='subtitle'>{group['group']}</h3>", unsafe_allow_html=True)
 
                 for option in group['options']:
-                    if st.checkbox(f"{option['name']} (+{option['cost']} pts)", key=f"upgrade_{group['group']}_{option['name']}"):
-                        if group['group'] not in options['selected_options']:
-                            options['selected_options'][group['group']] = []
-                        if not any(opt['name'] == option['name'] for opt in options['selected_options'].get(group['group'], [])):
-                            options['selected_options'][group['group']].append(option)
-                            total_cost += option['cost']
+                    options['selected_options'].setdefault(group['group'], [])
+
+                    checked_options = []
+                    for option in group['options']:
+                        checked = st.checkbox(
+                            f"{option['name']} (+{option['cost']} pts)",
+                            value=any(opt['name'] == option['name'] for opt in options['selected_options'][group['group']]),
+                            key=f"upgrade_{group['group']}_{option['name']}"
+                        )
+                        if checked:
+                            checked_options.append(option)
+
+                    options['selected_options'][group['group']] = checked_options
 
     # Calcul du coût final
     if options.get('combined', False) and unit.get('type', '').lower() != 'hero':
