@@ -576,7 +576,7 @@ elif st.session_state.page == "army_builder":
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# PAGE 3 - Options de l'unité (avec radio buttons pour les héros)
+# PAGE 3 - Options de l'unité
 elif st.session_state.page == "unit_options":
     unit = st.session_state.current_unit
     options = st.session_state.current_options
