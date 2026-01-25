@@ -232,7 +232,7 @@ def find_option_by_name(options, name):
         return None
 
 def display_faction_rules(faction_data):
-    """Affiche les règles spéciales de la faction sous forme d'accordéon dépliable."""
+    """Affiche les règles spéciales de la faction sous forme d'accordéon dépliable, pliées par défaut."""
     if not faction_data or 'special_rules_descriptions' not in faction_data:
         return
 
@@ -277,7 +277,7 @@ def display_faction_rules(faction_data):
     .rule-description {
         padding: 10px 12px;
         color: #495057;
-        display: none;
+        display: none;  /* Masqué par défaut */
         background-color: #f8f9fa;
         border-top: 1px solid #ddd;
     }
