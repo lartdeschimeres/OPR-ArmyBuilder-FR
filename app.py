@@ -90,22 +90,18 @@ def load_factions():
     factions = {}
     games = set()
 
-    # Vérification de l'existence du dossier
-    if not FACTIONS_DIR.exists():
-        FACTIONS_DIR.mkdir(parents=True, exist_ok=True)
-
-    # Chargement des fichiers JSON
-    for fp in FACTIONS_DIR.glob("*.json"):
-        try:
-            with open(fp, encoding="utf-8") as f:
-                data = json.load(f)
-                game = data.get("game")
-                faction = data.get("faction")
-                if game and faction:
-                    factions.setdefault(game, {})[faction] = data
-                    games.add(game)
-        except Exception as e:
-            st.warning(f"Erreur de chargement du fichier {fp.name}: {e}")
+    if FACTIONS_DIR.exists():
+        for fp in FACTIONS_DIR.glob("*.json"):
+            try:
+                with open(fp, encoding="utf-8") as f:
+                    data = json.load(f)
+                    game = data.get("game")
+                    faction = data.get("faction")
+                    if game and faction:
+                        factions.setdefault(game, {})[faction] = data
+                        games.add(game)
+            except Exception as e:
+                st.warning(f"Erreur de chargement du fichier {fp.name}: {e}")
 
     if not games:
         st.warning("Aucun fichier de faction trouvé. Veuillez ajouter vos fichiers JSON dans le dossier 'lists/data/factions/'")
@@ -183,7 +179,7 @@ if st.session_state.page == "faction_select":
         st.session_state.page = "army_builder"
         st.rerun()
 
-# PAGE 2 - Liste des unités
+# PAGE 2 - Liste des unités (rectangles cliquables)
 elif st.session_state.page == "army_builder":
     st.title(st.session_state.list_name)
     st.caption(f"{st.session_state.game} • {st.session_state.faction} • {st.session_state.army_cost}/{st.session_state.points} pts")
@@ -230,35 +226,31 @@ elif st.session_state.page == "army_builder":
     if heroes:
         st.subheader("🌟 HÉROS")
         for unit in heroes:
-            with st.expander(f"**{unit['name']}** - {unit['base_cost']} pts"):
+            with st.container():
+                # Rectangle cliquable pour le héros
                 st.markdown(f"""
-                <div style="background-color: #2a2a2a; color: white; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
-                    <p style="margin: 5px 0; color: #aaa;">Qua {unit['quality']}+ / Déf {unit.get('defense', '?')}+</p>
-                    <p style="margin: 5px 0; color: #ccc;">{', '.join(unit.get('special_rules', []))}</p>
+                <div style="background-color: #2a2a2a; color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; cursor: pointer;"
+                    onclick="document.getElementById('select-{unit['name'].replace(' ', '-')}').click()">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0; color: #ffd700;">{unit['name']} [1]</h4>
+                            <p style="margin: 5px 0; color: #aaa;">Qua {unit['quality']}+ / Déf {unit.get('defense', '?')}+</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="margin: 0; color: #4CAF50; font-weight: bold;">{unit['base_cost']} pts</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; color: #ccc;">
+                        <p style="margin: 5px 0; font-style: italic;">{', '.join(unit.get('special_rules', []))}</p>
+                        <p style="margin: 5px 0;">
+                            {format_weapon(unit['weapons'][0]) if 'weapons' in unit and unit['weapons'] else 'Aucune arme'}
+                        </p>
+                    </div>
+                </div>
                 """, unsafe_allow_html=True)
 
-                # Affichage des armes
-                if 'weapons' in unit and unit['weapons']:
-                    st.subheader("Armes")
-                    for weapon in unit['weapons']:
-                        st.write(f"- {format_weapon(weapon)}")
-
-                # Affichage des options de monture
-                if 'upgrade_groups' in unit:
-                    for group in unit['upgrade_groups']:
-                        if group['type'] == 'mount':
-                            st.subheader(group['group'])
-                            for option in group['options']:
-                                st.write(f"- {option['name']} (+{option['cost']} pts)")
-
-                # Affichage des améliorations
-                    for group in unit['upgrade_groups']:
-                        if group['type'] == 'upgrades':
-                            st.subheader(group['group'])
-                            for option in group['options']:
-                                st.write(f"- {option['name']} (+{option['cost']} pts)")
-
-                if st.button(f"Ajouter {unit['name']}", key=f"add-{unit['name']}"):
+                # Bouton caché pour sélectionner l'unité
+                if st.button(f"Sélectionner {unit['name']}", key=f"select-{unit['name'].replace(' ', '-')}"):
                     st.session_state.current_unit = unit
                     st.session_state.current_options = {
                         'combined': False,
@@ -272,27 +264,31 @@ elif st.session_state.page == "army_builder":
     if units:
         st.subheader("🏳️ UNITÉS")
         for unit in units:
-            with st.expander(f"**{unit['name']}** - {unit['base_cost']} pts"):
+            with st.container():
+                # Rectangle cliquable pour l'unité
                 st.markdown(f"""
-                <div style="background-color: #1e1e1e; color: white; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
-                    <p style="margin: 5px 0; color: #aaa;">Qua {unit['quality']}+ / Déf {unit.get('defense', '?')}+ / Taille: {unit.get('size', 10)}</p>
-                    <p style="margin: 5px 0; color: #ccc;">{', '.join(unit.get('special_rules', []))}</p>
+                <div style="background-color: #1e1e1e; color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; cursor: pointer;"
+                    onclick="document.getElementById('select-{unit['name'].replace(' ', '-')}').click()">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0; color: #fff;">{unit['name']} [{unit.get('size', 10)}]</h4>
+                            <p style="margin: 5px 0; color: #aaa;">Qua {unit['quality']}+ / Déf {unit.get('defense', '?')}+</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="margin: 0; color: #4CAF50; font-weight: bold;">{unit['base_cost']} pts</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; color: #ccc;">
+                        <p style="margin: 5px 0; font-style: italic;">{', '.join(unit.get('special_rules', []))}</p>
+                        <p style="margin: 5px 0;">
+                            {format_weapon(unit['weapons'][0]) if 'weapons' in unit and unit['weapons'] else 'Aucune arme'}
+                        </p>
+                    </div>
+                </div>
                 """, unsafe_allow_html=True)
 
-                # Affichage des armes
-                if 'weapons' in unit and unit['weapons']:
-                    st.subheader("Armes")
-                    for weapon in unit['weapons']:
-                        st.write(f"- {format_weapon(weapon)}")
-
-                # Affichage des options
-                if 'upgrade_groups' in unit:
-                    for group in unit['upgrade_groups']:
-                        st.subheader(group['group'])
-                        for option in group['options']:
-                            st.write(f"- {option['name']} (+{option['cost']} pts)")
-
-                if st.button(f"Ajouter {unit['name']}", key=f"add-{unit['name']}"):
+                # Bouton caché pour sélectionner l'unité
+                if st.button(f"Sélectionner {unit['name']}", key=f"select-{unit['name'].replace(' ', '-')}"):
                     st.session_state.current_unit = unit
                     st.session_state.current_options = {
                         'combined': False,
@@ -311,20 +307,36 @@ elif st.session_state.page == "army_builder":
         st.info("Ajoutez des unités pour commencer à construire votre armée")
 
     for i, u in enumerate(st.session_state.army_list):
-        with st.expander(f"**{u['name']}** - {u['cost']} pts"):
+        with st.container():
             st.markdown(f"""
             <div style="background-color: {'#2a2a2a' if u.get('type') == 'hero' else '#1e1e1e'}; color: white; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
-                <p style="margin: 5px 0; color: #aaa;">
-                    Qua {u['quality']}+ / Déf {u.get('defense', '?')}+ / Taille: {u.get('size', 1)}
-                </p>
-                <p style="margin: 5px 0; color: #ccc;">
-                    {format_weapon(u.get('weapon', {}))}
-                </p>
-                {f"<p style='margin: 5px 0; color: #ccc;'>Monture: {format_mount(u.get('mount'))}</p>" if u.get('mount') else ""}
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h4 style="margin: 0; color: {'#ffd700' if u.get('type') == 'hero' else '#fff'};">
+                            {u['name']} [{u.get('size', 1)}] {'🌟' if u.get('type') == 'hero' else ''}
+                        </h4>
+                        <p style="margin: 5px 0; color: #aaa;">
+                            Qua {u['quality']}+ / Déf {u.get('defense', '?')}+
+                        </p>
+                    </div>
+                    <div style="text-align: right; color: #4CAF50; font-weight: bold;">
+                        {u['cost']} pts
+                    </div>
+                </div>
+                <div style="margin-top: 10px; color: #ccc;">
+                    <p style="margin: 5px 0;">
+                        {format_weapon(u.get('weapon', {}))}
+                    </p>
+                    {f"<p style='margin: 5px 0;'>Monture: {format_mount(u.get('mount'))}</p>" if u.get('mount') else ""}
+                </div>
             </div>
             """, unsafe_allow_html=True)
 
             if st.button(f"Supprimer", key=f"del-{i}"):
+                st.session_state.history.append({
+                    "army_list": copy.deepcopy(st.session_state.army_list),
+                    "army_cost": st.session_state.army_cost
+                })
                 st.session_state.army_cost -= u["cost"]
                 st.session_state.army_list.pop(i)
                 st.rerun()
@@ -359,7 +371,7 @@ elif st.session_state.page == "army_builder":
             mime="application/json"
         )
 
-# PAGE 3 - Options de l'unité
+# PAGE 3 - Options de l'unité (avec checkbox pour les héros)
 elif st.session_state.page == "unit_options":
     unit = st.session_state.current_unit
     options = st.session_state.current_options
@@ -394,74 +406,97 @@ elif st.session_state.page == "unit_options":
         st.subheader("Armes")
         weapon_options = [format_weapon(w) for w in unit['weapons']]
 
-        selected_weapon = st.selectbox(
-            "Sélectionnez une arme",
-            weapon_options,
-            index=0,
-            key="weapon_select"
-        )
-
-        selected_index = weapon_options.index(selected_weapon)
-        options['weapon'] = unit['weapons'][selected_index]
+        if unit.get('type') == 'hero':
+            # Pour les héros: checkbox pour chaque arme
+            for i, weapon in enumerate(unit['weapons']):
+                if st.checkbox(f"{format_weapon(weapon)}", key=f"weapon-{i}"):
+                    options['weapon'] = weapon
+        else:
+            # Pour les unités: selectbox
+            selected_weapon = st.selectbox(
+                "Sélectionnez une arme",
+                weapon_options,
+                index=0,
+                key="weapon_select"
+            )
+            selected_index = weapon_options.index(selected_weapon)
+            options['weapon'] = unit['weapons'][selected_index]
 
     # Gestion des montures
     if 'upgrade_groups' in unit:
         for group in unit['upgrade_groups']:
             if group['type'] == 'mount' and 'options' in group:
                 st.subheader(group['group'])
-                mount_options = ["Aucune monture"]
-                mount_details = {}
 
-                for option in group['options']:
-                    mount_options.append(f"{option['name']} (+{option['cost']} pts)")
-                    mount_details[option['name']] = option
-
-                selected_mount = st.selectbox(
-                    "Sélectionnez une monture",
-                    mount_options,
-                    index=0,
-                    key=f"mount_{group['group']}"
-                )
-
-                if selected_mount != "Aucune monture":
-                    mount_name = selected_mount.split(" (+")[0]
-                    options['mount'] = mount_details[mount_name]
-                    total_cost += mount_details[mount_name]['cost']
+                if unit.get('type') == 'hero':
+                    # Pour les héros: checkbox pour chaque monture
+                    for option in group['options']:
+                        if st.checkbox(f"{option['name']} (+{option['cost']} pts)", key=f"mount-{option['name']}"):
+                            options['mount'] = option
+                            total_cost += option['cost']
                 else:
-                    options['mount'] = None
+                    # Pour les unités: selectbox
+                    mount_options = ["Aucune monture"]
+                    mount_details = {}
 
-    # Gestion des améliorations
+                    for option in group['options']:
+                        mount_options.append(f"{option['name']} (+{option['cost']} pts)")
+                        mount_details[option['name']] = option
+
+                    selected_mount = st.selectbox(
+                        "Sélectionnez une monture",
+                        mount_options,
+                        index=0,
+                        key=f"mount_{group['group']}"
+                    )
+
+                    if selected_mount != "Aucune monture":
+                        mount_name = selected_mount.split(" (+")[0]
+                        options['mount'] = mount_details[mount_name]
+                        total_cost += mount_details[mount_name]['cost']
+                    else:
+                        options['mount'] = None
+
+    # Gestion des améliorations (toujours avec checkbox pour les héros)
     if 'upgrade_groups' in unit:
         for group in unit['upgrade_groups']:
             if group['type'] == 'upgrades' and 'options' in group:
                 st.subheader(group['group'])
 
-                if len(group['options']) == 1:  # Sélection unique
-                    selected_option = st.selectbox(
-                        f"Sélectionnez une {group['group'].lower()}",
-                        ["Aucune"] + [f"{opt['name']} (+{opt['cost']} pts)" for opt in group['options']],
-                        index=0,
-                        key=f"upgrade_{group['group']}"
-                    )
-
-                    if selected_option != "Aucune":
-                        option_name = selected_option.split(" (+")[0]
-                        selected_opt = next(opt for opt in group['options'] if opt['name'] == option_name)
-                        options['selected_options'][group['group']] = [selected_opt]
-                        total_cost += selected_opt['cost']
-                    else:
-                        options['selected_options'][group['group']] = []
-                else:  # Sélection multiple
+                if unit.get('type') == 'hero':
+                    # Pour les héros: checkbox pour chaque amélioration
                     for option in group['options']:
-                        if st.checkbox(
-                            f"{option['name']} (+{option['cost']} pts)",
-                            key=f"upgrade_{group['group']}_{option['name']}"
-                        ):
+                        if st.checkbox(f"{option['name']} (+{option['cost']} pts)", key=f"upgrade-{group['group']}-{option['name']}"):
                             if group['group'] not in options['selected_options']:
                                 options['selected_options'][group['group']] = []
                             if not any(opt['name'] == option['name'] for opt in options['selected_options'].get(group['group'], [])):
                                 options['selected_options'][group['group']].append(option)
                                 total_cost += option['cost']
+                else:
+                    # Pour les unités: selectbox ou checkbox selon le nombre d'options
+                    if len(group['options']) == 1:
+                        selected_option = st.selectbox(
+                            f"Sélectionnez une {group['group'].lower()}",
+                            ["Aucune"] + [f"{opt['name']} (+{opt['cost']} pts)" for opt in group['options']],
+                            index=0,
+                            key=f"upgrade_{group['group']}"
+                        )
+
+                        if selected_option != "Aucune":
+                            option_name = selected_option.split(" (+")[0]
+                            selected_opt = next(opt for opt in group['options'] if opt['name'] == option_name)
+                            options['selected_options'][group['group']] = [selected_opt]
+                            total_cost += selected_opt['cost']
+                        else:
+                            options['selected_options'][group['group']] = []
+                    else:
+                        for option in group['options']:
+                            if st.checkbox(f"{option['name']} (+{option['cost']} pts)", key=f"upgrade_{group['group']}_{option['name']}"):
+                                if group['group'] not in options['selected_options']:
+                                    options['selected_options'][group['group']] = []
+                                if not any(opt['name'] == option['name'] for opt in options['selected_options'].get(group['group'], [])):
+                                    options['selected_options'][group['group']].append(option)
+                                    total_cost += option['cost']
 
     # Calcul du coût final
     if options['combined'] and unit.get('type') != 'hero':
