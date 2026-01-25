@@ -232,48 +232,101 @@ def find_option_by_name(options, name):
         return None
 
 def display_faction_rules(faction_data):
+    """Affiche les règles spéciales de la faction sous forme d'accordéon dépliable."""
     if not faction_data or 'special_rules_descriptions' not in faction_data:
         return
+
     st.subheader("📜 Règles Spéciales de la Faction")
+
     rules_descriptions = faction_data['special_rules_descriptions']
+
     if not rules_descriptions:
         st.info("Cette faction n'a pas de règles spéciales spécifiques.")
         return
-    with st.container():
-        st.markdown("""
-        <style>
-        .faction-rules {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-left: 4px solid #3498db;
+
+    # CSS pour l'accordéon
+    st.markdown("""
+    <style>
+    .faction-rules {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+    .rule-item {
+        margin-bottom: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .rule-header {
+        background-color: #e9ecef;
+        padding: 8px 12px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 4px;
+    }
+    .rule-header:hover {
+        background-color: #dee2e6;
+    }
+    .rule-name {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    .rule-description {
+        padding: 10px 12px;
+        color: #495057;
+        display: none;
+        background-color: #f8f9fa;
+        border-top: 1px solid #ddd;
+    }
+    .expand-icon {
+        transition: transform 0.2s;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # JavaScript pour gérer le dépliement
+    st.markdown("""
+    <script>
+    function toggleRule(id) {
+        const content = document.getElementById('rule-content-' + id);
+        const icon = document.getElementById('rule-icon-' + id);
+        if (content.style.display === 'block') {
+            content.style.display = 'none';
+            icon.style.transform = 'rotate(0deg)';
+            icon.textContent = '▼';
+        } else {
+            content.style.display = 'block';
+            icon.style.transform = 'rotate(180deg)';
+            icon.textContent = '▲';
         }
-        .rule-item {
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        .rule-name {
-            font-weight: bold;
-            color: #2c3e50;
-            font-size: 1.1em;
-        }
-        .rule-description {
-            margin-top: 5px;
-            color: #555;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-        st.markdown('<div class="faction-rules">', unsafe_allow_html=True)
-        for rule_name, description in rules_descriptions.items():
-            st.markdown(f"""
-            <div class="rule-item">
-                <div class="rule-name">{rule_name}</div>
-                <div class="rule-description">{description}</div>
+    }
+    </script>
+    """, unsafe_allow_html=True)
+
+    # Conteneur principal
+    st.markdown('<div class="faction-rules">', unsafe_allow_html=True)
+
+    # Affichage des règles sous forme d'accordéon
+    rule_id = 0
+    for rule_name, description in rules_descriptions.items():
+        rule_id += 1
+        st.markdown(f"""
+        <div class="rule-item">
+            <div class="rule-header" onclick="toggleRule({rule_id})">
+                <span class="rule-name">{rule_name}</span>
+                <span id="rule-icon-{rule_id}" class="expand-icon">▼</span>
             </div>
-            """, unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+            <div id="rule-content-{rule_id}" class="rule-description">
+                {description}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ======================================================
 # LOCAL STORAGE
