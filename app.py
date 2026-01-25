@@ -576,7 +576,7 @@ elif st.session_state.page == "army_builder":
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# PAGE 3 - Options de l'unité (avec radio buttons pour les héros)
+# PAGE 3 - Options de l'unité
 elif st.session_state.page == "unit_options":
     unit = st.session_state.current_unit
     options = st.session_state.current_options
@@ -607,63 +607,19 @@ elif st.session_state.page == "unit_options":
     total_cost = unit['base_cost']
     current_size = unit.get('size', 1)
 
-    # Gestion des armes
-    if 'weapons' in unit and unit['weapons']:
-        st.markdown("<h3 class='subtitle'>Armes</h3>", unsafe_allow_html=True)
-
-        if unit.get('type', '').lower() == 'hero':
-            # Pour les héros: radio buttons pour chaque arme
-            weapon_options = [f"{format_weapon(weapon)}" for weapon in unit['weapons']]
-            selected_weapon = st.radio(
-                "Sélectionnez une arme",
-                weapon_options,
-                index=0,
-                key="weapon_radio"
-            )
-            selected_index = weapon_options.index(selected_weapon)
-            options['weapon'] = unit['weapons'][selected_index]
-
-    # Gestion des améliorations de rôle
+    # Gestion des améliorations d'unité (checkbox multiples)
     if 'upgrade_groups' in unit:
         for group in unit['upgrade_groups']:
-            if group['type'] == 'multiple' and group['group'] == 'Améliorations de rôle':
+            if group['type'] != 'mount' and group['type'] != 'weapon' and group['type'] != 'multiple':
                 st.markdown(f"<h3 class='subtitle'>{group['group']}</h3>", unsafe_allow_html=True)
 
-                role_options = [f"{option['name']} (+{option['cost']} pts)" for option in group['options']]
-                selected_role = st.radio(
-                    "Sélectionnez une amélioration de rôle",
-                    ["Aucune amélioration"] + role_options,
-                    index=0,
-                    key=f"role_radio_{group['group']}"
-                )
-
-                if selected_role != "Aucune amélioration":
-                    role_name = selected_role.split(" (+")[0]
-                    selected_role_option = next(opt for opt in group['options'] if opt['name'] == role_name)
-                    options['selected_options'][group['group']] = [selected_role_option]
-                    total_cost += selected_role_option['cost']
-                else:
-                    options['selected_options'][group['group']] = []
-
-    # Gestion des changements d'armes
-    if 'upgrade_groups' in unit:
-        for group in unit['upgrade_groups']:
-            if group['type'] == 'weapon' and group['group'] == 'Remplacement d\'arme':
-                st.markdown(f"<h3 class='subtitle'>{group['group']}</h3>", unsafe_allow_html=True)
-
-                weapon_options = [f"{format_weapon(option['weapon'])} (+{option['cost']} pts)" for option in group['options']]
-                selected_weapon_replacement = st.radio(
-                    "Sélectionnez une arme de remplacement",
-                    ["Aucun remplacement"] + weapon_options,
-                    index=0,
-                    key=f"weapon_replacement_radio_{group['group']}"
-                )
-
-                if selected_weapon_replacement != "Aucun remplacement":
-                    weapon_name = selected_weapon_replacement.split(" (+")[0]
-                    selected_weapon_option = next(opt for opt in group['options'] if format_weapon(opt['weapon']) == weapon_name)
-                    options['weapon'] = selected_weapon_option['weapon']
-                    total_cost += selected_weapon_option['cost']
+                for option in group['options']:
+                    if st.checkbox(f"{option['name']} (+{option['cost']} pts)", key=f"upgrade_{group['group']}_{option['name']}"):
+                        if group['group'] not in options['selected_options']:
+                            options['selected_options'][group['group']] = []
+                        if not any(opt['name'] == option['name'] for opt in options['selected_options'].get(group['group'], [])):
+                            options['selected_options'][group['group']].append(option)
+                            total_cost += option['cost']
 
     # Gestion des montures
     if 'upgrade_groups' in unit:
@@ -687,33 +643,12 @@ elif st.session_state.page == "unit_options":
                 else:
                     options['mount'] = None
 
-    # Gestion des améliorations d'unité (checkbox multiples)
-    if 'upgrade_groups' in unit:
-        for group in unit['upgrade_groups']:
-            if group['type'] != 'mount' and group['type'] != 'weapon' and group['type'] != 'multiple':
-                st.markdown(f"<h3 class='subtitle'>{group['group']}</h3>", unsafe_allow_html=True)
-
-                for option in group['options']:
-                    if st.checkbox(f"{option['name']} (+{option['cost']} pts)", key=f"upgrade_{group['group']}_{option['name']}"):
-                        if group['group'] not in options['selected_options']:
-                            options['selected_options'][group['group']] = []
-                        if not any(opt['name'] == option['name'] for opt in options['selected_options'].get(group['group'], [])):
-                            options['selected_options'][group['group']].append(option)
-                            total_cost += option['cost']
-
     # Calcul du coût final
     if options.get('combined', False) and unit.get('type', '').lower() != 'hero':
-        base_weapon_cost = 0
-        if 'upgrade_groups' in unit:
-            for group in unit['upgrade_groups']:
-                if group['type'] == 'weapon' and group['group'] == 'Remplacement d\'arme' and options['weapon']:
-                    selected_weapon_option = next((opt for opt in group['options'] if format_weapon(opt['weapon']) == format_weapon(options['weapon'])), None)
-                    if selected_weapon_option:
-                        base_weapon_cost = selected_weapon_option['cost']
-        total_cost = (unit['base_cost'] + base_weapon_cost) * 2
+        total_cost = (unit['base_cost']) * 2
+        current_size = unit.get('size', 1) * 2
         total_cost += sum(opt['cost'] for group in options['selected_options'].values() for opt in group)
         total_cost += options['mount']['cost'] if options['mount'] else 0
-        current_size = unit.get('size', 1) * 2
     else:
         total_cost = unit['base_cost'] + \
                      (options['mount']['cost'] if options['mount'] else 0) + \
