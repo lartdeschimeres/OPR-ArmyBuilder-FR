@@ -723,6 +723,9 @@ elif st.session_state.page == "unit_options":
                     else:
                         options['mount'] = None
 
+    # Toujours définir weapon_cost par défaut
+    weapon_cost = 0
+
     # Gestion des armes (choix exclusif)
     if 'upgrade_groups' in unit:
         for group in unit['upgrade_groups']:
