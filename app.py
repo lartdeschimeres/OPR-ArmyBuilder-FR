@@ -500,6 +500,15 @@ def load_factions():
     return factions, sorted(games) if games else list(GAME_CONFIG.keys())
 
 # ======================================================
+# FONCTION POUR LA BARRE DE PROGRESSION
+# ======================================================
+def show_points_progress(current_points, max_points):
+    """Affiche une barre de progression pour les points de l'armée."""
+    ratio = min(current_points / max_points, 1.0)
+    st.progress(ratio)
+    st.markdown(f"**{current_points}/{max_points} pts**")
+
+# ======================================================
 # INITIALISATION
 # ======================================================
 factions_by_game, games = load_factions()
@@ -514,7 +523,7 @@ if "page" not in st.session_state:
 # PAGE 1 – CONFIGURATION
 # ======================================================
 if st.session_state.page == "setup":
-    st.title("OPR Army Forge FR")
+    st.title("OPR Army Forge")
 
     # Affichage des informations sur les jeux disponibles
     st.subheader("Jeux disponibles")
@@ -628,6 +637,9 @@ if st.session_state.page == "setup":
 elif st.session_state.page == "army":
     st.title(st.session_state.list_name)
     st.caption(f"{st.session_state.game} • {st.session_state.faction} • {st.session_state.army_cost}/{st.session_state.points} pts")
+
+    # Affichage de la barre de progression
+    show_points_progress(st.session_state.army_cost, st.session_state.points)
 
     # Vérification des règles spécifiques au jeu
     game_config = GAME_CONFIG.get(st.session_state.game, GAME_CONFIG["Age of Fantasy"])
@@ -803,7 +815,13 @@ elif st.session_state.page == "army":
             test_army.append(unit_data)
             test_total = st.session_state.army_cost + final_cost
 
-            if not validate_army_rules(test_army, st.session_state.points, st.session_state.game, final_cost):
+            if test_total > st.session_state.points:
+                st.error(f"⚠️ La limite de points ({st.session_state.points}) est dépassée! Ajout annulé.")
+                if st.button("Annuler la dernière action"):
+                    st.session_state.army_list = st.session_state.army_list[:-1]
+                    st.session_state.army_cost -= final_cost
+                    st.rerun()
+            elif not validate_army_rules(test_army, st.session_state.points, st.session_state.game, final_cost):
                 st.error("Cette unité ne peut pas être ajoutée car elle violerait les règles du jeu.")
             else:
                 st.session_state.army_list.append(unit_data)
