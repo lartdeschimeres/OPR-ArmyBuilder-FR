@@ -618,7 +618,7 @@ elif st.session_state.page == "unit_options":
                 "Sélectionnez une arme",
                 weapon_options,
                 index=0,
-                key="weapon_radio"
+                key=f"weapon_radio_{unit['name']}"
             )
             selected_index = weapon_options.index(selected_weapon)
             options['weapon'] = unit['weapons'][selected_index]
@@ -629,7 +629,7 @@ elif st.session_state.page == "unit_options":
                 "Sélectionnez une arme",
                 weapon_options,
                 index=0,
-                key="weapon_select"
+                key=f"weapon_select_{unit['name']}_{id(unit)}"
             )
             selected_index = weapon_options.index(selected_weapon)
             options['weapon'] = unit['weapons'][selected_index]
