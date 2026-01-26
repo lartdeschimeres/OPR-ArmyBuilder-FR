@@ -594,21 +594,30 @@ elif st.session_state.page == "army":
     mount_cost = 0
     upgrades_cost = 0
 
-    # Gestion des unités combinées - SUPPRESSION DÉFINITIVE POUR LES HÉROS
-    if unit.get("type") == "hero":
-        for k in list(st.session_state.keys()):
-            if k.startswith("combined_"):
-                del st.session_state[k]
-        combined = False
-    
-    if unit.get("type") == "hero":
-        combined = False
-    else:
+    # Gestion des unités combinées
+    combined = False
+
+    if unit.get("type") != "hero":
         combined = st.checkbox(
             "Unité combinée",
             value=False,
             key=f"combined_{unit['name']}"
         )
+    
+     #if unit.get("type") == "hero":
+     #   for k in list(st.session_state.keys()):
+     #       if k.startswith("combined_"):
+     #           del st.session_state[k]
+     #   combined = False
+    
+    #if unit.get("type") == "hero":
+    #    combined = False
+    #else:
+    #    combined = st.checkbox(
+    #        "Unité combinée",
+    #        value=False,
+    #       key=f"combined_{unit['name']}"
+    #   )
     
     # Options de l'unité
     for group in unit.get("upgrade_groups", []):
