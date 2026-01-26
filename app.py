@@ -679,55 +679,55 @@ elif st.session_state.page == "army":
         st.markdown(f"**Taille finale : {unit_size}** ({label})")
     
         if st.button("Ajouter à l'armée"):
-        try:
-            weapon_data = format_weapon_details(weapon)
-            total_coriace = 0
-            if 'special_rules' in unit and isinstance(unit.get('special_rules'), list):
-                total_coriace += get_coriace_from_rules(unit['special_rules'])
-            if mount:
-                _, mount_coriace = get_mount_details(mount)
-                total_coriace += mount_coriace
-            if selected_options:
-                for opts in selected_options.values():
-                    if isinstance(opts, list):
-                        for opt in opts:
-                            if 'special_rules' in opt and isinstance(opt.get('special_rules'), list):
-                                total_coriace += get_coriace_from_rules(opt['special_rules'])
-            if 'special_rules' in weapon and isinstance(weapon.get('special_rules'), list):
-                total_coriace += get_coriace_from_rules(weapon['special_rules'])
-            total_coriace = total_coriace if total_coriace > 0 else None
-            unit_data = {
-                "name": unit["name"],
-                "type": unit.get("type", "unit"),
-                "cost": final_cost,
-                "base_cost": base_cost,
-                "size": unit_size,
-                "is_doubled": double_size,
-                "quality": unit["quality"],
-                "defense": unit["defense"],
-                "rules": [format_special_rule(r) for r in unit.get("special_rules", []) if "Coriace(0)" not in r],
-                "weapon": weapon_data,
-                "options": selected_options,
-                "mount": mount,
-                "coriace": total_coriace,                
-            }
-            test_army = st.session_state.army_list.copy()
-            test_army.append(unit_data)
-            test_total = st.session_state.army_cost + final_cost
-            if test_total > st.session_state.points:
-                st.error(f"⚠️ La limite de points ({st.session_state.points}) est dépassée! Ajout annulé.")
-                if st.button("Annuler la dernière action"):
-                    st.session_state.army_list = st.session_state.army_list[:-1]
-                    st.session_state.army_cost -= final_cost
+            try:
+                weapon_data = format_weapon_details(weapon)
+                total_coriace = 0
+                if 'special_rules' in unit and isinstance(unit.get('special_rules'), list):
+                    total_coriace += get_coriace_from_rules(unit['special_rules'])
+                if mount:
+                    _, mount_coriace = get_mount_details(mount)
+                    total_coriace += mount_coriace
+                if selected_options:
+                    for opts in selected_options.values():
+                        if isinstance(opts, list):
+                            for opt in opts:
+                                if 'special_rules' in opt and isinstance(opt.get('special_rules'), list):
+                                    total_coriace += get_coriace_from_rules(opt['special_rules'])
+                if 'special_rules' in weapon and isinstance(weapon.get('special_rules'), list):
+                    total_coriace += get_coriace_from_rules(weapon['special_rules'])
+                total_coriace = total_coriace if total_coriace > 0 else None
+                unit_data = {
+                    "name": unit["name"],
+                    "type": unit.get("type", "unit"),
+                    "cost": final_cost,
+                    "base_cost": base_cost,
+                    "size": unit_size,
+                    "is_doubled": double_size,
+                    "quality": unit["quality"],
+                    "defense": unit["defense"],
+                    "rules": [format_special_rule(r) for r in unit.get("special_rules", []) if "Coriace(0)" not in r],
+                    "weapon": weapon_data,
+                    "options": selected_options,
+                    "mount": mount,
+                    "coriace": total_coriace,                
+                }
+                test_army = st.session_state.army_list.copy()
+                test_army.append(unit_data)
+                test_total = st.session_state.army_cost + final_cost
+                if test_total > st.session_state.points:
+                    st.error(f"⚠️ La limite de points ({st.session_state.points}) est dépassée! Ajout annulé.")
+                    if st.button("Annuler la dernière action"):
+                        st.session_state.army_list = st.session_state.army_list[:-1]
+                        st.session_state.army_cost -= final_cost
+                        st.rerun()
+                elif not validate_army_rules(test_army, st.session_state.points, st.session_state.game, final_cost):
+                    st.error("Cette unité ne peut pas être ajoutée car elle violerait les règles du jeu.")
+                else:
+                    st.session_state.army_list.append(unit_data)
+                    st.session_state.army_cost += final_cost
                     st.rerun()
-            elif not validate_army_rules(test_army, st.session_state.points, st.session_state.game, final_cost):
-                st.error("Cette unité ne peut pas être ajoutée car elle violerait les règles du jeu.")
-            else:
-                st.session_state.army_list.append(unit_data)
-                st.session_state.army_cost += final_cost
-                st.rerun()
-        except Exception as e:
-            st.error(f"Erreur lors de la création de l'unité: {str(e)}")
+            except Exception as e:
+                st.error(f"Erreur lors de la création de l'unité: {str(e)}")
 
     # Liste de l'armée
     st.divider()
