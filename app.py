@@ -673,10 +673,10 @@ elif st.session_state.page == "army":
     unit_size = base_size
     
     # Affichage de la taille finale de l'unité
-     if unit.get("type") == "hero":
-        st.markdown(f"**Taille finale: 1** (les héros sont toujours des unités individuelles)")
-     else:
-        st.markdown(f"**Taille finale: {unit_size}
+    if unit.get("type") == "hero":
+        st.markdown("**Taille finale: 1** (les héros sont toujours des unités individuelles)")
+    else:
+        st.markdown(f"**Taille finale: {unit_size}**")
 
     # st.markdown(f"**Coût total: {final_cost} pts**")
 
