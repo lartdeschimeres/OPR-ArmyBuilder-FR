@@ -576,6 +576,11 @@ elif st.session_state.page == "army":
         key="unit_select"
     )
 
+    # Nettoyage définitif des anciens états "combined"
+    for k in list(st.session_state.keys()):
+        if k.startswith("combined_"):
+            del st.session_state[k]
+    
     # Récupération de la taille de base de l'unité
     base_size = unit.get('size', 10)
     base_cost = unit["base_cost"]
@@ -594,30 +599,14 @@ elif st.session_state.page == "army":
     mount_cost = 0
     upgrades_cost = 0
 
-    # Gestion des unités combinées
-    combined = False
-
-    if unit.get("type") != "hero":
-        combined = st.checkbox(
-            "Unité combinée",
-            value=False,
-            key=f"combined_{unit['name']}"
-        )
-    
-     #if unit.get("type") == "hero":
-     #   for k in list(st.session_state.keys()):
-     #       if k.startswith("combined_"):
-     #           del st.session_state[k]
-     #   combined = False
-    
-    #if unit.get("type") == "hero":
-    #    combined = False
-    #else:
+    # Gestion des unités combinées - non fonctionnel
+    # combined = False
+    # if unit.get("type") != "hero":
     #    combined = st.checkbox(
     #        "Unité combinée",
     #        value=False,
-    #       key=f"combined_{unit['name']}"
-    #   )
+    #        key=f"combined_{unit['name']}"
+    #    )
     
     # Options de l'unité
     for group in unit.get("upgrade_groups", []):
@@ -672,21 +661,24 @@ elif st.session_state.page == "army":
                             selected_options[group["group"]].append(o)
                             upgrades_cost += o["cost"]
 
-    # Calcul du coût final et de la taille
-    if combined and unit.get("type") != "hero":
-        final_cost = (base_cost + weapon_cost + mount_cost + upgrades_cost) * 2
-        unit_size = base_size * 2
-    else:
-        final_cost = base_cost + weapon_cost + mount_cost + upgrades_cost
-        unit_size = base_size
-
+    # Calcul du coût final et de la taille - non focntionnel
+    # if combined and unit.get("type") != "hero":
+    #    final_cost = (base_cost + weapon_cost + mount_cost + upgrades_cost) * 2
+    #    unit_size = base_size * 2
+    # else:
+    #    final_cost = base_cost + weapon_cost + mount_cost + upgrades_cost
+    #    unit_size = base_size
+    
+    final_cost = base_cost + weapon_cost + mount_cost + upgrades_cost
+    unit_size = base_size
+    
     # Affichage de la taille finale de l'unité
-    if unit.get("type") == "hero":
+     if unit.get("type") == "hero":
         st.markdown(f"**Taille finale: 1** (les héros sont toujours des unités individuelles)")
-    else:
-        st.markdown(f"**Taille finale: {unit_size}** {'(x2 combinée)' if combined else ''}")
+     else:
+        st.markdown(f"**Taille finale: {unit_size}
 
-    st.markdown(f"**Coût total: {final_cost} pts**")
+    # st.markdown(f"**Coût total: {final_cost} pts**")
 
     if st.button("Ajouter à l'armée"):
         try:
@@ -705,9 +697,6 @@ elif st.session_state.page == "army":
                                 total_coriace += get_coriace_from_rules(opt['special_rules'])
             if 'special_rules' in weapon and isinstance(weapon.get('special_rules'), list):
                 total_coriace += get_coriace_from_rules(weapon['special_rules'])
-            if combined and unit.get('type') != "hero":
-                base_coriace = get_coriace_from_rules(unit.get('special_rules', []))
-                total_coriace += base_coriace
             total_coriace = total_coriace if total_coriace > 0 else None
             unit_data = {
                 "name": unit["name"],
@@ -721,8 +710,7 @@ elif st.session_state.page == "army":
                 "weapon": weapon_data,
                 "options": selected_options,
                 "mount": mount,
-                "coriace": total_coriace,
-                "combined": combined and unit.get("type") != "hero",
+                "coriace": total_coriace,                
             }
             test_army = st.session_state.army_list.copy()
             test_army.append(unit_data)
