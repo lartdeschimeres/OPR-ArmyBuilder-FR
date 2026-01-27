@@ -641,6 +641,9 @@ def show_points_progress(current_points, max_points):
 # ======================================================
 factions_by_game, games = load_factions()
 
+if "list_name" not in st.session_state:
+    st.session_state.list_name = "Liste sans nom"
+
 if "page" not in st.session_state:
     st.session_state.page = "setup"
     st.session_state.army_list = []
@@ -860,7 +863,7 @@ elif st.session_state.page == "army":
                             selected_options[group["group"]].append(o)
                             upgrades_cost += o["cost"]
     
-   # Doublement d'effectif : INTERDIT pour les héros
+    # Doublement d'effectif : INTERDIT pour les héros
     if unit.get("type") != "hero":
         double_size = st.checkbox(
             "Doubler les effectifs (+100% coût de base et armes)",
@@ -868,6 +871,8 @@ elif st.session_state.page == "army":
         )
     else:
         double_size = False
+    
+    multiplier = 2 if double_size else 1
                
     # -------------------------------
     # Calcul du coût final
@@ -968,9 +973,9 @@ elif st.session_state.page == "army":
                 st.session_state.army_list.pop(i)
                 st.rerun()
 
-army_name = st.session_state.list_name
-army = st.session_state.army_list
-army_limit = st.session_state.points
+army_name = st.session_state.get("list_name", "Liste sans nom")
+army = st.session_state.get("army_list", [])
+army_limit = st.session_state.get("points", 0)
 
 army_data = {
     "name": army_name,
