@@ -866,12 +866,11 @@ elif st.session_state.page == "army":
     if unit.get("type") != "hero":
         double_size = st.checkbox(
             "Doubler les effectifs (+100% coût de base et armes)",
-            value=False,
-            key=f"double_{unit['name']}_{len(st.session_state.army_list)}"
+            value=False
         )
-    
-    multiplier = 2 if double_size else 1
-    
+    else:
+        double_size = False
+               
     # -------------------------------
     # Calcul du coût final
     # -------------------------------
