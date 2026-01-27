@@ -988,10 +988,28 @@ elif st.session_state.page == "army":
             current_lists.append(army_data)
             ls_set("opr_saved_lists", current_lists)
             st.success("Liste sauvegardée!")
-    with col2:
-        st.download_button(
-            "Exporter en JSON",
-            json.dumps(army_data, indent=2, ensure_ascii=False),
-            file_name=f"{st.session_state.list_name}.json",
-            mime="application/json"
-        )
+    col1, col2 = st.columns(2)
+
+with col1:
+    st.download_button(
+        "📦 Export JSON",
+        data=json_data,
+        file_name=f"{army_name}.json",
+        mime="application/json",
+        use_container_width=True
+    )
+
+with col2:
+    html_content = export_html(
+        army=army,
+        army_name=army_name,
+        army_limit=army_limit
+    )
+
+    st.download_button(
+        "🖨 Export HTML",
+        data=html_content,
+        file_name=f"{army_name}.html",
+        mime="text/html",
+        use_container_width=True
+    )
