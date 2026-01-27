@@ -34,6 +34,23 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+.army-header {
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #444;
+}
+
+.army-title {
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.army-meta {
+  font-size: 12px;
+  color: #bbb;
+}
+
 # Chemins des fichiers
 BASE_DIR = Path(__file__).resolve().parent
 FACTIONS_DIR = BASE_DIR / "lists" / "data" / "factions"
