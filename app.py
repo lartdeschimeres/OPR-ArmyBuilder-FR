@@ -305,6 +305,23 @@ body {
   </div>
 </div>
 
+.army-header {
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #444;
+}
+
+.army-title {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.army-meta {
+    font-size: 12px;
+    color: #bbb;
+}
+
 .army {
   max-width: 1100px;
   margin: auto;
