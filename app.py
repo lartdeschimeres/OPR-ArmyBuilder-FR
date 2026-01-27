@@ -88,7 +88,7 @@ def check_unit_copy_rule(army_list, army_points, game_config):
         unit_counts = {}
         for unit in army_list:
             if unit.get("type") == "hero":
-            continue  # OPR : héros exclus du calcul
+                continue  # OPR : héros exclus du calcul
             for unit in army_list:
                 unit_name = unit["name"]
                 count_key = unit_name
