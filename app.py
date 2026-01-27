@@ -288,77 +288,76 @@ def export_html(army_list, army_name, army_limit):
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<title>{esc(army_name)}</title>
-<style>
-:root {{
-  --bg-main: #2e2f2b;
-  --bg-card: #3a3c36;
-  --bg-header: #1f201d;
-  --accent: #9fb39a;
-  --text-main: #e6e6e6;
-  --border: #555;
-}}
-body {{
-  background: var(--bg-main);
-  color: var(--text-main);
-  font-family: "Segoe UI", Roboto, Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-}}
-.unit-card {{
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  margin-bottom: 20px;
-  padding: 16px;
-  border-radius: 8px;
-}}
-.unit-header {{
-  display: flex;
-  justify-content: space-between;
-  background: var(--bg-header);
-  padding: 10px;
-  margin: -16px -16px 12px -16px;
-  border-radius: 8px 8px 0 0;
-}}
-.section {{
-  margin-bottom: 12px;
-}}
-.section-title {{
-  font-weight: bold;
-  color: var(--accent);
-}}
-.weapons-table, .mount-section {{
-  margin-left: 16px;
-}}
-table {{
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 8px;
-  font-size: 12px;
-}}
-th, td {{
-  border: 1px solid var(--border);
-  padding: 6px;
-  text-align: left;
-}}
-</style>
-</head>
-<body>
-<div class="army">
-    <h1>{esc(army_name)} ({sum(u['cost'] for u in army_list)}/{army_limit} pts)</h1>
-"""
-
-    for unit in army_list:
-        name = esc(unit.get("name", "Unité"))
-        cost = unit.get("cost", 0)
-        quality = esc(unit.get("quality", "-"))
-        defense = esc(unit.get("defense", "-"))
-        coriace = unit.get("coriace", None)
-
-        html += f"""
-    <div class="unit-card">
-        <div class="unit-header
+    <meta charset="utf-8">
+    <title>{esc(army_name)}</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }}
+        .army-container {{
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }}
+        .army-header {{
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }}
+        .unit-card {{
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }}
+        .unit-name {{
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }}
+        .unit-cost {{
+            float: right;
+            background-color: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }}
+        .unit-stats {{
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }}
+        .stat {{
+            background-color: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }}
+        .section {{
+            margin-bottom: 12px;
+        }}
+        .section-title {{
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 3px;
+        }}
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin-t
 
 
 # ======================================================
