@@ -287,7 +287,7 @@ def export_html(army_list, army_name, army_limit):
 <title>OPR Army List</title>
 <style>
 :root {
-  --bg-main: #2e2f2b;  <!-- Fond sombre actuel -->
+  --bg-main: #2e2f2b;
   --bg-card: #3a3c36;
   --bg-header: #1f201d;
   --accent: #9fb39a;
@@ -297,13 +297,12 @@ def export_html(army_list, army_name, army_limit):
   --border: #555;
 }
 body {
-  background: var(--bg-main);  <!-- Fond sombre actuel -->
+  background: var(--bg-main);
   color: var(--text-main);
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
   margin: 0;
   padding: 20px;
 }
-</style>
 .army-header {
     margin-bottom: 16px;
     padding-bottom: 8px;
