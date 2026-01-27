@@ -863,16 +863,16 @@ elif st.session_state.page == "army":
                             selected_options[group["group"]].append(o)
                             upgrades_cost += o["cost"]
     
-    # Doublement d'effectif : INTERDIT pour les héros
-    if unit.get("type") != "hero":
-        double_size = st.checkbox(
-            "Doubler les effectifs (+100% coût de base et armes)",
-            value=False
-        )
-    else:
-        double_size = False
+# Doublement d'effectif : INTERDIT pour les héros
+if unit.get("type") != "hero":
+    double_size = st.checkbox(
+        "Doubler les effectifs (+100% coût de base et armes)",
+        value=False
+    )
+else:
+    double_size = False
     
-    multiplier = 2 if double_size else 1
+multiplier = 2 if double_size else 1
                
     # -------------------------------
     # Calcul du coût final
