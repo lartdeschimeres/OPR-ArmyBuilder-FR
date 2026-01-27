@@ -970,6 +970,22 @@ elif st.session_state.page == "army":
                 st.session_state.army_cost -= u["cost"]
                 st.session_state.army_list.pop(i)
                 st.rerun()
+
+army_name = st.session_state.list_name
+army = st.session_state.army_list
+army_limit = st.session_state.points
+
+army_data = {
+    "name": army_name,
+    "game": st.session_state.game,
+    "faction": st.session_state.faction,
+    "points": army_limit,
+    "total_cost": st.session_state.army_cost,
+    "army_list": army
+}
+
+json_data = json.dumps(army_data, indent=2, ensure_ascii=False)
+
 # ------------------------------------------------------
 # SAUVEGARDE & EXPORTS
 # ------------------------------------------------------
