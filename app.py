@@ -737,6 +737,8 @@ elif st.session_state.page == "army":
         st.warning("⚠️ Certaines règles spécifiques ne sont pas respectées. Voir les messages d'erreur ci-dessus.")
 
     # Affichage de la barre de progression
+    st.divider()
+    st.subheader("Points d'armée")
     show_points_progress(st.session_state.army_cost, st.session_state.points)
     
     # Ajout d'une unité
