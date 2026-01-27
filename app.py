@@ -726,9 +726,6 @@ elif st.session_state.page == "army":
     st.title(st.session_state.list_name)
     st.caption(f"{st.session_state.game} • {st.session_state.faction} • {st.session_state.army_cost}/{st.session_state.points} pts")
 
-    # Affichage de la barre de progression
-    show_points_progress(st.session_state.army_cost, st.session_state.points)
-
     # Vérification des règles spécifiques au jeu
     game_config = GAME_CONFIG.get(st.session_state.game, GAME_CONFIG["Age of Fantasy"])
 
@@ -739,6 +736,9 @@ elif st.session_state.page == "army":
     if not validate_army_rules(st.session_state.army_list, st.session_state.points, st.session_state.game):
         st.warning("⚠️ Certaines règles spécifiques ne sont pas respectées. Voir les messages d'erreur ci-dessus.")
 
+    # Affichage de la barre de progression
+    show_points_progress(st.session_state.army_cost, st.session_state.points)
+    
     # Ajout d'une unité
     st.divider()
     st.subheader("Ajouter une unité")
