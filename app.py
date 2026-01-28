@@ -392,7 +392,12 @@ th {
 </style>
 </head>
 <body>
+html = f"""
 <div class="army">
+  <!-- Titre de la liste -->
+  <div class="army-title">
+    {esc(army_name)} • {sum(unit['cost'] for unit in army_list)}/{army_limit} pts • {army_list[0].get('game', 'Jeu non spécifié')}
+  </div>
 """
 
     for unit in army_list:
