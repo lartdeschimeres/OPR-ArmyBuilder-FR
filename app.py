@@ -929,7 +929,7 @@ def main():
                         upgrades_cost += opt["cost"]
                 else:
                     # Pour les unités: checkbox (choix multiples)
-                    st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
+                    st.write("Sélectionnez les améliorations:")
                     for o in group["options"]:
                         if st.checkbox(f"{o['name']} (+{o['cost']} pts)", key=f"{unit['name']}_{group['group']}_{o['name']}"):
                             if group["group"] not in selected_options:
