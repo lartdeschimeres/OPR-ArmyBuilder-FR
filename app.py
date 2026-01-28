@@ -60,6 +60,13 @@ st.markdown("""
         font-style: italic;
         color: #666;
     }
+    .rule-badge {
+        background-color: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-right: 5px;
+        font-size: 12px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -412,6 +419,14 @@ th {{
   color: var(--accent);
   font-weight: bold;
 }}
+.rule-badge {{
+  background-color: var(--accent-soft);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-right: 5px;
+  font-size: 12px;
+  color: #000;
+}}
 </style>
 </head>
 <body>
@@ -488,7 +503,7 @@ th {{
             html += '<div class="section-title">Règles spéciales :</div>'
             html += "<div class='rules'>"
             for r in rules:
-                html += f"<span>{esc(r)}</span>"
+                html += f"<span class='rule-badge'>{esc(r)}</span>"
             html += "</div>"
 
         # ---- OPTIONS ----
@@ -919,6 +934,7 @@ def main():
 
         for group in unit.get("upgrade_groups", []):
             st.markdown(f"### {group['group']} ")
+
             if group["type"] == "weapon":
                 weapon_options = ["Arme de base"]
                 for o in group["options"]:
@@ -932,6 +948,7 @@ def main():
                     if opt:
                         weapon = opt["weapon"]
                         weapon_cost = opt["cost"]
+
             elif group["type"] == "mount":
                 mount_labels = ["Aucune monture"]
                 mount_map = {}
@@ -945,6 +962,7 @@ def main():
                     opt = mount_map[selected_mount]
                     mount = opt
                     mount_cost = opt["cost"]
+
             else:
                 # Gestion différente pour les héros et les unités
                 if unit.get("type") == "hero" and group["group"] == "Améliorations de rôle":
@@ -973,7 +991,7 @@ def main():
                         upgrades_cost += opt["cost"]
                 else:
                     # Pour les unités: cases à cocher (choix multiples)
-                    st.write("Choisissez une des options suivantes:")
+                    st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
                     for o in group["options"]:
                         if st.checkbox(f"{o['name']} (+{o['cost']} pts)", key=f"{unit['name']}_{group['group']}_{o['name']}"):
                             if group["group"] not in selected_options:
@@ -1061,8 +1079,8 @@ def main():
                 st.markdown(unit_header, unsafe_allow_html=True)
 
                 if u.get("rules"):
-                    rules_text = ", ".join(u["rules"])
-                    st.markdown(f"**Règles spéciales:** {rules_text}")
+                    rules_text = ", ".join([f"<span class='rule-badge'>{rule}</span>" for rule in u["rules"]])
+                    st.markdown(f"**Règles spéciales:** {rules_text}", unsafe_allow_html=True)
 
                 if 'weapon' in u and u['weapon']:
                     weapon_details = format_weapon_details(u['weapon'])
