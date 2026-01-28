@@ -962,7 +962,7 @@ elif st.session_state.page == "army":
         else:
             st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
             for o in group["options"]:
-                if st.checkbox(f"{o['name']} (+{o['cost']} pts)", key=f"{unit['name']}_{group['group']}_{o['name']}"):
+                if st.radio(f"{o['name']} (+{o['cost']} pts)", key=f"{unit['name']}_{group['group']}_{o['name']}"):
                     if group["group"] not in selected_options:
                         selected_options[group["group"]] = []
                     if not any(opt.get("name") == o["name"] for opt in selected_options.get(group["group"], [])):
