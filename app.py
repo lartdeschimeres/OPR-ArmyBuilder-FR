@@ -11,7 +11,7 @@ import math
 # CONFIGURATION
 # ======================================================
 st.set_page_config(
-    page_title="OPR Army Forge FR",
+    page_title="OPR Army Forge FR - Simon Joinville Fouquet",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -56,16 +56,26 @@ st.markdown("""
         color: gold;
         font-weight: bold;
     }
-    .weapon-specs {
-        font-style: italic;
-        color: #666;
-    }
     .rule-badge {
         background-color: #e9ecef;
         padding: 2px 6px;
         border-radius: 4px;
         margin-right: 5px;
         font-size: 12px;
+    }
+    .weapon-info {
+        font-style: normal;
+        color: #333;
+    }
+    .mount-info {
+        font-style: normal;
+        color: #333;
+    }
+    .role-improvement {
+        background-color: #f0f2f6;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -967,7 +977,8 @@ def main():
                 # Gestion différente pour les héros et les unités
                 if unit.get("type") == "hero" and group["group"] == "Améliorations de rôle":
                     # Pour les héros: boutons radio (choix unique)
-                    option_names = ["Aucune amélioration"]
+                    st.markdown('<div class="role-improvement">', unsafe_allow_html=True)
+                    option_names = ["Aucune amélioration de rôle"]
                     option_map = {}
 
                     for o in group["options"]:
@@ -976,19 +987,22 @@ def main():
 
                     key = f"{unit['name']}_{group['group']}_hero"
 
+                    # Initialisation de la sélection
                     if key not in st.session_state:
-                        st.session_state[key] = "Aucune amélioration"
+                        st.session_state[key] = option_names[0]
 
                     selected_option = st.radio(
-                        f"Amélioration {group['group']}",
+                        "Sélectionnez une amélioration de rôle (choix unique)",
                         option_names,
-                        key=key
+                        key=key,
+                        horizontal=False
                     )
 
-                    if selected_option != "Aucune amélioration":
+                    if selected_option != option_names[0]:
                         opt = option_map[selected_option]
                         selected_options[group["group"]] = [opt]  # Un seul choix possible
                         upgrades_cost += opt["cost"]
+                    st.markdown('</div>', unsafe_allow_html=True)
                 else:
                     # Pour les unités: cases à cocher (choix multiples)
                     st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
