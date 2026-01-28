@@ -228,7 +228,7 @@ def format_mount_details(mount):
         if 'quality' in mount_data:
             details += f"Qua{mount_data['quality']}+"
         if 'defense' in mount_data:
-            details += f" Déf{mount_data['defense']}+"
+            details += f" Défense {mount_data['defense']}+"
         details += ")"
     if 'special_rules' in mount_data and mount_data['special_rules']:
         details += " | " + ", ".join(mount_data['special_rules'])
@@ -924,40 +924,16 @@ def main():
                             selected_options[group["group"]] = []
                         selected_options[group["group"]].append(opt)
                         upgrades_cost += opt["cost"]
-               else:
-                    # --- HÉROS : une seule amélioration possible (radio)
-                    if unit.get("type") == "hero":
-                        options_labels = ["Aucune amélioration"]
-                        options_map = {}
-                
-                        for o in group["options"]:
-                            label = f"{o['name']} (+{o['cost']} pts)"
-                            options_labels.append(label)
-                            options_map[label] = o
-
-                        selected_label = st.radio(
-                            "Choisir une amélioration",
-                            options_labels,
-                            key=f"{unit['name']}_{group['group']}_radio"
-                        )
-
-                        if selected_label != "Aucune amélioration":
-                            selected_options[group["group"]] = [options_map[selected_label]]
-                            upgrades_cost += options_map[selected_label]["cost"]
-
-                    # --- UNITÉS NORMALES : choix multiples (checkbox)
-                    else:
-                        st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
-                        for o in group["options"]:
-                            if st.checkbox(
-                             f"{o['name']} (+{o['cost']} pts)",
-                              key=f"{unit['name']}_{group['group']}_{o['name']}"
-                            ):
-                                if group["group"] not in selected_options:
-                                    selected_options[group["group"]] = []
-                                if not any(opt.get("name") == o["name"] for opt in selected_options.get(group["group"], [])):
-                                    selected_options[group["group"]].append(o)
-                                    upgrades_cost += o["cost"]
+                else:
+                    # Pour les unités: checkbox (choix multiples)
+                    st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
+                    for o in group["options"]:
+                        if st.checkbox(f"{o['name']} (+{o['cost']} pts)", key=f"{unit['name']}_{group['group']}_{o['name']}"):
+                            if group["group"] not in selected_options:
+                                selected_options[group["group"]] = []
+                            if not any(opt.get("name") == o["name"] for opt in selected_options.get(group["group"], [])):
+                                selected_options[group["group"]].append(o)
+                                upgrades_cost += o["cost"]
 
         # Calcul du coût final et de la taille (sans doublage)
         final_cost = base_cost + weapon_cost + mount_cost + upgrades_cost
