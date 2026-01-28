@@ -560,28 +560,31 @@ th {{
                     <div class="special-rules-column">
                 """
 
-                # Diviser les règles en deux colonnes
+                # Diviser les règles en deux colonnes de longueur égale
                 half = len(all_rules) // 2
-                for i, rule in enumerate(all_rules):
-                    if i < half:
-                        html += f"""
-                        <div><strong>{esc(rule)}:</strong> {esc(faction_rules[rule])}</div>
-                        """
-                    else:
-                        if i == half:
-                            html += """
-                            </div>
-                            <div class="special-rules-column">
-                            """
-                        html += f"""
-                        <div><strong>{esc(rule)}:</strong> {esc(faction_rules[rule])}</div>
-                        """
+                if len(all_rules) % 2 != 0:
+                    half += 1  # Ajouter une règle à la première colonne si le nombre est impair
+
+                # Première colonne
+                html += '<div class="special-rules-column">'
+                for rule in all_rules[:half]:
+                    html += f"""
+                    <div><strong>{esc(rule)}:</strong> {esc(faction_rules[rule])}</div>
+                    """
+                html += '</div>'
+
+                # Deuxième colonne
+                html += '<div class="special-rules-column">'
+                for rule in all_rules[half:]:
+                    html += f"""
+                    <div><strong>{esc(rule)}:</strong> {esc(faction_rules[rule])}</div>
+                    """
+                html += '</div>'
 
                 html += """
-                    </div>
                 </div>
                 """
-
+            
     html += """
 </div>
 </body>
