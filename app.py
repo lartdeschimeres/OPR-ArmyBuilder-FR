@@ -229,10 +229,10 @@ def format_mount_details(mount):
 def format_unit_option(u):
     name_part = f"{u['name']}"
     if u.get('type') == "hero":
-        name_part += " [1]"
+        name_part += " [1]"  # Les héros ont toujours un effectif de 1
     else:
         base_size = u.get('size', 10)
-        name_part += f" [{base_size}]"
+        name_part += f" [{base_size}]"  # Les unités ont leur effectif de base
     qua_def = f"Qua {u['quality']}+ / Déf {u.get('defense', '?')}"
     coriace = get_coriace_from_rules(u.get('special_rules', []))
     if 'mount' in u and u['mount']:
@@ -975,10 +975,9 @@ elif st.session_state.page == "army":
     final_cost = core_cost + upgrades_cost + mount_cost
     unit_size = base_size * multiplier
     if unit.get("type") == "hero":
-        st.markdown("**Taille finale : 1** (héros)")
+        st.markdown("**Effectif final : [1]** (héros)")
     else:
-        label = "doublée" if double_size else "standard"
-        st.markdown(f"**Taille finale : {unit_size}** ({label})")
+        st.markdown(f"**Effectif final : [{unit_size}]**")
     if st.button("Ajouter à l'armée"):
         try:
             weapon_data = format_weapon_details(weapon)
@@ -1039,7 +1038,7 @@ elif st.session_state.page == "army":
             qua_def_coriace = f"Qua {u['quality']}+ / Déf {u['defense']}+"
             if u.get("coriace"):
                 qua_def_coriace += f" / Coriace {u['coriace']}"
-            unit_header = f"### {u['name']} [{u.get('size', 1)}] ({u['cost']} pts) | {qua_def_coriace}"
+            unit_header = f"### {u['name']} [{u.get('size', 1) if u.get('type') != 'hero' else 1}] ({u['cost']} pts) | {qua_def_coriace}"
             if u.get("type") == "hero":
                 unit_header += " | 🌟 Héros"
             st.markdown(unit_header)
