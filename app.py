@@ -283,6 +283,9 @@ def export_html(army_list, army_name, army_limit):
     def esc(txt):
         return str(txt).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
+    # Trier la liste pour afficher les héros en premier
+    sorted_army_list = sorted(army_list, key=lambda x: 0 if x.get("type") == "hero" else 1)
+
     html = f"""
 <!DOCTYPE html>
 <html lang="fr">
@@ -326,15 +329,16 @@ body {{
 .unit-card {{
   background: var(--bg-card);
   border: 1px solid var(--border);
-  margin-bottom: 40px;  /* Espacement de 2 lignes entre les unités */
+  margin-bottom: 40px;
   padding: 16px;
+  page-break-inside: avoid;  /* Évite la coupure d'une unité sur plusieurs pages */
 }}
 
 .unit-header {{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-header);
+  background: var(--bg-header;
   padding: 10px 14px;
   margin: -16px -16px 12px -16px;
 }}
@@ -432,11 +436,11 @@ th {{
 <div class="army">
   <!-- Titre de la liste -->
   <div class="army-title">
-    {esc(army_name)} - {sum(unit['cost'] for unit in army_list)}/{army_limit} pts - {st.session_state.game}
+    {esc(army_name)} - {sum(unit['cost'] for unit in sorted_army_list)}/{army_limit} pts - {st.session_state.game}
   </div>
 """
 
-    for unit in army_list:
+    for unit in sorted_army_list:
         name = esc(unit.get("name", "Unité"))
         cost = unit.get("cost", 0)
         quality = esc(unit.get("quality", "-"))
@@ -542,8 +546,8 @@ th {{
 
         html += "</section>"
 
-    # ---- RÈGLES SPÉCIALES DE L'ARMÉE (en deux colonnes UNIQUEMENT) ----
-    if army_list and 'faction' in st.session_state:
+    # ---- RÈGLES SPÉCIALES DE L'ARMÉE (en deux colonnes) ----
+    if sorted_army_list and 'faction' in st.session_state:
         faction_data = factions_by_game.get(st.session_state.game, {}).get(st.session_state.faction, {})
         if 'special_rules_descriptions' in faction_data:
             faction_rules = faction_data['special_rules_descriptions']
