@@ -542,22 +542,21 @@ th {{
 
         html += "</section>"
 
-    # ---- RÈGLES SPÉCIALES DE L'ARMÉE (en deux colonnes) ----
+    # ---- RÈGLES SPÉCIALES DE L'ARMÉE (en deux colonnes UNIQUEMENT) ----
     if army_list and 'faction' in st.session_state:
         faction_data = factions_by_game.get(st.session_state.game, {}).get(st.session_state.faction, {})
         if 'special_rules_descriptions' in faction_data:
             faction_rules = faction_data['special_rules_descriptions']
-
-            # Utiliser TOUTES les règles spéciales de la faction
             all_rules = sorted(faction_rules.keys())
 
             if all_rules:
                 html += """
-                <div class="special-rules-title">
-                    Légende des règles spéciales de la faction
-                </div>
-                <div style="display: flex; flex-wrap: wrap; margin-top: 20px;">
-                    <div style="flex: 1; min-width: 300px; padding-right: 15px;">
+                <div style="margin-top: 40px;">
+                    <h3 style="text-align: center; color: var(--accent); border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 15px;">
+                        Légende des règles spéciales de la faction
+                    </h3>
+                    <div style="display: flex; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 300px; padding-right: 15px;">
                 """
 
                 # Diviser les règles en deux colonnes de longueur égale
@@ -574,8 +573,8 @@ th {{
                     """
 
                 html += """
-                    </div>
-                    <div style="flex: 1; min-width: 300px; padding-left: 15px;">
+                        </div>
+                        <div style="flex: 1; min-width: 300px; padding-left: 15px;">
                 """
 
                 # Deuxième colonne
@@ -587,10 +586,11 @@ th {{
                     """
 
                 html += """
+                        </div>
                     </div>
                 </div>
                 """
-                    
+
     html += """
 </div>
 </body>
