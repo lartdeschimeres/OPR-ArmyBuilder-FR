@@ -326,7 +326,7 @@ body {{
 .unit-card {{
   background: var(--bg-card);
   border: 1px solid var(--border);
-  margin-bottom: 40px;
+  margin-bottom: 40px;  /* Espacement de 2 lignes entre les unités */
   padding: 16px;
 }}
 
@@ -398,6 +398,33 @@ th {{
   margin-top: 10px;
   margin-bottom: 5px;
   color: var(--text-main);
+}}
+
+.special-rules-title {{
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 40px;
+  margin-bottom: 15px;
+  color: var(--accent);
+  text-align: center;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}}
+
+.special-rules-container {{
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px;
+  margin-bottom: 20px;
+}}
+
+.special-rules-column {{
+  flex: 1;
+  padding: 0 10px;
+}}
+
+.special-rules-column div {{
+  margin-bottom: 8px;
 }}
 </style>
 </head>
@@ -510,77 +537,68 @@ th {{
                     if weapon_details['special']:
                         html += ", " + ", ".join(weapon_details['special'])
                     html += ")"
-            # Collecter toutes les règles spéciales de la faction
-faction_rules = {}
-if army_list and 'faction' in st.session_state:
-    faction_data = factions_by_game.get(st.session_state.game, {}).get(st.session_state.faction, {})
-    if 'special_rules_descriptions' in faction_data:
-        faction_rules = faction_data['special_rules_descriptions']
 
-# Collecter les règles spéciales utilisées dans l'armée
-used_rules = set()
-for unit in army_list:
-    if 'rules' in unit:
-        used_rules.update(unit['rules'])
-    if 'weapon' in unit and 'special_rules' in unit['weapon']:
-        used_rules.update(unit['weapon']['special_rules'])
-    if 'mount' in unit and unit['mount']:
-        mount_data = unit['mount']['mount'] if 'mount' in unit['mount'] else unit['mount']
-        if 'special_rules' in mount_data:
-            used_rules.update(mount_data['special_rules'])
-
-# Afficher les règles spéciales de l'armée en deux colonnes
-if used_rules and faction_rules:
-    html += """
-    <div style="margin-top: 40px; font-size: 12px;">
-        <h3 style="text-align: center; color: var(--accent); border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 15px;">
-            Légende des règles spéciales de l'armée
-        </h3>
-        <div style="display: flex; flex-wrap: wrap;">
-    """
-
-    # Diviser les règles en deux colonnes
-    rules_list = sorted(used_rules)
-    half = len(rules_list) // 2
-
-    # Première colonne
-    html += "<div style='flex: 1; padding-right: 10px;'>"
-    for rule in rules_list[:half]:
-        description = faction_rules.get(rule, "Description non disponible")
-        html += f"""
-        <div style="margin-bottom: 8px;">
-            <strong>{esc(rule)}:</strong> {esc(description)}
-        </div>
-        """
-    html += "</div>"
-
-    # Deuxième colonne
-    html += "<div style='flex: 1; padding-left: 10px;'>"
-    for rule in rules_list[half:]:
-        description = faction_rules.get(rule, "Description non disponible")
-        html += f"""
-        <div style="margin-bottom: 8px;">
-            <strong>{esc(rule)}:</strong> {esc(description)}
-        </div>
-        """
-    html += "</div>"
-
-    html += """
-        </div>
-    </div>
-    """
             html += "</div>"
 
-    html += """
-</section>
-"""
+        html += "</section>"
+
+    # ---- RÈGLES SPÉCIALES DE L'ARMÉE (en deux colonnes) ----
+    if army_list and 'faction' in st.session_state:
+        faction_data = factions_by_game.get(st.session_state.game, {}).get(st.session_state.faction, {})
+        if 'special_rules_descriptions' in faction_data:
+            faction_rules = faction_rules = faction_data['special_rules_descriptions']
+
+            # Collecter les règles utilisées dans l'armée
+            used_rules = set()
+            for unit in army_list:
+                if 'rules' in unit:
+                    used_rules.update(unit['rules'])
+                if 'weapon' in unit and 'special_rules' in unit['weapon']:
+                    used_rules.update(unit['weapon']['special_rules'])
+                if 'mount' in unit and unit['mount']:
+                    mount_data = unit['mount']['mount'] if 'mount' in unit['mount'] else unit['mount']
+                    if 'special_rules' in mount_data:
+                        used_rules.update(mount_data['special_rules'])
+
+            # Filtrer les règles utilisées et existantes dans faction_rules
+            used_rules = [rule for rule in used_rules if rule in faction_rules]
+
+            if used_rules:
+                html += """
+                <div class="special-rules-title">
+                    Légende des règles spéciales de l'armée
+                </div>
+                <div class="special-rules-container">
+                    <div class="special-rules-column">
+                """
+
+                # Diviser les règles en deux colonnes
+                half = len(used_rules) // 2
+                for i, rule in enumerate(used_rules):
+                    if i < half:
+                        html += f"""
+                        <div><strong>{esc(rule)}:</strong> {esc(faction_rules[rule])}</div>
+                        """
+                    else:
+                        if i == half:
+                            html += """
+                            </div>
+                            <div class="special-rules-column">
+                            """
+                        html += f"""
+                        <div><strong>{esc(rule)}:</strong> {esc(faction_rules[rule])}</div>
+                        """
+
+                html += """
+                    </div>
+                </div>
+                """
 
     html += """
 </div>
 </body>
 </html>
 """
-
     return html
 
 # ======================================================
