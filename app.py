@@ -287,13 +287,13 @@ def export_html(army_list, army_name, army_limit):
 <title>OPR Army List</title>
 <style>
 :root {
-  --bg-main: #ffffff;  <!-- Fond blanc -->
-  --bg-card: #f8f9fa;  <!-- Fond des cartes légèrement gris clair -->
-  --bg-header: #e9ecef;  <!-- Fond des en-têtes légèrement gris clair -->
+  --bg-main: #2e2f2b;
+  --bg-card: #3a3c36;
+  --bg-header: #1f201d;
   --accent: #9fb39a;
   --accent-soft: #6e7f6a;
-  --text-main: #212529;  <!-- Texte noir pour un meilleur contraste sur fond blanc -->
-  --text-muted: #6c757d;  <!-- Texte gris pour les éléments secondaires -->
+  --text-main: #e6e6e6;
+  --text-muted: #b0b0b0;
   --border: #555;
 }
 body {
