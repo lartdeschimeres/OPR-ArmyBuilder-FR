@@ -11,7 +11,7 @@ import math
 # CONFIGURATION
 # ======================================================
 st.set_page_config(
-    page_title="OPR Army Forge FR - Simon Joinville Fouquet",
+    page_title="OPR Army Forge FR",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -900,7 +900,7 @@ def main():
             unsafe_allow_html=True
         )
 
-        if st.button("⬅ Retour à la page 1"):
+        if st.button("⬅ Retour à la page de configuration"):
             st.session_state.page = "setup"
             st.rerun()
 
@@ -975,7 +975,7 @@ def main():
 
             else:
                 # Gestion différente pour les héros et les unités
-                if unit.get("type") == "hero" and group["group"] == "Améliorations de rôle":
+                if unit.get("type") == "hero":
                     # Pour les héros: boutons radio (choix unique)
                     st.markdown('<div class="role-improvement">', unsafe_allow_html=True)
                     option_names = ["Aucune amélioration de rôle"]
@@ -1003,16 +1003,45 @@ def main():
                         selected_options[group["group"]] = [opt]  # Un seul choix possible
                         upgrades_cost += opt["cost"]
                     st.markdown('</div>', unsafe_allow_html=True)
-                else:
-                    # Pour les unités: cases à cocher (choix multiples)
-                    st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
-                    for o in group["options"]:
-                        if st.checkbox(f"{o['name']} (+{o['cost']} pts)", key=f"{unit['name']}_{group['group']}_{o['name']}"):
-                            if group["group"] not in selected_options:
-                                selected_options[group["group"]] = []
-                            if not any(opt.get("name") == o["name"] for opt in selected_options.get(group["group"], [])):
-                                selected_options[group["group"]].append(o)
-                                upgrades_cost += o["cost"]
+               else:
+    # Gestion différente pour les héros et les unités
+    st.write("DEBUG type unité:", unit.get("type"))
+    if unit.get("type") == "hero":
+        # 🔥 HÉROS = UN SEUL CHOIX PAR GROUPE (radio)
+        option_names = ["Aucune amélioration"]
+        option_map = {}
+
+        for o in group["options"]:
+            label = f"{o['name']} (+{o['cost']} pts)"
+            option_names.append(label)
+            option_map[label] = o
+
+        key = f"hero_{unit['name']}_{group['group']}"
+
+        selected_option = st.radio(
+            f"{group['group']} (choix unique)",
+            option_names,
+            key=key
+        )
+
+        if selected_option != "Aucune amélioration":
+            opt = option_map[selected_option]
+            selected_options[group["group"]] = [opt]
+            upgrades_cost += opt["cost"]
+
+    else:
+        # 🔧 UNITÉS = CHOIX MULTIPLES (checkbox)
+        st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
+        for o in group["options"]:
+            if st.checkbox(
+                f"{o['name']} (+{o['cost']} pts)",
+                key=f"{unit['name']}_{group['group']}_{o['name']}"
+            ):
+                if group["group"] not in selected_options:
+                    selected_options[group["group"]] = []
+                if not any(opt["name"] == o["name"] for opt in selected_options[group["group"]]):
+                    selected_options[group["group"]].append(o)
+                    upgrades_cost += o["cost"] 
 
         # Calcul du coût final et de la taille (sans doublage)
         final_cost = base_cost + weapon_cost + mount_cost + upgrades_cost
