@@ -89,7 +89,7 @@ GAME_CONFIG = {
 def check_hero_limit(army_list, army_points, game_config):
     if game_config.get("hero_limit"):
         max_heroes = math.floor(army_points / game_config["hero_limit"])
-        hero_count = sum(1 for unit in army_list if unit.get("type") == "hero")
+        hero_count = sum(1 for unit in army_list if unit.get("type", "").lower() == "hero":
         if hero_count > max_heroes:
             st.error(f"Limite de héros dépassée! Maximum autorisé: {max_heroes} (1 héros par {game_config['hero_limit']} pts)")
             return False
@@ -101,7 +101,7 @@ def check_unit_copy_rule(army_list, army_points, game_config):
         max_copies = 1 + x_value
         unit_counts = {}
         for unit in army_list:
-            if unit.get("type") == "hero":
+            if unit.get("type", "").lower() == "hero":
                 continue
             unit_name = unit["name"]
             if unit_name in unit_counts:
@@ -449,7 +449,7 @@ th {{
 
         # Détermine l'effectif à afficher
         unit_size = unit.get("size", 10)
-        if unit.get("type") == "hero":
+        if unit.get("type", "").lower() == "hero":
             unit_size = 1  # Les héros ont toujours un effectif de 1
 
         html += f"""
@@ -971,7 +971,7 @@ elif st.session_state.page == "army":
 
 # Nettoyage de l'état Streamlit pour éviter l'affichage du doublage chez les héros
     double_key = f"double_{unit['name']}"
-    if unit.get("type") == "hero" and double_key in st.session_state:
+    if unit.get("type", "").lower() == "hero": and double_key in st.session_state:
         del st.session_state[double_key]    
     
 # Doublage des effectifs (UNIQUEMENT pour les unités, PAS pour les héros)
@@ -992,7 +992,7 @@ elif st.session_state.page == "army":
     final_cost = core_cost + upgrades_cost + mount_cost
     unit_size = base_size * multiplier
 
-    if unit.get("type") == "hero":
+    if unit.get("type", "").lower() == "hero":
         st.markdown("**Effectif final : [1]** (héros)")
     else:
         label = "combinée" if double_size else "standard"
