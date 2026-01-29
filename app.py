@@ -96,26 +96,27 @@ def check_hero_limit(army_list, army_points, game_config):
     return True
 
 def check_unit_copy_rule(army_list, army_points, game_config):
-    if game_config.get("unit_copy_rule"):
-        x_value = math.floor(army_points / game_config["unit_copy_rule"])
-        max_copies = 1 + x_value
-        unit_counts = {}
-        for unit in army_list:
-            for unit in army_list:
-                unit_name = unit["name"]
-                if unit_name in unit_counts:
-                    unit_counts[unit_name] += 1
-                else:
-                    unit_counts[unit_name] = 1
-            unit_name = unit["name"]
-            if unit_name in unit_counts:
-                unit_counts[unit_name] += 1
-            else:
-                unit_counts[unit_name] = 1
-        for unit_name, count in unit_counts.items():
-            if count > max_copies:
-                st.error(f"Trop de copies de l'unité {unit_name}! Maximum autorisé: {max_copies} (1+{x_value} pour {game_config['unit_copy_rule']} pts)")
-                return False
+    if not game_config.get("unit_copy_rule"):
+        return True
+
+    x_value = math.floor(army_points / game_config["unit_copy_rule"])
+    max_copies = 1 + x_value
+
+    unit_counts = {}
+
+    for unit in army_list:
+        name = unit["name"]
+        unit_counts[name] = unit_counts.get(name, 0) + 1
+
+    for unit_name, count in unit_counts.items():
+        if count > max_copies:
+            st.error(
+                f"Trop de copies de l'unité {unit_name}! "
+                f"Maximum autorisé: {max_copies} "
+                f"(1+{x_value} pour {game_config['unit_copy_rule']} pts)"
+            )
+            return False
+
     return True
 
 def check_unit_max_cost(army_list, army_points, game_config, new_unit_cost=None):
