@@ -346,10 +346,12 @@ body {{
   margin: 0;
   padding: 20px;
 }}
+
 .army {{
   max-width: 1100px;
   margin: auto;
 }}
+
 .army-title {{
   text-align: center;
   font-size: 24px;
@@ -359,13 +361,15 @@ body {{
   border-bottom: 1px solid var(--border);
   padding-bottom: 10px;
 }}
+
 .unit-card {{
   background: var(--bg-card);
   border: 1px solid var(--border);
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   padding: 16px;
-  page-break-inside: avoid;
+  page-break-inside: avoid;  /* Évite la coupure d'une unité sur plusieurs pages */
 }}
+
 .unit-header {{
   display: flex;
   justify-content: space-between;
@@ -374,17 +378,21 @@ body {{
   padding: 10px 14px;
   margin: -16px -16px 12px -16px;
 }}
+
 .unit-header h2 {{
   margin: 0;
   font-size: 18px;
   color: var(--accent);
 }}
+
 .cost {{
   font-weight: bold;
 }}
+
 .stats {{
   margin-bottom: 10px;
 }}
+
 .stats span {{
   display: inline-block;
   background: var(--accent-soft);
@@ -394,6 +402,7 @@ body {{
   font-size: 12px;
   font-weight: bold;
 }}
+
 table {{
   width: 100%;
   border-collapse: collapse;
@@ -401,46 +410,67 @@ table {{
   font-size: 12px;
   border: 1px solid var(--border);
 }}
+
 th, td {{
   border: 1px solid var(--border);
   padding: 6px;
   text-align: left;
 }}
+
 th {{
   background: var(--bg-header);
   color: var(--text-main);
 }}
+
 .rules {{
   margin-top: 10px;
   font-size: 12px;
 }}
+
 .rules span {{
   display: inline-block;
   margin-right: 8px;
   color: var(--accent);
 }}
+
 .section-title {{
   font-weight: bold;
   margin-top: 10px;
   margin-bottom: 5px;
   color: var(--text-main);
 }}
-.hero-badge {{
-  color: var(--accent);
+
+.special-rules-title {{
+  font-size: 18px;
   font-weight: bold;
+  margin-top: 40px;
+  margin-bottom: 15px;
+  color: var(--accent);
+  text-align: center;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
 }}
-.rule-badge {{
-  background-color: var(--accent-soft);
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-right: 5px;
+
+.special-rules-container {{
+  display: flex;
+  flex-wrap: wrap;
   font-size: 12px;
-  color: #000;
+  margin-bottom: 20px;
+}}
+
+.special-rules-column {{
+  flex: 1;
+  padding: 0 10px;
+}}
+
+.special-rules-column div {{
+  margin-bottom: 8px;
 }}
 </style>
 </head>
 <body>
 <div class="army">
+  <!-- Titre de la liste -->
   <div class="army-title">
     {esc(army_name)} - {sum(unit['cost'] for unit in sorted_army_list)}/{army_limit} pts - {st.session_state.game}
   </div>
@@ -453,17 +483,15 @@ th {{
         defense = esc(unit.get("defense", "-"))
         coriace = unit.get("coriace")
 
+        # Détermine l'effectif à afficher
         unit_size = unit.get("size", 10)
         if unit.get("type") == "hero":
-            unit_size = 1
+            unit_size = 1  # Les héros ont toujours un effectif de 1
 
         html += f"""
 <section class="unit-card">
   <div class="unit-header">
-    <h2>{name} [{unit_size}]"""
-        if unit.get("type") == "hero":
-            html += '<span class="hero-badge"> 🌟 Héros</span>'
-        html += f"""</h2>
+    <h2>{name} [{unit_size}]</h2>
     <span class="cost">{cost} pts</span>
   </div>
 
@@ -488,10 +516,7 @@ th {{
 <table>
 <thead>
 <tr>
-  <th>Arme</th>
-  <th>Att</th>
-  <th>PA</th>
-  <th>Règles spéciales</th>
+  <th>Arme</th><th>Port</th><th>Att</th><th>PA</th><th>Règles spéciales</th>
 </tr>
 </thead>
 <tbody>
@@ -500,6 +525,7 @@ th {{
                 html += f"""
 <tr>
   <td>{esc(w.get('name', '-'))}</td>
+  <td>{esc(w.get('range', '-'))}</td>
   <td>{esc(w.get('attacks', '-'))}</td>
   <td>{esc(w.get('ap', '-'))}</td>
   <td>{esc(", ".join(w.get('special', [])) if w.get('special') else '-')}</td>
@@ -513,7 +539,7 @@ th {{
             html += '<div class="section-title">Règles spéciales :</div>'
             html += "<div class='rules'>"
             for r in rules:
-                html += f"<span class='rule-badge'>{esc(r)}</span>"
+                html += f"<span>{esc(r)}</span>"
             html += "</div>"
 
         # ---- OPTIONS ----
@@ -527,7 +553,7 @@ th {{
                         html += f"{esc(opt.get('name', ''))}, "
                     html += "</div>"
 
-        # ---- MONTURE ----
+        # ---- MONTURE (pour les héros) ----
         mount = unit.get("mount")
         if mount:
             mount_name = esc(mount.get("name", "Monture non nommée"))
@@ -552,7 +578,7 @@ th {{
             if 'weapons' in mount_data and mount_data['weapons']:
                 for weapon in mount_data['weapons']:
                     weapon_details = format_weapon_details(weapon)
-                    html += f" | {weapon.get('name', 'Arme')} (A{weapon_details['attacks']}, PA({weapon_details['ap']})"
+                    html += f" | {weapon.get('name', 'Arme')} (Att{weapon_details['attacks']}, PA({weapon_details['ap']})"
                     if weapon_details['special']:
                         html += ", " + ", ".join(weapon_details['special'])
                     html += ")"
@@ -561,13 +587,62 @@ th {{
 
         html += "</section>"
 
+    # ---- RÈGLES SPÉCIALES DE L'ARMÉE (en deux colonnes) ----
+    if sorted_army_list and 'faction' in st.session_state:
+        faction_data = factions_by_game.get(st.session_state.game, {}).get(st.session_state.faction, {})
+        if 'special_rules_descriptions' in faction_data:
+            faction_rules = faction_data['special_rules_descriptions']
+            all_rules = sorted(faction_rules.keys())
+
+            if all_rules:
+                html += """
+                <div style="margin-top: 40px;">
+                    <h3 style="text-align: center; color: var(--accent); border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 15px;">
+                        Légende des règles spéciales de la faction
+                    </h3>
+                    <div style="display: flex; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 300px; padding-right: 15px;">
+                """
+
+                # Diviser les règles en deux colonnes de longueur égale
+                half = len(all_rules) // 2
+                if len(all_rules) % 2 != 0:
+                    half += 1  # Ajouter une règle à la première colonne si le nombre est impair
+
+                # Première colonne
+                for rule in all_rules[:half]:
+                    html += f"""
+                    <div style="margin-bottom: 8px; font-size: 12px;">
+                        <strong>{esc(rule)}:</strong> {esc(faction_rules[rule])}
+                    </div>
+                    """
+
+                html += """
+                        </div>
+                        <div style="flex: 1; min-width: 300px; padding-left: 15px;">
+                """
+
+                # Deuxième colonne
+                for rule in all_rules[half:]:
+                    html += f"""
+                    <div style="margin-bottom: 8px; font-size: 12px;">
+                        <strong>{esc(rule)}:</strong> {esc(faction_rules[rule])}
+                    </div>
+                    """
+
+                html += """
+                        </div>
+                    </div>
+                </div>
+                """
+
     html += """
 </div>
 </body>
 </html>
 """
     return html
-
+    
 # ======================================================
 # LOCAL STORAGE
 # ======================================================
