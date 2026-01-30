@@ -822,8 +822,6 @@ if st.session_state.page == "setup":
     if uploaded is not None:
         try:
             data = json.load(uploaded)
-
-            # Vérification minimale
             required_keys = {"game", "faction", "army_list", "points"}
             if not required_keys.issubset(data.keys()):
                 st.error("❌ Fichier JSON invalide ou incomplet")
@@ -835,18 +833,12 @@ if st.session_state.page == "setup":
                 st.session_state.army_list = data["army_list"]
                 st.session_state.army_cost = data.get("total_cost", 0)
 
-                # Recharger les unités de la faction
                 factions_by_game, _ = load_factions()
-                st.session_state.units = factions_by_game[
-                    st.session_state.game
-                ][
-                    st.session_state.faction
-                ]["units"]
+                st.session_state.units = factions_by_game[st.session_state.game][st.session_state.faction]["units"]
 
                 st.session_state.page = "army"
                 st.success("✅ Liste chargée avec succès")
                 st.rerun()
-
         except Exception as e:
             st.error(f"❌ Erreur lors du chargement : {e}")
 
@@ -857,83 +849,100 @@ if st.session_state.page == "setup":
 
     st.subheader("🎮 Choisis ton jeu")
 
-    # CSS supplémentaire pour les cartes de jeu
+    # CSS pour les cartes de jeu
     st.markdown("""
     <style>
+        .game-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
         .game-card {
-            border: 2px solid transparent;
+            flex: 1 1 200px;
+            min-height: 250px;
+            border: 2px solid #ddd;
             border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 15px;
+            overflow: hidden;
             transition: all 0.3s ease;
-            text-align: center;
             cursor: pointer;
+            background: white;
+            position: relative;
         }
         .game-card:hover {
-            border-color: #4a90e2;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
         }
         .game-card.selected {
-            border-color: #2a7fd1;
-            background-color: #f0f7ff;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 2px rgba(74,144,226,0.2);
         }
         .game-image {
             width: 100%;
-            border-radius: 6px;
-            margin-bottom: 8px;
+            height: 180px;
+            object-fit: cover;
+            display: block;
         }
         .game-title {
+            padding: 10px;
+            text-align: center;
             font-weight: bold;
-            color: #2c3e50;
+            background: white;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        .no-image {
+            height: 180px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
         }
     </style>
     """, unsafe_allow_html=True)
 
-    # Création des colonnes pour les cartes de jeu
-    game_cols = st.columns(3)
+    # Conteneur pour les cartes de jeu
+    st.markdown('<div class="game-selector">', unsafe_allow_html=True)
 
-    # Variable pour suivre le jeu sélectionné
-    current_game = st.session_state.get("game")
-
-    # Affichage des cartes de jeu cliquables
-    for i, game_name in enumerate(games):
+    # Affichage des cartes de jeu
+    for game_name in games:
         card = GAME_CARDS.get(game_name)
-        is_selected = current_game == game_name
+        is_selected = st.session_state.get("game") == game_name
 
-        with game_cols[i % 3]:
-            # Conteneur cliquable pour la carte
-            container = st.container()
-
+        # Conteneur pour chaque carte
+        with st.container():
             # Utilisation de HTML pour créer une carte cliquable
-            with container:
-                if st.button("", key=f"game_select_{game_name}"):
-                    st.session_state.game = game_name
-                    st.rerun()
+            html_content = f"""
+            <div class="game-card {'selected' if is_selected else ''}"
+                 onclick="document.getElementById('game_{game_name.replace(' ', '_')}').click()">
+            """
 
-                # Style CSS dynamique en fonction de la sélection
-                card_style = f"""
-                <style>
-                    #game-card-{game_name.replace(" ", "-")} {{
-                        border: 2px solid {'#2a7fd1' if is_selected else 'transparent'};
-                        background-color: {'#f0f7ff' if is_selected else 'transparent'};
-                        border-radius: 8px;
-                        padding: 10px;
-                        margin-bottom: 15px;
-                        transition: all 0.3s ease;
-                        text-align: center;
-                    }}
-                </style>
-                """
+            # Image ou placeholder
+            if card and card.get("image") and card["image"].exists():
+                image_path = str(card["image"].absolute())
+                html_content += f'<img src="file:///{image_path}" class="game-image">'
+            else:
+                html_content += f'<div class="no-image">Image manquante</div>'
 
-                st.markdown(card_style, unsafe_allow_html=True)
+            # Titre du jeu
+            html_content += f'<div class="game-title">{game_name}</div>'
 
-                # Contenu de la carte
-                st.markdown(f"""
-                <div id="game-card-{game_name.replace(" ", "-")}" onclick="document.getElementById('game_select_{game_name}').click()">
-                    {f'<img src="file://{card["image"]}" class="game-image" style="width:100%; border-radius:6px; margin-bottom:8px;">' if card and card.get("image") and card["image"].exists() else '<div style="height:150px; background:#eee; border-radius:6px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; color:#666;">Image manquante</div>'}
-                    <div class="game-title">{game_name}</div>
-                </div>
-                """, unsafe_allow_html=True)
+            # Bouton caché pour la sélection
+            html_content += f"""
+            </div>
+            """
+
+            st.markdown(html_content, unsafe_allow_html=True)
+
+            # Bouton réel (caché) pour la sélection
+            if st.button("", key=f"game_{game_name.replace(' ', '_')}"):
+                st.session_state.game = game_name
+                st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
     if "game" not in st.session_state or not st.session_state.game:
         st.info("⬆️ Sélectionne un jeu pour continuer")
@@ -953,7 +962,6 @@ if st.session_state.page == "setup":
     )
     list_name = st.text_input("Nom de la liste", f"Liste_{datetime.now().strftime('%Y%m%d')}")
 
-    # Bouton pour créer une nouvelle liste
     if st.button("Créer une nouvelle liste"):
         st.session_state.game = game
         st.session_state.faction = faction
@@ -964,6 +972,7 @@ if st.session_state.page == "setup":
         st.session_state.army_cost = 0
         st.session_state.page = "army"
         st.rerun()
+
 # ======================================================
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE
 # ======================================================
