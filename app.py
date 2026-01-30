@@ -48,6 +48,61 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# ======================================================
+# HEADER – Identité & Contexte (UX ArmyForge ++)
+# ======================================================
+with st.container():
+    st.markdown("""
+    <style>
+        .af-header {
+            background: linear-gradient(90deg, #1e1e1e, #2b2b2b);
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: #f0f0f0;
+        }
+        .af-title {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .af-sub {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .af-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .af-actions button {
+            margin-right: 8px;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    game = st.session_state.get("game", "—")
+    faction = st.session_state.get("faction", "—")
+    list_name = st.session_state.get("list_name", "Liste sans nom")
+    total = st.session_state.get("army_cost", 0)
+    limit = st.session_state.get("points", 0)
+
+    st.markdown(f"""
+    <div class="af-header">
+        <div class="af-row">
+            <div>
+                <div class="af-title">🛡 OPR Army Forge</div>
+                <div class="af-sub">🎲 {game} &nbsp;&nbsp;|&nbsp;&nbsp; 🏴‍☠️ {faction}</div>
+            </div>
+            <div class="af-sub">
+                📋 <b>{list_name}</b><br>
+                📊 <b>{total}</b> / {limit} pts
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
 # CSS personnalisé pour les expanders et l'interface
 st.markdown("""
 <style>
