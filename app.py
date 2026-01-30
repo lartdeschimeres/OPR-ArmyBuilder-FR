@@ -861,7 +861,7 @@ elif st.session_state.page == "army":
         """,
         unsafe_allow_html=True
     )
-    if st.button("⬅ Retour à la page 1"):
+    if st.button("⬅ Retour à la page Configuration"):
         st.session_state.page = "setup"
         st.rerun()
     st.title(st.session_state.list_name)
