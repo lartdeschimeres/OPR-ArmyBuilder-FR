@@ -855,30 +855,24 @@ if st.session_state.page == "setup":
         st.error("Aucun jeu trouvé")
         st.stop()
 
-    st.subheader("🎮 Choisis ton jeu")
+st.subheader("🎮 Choisis ton jeu")
 
-    if "game" not in st.session_state:
-        cols = st.columns(len(GAME_CARDS))
+cols = st.columns(3)
 
-        for col, (game_name, game_data) in zip(cols, GAME_CARDS.items()):
-            with col:
-                st.image(
-                    str(game_data["image"]),
-                    use_container_width=True
-                )
-                if st.button(
-                    game_name,
-                    key=f"select_{game_name}"
-                ):
-                    st.session_state.game = game_name
-                    st.rerun()
-        if "game" not in st.session_state:
-            st.info("⬆️ Sélectionne un jeu pour continuer")
-            st.stop()
+for i, game_name in enumerate(games):
+    img_path = f"assets/games/{GAME_CONFIG[game_name]['cover']}"
 
-        game = st.session_state.game
+    with cols[i % 3]:
+        st.image(img_path, use_container_width=True)
+        if st.button(game_name, key=f"game_{game_name}"):
+            st.session_state.game = game_name
+            st.rerun()
 
-    st.subheader("Choisis ton jeu")
+if "game" not in st.session_state:
+    st.info("⬆️ Sélectionne un jeu pour continuer")
+    st.stop()  
+
+st.subheader("Choisis ton jeu")
 
     cols = st.columns(3)
 
