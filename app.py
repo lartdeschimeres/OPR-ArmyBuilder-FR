@@ -998,6 +998,16 @@ if st.session_state.page == "setup":
         st.session_state.page = "army"
         st.rerun()
 
+    st.divider()
+
+    st.markdown("### 🚀 Étape suivante")
+
+    st.info("Tu pourras ajouter, modifier et exporter ton armée à l’étape suivante.")
+
+    if st.button("➡️ Construire l’armée", type="primary", use_container_width=True):
+        st.session_state.page = "army"
+        st.rerun()
+        
 # ======================================================
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE
 # ======================================================
