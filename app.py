@@ -612,47 +612,6 @@ th {{
 """
     return html
 
-
-# ======================================================
-# LOCAL STORAGE
-# ======================================================
-def ls_get(key):
-    try:
-        unique_key = f"{key}_{hashlib.md5(str(datetime.now().timestamp()).encode()).hexdigest()[:8]}"
-        st.markdown(
-            f"""
-            <script>
-            const value = localStorage.getItem("{key}");
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.id = "{unique_key}";
-            input.value = value || "";
-            document.body.appendChild(input);
-            </script>
-            """,
-            unsafe_allow_html=True
-        )
-        return st.text_input("", key=unique_key, label_visibility="collapsed")
-    except Exception as e:
-        st.error(f"Erreur LocalStorage: {e}")
-        return None
-
-def ls_set(key, value):
-    try:
-        if not isinstance(value, str):
-            value = json.dumps(value)
-        escaped_value = value.replace("'", "\\'").replace('"', '\\"')
-        st.markdown(
-            f"""
-            <script>
-            localStorage.setItem("{key}", `{escaped_value}`);
-            </script>
-            """,
-            unsafe_allow_html=True
-        )
-    except Exception as e:
-        st.error(f"Erreur LocalStorage: {e}")
-
 # ======================================================
 # CHARGEMENT DES FACTIONS
 # ======================================================
@@ -817,30 +776,6 @@ if "page" not in st.session_state:
 # ======================================================
 if st.session_state.page == "setup":
     st.title("OPR Army Forge")
-    st.subheader("Mes listes sauvegardées")
-    saved_lists = ls_get("opr_saved_lists")
-    if saved_lists:
-        try:
-            saved_lists = json.loads(saved_lists)
-            if isinstance(saved_lists, list):
-                for i, saved_list in enumerate(saved_lists):
-                    col1, col2 = st.columns([4, 1])
-                    with col1:
-                        st.markdown(f"**{saved_list.get('name', 'Liste sans nom')}**")
-                        st.caption(f"{saved_list.get('game', 'Inconnu')} • {saved_list.get('faction', 'Inconnue')} • {saved_list.get('total_cost', 0)}/{saved_list.get('points', 0)} pts")
-                    with col2:
-                        if st.button(f"Charger", key=f"load_{i}"):
-                            st.session_state.game = saved_list["game"]
-                            st.session_state.faction = saved_list["faction"]
-                            st.session_state.points = saved_list["points"]
-                            st.session_state.list_name = saved_list["name"]
-                            st.session_state.army_list = saved_list["army_list"]
-                            st.session_state.army_cost = saved_list["total_cost"]
-                            st.session_state.units = factions_by_game[saved_list["game"]][saved_list["faction"]]["units"]
-                            st.session_state.page = "army"
-                            st.rerun()
-        except Exception as e:
-            st.error(f"Erreur chargement listes: {e}")
     if not games:
         st.error("Aucun jeu trouvé")
         st.stop()
