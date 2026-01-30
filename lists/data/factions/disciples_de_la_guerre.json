@@ -31,10 +31,10 @@
   },
   "units": [
     {
-      "name": "Maître de la Guerre Élu",
+      "name": "Maître du Ravage de la Guerre Élu",
       "type": "hero",
       "size": 1,
-      "base_cost": 60,
+      "base_cost": 65,
       "quality": 3,
       "defense": 3,
       "special_rules": ["Attaque versatile", "Coriace (3)", "Héros", "Guerrier-né"],
@@ -56,9 +56,155 @@
             {"name": "Marauder (Aura de Combattant imprévisible)", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
             {"name": "Porteur de la bannière de l'armée (Effrayant (3))", "cost": 30, "special_rules": ["Effrayant (3)"]},
             {"name": "Ensorceleur (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
-            {"name": "Seigneur de Guerre (Aura de Boost de Guerrier-né)", "cost": 35, "special_rules": ["Aura de Boost de Guerrier-né"]},
             {"name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
-            {"name": "Maître Sorcier (Lanceur de sorts (3))", "cost": 60, "special_rules": ["Lanceur de sorts (3)"]}
+            {"name": "Seigneur de Guerre (Aura de Boost de Guerrier-né)", "cost": 50, "special_rules": ["Aura de Boost de Guerrier-né"]},
+            {"name": "Maître Sorcier (Lanceur de sorts (3))", "cost": 65, "special_rules": ["Lanceur de sorts (3)"]}
+          ]
+        },
+        {
+          "group": "Remplacement d'arme",
+          "type": "weapon",
+          "description": "Choisissez une arme différente pour ce héros",
+          "options": [
+            {
+              "name": "Hallebarde lourde",
+              "cost": 5,
+              "weapon": {
+                "name": "Hallebarde lourde",
+                "range": "-",
+                "attacks": 3,
+                "armor_piercing": 1,
+                "special_rules": ["Perforant"]
+              }
+            },
+            {
+              "name": "Paire d'armes à une main lourdes",
+              "cost": 15,
+              "weapon": {
+                "name": "Paire d'armes à une main lourdes",
+                "range": "-",
+                "attacks": 4,
+                "armor_piercing": 1
+              }
+            },
+            {
+              "name": "Grande arme lourde",
+              "cost": 15,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "-",
+                "attacks": 3,
+                "armor_piercing": 3
+              }
+            },
+            {
+              "name": "Lance lourde",
+              "cost": 15,
+              "weapon": {
+                "name": "Lance lourde",
+                "range": "-",
+                "attacks": 3,
+                "armor_piercing": 1,
+                "special_rules": ["Percée"]
+              }
+            }
+          ]
+        },
+        {
+          "group": "Montures",
+          "type": "mount",
+          "description": "Ajoutez une monture à ce héros",
+          "options": [
+            {
+              "name": "Cheval",
+              "cost": 15,
+              "mount": {
+                "name": "Cheval",
+                "special_rules": ["Impact (1)", "Rapide"]
+              }
+            },
+            {
+              "name": "Grande bête",
+              "cost": 70,
+              "mount": {
+                "name": "Grande bête",
+                "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Impact (2)", "Rapide"]
+              }
+            },
+            {
+              "name": "Monture démoniaque",
+              "cost": 80,
+              "mount": {
+                "name": "Monture démoniaque",
+                "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Effrayant (1)", "Impact (2)", "Rapide"]
+              }
+            },
+            {
+              "name": "Char",
+              "cost": 125,
+              "mount": {
+                "name": "Char",
+                "special_rules": ["Sabots (A2)", "Coriace (6)", "Impact (4)", "Rapide"]
+              }
+            },
+            {
+              "name": "Char bestial",
+              "cost": 140,
+              "mount": {
+                "name": "Char bestial",
+                "special_rules": ["Griffes lourdes (A2, PA(1))", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]
+              }
+            },
+            {
+              "name": "Manticore",
+              "cost": 165,
+              "mount": {
+                "name": "Manticore",
+                "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (6)", "Effrayant (1)", "Volant"]
+              }
+            },
+            {
+              "name": "Dragon du Ravage",
+              "cost": 325,
+              "mount": {
+                "name": "Dragon du Ravage",
+                "special_rules": ["Griffes lourdes (A6, PA(1))", "Piétinement (A4, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "Maître du Ravage de la Guerre",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 55,
+      "quality": 3,
+      "defense": 3,
+      "special_rules": ["Coriace (3)", "Héros", "Guerrier-né"],
+      "weapons": [
+        {
+          "name": "Arme à une main lourde",
+          "range": "-",
+          "attacks": 3,
+          "armor_piercing": 1
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Améliorations de rôle",
+          "type": "multiple",
+          "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
+          "options": [
+            {"name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
+            {"name": "Marauder (Aura de Combattant imprévisible)", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
+            {"name": "Porteur de la bannière de l'armée (Effrayant (3))", "cost": 30, "special_rules": ["Effrayant (3)"]},
+            {"name": "Ensorceleur (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
+            {"name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
+            {"name": "Seigneur de Guerre (Aura de Boost de Guerrier-né)", "cost": 50, "special_rules": ["Aura de Boost de Guerrier-né"]},
+            {"name": "Maître Sorcier (Lanceur de sorts (3))", "cost": 65, "special_rules": ["Lanceur de sorts (3)"]}
           ]
         },
         {
@@ -99,7 +245,7 @@
             },
             {
               "name": "Lance lourde",
-              "cost": 10,
+              "cost": 15,
               "weapon": {
                 "name": "Lance lourde",
                 "range": "-",
@@ -141,7 +287,7 @@
             },
             {
               "name": "Char",
-              "cost": 120,
+              "cost": 115,
               "mount": {
                 "name": "Char",
                 "special_rules": ["Sabots (A2)", "Coriace (6)", "Impact (4)", "Rapide"]
@@ -149,7 +295,7 @@
             },
             {
               "name": "Char bestial",
-              "cost": 135,
+              "cost": 130,
               "mount": {
                 "name": "Char bestial",
                 "special_rules": ["Griffes lourdes (A2, PA(1))", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]
@@ -157,7 +303,7 @@
             },
             {
               "name": "Manticore",
-              "cost": 155,
+              "cost": 145,
               "mount": {
                 "name": "Manticore",
                 "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (6)", "Effrayant (1)", "Volant"]
@@ -165,7 +311,7 @@
             },
             {
               "name": "Dragon du Ravage",
-              "cost": 320,
+              "cost": 295,
               "mount": {
                 "name": "Dragon du Ravage",
                 "special_rules": ["Griffes lourdes (A6, PA(1))", "Piétinement (A4, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]
@@ -176,10 +322,133 @@
       ]
     },
     {
-      "name": "Barbares de la Guerre",
+      "name": "Champion Barbare de la Guerre",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 30,
+      "quality": 5,
+      "defense": 5,
+      "special_rules": ["Coriace (3)", "Éclaireur", "Furieux", "Guerrier-né", "Héros"],
+      "weapons": [
+        {
+          "name": "Arme à une main",
+          "range": "-",
+          "attacks": 3,
+          "armor_piercing": 0
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Améliorations de rôle",
+          "type": "multiple",
+          "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
+          "options": [
+            {"name": "Héraut (Aura de Lacération au tir)", "cost": 25, "special_rules": ["Aura de Lacération au tir"]},
+            {"name": "Marauder (Aura de Combattant imprévisible)", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
+            {"name": "Ensorceleur (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
+            {"name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
+            {"name": "Seigneur de Guerre (Aura de Boost de Guerrier-né)", "cost": 50, "special_rules": ["Aura de Boost de Guerrier-né"]}
+          ]
+        },
+        {
+          "group": "Remplacement d'arme",
+          "type": "weapon",
+          "description": "Choisissez une arme différente pour ce héros",
+          "options": [
+            {
+              "name": "Paire d'armes à une main",
+              "cost": 5,
+              "weapon": {
+                "name": "Paire d'armes à une main",
+                "range": "-",
+                "attacks": 4,
+                "armor_piercing": 0
+              }
+            },
+            {
+              "name": "Hallebarde",
+              "cost": 10,
+              "weapon": {
+                "name": "Hallebarde",
+                "range": "-",
+                "attacks": 3,
+                "armor_piercing": 0,
+                "special_rules": ["Perforant"]
+              }
+            },
+            {
+              "name": "Lance",
+              "cost": 10,
+              "weapon": {
+                "name": "Lance",
+                "range": "-",
+                "attacks": 3,
+                "armor_piercing": 0,
+                "special_rules": ["Percée"]
+              },
+            {
+              "name": "Grande arme",
+              "cost": 10,
+              "weapon": {
+                "name": "Grande arme",
+                "range": "-",
+                "attacks": 3,
+                "armor_piercing": 2
+              } 
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'arme",
+          "type": "multiple",
+          "description": "Améliorer avec une des options suivantes (un seul choix possible)",
+          "options": [
+            {
+              "name": "Arc court",
+              "cost": 10,
+              "weapon": {
+                "name": "Arc court",
+                "range": "18",
+                "attacks": 2,
+                "armor_piercing": 0,
+              },
+            {
+              "name": "Javelots barbelés",
+              "cost": 10,
+              "weapon": {
+                "name": "Javelots barbelés",
+                "range": "18",
+                "attacks": 2,
+                "armor_piercing": 1,
+                "special_rules": ["Éclatement"]
+              }
+          ]
+        },
+        
+        {
+          "group": "Montures",
+          "type": "mount",
+          "description": "Ajoutez une monture à ce héros",
+          "options": [
+            {
+              "name": "Cheval",
+              "cost": 15,
+              "mount": {
+                "name": "Cheval",
+                "special_rules": ["Impact (1)", "Rapide"]
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    
+    {
+      "name": "Pïllards Barbares de la Guerre",
       "type": "Unit",
       "size": 10,
-      "base_cost": 100,
+      "base_cost": 95,
       "quality": 5,
       "defense": 5,
       "special_rules": ["Éclaireur", "Furieux", "Guerrier-né"],
