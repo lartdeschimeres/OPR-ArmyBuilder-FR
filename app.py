@@ -1051,67 +1051,14 @@ elif st.session_state.page == "army":
         "total_cost": st.session_state.army_cost,
         "army_list": army
     }
-    html_export = generate_html_export(army_data)
+    html_export = export_html(
+        army_list=army,
+        army_name=army_name,
+        army_limit=army_limit
+    )        
     
     json_data = json.dumps(army_data, indent=2, ensure_ascii=False)
     st.divider()
-
-    def generate_html_export(army_data):
-        units_html = ""
-
-        for u in army_data["army_list"]:
-            units_html += f"""
-            <div class="unit">
-                <h3>{u['name']} ({u['cost']} pts)</h3>
-                <p><strong>Taille :</strong> {u.get('size', 1)}</p>
-                <p><strong>Qualité / Défense :</strong> {u['quality']}+ / {u['defense']}+</p>
-            """
-
-            if u.get("rules"):
-                units_html += f"<p><strong>Règles :</strong> {', '.join(u['rules'])}</p>"
-
-            if u.get("weapon"):
-                w = u["weapon"]
-                units_html += f"<p><strong>Arme :</strong> {w['name']} (A{w['attacks']}, PA{w['ap']})</p>"
-
-            if u.get("options"):
-                for group, opts in u["options"].items():
-                    units_html += f"<p><strong>{group} :</strong> {', '.join(o['name'] for o in opts)}</p>"
-
-            units_html += "</div>"
-
-        return f"""
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <style>
-                body {{
-                    font-family: Arial, sans-serif;
-                    background: #1b1b1b;
-                    color: #eaeaea;
-                    padding: 20px;
-                }}
-                h1 {{
-                    color: #ffcc66;
-                }}
-                .unit {{
-                    border: 1px solid #444;
-                    padding: 10px;
-                    margin-bottom: 10px;
-                    background: #262626;
-                }}
-            </style>
-        </head>
-        <body>
-            <h1>{army_data['name']}</h1>
-            <p><strong>Jeu :</strong> {army_data['game']}</p>
-            <p><strong>Faction :</strong> {army_data['faction']}</p>
-            <p><strong>Points :</strong> {army_data['total_cost']} / {army_data['points']}</p>
-    
-            {units_html}
-        </body>
-        </html>
-        """
     
     st.divider()
     st.subheader("📤 Exporter l’armée")
@@ -1120,7 +1067,7 @@ elif st.session_state.page == "army":
 
     with col_json:
         st.download_button(
-            label="📄 Exporter en JSON (OPR Army Forge)",
+            label="📄 Exporter en JSON (fichier téléchargeable)",
             data=json.dumps(army_data, indent=2, ensure_ascii=False),
             file_name=f"{st.session_state.list_name or 'army'}_opr.json",
             mime="application/json",
