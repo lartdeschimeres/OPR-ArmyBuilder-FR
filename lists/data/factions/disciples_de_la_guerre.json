@@ -16,15 +16,15 @@
     "Lacération": "Sur les résultats non modifiés de 1 pour bloquer les touches, cette arme inflige une blessure supplémentaire.",
     "Éclatement": "Ignore les Couverts, et sur les résultats non modifiés de 1 pour bloquer les touches, cette arme inflige une blessure supplémentaire.",
     "Inébranlable": "Si une unité dont toutes les figurines possèdent cette règle est Ébranlée au début du round, lancez un dé. Sur un résultat de 4+, elle cesse d'être Ébranlée.",
-    "Bonus d’Inébranlable": "Une fois par activation, avant d'attaquer, choisissez une unité amie à 12\" ou moins qui obtient Inébranlable une fois (la prochaine fois que l'effet s'appliquerait).",
+    "Bonus d'Inébranlable": "Une fois par activation, avant d'attaquer, choisissez une unité amie à 12\" ou moins qui obtient Inébranlable une fois (la prochaine fois que l'effet s'appliquerait).",
     "Imprévisible": "Lors d'une attaque, lancez un dé et appliquez un effet à toutes les figurines dotées de cette règle : sur un résultat de 1 à 3, elles obtiennent PA (+1), et sur un résultat de 4 à 6, elles obtiennent +1 aux jets d'attaque.",
     "Combattant imprévisible": "En mêlée, lancez un dé et appliquez un effet à toutes les figurines dotées de cette règle : sur un résultat de 1 à 3, elles obtiennent PA (+1), et sur un résultat de 4 à 6, elles obtiennent +1 aux jets d'attaque.",
     "Attaque versatile": "Lorsque cette unité est activée, choisissez un effet : jusqu'à la fin de l'activation, toutes les figurines bénéficiant de cette règle obtiennent soit PA (+1) lorsqu'elles attaquent, soit +1 aux jets pour toucher lorsqu'elles attaquent.",
-    "Défense versatile": "Lorsqu'une unité dont toutes les figurines possèdent cette règle est déployée ou activée, choisissez un effet : lorsqu'on lui tire dessus ou lorsqu’elle est chargée à plus de 9\", l'unité gagne +1 aux jets de Défense, ou les unités ennemies subissent -1 aux jets pour la toucher. Cet effet dure jusqu'à la prochaine activation de l'unité.",
+    "Défense versatile": "Lorsqu'une unité dont toutes les figurines possèdent cette règle est déployée ou activée, choisissez un effet : lorsqu'on lui tire dessus ou lorsqu'elle est chargée à plus de 9\", l'unité gagne +1 aux jets de Défense, ou les unités ennemies subissent -1 aux jets pour la toucher. Cet effet dure jusqu'à la prochaine activation de l'unité.",
     "Boost de Guerrier-né": "Si cette figurine dispose de la règle spéciale Guerrier-né, les ennemis qui subissent des blessures de sa part subissent des blessures supplémentaires sur les jets de Défense ratés de 1-2 issues de Guerrier-né (au lieu de seulement sur 1).",
     "Aura de Voile fluctuant": "Cette figurine et son unité obtiennent la règle spéciale Voile fluctuant.",
-    "Aura d’Éclaireur": "Cette figurine et son unité obtiennent la règle spéciale Éclaireur.",
-    "Aura de Lacération au tir": "Cette figurine et son unité obtiennent la règle spéciale Lacération lorsqu’elles tirent.",
+    "Aura d'Éclaireur": "Cette figurine et son unité obtiennent la règle spéciale Éclaireur.",
+    "Aura de Lacération au tir": "Cette figurine et son unité obtiennent la règle spéciale Lacération lorsqu'elles tirent.",
     "Aura de Combattant imprévisible": "Cette figurine et son unité obtiennent la règle spéciale Combattant imprévisible.",
     "Aura de Défense versatile": "Cette figurine et son unité obtiennent la règle spéciale Défense versatile.",
     "Aura de Boost de Guerrier-né": "Cette figurine et son unité obtiennent la règle spéciale Boost de Guerrier-né."
@@ -49,7 +49,7 @@
       "upgrade_groups": [
         {
           "group": "Améliorations de rôle",
-          "type": "multiple",
+          "type": "upgrades",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
             {"name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
@@ -175,7 +175,6 @@
         }
       ]
     },
-
     {
       "name": "Maître du Ravage de la Guerre",
       "type": "hero",
@@ -195,7 +194,7 @@
       "upgrade_groups": [
         {
           "group": "Améliorations de rôle",
-          "type": "multiple",
+          "type": "upgrades",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
             {"name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
@@ -340,7 +339,7 @@
       "upgrade_groups": [
         {
           "group": "Améliorations de rôle",
-          "type": "multiple",
+          "type": "upgrades",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
             {"name": "Héraut (Aura de Lacération au tir)", "cost": 25, "special_rules": ["Aura de Lacération au tir"]},
@@ -395,13 +394,13 @@
                 "range": "-",
                 "attacks": 3,
                 "armor_piercing": 2
-              } 
+              }
             }
           ]
         },
         {
           "group": "Améliorations d'arme",
-          "type": "multiple",
+          "type": "upgrades",
           "description": "Améliorer avec une des options suivantes (un seul choix possible)",
           "options": [
             {
@@ -424,9 +423,9 @@
                 "armor_piercing": 1,
                 "special_rules": ["Éclatement"]
               }
-            } 
+            }
           ]
-        },        
+        },
         {
           "group": "Montures",
           "type": "mount",
@@ -444,10 +443,9 @@
         }
       ]
     },
-    
     {
       "name": "Pïllards Barbares de la Guerre",
-      "type": "Unit",
+      "type": "unit",
       "size": 10,
       "base_cost": 95,
       "quality": 5,
@@ -493,7 +491,7 @@
         },
         {
           "group": "Améliorations d'unité",
-          "type": "multiple",
+          "type": "upgrades",
           "description": "Améliorations disponibles pour l'unité",
           "options": [
             {
