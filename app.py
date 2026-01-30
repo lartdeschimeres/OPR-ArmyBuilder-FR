@@ -869,9 +869,9 @@ if st.session_state.page == "setup":
 
         game = st.session_state.game
 
-        game = st.session_state.get("game")
-        if game is None:
-            st.stop()
+    game = st.session_state.get("game")
+    if game is None:
+        st.stop()
         
     game_config = GAME_CONFIG.get(game, GAME_CONFIG["Age of Fantasy"])
     faction = st.selectbox("Faction", factions_by_game[game].keys())
