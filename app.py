@@ -859,11 +859,19 @@ if st.session_state.page == "setup":
 
     cols = st.columns(3)
 
+    st.subheader("🎮 Choisis ton jeu")
+
+    cols = st.columns(3)
+
     for i, game_name in enumerate(games):
-        img_path = f"assets/games/{GAME_CONFIG[game_name]['cover']}"
+        card = GAME_CARDS.get(game_name)
 
         with cols[i % 3]:
-            st.image(img_path, use_container_width=True)
+            if card and card.get("image") and card["image"].exists():
+                st.image(str(card["image"]), use_container_width=True)
+            else:
+                st.warning("Image manquante")
+
             if st.button(game_name, key=f"game_{game_name}"):
                 st.session_state.game = game_name
                 st.rerun()
