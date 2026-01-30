@@ -10,6 +10,15 @@ import math
 # ======================================================
 # CONFIGURATION
 # ======================================================
+GAME_COVERS = {
+    "Age of Fantasy": "assets/games/aof_cover.jpg",
+    "Age of Fantasy Quest": "assets/games/aofq_cover.jpg",
+    "Age of Fantasy Regiments": "assets/games/aofr_cover.jpg",
+    "Grimdark Future": "assets/games/gf_cover.jpg",
+    "Grimdark Future Firefight": "assets/games/gff_cover.jpg",
+    "Grimdark Future Squad": "assets/games/gfsq_cover.jpg",
+}
+
 from pathlib import Path
 
 BASE_DIR = Path(__file__).parent
@@ -869,12 +878,28 @@ if st.session_state.page == "setup":
 
         game = st.session_state.game
 
-    game = st.session_state.get("game")
-    if game is None:
+    st.subheader("Choisis ton jeu")
+
+    cols = st.columns(3)
+
+    for i, game_name in enumerate(games):
+        img_path = f"assets/games/{GAME_CONFIG[game_name]['cover']}"
+
+        with cols[i % 3]:
+            st.image(img_path, use_container_width=True)
+            if st.button(game_name, key=f"game_{game_name}"):
+                st.session_state.game = game_name
+                st.rerun()
+
+    if "game" not in st.session_state:
+        st.info("Sélectionne un jeu pour continuer")
         st.stop()
-        
+    
+    game = st.session_state.game
     game_config = GAME_CONFIG.get(game, GAME_CONFIG["Age of Fantasy"])
+
     faction = st.selectbox("Faction", factions_by_game[game].keys())
+        
     points = st.number_input(
         "Points",
         min_value=game_config["min_points"],
