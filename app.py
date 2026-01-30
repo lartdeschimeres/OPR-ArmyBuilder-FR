@@ -10,6 +10,29 @@ import math
 # ======================================================
 # CONFIGURATION
 # ======================================================
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent
+
+GAME_CARDS = {
+    "Grimdark Future": {
+        "image": BASE_DIR / "assets/games/gf_cover.jpg",
+        "description": "Escarmouches sci-fi à grande échelle"
+    },
+    "GF Firefight": {
+        "image": BASE_DIR / "assets/games/gff_cover.jpg",
+        "description": "Combat tactique en petites escouades"
+    },
+    "Age of Fantasy": {
+        "image": BASE_DIR / "assets/games/aof_cover.jpg",
+        "description": "Batailles fantasy"
+    },
+    "Age of Fantasy Skirmish": {
+        "image": BASE_DIR / "assets/games/aofs_cover.jpg",
+        "description": "Fantasy en escarmouche"
+    },
+}
+
 st.set_page_config(
     page_title="OPR Army Forge FR",
     layout="wide",
@@ -823,7 +846,29 @@ if st.session_state.page == "setup":
         st.error("Aucun jeu trouvé")
         st.stop()
 
-    game = st.selectbox("Jeu", games)
+    st.subheader("🎮 Choisis ton jeu")
+
+    if "game" not in st.session_state:
+        cols = st.columns(len(GAME_CARDS))
+
+        for col, (game_name, game_data) in zip(cols, GAME_CARDS.items()):
+            with col:
+                st.image(
+                    str(game_data["image"]),
+                    use_container_width=True
+                )
+                if st.button(
+                    game_name,
+                    key=f"select_{game_name}"
+                ):
+                    st.session_state.game = game_name
+                    st.rerun()
+        if "game" not in st.session_state:
+            st.info("⬆️ Sélectionne un jeu pour continuer")
+            st.stop()
+
+        game = st.session_state.game
+
     game_config = GAME_CONFIG.get(game, GAME_CONFIG["Age of Fantasy"])
     faction = st.selectbox("Faction", factions_by_game[game].keys())
     points = st.number_input(
