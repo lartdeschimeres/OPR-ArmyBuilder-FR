@@ -19,7 +19,7 @@
     "Bonus d'Inébranlable": "Une fois par activation, avant d'attaquer, choisissez une unité amie à 12\" ou moins qui obtient Inébranlable une fois (la prochaine fois que l'effet s'appliquerait).",
     "Imprévisible": "Lors d'une attaque, lancez un dé et appliquez un effet à toutes les figurines dotées de cette règle : sur un résultat de 1 à 3, elles obtiennent PA (+1), et sur un résultat de 4 à 6, elles obtiennent +1 aux jets d'attaque.",
     "Combattant imprévisible": "En mêlée, lancez un dé et appliquez un effet à toutes les figurines dotées de cette règle : sur un résultat de 1 à 3, elles obtiennent PA (+1), et sur un résultat de 4 à 6, elles obtiennent +1 aux jets d'attaque.",
-    "Attaque versatile": "Lorsque cette unité est activée, choisissez un effet : jusqu'à la fin de l'activation, toutes les figurines bénéficiant de cette règle obtiennent soit PA (+1) lorsqu'elles attaquent, soit +1 aux jets pour toucher lorsqu'elles attaquent.",
+    "Attaque versatile": "Lorsque cette unité est activée, choisissez un effet : jusqu'à la fin de l'activation, toutes les figurines bénéficiant de cette règle obtiennent soit PA (+1) lorsqu'elles attaquent, soit +1 aux jets pour toucher lorsque'elles attaquent.",
     "Défense versatile": "Lorsqu'une unité dont toutes les figurines possèdent cette règle est déployée ou activée, choisissez un effet : lorsqu'on lui tire dessus ou lorsqu'elle est chargée à plus de 9\", l'unité gagne +1 aux jets de Défense, ou les unités ennemies subissent -1 aux jets pour la toucher. Cet effet dure jusqu'à la prochaine activation de l'unité.",
     "Boost de Guerrier-né": "Si cette figurine dispose de la règle spéciale Guerrier-né, les ennemis qui subissent des blessures de sa part subissent des blessures supplémentaires sur les jets de Défense ratés de 1-2 issues de Guerrier-né (au lieu de seulement sur 1).",
     "Aura de Voile fluctuant": "Cette figurine et son unité obtiennent la règle spéciale Voile fluctuant.",
@@ -85,8 +85,7 @@
                 "range": "-",
                 "attacks": 4,
                 "armor_piercing": 1
-		        "special_rules": []
-              }
+		          }
             },
             {
               "name": "Grande arme lourde",
@@ -96,8 +95,7 @@
                 "range": "-",
                 "attacks": 3,
                 "armor_piercing": 3
-		"special_rules": ["Perforant"]
-              }
+		        }
             },
             {
               "name": "Lance lourde",
@@ -191,8 +189,7 @@
           "range": "-",
           "attacks": 3,
           "armor_piercing": 1
-	  "special_rules": []
-        }
+	      }
       ],
       "upgrade_groups": [
         {
@@ -233,8 +230,7 @@
                 "range": "-",
                 "attacks": 4,
                 "armor_piercing": 1
-		"special_rules": []
-              }
+		        }
             },
             {
               "name": "Grande arme lourde",
@@ -244,8 +240,7 @@
                 "range": "-",
                 "attacks": 3,
                 "armor_piercing": 3
-		"special_rules": []
-              }
+		        }
             },
             {
               "name": "Lance lourde",
@@ -367,8 +362,7 @@
                 "range": "-",
                 "attacks": 4,
                 "armor_piercing": 0
-		"special_rules": []
-              }
+		        }
             },
             {
               "name": "Hallebarde",
@@ -400,8 +394,7 @@
                 "range": "-",
                 "attacks": 3,
                 "armor_piercing": 2
-		"special_rules": []
-              }
+            }
             }
           ]
         },
@@ -539,7 +532,6 @@
           "range": "-",
           "attacks": 1,
           "armor_piercing": 2
-          "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -549,10 +541,10 @@
           "description": "Remplacez toutes les armes de base par:",
           "options": [
             {
-              "name": "Paire d'armesà une main",
+              "name": "Paire d'armes à une main",
               "cost": 10,
               "weapon": {
-                "name": "Paire d'armesà une main",
+                "name": "Paire d'armes à une main",
                 "range": "-",
                 "attacks": 2,
                 "armor_piercing": 0,
@@ -599,7 +591,6 @@
           "range": "-",
           "attacks": 1,
           "armor_piercing": 1
-	  "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -686,7 +677,6 @@
           "range": "-",
           "attacks": 1,
           "armor_piercing": 1
-	  "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -773,7 +763,6 @@
           "range": "-",
           "attacks": 2,
           "armor_piercing": 0
-	  "special_rules": []
         }
       ]
     },
@@ -791,7 +780,6 @@
           "range": "-",
           "attacks": 1,
           "armor_piercing": 1
-	  "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -827,6 +815,7 @@
                 "attacks": 2,
                 "armor_piercing": 3,
                 "special_rules": []
+              }
             },
             {
               "name": "Sergent",
@@ -861,9 +850,8 @@
           "range": "-",
           "attacks": 2,
           "armor_piercing": 2
-	  "special_rules": []
         }
       ]
-    },
+    }
   ]
 }
