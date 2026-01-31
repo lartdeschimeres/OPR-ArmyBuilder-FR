@@ -8,6 +8,34 @@ import base64
 import math
 
 # ======================================================
+# SESSION STATE – valeurs par défaut
+# ======================================================
+if "page" not in st.session_state:
+    st.session_state.page = "setup"
+
+if "army_list" not in st.session_state:
+    st.session_state.army_list = []
+
+if "army_cost" not in st.session_state:
+    st.session_state.army_cost = 0
+
+# ======================================================
+# SIDEBAR – NAVIGATION
+# ======================================================
+with st.sidebar:
+    st.title("🛡️ Army Forge")
+
+    st.subheader("🧭 Navigation")
+
+    if st.button("⚙️ Configuration", use_container_width=True):
+        st.session_state.page = "setup"
+        st.rerun()
+
+    if st.button("🧩 Construction", use_container_width=True):
+        st.session_state.page = "army"
+        st.rerun()
+        
+# ======================================================
 # CONFIGURATION
 # ======================================================
 GAME_COVERS = {
