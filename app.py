@@ -907,12 +907,14 @@ if "page" not in st.session_state:
     st.session_state.current_player = "Simon Joinville Fouquet"
 
 # ======================================================
-# PAGE 1 – CONFIGURATION (SECTION MODIFIÉE UNIQUEMENT)
+# PAGE 1 – CONFIGURATION
 # ======================================================
 if st.session_state.page == "setup":
     st.title("OPR Army Forge")
 
-    # Section d'import de liste
+    # ======================================================
+    # IMPORT D'UNE LISTE EXISTANTE
+    # ======================================================
     st.divider()
     st.subheader("🔄 Recharger une liste JSON")
 
@@ -925,6 +927,7 @@ if st.session_state.page == "setup":
     if uploaded is not None:
         try:
             data = json.load(uploaded)
+
             required_keys = {"game", "faction", "army_list", "points"}
             if not required_keys.issubset(data.keys()):
                 st.error("❌ Fichier JSON invalide ou incomplet")
@@ -937,91 +940,88 @@ if st.session_state.page == "setup":
                 st.session_state.army_cost = data.get("total_cost", 0)
 
                 factions_by_game, _ = load_factions()
-                st.session_state.units = factions_by_game[st.session_state.game][st.session_state.faction]["units"]
+                st.session_state.units = factions_by_game[
+                    st.session_state.game
+                ][
+                    st.session_state.faction
+                ]["units"]
 
                 st.session_state.page = "army"
                 st.success("✅ Liste chargée avec succès")
                 st.rerun()
+
         except Exception as e:
             st.error(f"❌ Erreur lors du chargement : {e}")
 
-    # Section de création de nouvelle liste
+    # ======================================================
+    # SÉLECTION DU JEU (CARTES VISUELLES)
+    # ======================================================
+    st.divider()
+    st.subheader("🎮 Choisis ton jeu")
+
     if not games:
         st.error("Aucun jeu trouvé")
         st.stop()
 
-        st.subheader("Choisis ton jeu")
+    # Grille 4 colonnes → 8 jeux = 2 lignes
+    cols = st.columns(4)
 
-    cols = st.columns(len(games))
-
-    for col, game_name in zip(cols, games):
-        with col:
-            card = GAME_CARDS.get(game_name)
-
-            if card and card.get("image") and card["image"].exists():
-                st.image(
-                    str(card["image"]),
-                    use_container_width=True
-                )
-            else:
-                st.markdown(
-                    "<div style='height:180px; background:#eee; display:flex; align-items:center; justify-content:center;'>Image manquante</div>",
-                    unsafe_allow_html=True
-                )
-    
-            if st.button(
-                f"🎯 {game_name}",
-                key=f"select_{game_name}",
-                use_container_width=True
-            ):
-                st.session_state.game = game_name
-                st.rerun()
-    
-    # Affichage des cartes de jeu
-    for game_name in games:
+    for i, game_name in enumerate(games):
+        col = cols[i % 4]
         card = GAME_CARDS.get(game_name)
         is_selected = st.session_state.get("game") == game_name
 
-        # Conteneur pour chaque carte
-        with st.container():
-            # Utilisation de HTML pour créer une carte cliquable
-            html_content = f"""
-            <div class="game-card {'selected' if is_selected else ''}"
-                 onclick="document.getElementById('game_{game_name.replace(' ', '_')}').click()">
-            """
+        with col:
+            with st.container(border=True):
+                # Image du jeu
+                if card and card.get("image") and card["image"].exists():
+                    st.image(
+                        str(card["image"]),
+                        use_container_width=True
+                    )
+                else:
+                    st.image(
+                        "assets/games/onepagerules_round_128x128.png",
+                        use_container_width=True
+                    )
 
-            # Image ou placeholder
-            if card and card.get("image") and card["image"].exists():
-                image_path = str(card["image"].absolute())
-                html_content += f'<img src="file:///{image_path}" class="game-image">'
-            else:
-                html_content += f'<div class="no-image">Image manquante</div>'
+                # Nom du jeu
+                st.markdown(
+                    f"<div style='text-align:center; font-weight:600; margin-top:6px;'>"
+                    f"{game_name}</div>",
+                    unsafe_allow_html=True
+                )
 
-            # Titre du jeu
-            html_content += f'<div class="game-title">{game_name}</div>'
+                # Bouton de sélection
+                if st.button(
+                    "✔ Sélectionner" if not is_selected else "✅ Sélectionné",
+                    key=f"select_game_{game_name}",
+                    use_container_width=True,
+                    disabled=is_selected
+                ):
+                    st.session_state.game = game_name
+                    st.rerun()
 
-            # Bouton caché pour la sélection
-            html_content += f"""
-            </div>
-            """
-
-            st.markdown(html_content, unsafe_allow_html=True)
-
-            # Bouton réel (caché) pour la sélection
-            if st.button("", key=f"game_{game_name.replace(' ', '_')}"):
-                st.session_state.game = game_name
-                st.rerun()
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    if "game" not in st.session_state or not st.session_state.game:
+    # Jeu non sélectionné → on bloque la suite
+    if "game" not in st.session_state:
         st.info("⬆️ Sélectionne un jeu pour continuer")
         st.stop()
 
     game = st.session_state.game
     game_config = GAME_CONFIG.get(game, GAME_CONFIG["Age of Fantasy"])
 
-    faction = st.selectbox("Faction", factions_by_game[game].keys())
+    # ======================================================
+    # PARAMÈTRES DE LISTE
+    # ======================================================
+    st.divider()
+    st.subheader("⚙️ Paramètres de la liste")
+
+    factions_by_game, _ = load_factions()
+
+    faction = st.selectbox(
+        "Faction",
+        factions_by_game[game].keys()
+    )
 
     points = st.number_input(
         "Points",
@@ -1030,12 +1030,17 @@ if st.session_state.page == "setup":
         value=game_config["default_points"],
         step=game_config["point_step"]
     )
-    list_name = st.text_input("Nom de la liste", f"Liste_{datetime.now().strftime('%Y%m%d')}")
 
+    list_name = st.text_input(
+        "Nom de la liste",
+        f"Liste_{datetime.now().strftime('%Y%m%d')}"
+    )
+
+    # ======================================================
+    # PASSAGE À LA CONSTRUCTION DE L'ARMÉE
+    # ======================================================
     st.divider()
-
     st.markdown("### 🚀 Étape suivante")
-
     st.info("Tu pourras ajouter, modifier et exporter ton armée à l’étape suivante.")
 
     if st.button("➡️ Construire l’armée", use_container_width=True):
