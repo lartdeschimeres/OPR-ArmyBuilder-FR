@@ -950,28 +950,6 @@ if st.session_state.page == "setup":
         st.error("Aucun jeu trouvé")
         st.stop()
 
-    if card and card.get("image") and card["image"].exists():
-        st.image(
-            str(card["image"]),
-            use_container_width=True
-        )
-    else:
-        st.markdown(
-            "<div style='height:180px; background:#eee; display:flex; align-items:center; justify-content:center;'>Image manquante</div>",
-            unsafe_allow_html=True
-        )
-
-        if st.button(
-            f"🎯 {game_name}",
-            key=f"select_{game_name}",
-            use_container_width=True
-        ):
-            st.session_state.game = game_name
-            st.rerun()
-
-
-   
-
     # Affichage des cartes de jeu
     for game_name in games:
         card = GAME_CARDS.get(game_name)
