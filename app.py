@@ -950,6 +950,33 @@ if st.session_state.page == "setup":
         st.error("Aucun jeu trouvé")
         st.stop()
 
+        st.subheader("Choisis ton jeu")
+
+    cols = st.columns(len(games))
+
+    for col, game_name in zip(cols, games):
+        with col:
+            card = GAME_CARDS.get(game_name)
+
+            if card and card.get("image") and card["image"].exists():
+                st.image(
+                    str(card["image"]),
+                    use_container_width=True
+                )
+            else:
+                st.markdown(
+                    "<div style='height:180px; background:#eee; display:flex; align-items:center; justify-content:center;'>Image manquante</div>",
+                    unsafe_allow_html=True
+                )
+    
+            if st.button(
+                f"🎯 {game_name}",
+                key=f"select_{game_name}",
+                use_container_width=True
+            ):
+                st.session_state.game = game_name
+                st.rerun()
+    
     # Affichage des cartes de jeu
     for game_name in games:
         card = GAME_CARDS.get(game_name)
