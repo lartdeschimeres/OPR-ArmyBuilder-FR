@@ -907,7 +907,7 @@ if "page" not in st.session_state:
     st.session_state.current_player = "Simon Joinville Fouquet"
 
 # ======================================================
-# PAGE 1 – CONFIGURATION (SECTION MODIFIÉE UNIQUEMENT)
+# PAGE 1 – CONFIGURATION (VERSION FINALE)
 # ======================================================
 if st.session_state.page == "setup":
     st.title("OPR Army Forge")
@@ -950,77 +950,98 @@ if st.session_state.page == "setup":
         st.error("Aucun jeu trouvé")
         st.stop()
 
-        st.subheader("Choisis ton jeu")
+    st.subheader("🎮 Choisis ton jeu")
 
-    cols = st.columns(len(games))
+    # CSS pour les cartes de jeu
+    st.markdown("""
+    <style>
+        .game-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .game-card {
+            flex: 1 1 220px;
+            height: 280px;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: white;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .game-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .game-card.selected {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74,144,226,0.3);
+        }
+        .game-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .game-title {
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            color: #2c3e50;
+            background: white;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        .no-image {
+            height: 200px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
-    for col, game_name in zip(cols, games):
-        with col:
-            card = GAME_CARDS.get(game_name)
+    # Conteneur pour les cartes de jeu
+    st.markdown('<div class="game-selector">', unsafe_allow_html=True)
 
-            if card and card.get("image") and card["image"].exists():
-                st.image(
-                    str(card["image"]),
-                    use_container_width=True
-                )
-            else:
-                st.markdown(
-                    "<div style='height:180px; background:#eee; display:flex; align-items:center; justify-content:center;'>Image manquante</div>",
-                    unsafe_allow_html=True
-                )
-    
-            if st.button(
-                f"🎯 {game_name}",
-                key=f"select_{game_name}",
-                use_container_width=True
-            ):
-                st.session_state.game = game_name
-                st.rerun()
-    
-    # Affichage des cartes de jeu
+    # Affichage des cartes de jeu cliquables
     for game_name in games:
         card = GAME_CARDS.get(game_name)
         is_selected = st.session_state.get("game") == game_name
 
-        # Conteneur pour chaque carte
         with st.container():
-            # Utilisation de HTML pour créer une carte cliquable
-            html_content = f"""
-            <div class="game-card {'selected' if is_selected else ''}"
-                 onclick="document.getElementById('game_{game_name.replace(' ', '_')}').click()">
-            """
-
-            # Image ou placeholder
-            if card and card.get("image") and card["image"].exists():
-                image_path = str(card["image"].absolute())
-                html_content += f'<img src="file:///{image_path}" class="game-image">'
-            else:
-                html_content += f'<div class="no-image">Image manquante</div>'
-
-            # Titre du jeu
-            html_content += f'<div class="game-title">{game_name}</div>'
-
             # Bouton caché pour la sélection
-            html_content += f"""
-            </div>
-            """
-
-            st.markdown(html_content, unsafe_allow_html=True)
-
-            # Bouton réel (caché) pour la sélection
-            if st.button("", key=f"game_{game_name.replace(' ', '_')}"):
+            if st.button("", key=f"game_select_{game_name.replace(' ', '_')}"):
                 st.session_state.game = game_name
                 st.rerun()
 
+            # HTML pour la carte cliquable
+            html_content = f"""
+            <div class="game-card {'selected' if is_selected else ''}"
+                 onclick="document.getElementById('game_select_{game_name.replace(' ', '_')}').click()">
+                {'<img src="file:///' + str(card["image"].absolute()) + '" class="game-image">' if card and card.get("image") and card["image"].exists() else '<div class="no-image">Image manquante</div>'}
+                <div class="game-title">{game_name}</div>
+            </div>
+            """
+            st.markdown(html_content, unsafe_allow_html=True)
+
     st.markdown('</div>', unsafe_allow_html=True)
 
+    # Vérification de la sélection du jeu
     if "game" not in st.session_state or not st.session_state.game:
         st.info("⬆️ Sélectionne un jeu pour continuer")
         st.stop()
 
+    # Menu déroulant FACTION (indispensable)
     game = st.session_state.game
     game_config = GAME_CONFIG.get(game, GAME_CONFIG["Age of Fantasy"])
-
     faction = st.selectbox("Faction", factions_by_game[game].keys())
 
     points = st.number_input(
@@ -1033,12 +1054,10 @@ if st.session_state.page == "setup":
     list_name = st.text_input("Nom de la liste", f"Liste_{datetime.now().strftime('%Y%m%d')}")
 
     st.divider()
-
     st.markdown("### 🚀 Étape suivante")
+    st.info("Tu pourras ajouter, modifier et exporter ton armée à l'étape suivante.")
 
-    st.info("Tu pourras ajouter, modifier et exporter ton armée à l’étape suivante.")
-
-    if st.button("➡️ Construire l’armée", use_container_width=True):
+    if st.button("➡️ Construire l'armée", use_container_width=True):
         st.session_state.game = game
         st.session_state.faction = faction
         st.session_state.points = points
