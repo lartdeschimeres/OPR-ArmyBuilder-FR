@@ -1009,18 +1009,49 @@ if st.session_state.page == "setup":
     """, unsafe_allow_html=True)
 
     # Conteneur pour les cartes de jeu
-    st.markdown('<div class="game-selector">', unsafe_allow_html=True)
+st.markdown('<div class="game-selector">', unsafe_allow_html=True)
 
-    # Affichage des cartes de jeu cliquables
-    for game_name in games:
-        card = GAME_CARDS.get(game_name)
-        is_selected = st.session_state.get("game") == game_name
+# Affichage des cartes de jeu cliquables
+for game_name in games:
+    card = GAME_CARDS.get(game_name)
+    is_selected = st.session_state.get("game") == game_name
 
-        with st.container():
-            # Bouton caché pour la sélection
-            if st.button("", key=f"game_select_{game_name.replace(' ', '_')}"):
-                st.session_state.game = game_name
-                st.rerun()
+    with st.container():
+        # Bouton caché pour la sélection
+        if st.button("", key=f"game_select_{game_name.replace(' ', '_')}"):
+            st.session_state.game = game_name
+            st.rerun()
+
+        # Affichage de l'image avec st.image (plus fiable)
+        if card and card.get("image"):
+            try:
+                st.image(str(card["image"]), use_column_width=True)
+            except:
+                st.markdown(f'<div style="height:200px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;color:#666;">Image manquante</div>', unsafe_allow_html=True)
+
+        # Titre du jeu en HTML
+        st.markdown(f"""
+        <div class="game-title" style="text-align:center;font-weight:bold;padding:10px;color:#2c3e50;">
+            {game_name}
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Style CSS pour la surbrillance
+        st.markdown(f"""
+        <style>
+            .stImage, .stMarkdown {{
+                border: 2px solid {'#4a90e2' if is_selected else 'transparent'};
+                border-radius: 10px;
+                margin-bottom: 15px;
+                {'box-shadow: 0 0 0 2px rgba(74,144,226,0.3);' if is_selected else ''}
+            }}
+            .stImage:hover, .stMarkdown:hover {{
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }}
+        </style>
+        """, unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
 
             # HTML pour la carte cliquable
             html_content = f"""
