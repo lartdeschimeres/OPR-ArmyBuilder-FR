@@ -1,7 +1,7 @@
 {
   "faction": "Disciples de la Guerre",
   "game": "Age of Fantasy",
-  "version": "FR-3.5.1",
+  "version": "FR-3.5.2",
   "status": "complete",
   "description": "Les Disciples de la Guerre sont une faction brutale et impitoyable, composée de guerriers fanatiques et de monstres déchaînés.",
   "special_rules_descriptions": {
@@ -64,7 +64,7 @@
         {
           "group": "Remplacement d'arme",
           "type": "weapon",
-          "description": "Choisissez une arme différente pour ce héros",
+          "description": "Remplacez l'arme de base par:",
           "options": [
             {
               "name": "Hallebarde lourde",
@@ -85,6 +85,7 @@
                 "range": "-",
                 "attacks": 4,
                 "armor_piercing": 1
+		"special_rules": []
               }
             },
             {
@@ -95,6 +96,7 @@
                 "range": "-",
                 "attacks": 3,
                 "armor_piercing": 3
+		"special_rules": ["Perforant"]
               }
             },
             {
@@ -113,7 +115,7 @@
         {
           "group": "Montures",
           "type": "mount",
-          "description": "Ajoutez une monture à ce héros",
+          "description": "Ajoutez une monture",
           "options": [
             {
               "name": "Cheval",
@@ -189,6 +191,7 @@
           "range": "-",
           "attacks": 3,
           "armor_piercing": 1
+	  "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -209,7 +212,7 @@
         {
           "group": "Remplacement d'arme",
           "type": "weapon",
-          "description": "Choisissez une arme différente pour ce héros",
+          "description": "Remplacez l'arme de base par:",
           "options": [
             {
               "name": "Hallebarde lourde",
@@ -230,6 +233,7 @@
                 "range": "-",
                 "attacks": 4,
                 "armor_piercing": 1
+		"special_rules": []
               }
             },
             {
@@ -240,6 +244,7 @@
                 "range": "-",
                 "attacks": 3,
                 "armor_piercing": 3
+		"special_rules": []
               }
             },
             {
@@ -258,7 +263,7 @@
         {
           "group": "Montures",
           "type": "mount",
-          "description": "Ajoutez une monture à ce héros",
+          "description": "Ajoutez une monture",
           "options": [
             {
               "name": "Cheval",
@@ -352,7 +357,7 @@
         {
           "group": "Remplacement d'arme",
           "type": "weapon",
-          "description": "Choisissez une arme différente pour ce héros",
+          "description": "Remplacez l'arme de base par:",
           "options": [
             {
               "name": "Paire d'armes à une main",
@@ -362,6 +367,7 @@
                 "range": "-",
                 "attacks": 4,
                 "armor_piercing": 0
+		"special_rules": []
               }
             },
             {
@@ -394,6 +400,7 @@
                 "range": "-",
                 "attacks": 3,
                 "armor_piercing": 2
+		"special_rules": []
               }
             }
           ]
@@ -444,7 +451,7 @@
       ]
     },
     {
-      "name": "Pïllards Barbares de la Guerre",
+      "name": "Pillards Barbares de la Guerre",
       "type": "unit",
       "size": 10,
       "base_cost": 95,
@@ -463,7 +470,7 @@
         {
           "group": "Remplacement d'armes",
           "type": "weapon",
-          "description": "Remplacez les armes de base par une arme spécialisée",
+          "description": "Remplacez toutes les armes de base par:",
           "options": [
             {
               "name": "Lance",
@@ -517,6 +524,346 @@
           ]
         }
       ]
-    }
+    },
+    {
+      "name": "Pillards Sanguinaires",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 100,
+      "quality": 5,
+      "defense": 5,
+      "special_rules": ["Combattant sanguinaire", "Guerrier-né"],
+      "weapons": [
+        {
+          "name": "Grandes armes",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 2
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes de base par:",
+          "options": [
+            {
+              "name": "Paire d'armesà une main",
+              "cost": 10,
+              "weapon": {
+                "name": "Paire d'armesà une main",
+                "range": "-",
+                "attacks": 2,
+                "armor_piercing": 0,
+                "special_rules": []
+              }
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Guerriers de la Guerre",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 80,
+      "quality": 3,
+      "defense": 3,
+      "special_rules": ["Guerrier-né"],
+      "weapons": [
+        {
+          "name": "Armes à une main lourdes",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 1
+	  "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes de base par ",
+          "options": [
+            {
+              "name": "Hallebarde lourde",
+              "cost": 10,
+              "weapon": {
+                "name": "Hallebarde lourde",
+                "range": "-",
+                "attacks": 1,
+                "armor_piercing": 1,
+                "special_rules": ["Perforant"]
+              }
+            },
+            {
+              "name": "Grande arme lourde",
+              "cost": 20,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "-",
+                "attacks": 1,
+                "armor_piercing": 3,
+                "special_rules": []
+              }
+            },
+	    {
+              "name": "Paire d'armes à une main lourdes",
+              "cost": 45,
+              "weapon": {
+                "name": "Paire d'armes à une main lourdes",
+                "range": "-",
+                "attacks": 2,
+                "armor_piercing": 1,
+                "special_rules": []
+              }
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Icône du Ravage (Aura de Défense versatile)",
+              "cost": 20,
+              "special_rules": ["Aura de Défense versatile"]
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Guerriers du Ravage de la Guerre",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 100,
+      "quality": 3,
+      "defense": 3,
+      "special_rules": ["Attaque versatile", "Guerrier-né"],
+      "weapons": [
+        {
+          "name": "Armes à une main lourdes",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 1
+	  "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes de base par ",
+          "options": [
+            {
+              "name": "Hallebarde lourde",
+              "cost": 10,
+              "weapon": {
+                "name": "Hallebarde lourde",
+                "range": "-",
+                "attacks": 1,
+                "armor_piercing": 1,
+                "special_rules": ["Perforant"]
+              }
+            },
+            {
+              "name": "Grande arme lourde",
+              "cost": 25,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "-",
+                "attacks": 1,
+                "armor_piercing": 3,
+                "special_rules": []
+              }
+            },
+	    {
+              "name": "Paire d'armes à une main lourdes",
+              "cost": 65,
+              "weapon": {
+                "name": "Paire d'armes à une main lourdes",
+                "range": "-",
+                "attacks": 2,
+                "armor_piercing": 1,
+                "special_rules": []
+              }
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Icône du Ravage (Aura de Défense versatile)",
+              "cost": 20,
+              "special_rules": ["Aura de Défense versatile"]
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mutants de la Guerre",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 105,
+      "quality": 4,
+      "defense": 4,
+      "special_rules": ["Combattant imprévisible","Guerrier-né","Sans peur"],
+      "weapons": [
+        {
+          "name": "Membres mutants",
+          "range": "-",
+          "attacks": 2,
+          "armor_piercing": 0
+	  "special_rules": []
+        }
+      ]
+    },
+    {
+      "name": "Guerriers Sanguinaires",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 90,
+      "quality": 3,
+      "defense": 4,
+      "special_rules": ["Assaut tranchant", "Combattant sanguinaire", "Guerrier-né"],
+      "weapons": [
+        {
+          "name": "Armes à une main lourdes",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 1
+	  "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes de base par ",
+          "options": [
+            {
+              "name": "Paire d'armes à une main",
+              "cost": 35,
+              "weapon": {
+                "name": "Paire d'armes à une main",
+                "range": "-",
+                "attacks": 2,
+                "armor_piercing": 0,
+                "special_rules": []
+              }
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Une Grande arme lourde (A2, PA (3))",
+              "cost": 20,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "-",
+                "attacks": 2,
+                "armor_piercing": 3,
+                "special_rules": []
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Guerriers Moissonneurs de Mort",
+      "type": "unit",
+      "size": 3,
+      "base_cost": 170,
+      "quality": 3,
+      "defense": 4,
+      "special_rules": ["Coriance (3)", "Guerrier-né","Impact (2)"],
+      "weapons": [
+        {
+          "name": "Paire de marteau-fléaux",
+          "range": "-",
+          "attacks": 2,
+          "armor_piercing": 2
+	  "special_rules": []
+        }
+      ]
+    },
   ]
 }
