@@ -1114,7 +1114,8 @@ elif st.session_state.page == "army":
         st.warning("⚠️ Faction non valide ou non sélectionnée")
         st.stop()
 
-faction_data = factions_by_game[game][faction]
+    faction_data = factions_by_game[game][faction]
+    
     display_faction_rules(faction_data)
     if not validate_army_rules(st.session_state.army_list, st.session_state.points, st.session_state.game):
         st.warning("⚠️ Certaines règles spécifiques ne sont pas respectées. Voir les messages d'erreur ci-dessus.")
