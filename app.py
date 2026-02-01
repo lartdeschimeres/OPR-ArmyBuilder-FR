@@ -912,24 +912,24 @@ if "page" not in st.session_state:
 if st.session_state.page == "setup":
     st.title("OPR Army Forge")
 
-st.markdown("""
-<style>
-.game-card {
-    border-radius: 16px;
-    padding: 12px;
-    transition: all 0.25s ease;
-}
+    st.markdown("""
+    <style>
+    .game-card {
+        border-radius: 16px;
+        padding: 12px;
+        transition: all 0.25s ease;
+    }
 
-.game-card.selected {
-    box-shadow: 0 0 0 3px #4CAF50, 0 12px 30px rgba(76, 175, 80, 0.35);
-    transform: translateY(-2px);
-}
+    .game-card.selected {
+        box-shadow: 0 0 0 3px #4CAF50, 0 12px 30px rgba(76, 175, 80, 0.35);
+        transform: translateY(-2px);
+    }
 
-.game-card:hover {
-    box-shadow: 0 10px 24px rgba(0,0,0,0.25);
-}
-</style>
-""", unsafe_allow_html=True)
+    .game-card:hover {
+        box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+    }
+    </style>
+    """, unsafe_allow_html=True)
     
     # ======================================================
     # IMPORT D'UNE LISTE EXISTANTE
