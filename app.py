@@ -1131,6 +1131,31 @@ elif st.session_state.page == "army":
         index=0,
         key="unit_select"
     )
+    if unit_name:
+    unit = units[unit_name]
+
+    with st.container(border=True):
+        st.markdown(f"### 🛡️ {unit_name}")
+
+        cols = st.columns([1, 2])
+
+        with cols[0]:
+            st.metric(
+                label="Coût",
+                value=f"{unit.get('cost', 0)} pts"
+            )
+
+        with cols[1]:
+            if unit.get("rules"):
+                st.markdown("**Règles spéciales**")
+                for rule in unit["rules"]:
+                    st.markdown(f"- {rule}")
+
+        if unit.get("equipment"):
+            st.markdown("**Équipement**")
+            for eq in unit["equipment"]:
+                st.markdown(f"- {eq}")
+    
     for k in list(st.session_state.keys()):
         if k.startswith("combined_"):
             del st.session_state[k]
