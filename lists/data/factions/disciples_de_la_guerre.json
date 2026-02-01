@@ -29,6 +29,44 @@
     "Aura de Défense versatile": "Cette figurine et son unité obtiennent la règle spéciale Défense versatile.",
     "Aura de Boost de Guerrier-né": "Cette figurine et son unité obtiennent la règle spéciale Boost de Guerrier-né."
   },
+    "spells": {
+    "Fureur terrifiante": {
+      "cost": 1,
+      "description": "Choisissez une unité ennemie à 18” ou moins...",
+      "range": "18\"",
+      "target": "1 unité ennemie"
+    },
+    "Flammes de la destruction": {
+      "cost": 1,
+      "description": "Choisissez une unité ennemie à 18” ou moins...",
+      "range": "18\"",
+      "target": "1 unité ennemie"
+    },
+    "Protection ardente": {
+      "cost": 2,
+      "description": "Choisissez jusqu'à deux unités amies à 12” ou moins...",
+      "range": "12\"",
+      "target": "jusqu'à 2 unités amies"
+    },
+    "Massacre brutal": {
+      "cost": 2,
+      "description": "Choisissez une unité ennemie à 6” ou moins...",
+      "range": "6\"",
+      "target": "1 unité ennemie"
+    },
+    "Bénédiction guerrière": {
+      "cost": 3,
+      "description": "Choisissez jusqu'à trois unités amies à 12” ou moins...",
+      "range": "12\"",
+      "target": "jusqu'à 3 unités amies"
+    },
+    "Décapitation": {
+      "cost": 3,
+      "description": "Choisissez jusqu'à deux unités ennemies à 12” ou moins...",
+      "range": "12\"",
+      "target": "jusqu'à 2 unités ennemies"
+    }
+  },  
   "units": [
     {
       "name": "Maître du Ravage de la Guerre Élu",
@@ -807,17 +845,6 @@
           "description": "Améliorations disponibles pour l'unité",
           "options": [
             {
-              "name": "Une Grande arme lourde (A2, PA (3))",
-              "cost": 20,
-              "weapon": {
-                "name": "Grande arme lourde",
-                "range": "-",
-                "attacks": 2,
-                "armor_piercing": 3,
-                "special_rules": []
-              }
-            },
-            {
               "name": "Sergent",
               "cost": 5,
               "special_rules": []
@@ -831,7 +858,6 @@
               "name": "Musicien",
               "cost": 10,
               "special_rules": []
-            }
           ]
         }
       ]
@@ -852,6 +878,168 @@
           "armor_piercing": 2
         }
       ]
-    }
+    },
+    {
+      "name": "Guerriers Semeurs de Mort",
+      "type": "unit",
+      "size": 3,
+      "base_cost": 200,
+      "quality": 3,
+      "defense": 4,
+      "special_rules": ["Assaut tranchant", "Coriace (3)", "Guerrier-né"],
+      "weapons": [
+        {
+          "name": "Paires d'armes ensorcelées",
+          "range": "-",
+          "attacks": 4,
+          "armor_piercing": 0
+	  "special_rules": [Perforant]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes de base par: ",
+          "options": [
+            {
+              "name": "Grande arme ensorcelée",
+              "cost": 15,
+              "weapon": {
+                "name": "Grande arme ensorcelée",
+                "range": "-",
+                "attacks": 4,
+                "armor_piercing": 2,
+                "special_rules": [Perforant]
+              }
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Une Grande arme lourde (A2, PA (3))",
+              "cost": 20,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "-",
+                "attacks": 2,
+                "armor_piercing": 3,
+                "special_rules": []
+              }
+            },
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Sergent",
+              "cost": 10,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chasseurs barbares de la Guerre",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 65,
+      "quality": 5,
+      "defense": 5,
+      "special_rules": ["Éclaireur", "Guerrier-né"],
+      "weapons": [
+        {
+          "name": "Arcs courts",
+          "range": "18",
+          "attacks": 1,
+          "armor_piercing": 0
+	},
+          "name": "Armes à une main",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 0
+	}
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez tous les Arcs courts par: ",
+          "options": [
+            {
+              "name": "Javelots barbelés",
+              "cost": 5,
+              "weapon": {
+                "name": "Javelots barbelés",
+                "range": "12",
+                "attacks": 1,
+                "armor_piercing": 1,
+                "special_rules": ["Éclatement"]
+              }
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Icône du Ravage (Aura de Défense versatile)",
+              "cost": 20,
+              "special_rules": ["Aura de Défense versatile"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Limiers du Ravage de la Guerre",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 70,
+      "quality": 4,
+      "defense": 5,
+      "special_rules": ["Arpenteur", "Guerrier-né", "Rapide"],
+      "weapons": [
+        {
+          "name": "Griffes perorantes",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 0
+	  "special_rules": ["Perforant"]
+	}
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Vicieux",
+              "cost": 5,
+              "special_rules": ["Lacération en mêlée"]
+            },
+            {
+              "name": "Éclaireur",
+              "cost": 10,
+              "special_rules": ["Éclaireur"]
+            }
+          ]
+        }
+      ]
+    },
   ]
 }
