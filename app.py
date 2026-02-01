@@ -1132,10 +1132,6 @@ elif st.session_state.page == "army":
         key="unit_select"
     )
     if unit:
-        with st.expander("📄 Fiche de l’unité", expanded=True):
-            with st.container(border=True):
-                st.markdown(f"### 🛡️ {unit['name']}")
-                ...
 
         with st.container(border=True):
             st.markdown(f"### 🛡️ {unit_name}")
