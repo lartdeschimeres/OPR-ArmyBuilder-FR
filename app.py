@@ -781,12 +781,20 @@ def load_factions():
                     "quality": 3,
                     "defense": 5,
                     "special_rules": ["Éclaireur", "Furieux", "Né pour la guerre"],
-                    "weapons": [{
-                        "name": "Armes à une main",
-                        "attacks": 1,
-                        "armor_piercing": 0,
-                        "special_rules": []
-                    }],
+                    "weapons": [
+                        {
+                            "name": "Arcs courts",
+                            "attacks": 1,
+                            "armor_piercing": 0,
+                            "special_rules": []
+                        },
+                        {
+                            "name": "Armes à une main",
+                            "attacks": 1,
+                            "armor_piercing": 0,
+                            "special_rules": []
+                        }
+                    ],
                     "upgrade_groups": [
                         {
                             "group": "Remplacement d'armes",
@@ -1129,12 +1137,9 @@ elif st.session_state.page == "army":
                 opt_name = selected_weapon.split(" (")[0]
                 opt = next((o for o in group["options"] if o["name"] == opt_name), None)
                 if opt:
-                    # Ajoute l'arme supplémentaire à la liste des armes existantes
-                    if isinstance(weapon, list):
-                        weapon.append(opt["weapon"])
-                    else:
-                        weapon = [weapon, opt["weapon"]]
-                    weapon_cost += opt["cost"]
+                    # Remplace l'arme de base par l'arme de remplacement
+                    weapon = [opt["weapon"]]
+                    weapon_cost = opt["cost"]
         elif group["type"] == "mount":
             mount_labels = ["Aucune monture"]
             mount_map = {}
