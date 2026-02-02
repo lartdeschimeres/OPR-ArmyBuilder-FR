@@ -385,7 +385,7 @@ def format_unit_option(u):
         weapons = []
         for weapon in u['weapons']:
             weapon_details = format_weapon_details(weapon)
-            weapons.append(f"{weapon.get('name', 'Arme')} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''})")
+            weapons.append(f"{weapon.get('name', 'Arme')} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon'hui_details['special'] else ''})")
         weapons_part = " | ".join(weapons)
     rules_part = ""
     if 'special_rules' in u and u['special_rules']:
@@ -1137,8 +1137,10 @@ elif st.session_state.page == "army":
                 opt_name = selected_weapon.split(" (")[0]
                 opt = next((o for o in group["options"] if o["name"] == opt_name), None)
                 if opt:
-                    # Remplace l'arme de base par l'arme de remplacement
-                    weapon = [opt["weapon"]]
+                    # Remplace uniquement l'arme concernée (ex: "Arcs courts" → "Javelots barbelés")
+                    # Conserve l'arme à une main
+                    weapon = [w for w in unit.get("weapons", []) if w.get("name") != "Arcs courts"]
+                    weapon.append(opt["weapon"])
                     weapon_cost = opt["cost"]
         elif group["type"] == "mount":
             mount_labels = ["Aucune monture"]
