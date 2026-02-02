@@ -610,10 +610,7 @@ th {{
         html += "</div>"
 
         # ---- ARMES ----
-        weapons = unit.get("weapon")
-        if weapons:
-            if not isinstance(weapons, list):
-                weapons = [weapons]
+        weapons = unit.get("weapons", [])
 
             html += '<div class="section-title">Armes équipées :</div>'
             html += """
@@ -631,8 +628,8 @@ th {{
   <td>{esc(w.get('name', '-'))}</td>
   <td>{esc(w.get('range', '-'))}</td>
   <td>{esc(w.get('attacks', '-'))}</td>
-  <td>{esc(w.get('ap', '-'))}</td>
-  <td>{esc(", ".join(w.get('special', [])) if w.get('special') else '-')}</td>
+  <td>{esc(w.get('armor_piercing', '-'))}</td>
+  <td>{esc(", ".join(w.get('special_rules', [])) if w.get('special_rules') else '-')}</td>
 </tr>
 """
             html += "</tbody></table>"
