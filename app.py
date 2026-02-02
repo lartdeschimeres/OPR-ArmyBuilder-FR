@@ -54,7 +54,7 @@ with st.sidebar:
     if st.button("🧩 Construction", use_container_width=True):
         st.session_state.page = "army"
         st.rerun()
-        
+
 # ======================================================
 # CONFIGURATION
 # ======================================================
@@ -1053,7 +1053,7 @@ if st.session_state.page == "setup":
         st.session_state.army_cost = st.session_state.get("army_cost", 0)
         st.session_state.page = "army"
         st.rerun()
-        
+
 # ======================================================
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE
 # ======================================================
@@ -1134,14 +1134,14 @@ elif st.session_state.page == "army":
                 opt = mount_map[selected_mount]
                 mount = opt
                 mount_cost = opt["cost"]
-        
+
         else:
             is_hero = unit.get("type", "").lower() == "hero"
 
             if is_hero:
                 option_labels = ["Aucune amélioration"]
                 option_map = {}
-    
+
                 for o in group["options"]:
                     label = f"{o['name']} (+{o['cost']} pts)"
                     option_labels.append(label)
@@ -1167,8 +1167,8 @@ elif st.session_state.page == "army":
                     ):
                         selected_options.setdefault(group["group"], []).append(o)
                         upgrades_cost += o["cost"]
-        
-# Doublage des effectifs (UNIQUEMENT pour les unités, PAS pour les héros)
+
+    # Doublage des effectifs (UNIQUEMENT pour les unités, PAS pour les héros)
     if unit.get("type") != "hero":
         double_size = st.checkbox(
             "Unité combinée (doubler les effectifs)",
@@ -1179,7 +1179,6 @@ elif st.session_state.page == "army":
     else:
         double_size = False
         multiplier = 1
-
 
     # Calcul du coût final (en tenant compte du doublage uniquement pour les unités)
     core_cost = (base_cost + weapon_cost) * multiplier
@@ -1194,24 +1193,36 @@ elif st.session_state.page == "army":
 
     if st.button("Ajouter à l'armée"):
         try:
-            weapon_data = format_weapon_details(weapon)
+            # Formate les armes
+            if isinstance(weapon, list):
+                weapon_data = [format_weapon_details(w) for w in weapon]
+            else:
+                weapon_data = [format_weapon_details(weapon)]
+
+            # Calcule la valeur de Coriace
             total_coriace = 0
-            if 'special_rules' in unit and isinstance(unit.get('special_rules'), list):
+            if 'special_rules' in unit and isinstance(unit['special_rules'], list):
                 total_coriace += get_coriace_from_rules(unit['special_rules'])
+
             if mount:
                 _, mount_coriace = get_mount_details(mount)
                 total_coriace += mount_coriace
+
             if selected_options:
                 for opts in selected_options.values():
                     if isinstance(opts, list):
                         for opt in opts:
-                            if 'special_rules' in opt and isinstance(opt.get('special_rules'), list):
+                            if 'special_rules' in opt and isinstance(opt['special_rules'], list):
                                 total_coriace += get_coriace_from_rules(opt['special_rules'])
-            if isinstance(weapon, list):
-                for w in weapon:
+
+            if isinstance(weapon_data, list):
+                for w in weapon_data:
                     if 'special_rules' in w and isinstance(w['special_rules'], list):
                         total_coriace += get_coriace_from_rules(w['special_rules'])
+
             total_coriace = total_coriace if total_coriace > 0 else None
+
+            # Crée les données de l'unité
             unit_data = {
                 "name": unit["name"],
                 "type": unit.get("type", "unit"),
@@ -1228,9 +1239,12 @@ elif st.session_state.page == "army":
                 "coriace": total_coriace,
                 "game": st.session_state.game
             }
+
+            # Valide les règles
             test_army = st.session_state.army_list.copy()
             test_army.append(unit_data)
             test_total = st.session_state.army_cost + final_cost
+
             if test_total > st.session_state.points:
                 st.error(f"⚠️ La limite de points ({st.session_state.points}) est dépassée! Ajout annulé.")
                 if st.button("Annuler la dernière action"):
@@ -1243,8 +1257,10 @@ elif st.session_state.page == "army":
                 st.session_state.army_list.append(unit_data)
                 st.session_state.army_cost += final_cost
                 st.rerun()
+
         except Exception as e:
-            st.error(f"Erreur lors de la création de l'unité: {str(e)}")
+            st.error(f"Erreur lors de l'ajout de l'unité : {str(e)}")
+
     st.divider()
     st.subheader("Liste de l'armée")
     if not st.session_state.army_list:
@@ -1262,8 +1278,13 @@ elif st.session_state.page == "army":
                 rules_text = ", ".join(u["rules"])
                 st.markdown(f"**Règles spéciales:** {rules_text}")
             if 'weapon' in u and u['weapon']:
-                weapon_details = format_weapon_details(u['weapon'])
-                st.markdown(f"**Arme:** {weapon_details['name']} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''})")
+                if isinstance(u['weapon'], list):
+                    for w in u['weapon']:
+                        weapon_details = format_weapon_details(w)
+                        st.markdown(f"**Arme:** {weapon_details['name']} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''})")
+                else:
+                    weapon_details = format_weapon_details(u['weapon'])
+                    st.markdown(f"**Arme:** {weapon_details['name']} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''})")
             if u.get("options"):
                 for group_name, opts in u["options"].items():
                     if isinstance(opts, list) and opts:
@@ -1292,11 +1313,11 @@ elif st.session_state.page == "army":
         army_list=army,
         army_name=army_name,
         army_limit=army_limit
-    )        
-    
+    )
+
     json_data = json.dumps(army_data, indent=2, ensure_ascii=False)
     st.divider()
-    
+
     st.divider()
     st.subheader("📤 Exporter l’armée")
 
