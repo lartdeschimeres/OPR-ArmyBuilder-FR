@@ -748,10 +748,11 @@ th {{
                 if spells:
                     html += '<div class="section-title">Sorts de la faction :</div>'
                     html += "<div class='rules'>"
-                    for spell_name, spell_description in spells.items():
-                        html += f"<div><strong>{esc(spell_name)}:</strong> {esc(spell_description)}</div>"
+                    for spell_name, spell_info in spells.items():
+                        cost = spell_info.get('cost', '?')
+                        description = spell_info.get('description', '')
+                        html += f"<div><strong>{esc(spell_name)} [{cost}]</strong>: {esc(description)}</div>"
                     html += "</div>"
-        html += """
 </div>
 </body>
 </html>
