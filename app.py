@@ -611,6 +611,16 @@ th {{
 
         # ---- ARMES ----
         if unit.get("weapons"):
+            html += "<div class='weapons'><strong>Armes :</strong><ul>"
+            for w in unit["weapons"]:
+                html += (
+                    f"<li>{w['name']} "
+                    f"(A{w['attacks']}, PA({w['ap']})"
+                    f"{', ' + ', '.join(w['special']) if w['special'] else ''})</li>"
+                )
+            html += "</ul></div>"
+        
+        if unit.get("weapons"):
             st.markdown("**Armes de base**")
             for w in unit["weapons"]:
                 wd = format_weapon_details(w)
@@ -622,6 +632,13 @@ th {{
                     f"{', ' + ', '.join(wd['special']) if wd['special'] else ''})"
                 )
 
+            def format_weapon_line(w):
+                return (
+                    f"{w['name']} (A{w['attacks']}, PA({w['ap']})"
+                    f"{', ' + ', '.join(w['special']) if w['special'] else ''})"
+                )
+
+            
             html += '<div class="section-title">Armes équipées :</div>'
             html += """
 <table>
@@ -1170,7 +1187,8 @@ elif st.session_state.page == "army":
     if unit["base_cost"] > max_cost:
         st.error(f"Cette unité ({unit['base_cost']} pts) dépasse la limite de {int(max_cost)} pts ({int(game_config['unit_max_cost_ratio']*100)}% du total)")
         st.stop()
-    weapon = unit.get("weapons", [{}])[0]
+    base_weapons = unit.get("weapons", [])
+    selected_weapons = base_weapons.copy()
     selected_options = {}
     mount = None
     weapon_cost = 0
@@ -1330,7 +1348,13 @@ elif st.session_state.page == "army":
                 rules_text = ", ".join(u["rules"])
                 st.markdown(f"**Règles spéciales:** {rules_text}")
             if 'weapon' in u and u['weapon']:
-                weapon_details = format_weapon_details(u['weapon'])
+                if u.get("weapons"):
+                    st.markdown("**Armes:**")
+                    for w in u["weapons"]:
+                        st.markdown(
+                            f"- {w['name']} (A{w['attacks']}, PA({w['ap']})"
+                            f"{', ' + ', '.join(w['special']) if w['special'] else ''})"
+                        )
                 st.markdown(f"**Arme:** {weapon_details['name']} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''})")
             if u.get("options"):
                 for group_name, opts in u["options"].items():
