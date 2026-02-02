@@ -630,7 +630,7 @@ th {{
           <td>{esc(w.get('name', '-'))}</td>
           <td>{esc(w.get('attacks', '-'))}</td>
           <td>{esc(w.get('ap', '-'))}</td>
-          <td>{esc(", ".join(w.get('special', [])) if w.get('special') else '-'}</td>
+          <td>{esc(", ".join(w.get('special', [])) if w.get('special') else '-')}</td>
         </tr>
         """
             html += "</tbody></table>"
