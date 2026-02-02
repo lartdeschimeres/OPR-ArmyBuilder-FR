@@ -610,7 +610,7 @@ th {{
         html += "</div>"
 
         # ---- ARMES ----
-        weapons = unit.get("weapon")
+        weapons = unit.get("weapon", [])
         if weapons:
             if not isinstance(weapons, list):
                 weapons = [weapons]
@@ -810,6 +810,16 @@ def load_factions():
                                         "attacks": 1,
                                         "armor_piercing": 1,
                                         "special_rules": []
+                                    }
+                                },
+                                {
+                                    "name": "Javelots barbelés",
+                                    "cost": 10,
+                                    "weapon": {
+                                        "name": "Javelots barbelés",
+                                        "attacks": 1,
+                                        "armor_piercing": 1,
+                                        "special_rules": ["Éclatement"]
                                     }
                                 }
                             ]
@@ -1119,8 +1129,12 @@ elif st.session_state.page == "army":
                 opt_name = selected_weapon.split(" (")[0]
                 opt = next((o for o in group["options"] if o["name"] == opt_name), None)
                 if opt:
-                    weapon = [opt["weapon"]]
-                    weapon_cost = opt["cost"]
+                    # Ajoute l'arme supplémentaire à la liste des armes existantes
+                    if isinstance(weapon, list):
+                        weapon.append(opt["weapon"])
+                    else:
+                        weapon = [weapon, opt["weapon"]]
+                    weapon_cost += opt["cost"]
         elif group["type"] == "mount":
             mount_labels = ["Aucune monture"]
             mount_map = {}
