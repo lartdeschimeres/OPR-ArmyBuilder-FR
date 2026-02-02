@@ -1207,8 +1207,10 @@ elif st.session_state.page == "army":
                         for opt in opts:
                             if 'special_rules' in opt and isinstance(opt.get('special_rules'), list):
                                 total_coriace += get_coriace_from_rules(opt['special_rules'])
-            if 'special_rules' in weapon and isinstance(weapon.get('special_rules'), list):
-                total_coriace += get_coriace_from_rules(weapon['special_rules'])
+            if isinstance(weapon, list):
+                for w in weapon:
+                    if 'special_rules' in w and isinstance(w['special_rules'], list):
+                        total_coriace += get_coriace_from_rules(w['special_rules'])
             total_coriace = total_coriace if total_coriace > 0 else None
             unit_data = {
                 "name": unit["name"],
