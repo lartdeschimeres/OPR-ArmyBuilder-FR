@@ -1133,28 +1133,26 @@ elif st.session_state.page == "army":
     )
     if unit:
         with st.expander("📄 Fiche de l’unité", expanded=True):
-            with st.container(border=True):
-                st.markdown(f"### 🛡️ {unit['name']}")
-                ...
-                
-            cols = st.columns([1, 2])
+            st.markdown(f"### 🛡️ {unit['name']}")
 
-            with cols[0]:
-                st.metric(
-                    label="Coût",
-                    value=f"{unit.get('cost', 0)} pts"
+            cols = st.columns(3)
+            cols[0].metric("Coût de base", f"{unit['base_cost']} pts")
+            cols[1].metric("Qualité", f"{unit['quality']}+")
+            cols[2].metric("Défense", f"{unit['defense']}+")
+
+            if unit.get("special_rules"):
+                st.markdown("**Règles spéciales**")
+                for r in unit["special_rules"]:
+                    st.markdown(f"- {format_special_rule(r)}")
+
+            if unit.get("weapons"):
+                w = unit["weapons"][0]
+                wd = format_weapon_details(w)
+                st.markdown(
+                    f"**Arme de base :** {wd['name']} "
+                    f"(A{wd['attacks']}, PA({wd['ap']})"
+                    f"{', ' + ', '.join(wd['special']) if wd['special'] else ''})"
                 )
-
-            with cols[1]:
-                if unit.get("rules"):
-                    st.markdown("**Règles spéciales**")
-                    for rule in unit["rules"]:
-                        st.markdown(f"- {rule}")
-
-            if unit.get("equipment"):
-                st.markdown("**Équipement**")
-                for eq in unit["equipment"]:
-                    st.markdown(f"- {eq}")
     
     for k in list(st.session_state.keys()):
         if k.startswith("combined_"):
