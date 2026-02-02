@@ -1217,7 +1217,7 @@ elif st.session_state.page == "army":
                 "is_combined": double_size if unit.get("type") != "hero" else False,
                 "quality": unit["quality"],
                 "defense": unit["defense"],
-                "rules": [format_special_rule(r) for r in unit.get("special_rules", []) if "Coriace(0)" not in r],
+                "special_rules": [format_special_rule(r) for r in unit.get("special_rules", []) if "Coriace(0)" not in r],
                 "weapon": weapon_data,
                 "options": selected_options,
                 "mount": mount,
@@ -1254,8 +1254,8 @@ elif st.session_state.page == "army":
             if u.get("type") == "hero":
                 unit_header += " | 🌟 Héros"
             st.markdown(unit_header)
-            if u.get("rules"):
-                rules_text = ", ".join(u["rules"])
+            if u.get("special_rules"):
+                rules_text = ", ".join(u["special_rules"])
                 st.markdown(f"**Règles spéciales:** {rules_text}")
             if 'weapon' in u and u['weapon']:
                 weapon_details = format_weapon_details(u['weapon'])
