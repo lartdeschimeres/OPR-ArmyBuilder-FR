@@ -646,6 +646,18 @@ th {{
                 html += f"<span>{esc(r)}</span>"
             html += "</div>"
 
+        # ---- SORTS DE LA FACTION ----
+        if 'faction' in st.session_state:
+            faction_data = factions_by_game.get(st.session_state.game, {}).get(st.session_state.faction, {})
+            if 'spells' in faction_data:
+                spells = faction_data['spells']
+                if spells:
+                    html += '<div class="section-title">Sorts de la faction :</div>'
+                    html += "<div class='rules'>"
+                    for spell_name, spell_description in spells.items():
+                        html += f"<div><strong>{esc(spell_name)}:</strong> {esc(spell_description)}</div>"
+                    html += "</div>"
+        
         # ---- OPTIONS ----
         options = unit.get("options", {})
         if options:
