@@ -610,10 +610,17 @@ th {{
         html += "</div>"
 
         # ---- ARMES ----
-        weapons = unit.get("weapon")
-        if weapons:
-            if not isinstance(weapons, list):
-                weapons = [weapons]
+        if unit.get("weapons"):
+            st.markdown("**Armes de base**")
+            for w in unit["weapons"]:
+                wd = format_weapon_details(w)
+                st.markdown(
+                    f"- **{wd['name']}** "
+                    f"(Portée {wd['range']}, "
+                    f"A{wd['attacks']}, "
+                    f"PA({wd['ap']})"
+                    f"{', ' + ', '.join(wd['special']) if wd['special'] else ''})"
+                )
 
             html += '<div class="section-title">Armes équipées :</div>'
             html += """
