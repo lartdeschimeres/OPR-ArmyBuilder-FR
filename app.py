@@ -707,7 +707,7 @@ th {{
         if rules:
             html += '<div class="section-title">Règles spéciales :</div>'
             html += "<div class='rules'>"
-            html += "<div>" + ", ".join(f"<span style='font-size: 12px;'>{esc(r)}</span>" for r in rules) + "</div>"
+            html += "<div>" + ", ".join(f"<span style='font-size: 14px;'>{esc(r)}</span>" for r in rules) + "</div>"
             html += "</div>"
 
         # ---- OPTIONS ----
