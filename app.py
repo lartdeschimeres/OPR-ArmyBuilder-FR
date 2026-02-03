@@ -180,6 +180,38 @@ st.markdown("""
         font-size: 12px;
         color: #bbb;
     }
+    .unit-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+    }
+    .hero-badge {
+        color: gold;
+        font-weight: bold;
+    }
+    .rule-badge {
+        background-color: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-right: 5px;
+        font-size: 12px;
+    }
+    .weapon-info {
+        font-style: normal;
+        color: #333;
+    }
+    .mount-info {
+        font-style: normal;
+        color: #333;
+    }
+    .role-improvement {
+        background-color: #f0f2f6;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -739,40 +771,40 @@ th {{
                 </div>
                 """
 
-# ---- SORTS DE LA FACTION (en dehors des unités, en une seule colonne) ----
-if 'faction' in st.session_state:
-    faction_data = factions_by_game.get(st.session_state.game, {}).get(st.session_state.faction, {})
-    if 'spells' in faction_data:
-        spells = faction_data['spells']
-        if spells:
-            html += """
-            <div style="margin-top: 40px;">
-                <h3 style="text-align: center; color: var(--accent); border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 15px;">
-                    Sorts de la faction
-                </h3>
-                <div style="display: flex; flex-direction: column; font-size: 12px; margin-bottom: 20px; max-width: 100%;">
-                    <div style="flex: 1; padding: 0 10px; width: 100%;">
-            """
-
-            # Utilise directement les clés du dictionnaire `spells` sans trier
-            spell_names = spells.keys()
-
-            # Afficher chaque sort en une seule colonne, dans l'ordre du JSON
-            for spell_name in spell_names:
-                spell_info = spells[spell_name]
-                cost = spell_info.get('cost', '?')
-                description = spell_info.get('description', '')
-                html += f"""
-                <div style="margin-bottom: 12px; line-height: 1.4; width: 100%;">
-                    <strong>{esc(spell_name)} [{cost}]</strong>: {esc(description)}
-                </div>
+    # ---- SORTS DE LA FACTION (en dehors des unités, en une seule colonne) ----
+    if 'faction' in st.session_state:
+        faction_data = factions_by_game.get(st.session_state.game, {}).get(st.session_state.faction, {})
+        if 'spells' in faction_data:
+            spells = faction_data['spells']
+            if spells:
+                html += """
+                <div style="margin-top: 40px;">
+                    <h3 style="text-align: center; color: var(--accent); border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 15px;">
+                        Sorts de la faction
+                    </h3>
+                    <div style="display: flex; flex-direction: column; font-size: 12px; margin-bottom: 20px; max-width: 100%;">
+                        <div style="flex: 1; padding: 0 10px; width: 100%;">
                 """
 
-            html += """
+                # Utilise directement les clés du dictionnaire `spells` sans trier
+                spell_names = spells.keys()
+
+                # Afficher chaque sort en une seule colonne, dans l'ordre du JSON
+                for spell_name in spell_names:
+                    spell_info = spells[spell_name]
+                    cost = spell_info.get('cost', '?')
+                    description = spell_info.get('description', '')
+                    html += f"""
+                    <div style="margin-bottom: 12px; line-height: 1.4; width: 100%;">
+                        <strong>{esc(spell_name)} [{cost}]</strong>: {esc(description)}
+                    </div>
+                    """
+
+                html += """
+                        </div>
                     </div>
                 </div>
-            </div>
-            """
+                """
 
     html += """
 </div>
@@ -780,6 +812,7 @@ if 'faction' in st.session_state:
 </html>
 """
     return html
+
 # ======================================================
 # CHARGEMENT DES FACTIONS
 # ======================================================
@@ -839,13 +872,6 @@ if "page" not in st.session_state:
 # ======================================================
 if st.session_state.page == "setup":
     st.title("OPR Army Forge")
-
-factions_by_game, games = load_factions()
-game = st.session_state.game
-faction = st.selectbox(
-    "Faction",
-    list(factions_by_game.get(game, {}).keys())
-)
 
     # ======================================================
     # IMPORT D'UNE LISTE EXISTANTE
