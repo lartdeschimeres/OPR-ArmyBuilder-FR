@@ -787,131 +787,6 @@ th {{
 def load_factions():
     factions = {}
     games = set()
-    if not list(FACTIONS_DIR.glob("*.json")):
-        default_faction = {
-            "game": "Age of Fantasy",
-            "faction": "Disciples de la Guerre",
-            "special_rules_descriptions": {
-                "Éclaireur": "Déplacement facilité en terrain difficile.",
-                "Furieux": "Relance les 1 en attaque.",
-                "Né pour la guerre": "Relance les 1 en test de moral.",
-                "Héros": "Personnage inspirant.",
-                "Coriace(1)": "Ignore 1 point de dégât par phase.",
-                "Magique(1)": "Ignore 1 point de défense.",
-                "Contre-charge": "+1 aux jets de dégât lors d'une charge.",
-                "Attaque venimeuse": "Les blessures infligées par cette unité ne peuvent pas être régénérées.",
-                "Perforant": "Ignore 1 point de défense supplémentaire.",
-                "Volant": "Peut voler par-dessus les obstacles et les unités.",
-                "Effrayant(1)": "Les unités ennemies à 6\" doivent passer un test de moral ou reculer de 3\".",
-                "Lanceur de sorts (3)": "Peut lancer 3 sorts par tour."
-            },
-            "units": [
-                {
-                    "name": "Barbares de la Guerre",
-                    "type": "unit",
-                    "size": 10,
-                    "base_cost": 50,
-                    "quality": 3,
-                    "defense": 5,
-                    "special_rules": ["Éclaireur", "Furieux", "Né pour la guerre"],
-                    "weapons": [
-                        {
-                            "name": "Arcs courts",
-                            "attacks": 1,
-                            "armor_piercing": 0,
-                            "special_rules": []
-                        },
-                        {
-                            "name": "Armes à une main",
-                            "attacks": 1,
-                            "armor_piercing": 0,
-                            "special_rules": []
-                        }
-                    ],
-                    "upgrade_groups": [
-                        {
-                            "group": "Remplacement d'armes",
-                            "type": "weapon",
-                            "options": [
-                                {
-                                    "name": "Lance",
-                                    "cost": 35,
-                                    "weapon": {
-                                        "name": "Lance",
-                                        "attacks": 1,
-                                        "armor_piercing": 0,
-                                        "special_rules": ["Contre-charge"]
-                                    }
-                                },
-                                {
-                                    "name": "Fléau",
-                                    "cost": 20,
-                                    "weapon": {
-                                        "name": "Fléau",
-                                        "attacks": 1,
-                                        "armor_piercing": 1,
-                                        "special_rules": []
-                                    }
-                                },
-                                {
-                                    "name": "Javelots barbelés",
-                                    "cost": 10,
-                                    "weapon": {
-                                        "name": "Javelots barbelés",
-                                        "attacks": 1,
-                                        "armor_piercing": 1,
-                                        "special_rules": ["Éclatement"]
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "group": "Améliorations d'unité",
-                            "type": "upgrades",
-                            "options": [
-                                {
-                                    "name": "Icône du Ravage",
-                                    "cost": 20,
-                                    "special_rules": ["Aura de Défense versatile"]
-                                },
-                                {
-                                    "name": "Sergent",
-                                    "cost": 5,
-                                    "special_rules": []
-                                },
-                                {
-                                    "name": "Bannière",
-                                    "cost": 5,
-                                    "special_rules": []
-                                },
-                                {
-                                    "name": "Musicien",
-                                    "cost": 10,
-                                    "special_rules": []
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "name": "Maître de la Guerre Élu",
-                    "type": "hero",
-                    "size": 1,
-                    "base_cost": 150,
-                    "quality": 3,
-                    "defense": 5,
-                    "special_rules": ["Héros", "Éclaireur", "Furieux"],
-                    "weapons": [{
-                        "name": "Arme héroïque",
-                        "attacks": 2,
-                        "armor_piercing": 1,
-                        "special_rules": ["Magique(1)"]
-                    }]
-                }
-            ]
-        }
-        with open(FACTIONS_DIR / "default.json", "w", encoding="utf-8") as f:
-            json.dump(default_faction, f, indent=2)
     for fp in FACTIONS_DIR.glob("*.json"):
         try:
             with open(fp, encoding="utf-8") as f:
@@ -919,7 +794,9 @@ def load_factions():
                 game = data.get("game")
                 faction = data.get("faction")
                 if game and faction:
-                    factions.setdefault(game, {})[faction] = data
+                    if game not in factions:
+                        factions[game] = {}
+                    factions[game][faction] = data
                     games.add(game)
         except Exception as e:
             st.warning(f"Erreur chargement {fp.name}: {e}")
@@ -962,6 +839,13 @@ if "page" not in st.session_state:
 # ======================================================
 if st.session_state.page == "setup":
     st.title("OPR Army Forge")
+
+factions_by_game, games = load_factions()
+game = st.session_state.game
+faction = st.selectbox(
+    "Faction",
+    list(factions_by_game.get(game, {}).keys())
+)
 
     # ======================================================
     # IMPORT D'UNE LISTE EXISTANTE
