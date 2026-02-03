@@ -707,7 +707,7 @@ th {{
         if rules:
             html += '<div class="section-title">Règles spéciales :</div>'
             html += "<div class='rules'>"
-            html += "<div>" + ", ".join(f"<span style='font-size: 16px;'>{esc(r)}</span>" for r in rules) + "</div>"
+            html += "<div>" + ", ".join(f"<span style='font-size: 12px;'>{esc(r)}</span>" for r in rules) + "</div>"
             html += "</div>"
 
         # ---- OPTIONS ----
@@ -1099,24 +1099,32 @@ elif st.session_state.page == "army":
     weapon_cost = 0
     mount_cost = 0
     upgrades_cost = 0
+
+    # Ajoute un compteur global pour les clés uniques
+    if "widget_counter" not in st.session_state:
+        st.session_state.widget_counter = 0
+
     for group in unit.get("upgrade_groups", []):
         st.markdown(f"**{group['group']}**")
+
+        # Incrémente le compteur pour chaque groupe d'améliorations
+        st.session_state.widget_counter += 1
+        unique_key = f"{unit['name']}_{st.session_state.widget_counter}"
+
         if group["type"] == "weapon":
             weapon_options = ["Arme de base"]
             for o in group["options"]:
                 weapon_details = format_weapon_details(o["weapon"])
                 cost_diff = o["cost"]
                 weapon_options.append(f"{o['name']} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''}) (+{cost_diff} pts)")
-            selected_weapon = st.radio("Arme", weapon_options, key=f"{unit['name']}_weapon")
+            selected_weapon = st.radio("Arme", weapon_options, key=f"{unique_key}_weapon")
             if selected_weapon != "Arme de base":
                 opt_name = selected_weapon.split(" (")[0]
                 opt = next((o for o in group["options"] if o["name"] == opt_name), None)
                 if opt:
-                    # Pour les héros, remplacer toutes les armes par l'arme de remplacement
                     if unit.get("type", "").lower() == "hero":
                         weapon = [opt["weapon"]]  # Remplacer toutes les armes par l'arme de remplacement
                     else:
-                        # Pour les unités normales, conserver les armes de base et remplacer uniquement l'arme concernée
                         new_weapons = []
                         for w in unit.get("weapons", []):
                             if w.get("name") != "Arcs courts":  # Conserver les armes de base
@@ -1132,41 +1140,35 @@ elif st.session_state.page == "army":
                 label = f"{mount_details} (+{o['cost']} pts)"
                 mount_labels.append(label)
                 mount_map[label] = o
-            selected_mount = st.radio("Monture", mount_labels, key=f"{unit['name']}_mount")
+            selected_mount = st.radio("Monture", mount_labels, key=f"{unique_key}_mount")
             if selected_mount != "Aucune monture":
                 opt = mount_map[selected_mount]
                 mount = opt
                 mount_cost = opt["cost"]
-
         else:
             is_hero = unit.get("type", "").lower() == "hero"
-
             if is_hero:
                 option_labels = ["Aucune amélioration"]
                 option_map = {}
-
                 for o in group["options"]:
                     label = f"{o['name']} (+{o['cost']} pts)"
                     option_labels.append(label)
                     option_map[label] = o
-
                 selected = st.radio(
                     f"Amélioration – {group['group']}",
                     option_labels,
-                    key=f"{unit['name']}_{group['group']}_hero"
+                    key=f"{unique_key}_hero"
                 )
-
                 if selected != "Aucune amélioration":
                     opt = option_map[selected]
                     selected_options[group['group']] = [opt]
                     upgrades_cost += opt["cost"]
-
             else:
                 st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
                 for o in group["options"]:
                     if st.checkbox(
                         f"{o['name']} (+{o['cost']} pts)",
-                        key=f"{unit['name']}_{group['group']}_{o['name']}"
+                        key=f"{unique_key}_{o['name']}"
                     ):
                         selected_options.setdefault(group["group"], []).append(o)
                         upgrades_cost += o["cost"]
@@ -1176,7 +1178,7 @@ elif st.session_state.page == "army":
         double_size = st.checkbox(
             "Unité combinée (doubler les effectifs)",
             value=False,
-            key=f"double_{unit['name']}"
+            key=f"{unique_key}_double"
         )
         multiplier = 2 if double_size else 1
     else:
