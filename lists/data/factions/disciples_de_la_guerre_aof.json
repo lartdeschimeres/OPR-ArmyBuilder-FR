@@ -1010,7 +1010,7 @@
           "attacks": 1,
           "armor_piercing": "-",
 	      "special_rules": ["Perforant"]
-	     },
+	     }
       ],
       "upgrade_groups": [
         {
