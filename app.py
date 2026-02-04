@@ -607,6 +607,14 @@ def load_factions():
     return factions, sorted(games) if games else list(GAME_CONFIG.keys())
 
 # ======================================================
+# FONCTION POUR LA BARRE DE PROGRESSION
+# ======================================================
+def show_points_progress(current_points, max_points):
+    ratio = min(current_points / max_points, 1.0)
+    st.progress(ratio)
+    st.markdown(f"**{current_points}/{max_points} pts**")
+
+# ======================================================
 # PAGE 1 – CONFIGURATION
 # ======================================================
 if st.session_state.page == "setup":
