@@ -1100,6 +1100,7 @@ elif st.session_state.page == "army":
     st.divider()
     st.subheader("Ajouter une unité")
 
+    # Sélection de l'unité
     unit = st.selectbox(
         "Unité disponible",
         st.session_state.units,
@@ -1107,6 +1108,11 @@ elif st.session_state.page == "army":
         index=0,
         key="unit_select"
     )
+
+    # Nettoyage des anciennes clés de session
+    keys_to_delete = [k for k in st.session_state.keys() if k.startswith("unit_") or k.startswith("combined_")]
+    for k in keys_to_delete:
+        del st.session_state[k]
 
     # Initialisation des variables
     weapon = unit.get("weapons", [])
@@ -1116,30 +1122,14 @@ elif st.session_state.page == "army":
     mount_cost = 0
     upgrades_cost = 0
 
-    # Nettoyage des anciennes clés de session
-    keys_to_delete = []
-    for k in st.session_state.keys():
-        if k.startswith("combined_") or (k.startswith(f"{unit['name']}_") and not k.startswith("unit_select")):
-            keys_to_delete.append(k)
-    for k in keys_to_delete:
-        del st.session_state[k]
-
-    base_size = unit.get('size', 10)
-    base_cost = unit["base_cost"]
-    max_cost = st.session_state.points * game_config["unit_max_cost_ratio"]
-
-    if unit["base_cost"] > max_cost:
-        st.error(f"Cette unité dépasse la limite de points")
-        st.stop()
-
     # Boucle des groupes d'améliorations (version corrigée)
     for group_idx, group in enumerate(unit.get("upgrade_groups", [])):
-        unique_key = f"{unit['name']}_group_{group_idx}"
+        unique_key = f"unit_{st.session_state.widget_counter}_{group_idx}"
 
         st.markdown(f"**{group['group']}**")
 
         if group["type"] == "weapon":
-            # Boutons radio pour les armes (Cavaliers Barbares)
+            # Boutons radio pour les armes (choix unique)
             weapon_options = ["Arme de base"]
             for o in group["options"]:
                 weapon_details = format_weapon_details(o["weapon"])
@@ -1149,34 +1139,39 @@ elif st.session_state.page == "army":
                     f"(+{o['cost']} pts)"
                 )
 
-            # Initialisation sécurisée
-            if f"{unique_key}_weapon" not in st.session_state:
-                st.session_state[f"{unique_key}_weapon"] = weapon_options[0]
+            # Utilisation d'un index sécurisé
+            default_index = 0
+            if f"{unique_key}_weapon" in st.session_state:
+                try:
+                    default_index = weapon_options.index(st.session_state[f"{unique_key}_weapon"])
+                except:
+                    default_index = 0
 
             selected_weapon = st.radio(
-                "Arme",
+                "Sélectionnez une arme",
                 weapon_options,
                 key=f"{unique_key}_weapon",
-                index=weapon_options.index(st.session_state[f"{unique_key}_weapon"])
+                index=default_index
             )
 
-            # Mise à jour sécurisée
+            # Mise à jour sécurisée de la sélection
             try:
                 st.session_state[f"{unique_key}_weapon"] = selected_weapon
             except:
-                pass  # Ignore les erreurs de session_state
+                pass
 
             if selected_weapon != "Arme de base":
                 opt_name = selected_weapon.split(" (")[0]
                 opt = next((o for o in group["options"] if o["name"] == opt_name), None)
                 if opt:
                     if unit.get("type", "").lower() == "hero":
-                        weapon = [opt["weapon"]]
+                        weapon = [opt["weapon"]]  # Remplacement total pour les héros
                     else:
-                        weapon = unit.get("weapons", []) + [opt["weapon"]]
+                        weapon = unit.get("weapons", []) + [opt["weapon"]]  # Ajout pour les unités
                     weapon_cost += opt["cost"]
 
         elif group["type"] == "mount":
+            # Boutons radio pour les montures
             mount_labels = ["Aucune monture"]
             mount_map = {}
             for o in group["options"]:
@@ -1185,14 +1180,18 @@ elif st.session_state.page == "army":
                 mount_labels.append(label)
                 mount_map[label] = o
 
-            if f"{unique_key}_mount" not in st.session_state:
-                st.session_state[f"{unique_key}_mount"] = mount_labels[0]
+            default_index = 0
+            if f"{unique_key}_mount" in st.session_state:
+                try:
+                    default_index = mount_labels.index(st.session_state[f"{unique_key}_mount"])
+                except:
+                    default_index = 0
 
             selected_mount = st.radio(
-                "Monture",
+                "Sélectionnez une monture",
                 mount_labels,
                 key=f"{unique_key}_mount",
-                index=mount_labels.index(st.session_state.get(f"{unique_key}_mount", mount_labels[0]))
+                index=default_index
             )
 
             try:
@@ -1207,6 +1206,7 @@ elif st.session_state.page == "army":
                     mount_cost = opt["cost"]
 
         else:
+            # Checkboxes pour les améliorations (choix multiples)
             is_hero = unit.get("type", "").lower() == "hero"
             if is_hero:
                 option_labels = ["Aucune amélioration"]
@@ -1216,14 +1216,18 @@ elif st.session_state.page == "army":
                     option_labels.append(label)
                     option_map[label] = o
 
-                if f"{unique_key}_hero" not in st.session_state:
-                    st.session_state[f"{unique_key}_hero"] = option_labels[0]
+                default_index = 0
+                if f"{unique_key}_hero" in st.session_state:
+                    try:
+                        default_index = option_labels.index(st.session_state[f"{unique_key}_hero"])
+                    except:
+                        default_index = 0
 
                 selected = st.radio(
                     f"Amélioration – {group['group']}",
                     option_labels,
                     key=f"{unique_key}_hero",
-                    index=option_labels.index(st.session_state.get(f"{unique_key}_hero", option_labels[0]))
+                    index=default_index
                 )
 
                 try:
@@ -1255,8 +1259,8 @@ elif st.session_state.page == "army":
                         st.session_state[option_key] = False
 
     # Doublage des effectifs (UNIQUEMENT pour les unités, PAS pour les héros)
+    double_size_key = f"unit_double_{unit['name']}"
     if unit.get("type") != "hero":
-        double_size_key = f"{unit['name']}_double_size"
         double_size = st.checkbox(
             "Unité combinée (doubler les effectifs)",
             value=st.session_state.get(double_size_key, False),
@@ -1318,7 +1322,6 @@ elif st.session_state.page == "army":
 
         except Exception as e:
             st.error(f"Erreur: {str(e)}")
-
     st.divider()
     st.subheader("Liste de l'armée")
     if not st.session_state.army_list:
