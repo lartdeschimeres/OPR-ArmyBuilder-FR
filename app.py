@@ -892,6 +892,8 @@ if "points" not in st.session_state:
     st.session_state.points = GAME_CONFIG["Grimdark Future"]["default_points"]
 if "army_list" not in st.session_state:
     st.session_state.army_list = []
+if "widget_counter" not in st.session_state:
+    st.session_state.widget_counter = 0
 
 # ======================================================
 # FONCTION POUR LA BARRE DE PROGRESSION
@@ -1079,18 +1081,24 @@ elif st.session_state.page == "army":
     if st.button("⬅ Retour à la page Configuration"):
         st.session_state.page = "setup"
         st.rerun()
+
     st.title(st.session_state.list_name)
     st.caption(f"{st.session_state.game} • {st.session_state.faction} • {st.session_state.army_cost}/{st.session_state.points} pts")
+
     game_config = GAME_CONFIG.get(st.session_state.game, GAME_CONFIG["Age of Fantasy"])
     faction_data = factions_by_game[st.session_state.game][st.session_state.faction]
     display_faction_rules(faction_data)
+
     if not validate_army_rules(st.session_state.army_list, st.session_state.points, st.session_state.game):
         st.warning("⚠️ Certaines règles spécifiques ne sont pas respectées. Voir les messages d'erreur ci-dessus.")
+
     st.divider()
     st.subheader("Points d'armée")
     show_points_progress(st.session_state.army_cost, st.session_state.points)
+
     st.divider()
     st.subheader("Ajouter une unité")
+
     unit = st.selectbox(
         "Unité disponible",
         st.session_state.units,
@@ -1098,15 +1106,20 @@ elif st.session_state.page == "army":
         index=0,
         key="unit_select"
     )
+
+    # Nettoyage des anciennes clés
     for k in list(st.session_state.keys()):
-        if k.startswith("combined_"):
+        if k.startswith("combined_") or k.startswith(f"{unit['name']}_"):
             del st.session_state[k]
+
     base_size = unit.get('size', 10)
     base_cost = unit["base_cost"]
     max_cost = st.session_state.points * game_config["unit_max_cost_ratio"]
+
     if unit["base_cost"] > max_cost:
         st.error(f"Cette unité ({unit['base_cost']} pts) dépasse la limite de {int(max_cost)} pts ({int(game_config['unit_max_cost_ratio']*100)}% du total)")
         st.stop()
+
     weapon = unit.get("weapons", [])
     selected_options = {}
     mount = None
@@ -1114,30 +1127,48 @@ elif st.session_state.page == "army":
     mount_cost = 0
     upgrades_cost = 0
 
-    # Ajoute un compteur global pour les clés uniques
+    # Initialisation du compteur pour les clés uniques
     if "widget_counter" not in st.session_state:
         st.session_state.widget_counter = 0
 
     for group in unit.get("upgrade_groups", []):
-        st.markdown(f"**{group['group']}**")
-
-        # Incrémente le compteur pour chaque groupe d'améliorations
         st.session_state.widget_counter += 1
         unique_key = f"{unit['name']}_{st.session_state.widget_counter}"
 
+        st.markdown(f"**{group['group']}**")
+
         if group["type"] == "weapon":
+            # Boutons radio pour les armes (choix unique - Cavaliers Barbares)
             weapon_options = ["Arme de base"]
             for o in group["options"]:
                 weapon_details = format_weapon_details(o["weapon"])
                 cost_diff = o["cost"]
-                weapon_options.append(f"{o['name']} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''}) (+{cost_diff} pts)")
-            selected_weapon = st.radio("Arme", weapon_options, key=f"{unique_key}_weapon")
+                weapon_options.append(
+                    f"{o['name']} (A{weapon_details['attacks']}, PA({weapon_details['ap']})"
+                    f"{', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''}) "
+                    f"(+{cost_diff} pts)"
+                )
+
+            # Initialisation de la sélection
+            if f"{unique_key}_weapon" not in st.session_state:
+                st.session_state[f"{unique_key}_weapon"] = weapon_options[0]
+
+            selected_weapon = st.radio(
+                "Arme",
+                weapon_options,
+                key=f"{unique_key}_weapon",
+                index=weapon_options.index(st.session_state[f"{unique_key}_weapon"])
+            )
+
+            # Mise à jour de la sélection
+            st.session_state[f"{unique_key}_weapon"] = selected_weapon
+
             if selected_weapon != "Arme de base":
                 opt_name = selected_weapon.split(" (")[0]
                 opt = next((o for o in group["options"] if o["name"] == opt_name), None)
                 if opt:
                     if unit.get("type", "").lower() == "hero":
-                        weapon = [opt["weapon"]]  # Remplacer toutes les armes par l'arme de remplacement
+                        weapon = [opt["weapon"]]  # Remplacement total pour les héros
                     else:
                         new_weapons = []
                         for w in unit.get("weapons", []):
@@ -1146,6 +1177,7 @@ elif st.session_state.page == "army":
                         new_weapons.append(opt["weapon"])  # Ajouter l'arme de remplacement
                         weapon = new_weapons
                     weapon_cost = opt["cost"]
+
         elif group["type"] == "mount":
             mount_labels = ["Aucune monture"]
             mount_map = {}
@@ -1154,11 +1186,24 @@ elif st.session_state.page == "army":
                 label = f"{mount_details} (+{o['cost']} pts)"
                 mount_labels.append(label)
                 mount_map[label] = o
-            selected_mount = st.radio("Monture", mount_labels, key=f"{unique_key}_mount")
+
+            if f"{unique_key}_mount" not in st.session_state:
+                st.session_state[f"{unique_key}_mount"] = mount_labels[0]
+
+            selected_mount = st.radio(
+                "Monture",
+                mount_labels,
+                key=f"{unique_key}_mount",
+                index=mount_labels.index(st.session_state[f"{unique_key}_mount"])
+            )
+
+            st.session_state[f"{unique_key}_mount"] = selected_mount
+
             if selected_mount != "Aucune monture":
                 opt = mount_map[selected_mount]
                 mount = opt
                 mount_cost = opt["cost"]
+
         else:
             is_hero = unit.get("type", "").lower() == "hero"
             if is_hero:
@@ -1168,24 +1213,40 @@ elif st.session_state.page == "army":
                     label = f"{o['name']} (+{o['cost']} pts)"
                     option_labels.append(label)
                     option_map[label] = o
+
+                if f"{unique_key}_hero" not in st.session_state:
+                    st.session_state[f"{unique_key}_hero"] = option_labels[0]
+
                 selected = st.radio(
                     f"Amélioration – {group['group']}",
                     option_labels,
-                    key=f"{unique_key}_hero"
+                    key=f"{unique_key}_hero",
+                    index=option_labels.index(st.session_state[f"{unique_key}_hero"])
                 )
-                if selected != "Aucune amélioration":
+
+                st.session_state[f"{unique_key}_hero"] = selected
+
+                if selected != option_labels[0]:
                     opt = option_map[selected]
                     selected_options[group['group']] = [opt]
                     upgrades_cost += opt["cost"]
             else:
                 st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
                 for o in group["options"]:
+                    option_key = f"{unique_key}_{o['name']}"
+                    if option_key not in st.session_state:
+                        st.session_state[option_key] = False
+
                     if st.checkbox(
                         f"{o['name']} (+{o['cost']} pts)",
-                        key=f"{unique_key}_{o['name']}"
+                        value=st.session_state[option_key],
+                        key=option_key
                     ):
+                        st.session_state[option_key] = True
                         selected_options.setdefault(group["group"], []).append(o)
                         upgrades_cost += o["cost"]
+                    else:
+                        st.session_state[option_key] = False
 
     # Doublage des effectifs (UNIQUEMENT pour les unités, PAS pour les héros)
     if unit.get("type") != "hero":
@@ -1199,7 +1260,7 @@ elif st.session_state.page == "army":
         double_size = False
         multiplier = 1
 
-    # Calcul du coût final (en tenant compte du doublage uniquement pour les unités)
+    # Calcul du coût final
     core_cost = (base_cost + weapon_cost) * multiplier
     final_cost = core_cost + upgrades_cost + mount_cost
     unit_size = base_size * multiplier
@@ -1317,6 +1378,7 @@ elif st.session_state.page == "army":
                 st.session_state.army_cost -= u["cost"]
                 st.session_state.army_list.pop(i)
                 st.rerun()
+
     army_name = st.session_state.get("list_name", "Liste sans nom")
     army = st.session_state.get("army_list", [])
     army_limit = st.session_state.get("points", 0)
@@ -1334,17 +1396,14 @@ elif st.session_state.page == "army":
         army_limit=army_limit
     )
 
-    json_data = json.dumps(army_data, indent=2, ensure_ascii=False)
     st.divider()
-
-    st.divider()
-    st.subheader("📤 Exporter l’armée")
+    st.subheader("📤 Exporter l'armée")
 
     col_json, col_html = st.columns(2)
 
     with col_json:
         st.download_button(
-            label="📄 Exporter en JSON (fichier téléchargeable)",
+            label="📄 Exporter en JSON",
             data=json.dumps(army_data, indent=2, ensure_ascii=False),
             file_name=f"{st.session_state.list_name or 'army'}_opr.json",
             mime="application/json",
@@ -1353,7 +1412,7 @@ elif st.session_state.page == "army":
 
     with col_html:
         st.download_button(
-            label="🌐 Exporter en HTML (fiche imprimable)",
+            label="🌐 Exporter en HTML",
             data=html_export,
             file_name=f"{st.session_state.list_name or 'army'}.html",
             mime="text/html",
