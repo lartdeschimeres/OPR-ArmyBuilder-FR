@@ -21,11 +21,11 @@ if "unit_selections" not in st.session_state:
 # CONFIGURATION DES JEUX
 # ======================================================
 GAME_COVERS = {
-    "Age of Fantasy": "assets/games/aof_cover.jpg",
-    "Age of Fantasy Quest": "assets/games/aofq_cover.jpg",
-    "Age of Fantasy Regiments": "assets/games/aofr_cover.jpg",
     "Grimdark Future": "assets/games/gf_cover.jpg",
+    "Age of Fantasy": "assets/games/aof_cover.jpg",
+    "Age of Fantasy Regiments": "assets/games/aofr_cover.jpg",
     "Grimdark Future Firefight": "assets/games/gff_cover.jpg",
+    "Age of Fantasy Quest": "assets/games/aofq_cover.jpg",
     "Grimdark Future Squad": "assets/games/gfsq_cover.jpg",
 }
 
@@ -56,7 +56,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS personnalisé pour les cartes de jeu
+# CSS personnalisé
 st.markdown("""
 <style>
     .game-card {
@@ -65,8 +65,9 @@ st.markdown("""
         transition: all 0.3s ease;
         border: 2px solid transparent;
         cursor: pointer;
-        min-width: 200px;
+        width: 200px;
         margin: 10px;
+        background: white;
     }
     .game-card.selected {
         border: 2px solid #4a90e2;
@@ -87,13 +88,6 @@ st.markdown("""
         background: #f8f9fa;
         font-weight: bold;
     }
-    .game-grid {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
-        margin-bottom: 30px;
-    }
     .game-button {
         width: 100%;
         margin-top: 10px;
@@ -107,6 +101,31 @@ st.markdown("""
     .game-button:disabled {
         background: #cccccc;
         cursor: not-allowed;
+    }
+    .game-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .unit-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+    }
+    .hero-badge {
+        color: gold;
+        font-weight: bold;
+    }
+    .rule-badge {
+        background-color: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-right: 5px;
+        font-size: 12px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -223,7 +242,7 @@ def load_factions():
     return factions, sorted(games) if games else list(GAME_CONFIG.keys())
 
 # ======================================================
-# PAGE 1 – CONFIGURATION (avec cartes cliquables)
+# PAGE 1 – CONFIGURATION
 # ======================================================
 if st.session_state.page == "setup":
     st.title("OPR Army Forge - Configuration")
@@ -274,23 +293,32 @@ if st.session_state.page == "setup":
         is_selected = st.session_state.get("game") == game_name
 
         # Conteneur de la carte
-        st.markdown(f"""
-        <div class="game-card {'selected' if is_selected else ''}">
-            <img class="game-image" src="file/{card['image'] if card and card.get('image') and card['image'].exists() else 'assets/games/onepagerules_round_128x128.png'}">
-            <div class="game-title">{game_name}</div>
-            <button class="game-button" {'disabled' if is_selected else ''} onclick="window.location.href='?game={game_name}'">
-                {'✅ Sélectionné' if is_selected else '✔ Sélectionner'}
-            </button>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.container():
+            # Image du jeu
+            if card and card.get("image") and card["image"].exists():
+                st.image(str(card["image"]), use_column_width=True)
+            else:
+                try:
+                    st.image("assets/games/onepagerules_round_128x128.png", use_column_width=True)
+                except:
+                    st.warning("Image par défaut non trouvée")
+
+            # Titre du jeu
+            st.markdown(f"""
+            <div style='text-align:center; font-weight:600; margin-top:6px;'>{game_name}</div>
+            """, unsafe_allow_html=True)
+
+            # Bouton de sélection
+            if st.button(
+                "✅ Sélectionné" if is_selected else "✔ Sélectionner",
+                key=f"select_game_{game_name}",
+                use_container_width=True,
+                disabled=is_selected
+            ):
+                st.session_state.game = game_name
+                st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
-
-    # Gestion de la sélection via URL
-    query_params = st.experimental_get_query_params()
-    if "game" in query_params and query_params["game"][0] in games:
-        st.session_state.game = query_params["game"][0]
-        st.rerun()
 
     # Jeu non sélectionné → on bloque la suite
     if "game" not in st.session_state:
@@ -335,20 +363,9 @@ if st.session_state.page == "setup":
         st.rerun()
 
 # ======================================================
-# PAGE 2 – CONSTRUCTEUR D'ARMÉE (inchangé)
+# PAGE 2 – CONSTRUCTEUR D'ARMÉE
 # ======================================================
 elif st.session_state.page == "army":
-    # Initialisation sécurisée
-    if "widget_counter" not in st.session_state:
-        st.session_state.widget_counter = 0
-
-    # Nettoyage des anciennes clés spécifiques
-    if "unit" in locals():
-        keys_to_clean = [k for k in st.session_state.keys()
-                        if k.startswith("unit_") and unit["name"] in k]
-        for k in keys_to_clean:
-            del st.session_state[k]
-
     st.title(f"{st.session_state.list_name} - {st.session_state.army_cost}/{st.session_state.points} pts")
 
     if st.button("Retour à la configuration"):
@@ -373,7 +390,6 @@ elif st.session_state.page == "army":
 
     # Traitement des améliorations
     for group_idx, group in enumerate(unit.get("upgrade_groups", [])):
-        st.session_state.widget_counter += 1
         unique_key = f"unit_{unit['name']}_{group_idx}"
 
         st.subheader(group['group'])
