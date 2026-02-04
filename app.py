@@ -6,7 +6,7 @@ import re
 import math
 
 # ======================================================
-# INITIALISATION DE BASE
+# INITIALISATION
 # ======================================================
 if "page" not in st.session_state:
     st.session_state.page = "setup"
@@ -25,9 +25,9 @@ GAME_CONFIG = {
         "max_points": 10000,
         "min_points": 250,
         "default_points": 1000,
-        "hero_limit": 375,
+        "hero_limit": 375,  # 1 héros par 375pts
         "unit_copy_rule": 750,
-        "unit_max_cost_ratio": 0.35,
+        "unit_max_cost_ratio": 0.35,  # 35% du total
         "unit_per_points": 150
     },
     "Grimdark Future": {
@@ -40,6 +40,47 @@ GAME_CONFIG = {
         "unit_per_points": 150
     }
 }
+
+# ======================================================
+# FONCTIONS DE VALIDATION
+# ======================================================
+def check_hero_limit(army_list, army_points, game_config):
+    max_heroes = math.floor(army_points / game_config["hero_limit"])
+    hero_count = sum(1 for unit in army_list if unit.get("type") == "hero")
+    if hero_count > max_heroes:
+        st.error(f"Limite de héros dépassée! Max: {max_heroes} (1 héros/{game_config['hero_limit']} pts)")
+        return False
+    return True
+
+def check_unit_max_cost(army_list, army_points, game_config, new_unit_cost=None):
+    max_cost = army_points * game_config["unit_max_cost_ratio"]
+    for unit in army_list:
+        if unit["cost"] > max_cost:
+            st.error(f"Unité {unit['name']} dépasse {int(max_cost)} pts (35% du total)")
+            return False
+    if new_unit_cost and new_unit_cost > max_cost:
+        st.error(f"Cette unité dépasse {int(max_cost)} pts (35% du total)")
+        return False
+    return True
+
+def check_unit_copy_rule(army_list, army_points, game_config):
+    x_value = math.floor(army_points / game_config["unit_copy_rule"])
+    max_copies = 1 + x_value
+    unit_counts = {}
+    for unit in army_list:
+        name = unit["name"]
+        unit_counts[name] = unit_counts.get(name, 0) + 1
+    for unit_name, count in unit_counts.items():
+        if count > max_copies:
+            st.error(f"Trop de copies de {unit_name}! Max: {max_copies}")
+            return False
+    return True
+
+def validate_army_rules(army_list, army_points, game):
+    game_config = GAME_CONFIG.get(game, {})
+    return (check_hero_limit(army_list, army_points, game_config) and
+            check_unit_max_cost(army_list, army_points, game_config) and
+            check_unit_copy_rule(army_list, army_points, game_config))
 
 # ======================================================
 # FONCTIONS UTILITAIRES
@@ -59,11 +100,9 @@ def format_unit_option(u):
     if u.get('type') == "hero":
         name_part += " [1]"
     else:
-        base_size = u.get('size', 10)
-        name_part += f" [{base_size}]"
+        name_part += f" [{u.get('size', 10)}]"
     qua_def = f"Qua {u['quality']}+ / Déf {u.get('defense', '?')}"
-    result = f"{name_part} - {qua_def}"
-    result += f" {u['base_cost']}pts"
+    result = f"{name_part} - {qua_def} {u['base_cost']}pts"
     return result
 
 # ======================================================
@@ -95,14 +134,13 @@ def load_factions():
 if st.session_state.page == "setup":
     st.title("OPR Army Forge - Configuration")
 
-    # Sélection du jeu
     factions_by_game, games = load_factions()
     if not games:
         st.error("Aucun jeu trouvé")
         st.stop()
 
-    game = st.selectbox("Sélectionnez un jeu", games)
-    faction = st.selectbox("Sélectionnez une faction", factions_by_game[game].keys())
+    game = st.selectbox("Jeu", games)
+    faction = st.selectbox("Faction", factions_by_game[game].keys())
     points = st.number_input("Points", min_value=250, max_value=10000, value=1000)
     list_name = st.text_input("Nom de la liste", f"Liste_{datetime.now().strftime('%Y%m%d')}")
 
@@ -112,11 +150,13 @@ if st.session_state.page == "setup":
         st.session_state.points = points
         st.session_state.list_name = list_name
         st.session_state.units = factions_by_game[game][faction]["units"]
+        st.session_state.army_list = []
+        st.session_state.army_cost = 0
         st.session_state.page = "army"
         st.rerun()
 
 # ======================================================
-# PAGE 2 – CONSTRUCTEUR D'ARMÉE (version corrigée)
+# PAGE 2 – CONSTRUCTEUR D'ARMÉE
 # ======================================================
 elif st.session_state.page == "army":
     st.title(f"{st.session_state.list_name} - {st.session_state.army_cost}/{st.session_state.points} pts")
@@ -158,9 +198,7 @@ elif st.session_state.page == "army":
                 weapon_details = format_weapon_details(o["weapon"])
                 weapon_options.append(f"{o['name']} (+{o['cost']} pts)")
 
-            # Récupération de la sélection précédente
             current_selection = st.session_state.unit_selections[unit_key].get(group_key, weapon_options[0])
-
             selected_weapon = st.radio(
                 "Sélectionnez une arme",
                 weapon_options,
@@ -168,7 +206,6 @@ elif st.session_state.page == "army":
                 key=f"{unit_key}_{group_key}_weapon"
             )
 
-            # Mise à jour de la sélection
             st.session_state.unit_selections[unit_key][group_key] = selected_weapon
 
             if selected_weapon != "Arme de base":
@@ -190,7 +227,6 @@ elif st.session_state.page == "army":
                 mount_map[f"{o['name']} (+{o['cost']} pts)"] = o
 
             current_selection = st.session_state.unit_selections[unit_key].get(group_key, mount_options[0])
-
             selected_mount = st.radio(
                 "Sélectionnez une monture",
                 mount_options,
@@ -217,7 +253,6 @@ elif st.session_state.page == "army":
                     option_map[label] = o
 
                 current_selection = st.session_state.unit_selections[unit_key].get(group_key, option_labels[0])
-
                 selected = st.radio(
                     f"Amélioration – {group['group']}",
                     option_labels,
@@ -249,7 +284,7 @@ elif st.session_state.page == "army":
                     else:
                         st.session_state.unit_selections[unit_key][option_key] = False
 
-    # Doublage des effectifs (uniquement pour les unités non-héros)
+    # Doublage des effectifs (UNIQUEMENT pour les unités non-héros)
     if unit.get("type") != "hero":
         double_size = st.checkbox("Unité combinée (doubler les effectifs)")
         multiplier = 2 if double_size else 1
@@ -261,6 +296,12 @@ elif st.session_state.page == "army":
     core_cost = (base_cost + weapon_cost) * multiplier
     final_cost = core_cost + upgrades_cost + mount_cost
 
+    # Affichage des informations finales
+    if unit.get("type") == "hero":
+        st.markdown("**Effectif final : [1]** (héros)")
+    else:
+        st.markdown(f"**Effectif final : [{unit.get('size', 10) * multiplier}]**")
+
     if st.button("Ajouter à l'armée"):
         try:
             unit_data = {
@@ -268,7 +309,7 @@ elif st.session_state.page == "army":
                 "type": unit.get("type", "unit"),
                 "cost": final_cost,
                 "base_cost": base_cost,
-                "size": unit.get("size", 10) * multiplier,
+                "size": unit.get("size", 10) * multiplier if unit.get("type") != "hero" else 1,
                 "quality": unit.get("quality", 3),
                 "defense": unit.get("defense", 3),
                 "rules": unit.get("special_rules", []),
@@ -278,9 +319,19 @@ elif st.session_state.page == "army":
                 "game": st.session_state.game
             }
 
-            st.session_state.army_list.append(unit_data)
-            st.session_state.army_cost += final_cost
-            st.rerun()
+            # Validation des règles
+            test_army = st.session_state.army_list.copy()
+            test_army.append(unit_data)
+            test_total = st.session_state.army_cost + final_cost
+
+            if test_total > st.session_state.points:
+                st.error(f"Limite de points dépassée! ({st.session_state.points} pts max)")
+            elif not validate_army_rules(test_army, st.session_state.points, st.session_state.game):
+                pass  # Les erreurs sont déjà affichées par les fonctions de validation
+            else:
+                st.session_state.army_list.append(unit_data)
+                st.session_state.army_cost += final_cost
+                st.rerun()
 
         except Exception as e:
             st.error(f"Erreur: {str(e)}")
@@ -322,12 +373,38 @@ elif st.session_state.page == "army":
     with col1:
         st.download_button(
             "Exporter en JSON",
-            json.dumps(army_data, indent=2),
+            json.dumps(army_data, indent=2, ensure_ascii=False),
             f"{st.session_state.list_name}.json"
         )
     with col2:
+        html = f"""<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {{ background: #2e2f2b; color: #e6e6e6; font-family: Arial; }}
+.unit {{ background: #3a3c36; padding: 15px; margin-bottom: 20px; border-radius: 5px; }}
+</style>
+</head>
+<body>
+<h1>{st.session_state.list_name}</h1>
+"""
+        for unit in st.session_state.army_list:
+            html += f"""
+<div class="unit">
+<h2>{unit['name']} [{unit['size']}] - {unit['cost']} pts</h2>
+<p>Qualité {unit['quality']}+ / Défense {unit['defense']}+</p>
+"""
+            if 'weapon' in unit and unit['weapon']:
+                html += "<h3>Armes:</h3><ul>"
+                for w in unit['weapon']:
+                    html += f"<li>{w.get('name', 'Arme')} (A{w.get('attacks', '?')}, PA{w.get('ap', '?')})</li>"
+                html += "</ul>"
+            html += "</div>"
+        html += "</body></html>"
+
         st.download_button(
             "Exporter en HTML",
-            json.dumps(army_data, indent=2),
-            f"{st.session_state.list_name}.html"
+            html,
+            f"{st.session_state.list_name}.html",
+            mime="text/html"
         )
