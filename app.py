@@ -59,11 +59,11 @@ with st.sidebar:
 # CONFIGURATION
 # ======================================================
 GAME_COVERS = {
-    "Age of Fantasy": "assets/games/aof_cover.jpg",
-    "Age of Fantasy Quest": "assets/games/aofq_cover.jpg",
-    "Age of Fantasy Regiments": "assets/games/aofr_cover.jpg",
     "Grimdark Future": "assets/games/gf_cover.jpg",
+    "Age of Fantasy": "assets/games/aof_cover.jpg",
+    "Age of Fantasy Regiments": "assets/games/aofr_cover.jpg",
     "Grimdark Future Firefight": "assets/games/gff_cover.jpg",
+    "Age of Fantasy Quest": "assets/games/aofq_cover.jpg",
     "Grimdark Future Squad": "assets/games/gfsq_cover.jpg",
 }
 
@@ -1206,9 +1206,10 @@ elif st.session_state.page == "army":
                 "quality": unit.get("quality", 3),
                 "defense": unit.get("defense", 3),
                 "rules": unit.get("special_rules", []),
-                "weapon": weapon,
-                "options": selected_options,
-                "mount": mount,
+                "weapons_available": unit_data.get("weapons", []),
+                "weapons_available": unit_data.get("weapons", []),
+                "options": [],
+                "mount": None,
                 "game": st.session_state.game
             }
 
