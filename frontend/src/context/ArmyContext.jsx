@@ -27,19 +27,41 @@ const initialState = {
 };
 
 function calculateUnitCost(unit, selectedUpgrades, isCombined) {
-  let cost = unit.base_cost;
+  // For combined units: only base cost + weapon upgrades are doubled
+  // Unit upgrades (icon, champion, musician, banner) are NOT doubled
   
-  // Add upgrade costs
-  selectedUpgrades.forEach(upgrade => {
-    cost += upgrade.cost;
-  });
-  
-  // Double cost if combined unit (not for heroes)
   if (isCombined && unit.type !== 'hero') {
-    cost *= 2;
+    // Separate weapon upgrades from unit upgrades
+    let weaponUpgradesCost = 0;
+    let unitUpgradesCost = 0;
+    
+    // Find upgrade groups to determine type
+    const upgradeGroups = unit.upgrade_groups || [];
+    
+    selectedUpgrades.forEach(upgrade => {
+      // Find the group this upgrade belongs to
+      const group = upgradeGroups.find(g => g.group === upgrade.group);
+      
+      if (group && (group.type === 'weapon' || group.type === 'mount')) {
+        // Weapon/mount upgrades are doubled
+        weaponUpgradesCost += upgrade.cost;
+      } else {
+        // Unit upgrades (type: 'upgrades') are NOT doubled
+        unitUpgradesCost += upgrade.cost;
+      }
+    });
+    
+    // Double: base cost + weapon upgrades
+    // NOT doubled: unit upgrades
+    return (unit.base_cost + weaponUpgradesCost) * 2 + unitUpgradesCost;
+  } else {
+    // Non-combined unit or hero: simple calculation
+    let cost = unit.base_cost;
+    selectedUpgrades.forEach(upgrade => {
+      cost += upgrade.cost;
+    });
+    return cost;
   }
-  
-  return cost;
 }
 
 function validateArmy(state) {
