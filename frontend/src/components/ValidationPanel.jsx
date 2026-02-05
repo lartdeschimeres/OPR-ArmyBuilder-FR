@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Info, XCircle, Users, User, Copy, Shield } from 'lucide-react';
 import { useArmy } from '../context/ArmyContext';
 
 export const ValidationPanel = () => {
@@ -11,6 +11,9 @@ export const ValidationPanel = () => {
   
   const errors = validation.errors.filter(e => e.type === 'error');
   const warnings = validation.errors.filter(e => e.type === 'warning');
+  
+  // Calculate limits for display
+  const maxUnitCost = Math.floor(pointsLimit * 0.35);
   
   return (
     <div className="bg-[#3a3c36]/80 backdrop-blur-sm border border-[#4b4d46] rounded-lg overflow-hidden sticky top-4">
@@ -69,22 +72,82 @@ export const ValidationPanel = () => {
         </div>
       </div>
       
-      {/* Hero Limit */}
+      {/* Army Composition Limits */}
       <div className="p-4 border-t border-[#4b4d46]">
         <h3 className="font-headings text-sm font-semibold uppercase text-gray-400 mb-3">
-          Limite de Héros
+          Limites de Composition
         </h3>
         
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-400">Héros</span>
-          <span className={`font-mono font-bold ${validation.currentHeroCount > validation.maxHeroCount ? 'text-red-400' : 'text-white'}`}>
-            {validation.currentHeroCount} / {validation.maxHeroCount}
-          </span>
-        </div>
-        <div className="text-xs text-gray-500 mt-1">
-          1 héros autorisé par tranche de 375 pts
+        <div className="space-y-3">
+          {/* Hero Limit */}
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-400 flex items-center gap-2">
+              <User className="w-4 h-4" />
+              Héros
+            </span>
+            <span className={`font-mono font-bold ${validation.currentHeroCount > validation.maxHeroCount ? 'text-red-400' : 'text-white'}`}>
+              {validation.currentHeroCount} / {validation.maxHeroCount}
+            </span>
+          </div>
+          
+          {/* Total Units Limit */}
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-400 flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              Unités totales
+            </span>
+            <span className={`font-mono font-bold ${(validation.currentUnitCount || 0) > (validation.maxTotalUnits || 999) ? 'text-red-400' : 'text-white'}`}>
+              {validation.currentUnitCount || 0} / {validation.maxTotalUnits || Math.floor(pointsLimit / 150)}
+            </span>
+          </div>
+          
+          {/* Max Copies */}
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-400 flex items-center gap-2">
+              <Copy className="w-4 h-4" />
+              Copies max/unité
+            </span>
+            <span className="font-mono font-bold text-white">
+              {validation.maxCopies || (1 + Math.floor(pointsLimit / 750))}
+            </span>
+          </div>
+          
+          {/* Max Unit Cost */}
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-400 flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              Coût max/unité
+            </span>
+            <span className="font-mono font-bold text-white">
+              {maxUnitCost} pts
+            </span>
+          </div>
         </div>
       </div>
+      
+      {/* Unit Copies Count */}
+      {validation.unitCounts && Object.keys(validation.unitCounts).length > 0 && (
+        <div className="p-4 border-t border-[#4b4d46]">
+          <h3 className="font-headings text-sm font-semibold uppercase text-gray-400 mb-3">
+            Copies par Unité
+          </h3>
+          <div className="space-y-1">
+            {Object.entries(validation.unitCounts).map(([unitName, count]) => {
+              const isOverLimit = count > (validation.maxCopies || 2);
+              return (
+                <div key={unitName} className="flex justify-between items-center text-sm">
+                  <span className={`truncate pr-2 ${isOverLimit ? 'text-red-400' : 'text-gray-400'}`}>
+                    {unitName}
+                  </span>
+                  <span className={`font-mono ${isOverLimit ? 'text-red-400 font-bold' : 'text-white'}`}>
+                    {count}x
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
       
       {/* Errors */}
       {errors.length > 0 && (
@@ -129,9 +192,10 @@ export const ValidationPanel = () => {
           Règles OPR
         </h3>
         <ul className="text-xs text-gray-500 space-y-1">
-          <li>• 1 héros maximum par 375 points</li>
-          <li>• Aucune unité ne peut dépasser 35% des points totaux</li>
-          <li>• Le total ne peut pas dépasser la limite de points</li>
+          <li>• 1 héros par tranche de 375 pts</li>
+          <li>• 1+X copies de même unité (X = pts/750)</li>
+          <li>• 1 unité max par tranche de 150 pts</li>
+          <li>• Aucune unité &gt; 35% du total</li>
         </ul>
       </div>
     </div>
