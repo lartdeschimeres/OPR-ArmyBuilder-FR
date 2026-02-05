@@ -27,33 +27,45 @@ const initialState = {
 };
 
 function calculateUnitCost(unit, selectedUpgrades, isCombined) {
-  // For combined units: only base cost + weapon upgrades are doubled
-  // Unit upgrades (icon, champion, musician, banner) are NOT doubled
+  // For combined units:
+  // - Base cost: DOUBLED
+  // - Weapon/mount upgrades: DOUBLED
+  // - Unit-wide ability upgrades (like Vicieux, Éclaireur): DOUBLED
+  // - Command upgrades (Sergent, Bannière, Musicien, Icône): NOT doubled
+  
+  // List of command upgrade names that should NOT be doubled
+  const commandUpgradeNames = [
+    'sergent', 'champion', 'bannière', 'banner', 'musicien', 'musician',
+    'icône', 'icon', 'porte-étendard', 'standard bearer'
+  ];
+  
+  const isCommandUpgrade = (upgradeName) => {
+    const lowerName = upgradeName.toLowerCase();
+    return commandUpgradeNames.some(cmd => lowerName.includes(cmd));
+  };
   
   if (isCombined && unit.type !== 'hero') {
-    // Separate weapon upgrades from unit upgrades
-    let weaponUpgradesCost = 0;
-    let unitUpgradesCost = 0;
+    let doubledCost = 0;      // Cost that will be doubled
+    let notDoubledCost = 0;   // Cost that won't be doubled (command upgrades only)
     
-    // Find upgrade groups to determine type
     const upgradeGroups = unit.upgrade_groups || [];
     
     selectedUpgrades.forEach(upgrade => {
-      // Find the group this upgrade belongs to
       const group = upgradeGroups.find(g => g.group === upgrade.group);
       
-      if (group && (group.type === 'weapon' || group.type === 'mount')) {
-        // Weapon/mount upgrades are doubled
-        weaponUpgradesCost += upgrade.cost;
+      // Check if it's a command upgrade by name
+      if (isCommandUpgrade(upgrade.name)) {
+        // Command upgrades are NOT doubled
+        notDoubledCost += upgrade.cost;
       } else {
-        // Unit upgrades (type: 'upgrades') are NOT doubled
-        unitUpgradesCost += upgrade.cost;
+        // All other upgrades (weapons, mounts, unit abilities) are doubled
+        doubledCost += upgrade.cost;
       }
     });
     
-    // Double: base cost + weapon upgrades
-    // NOT doubled: unit upgrades
-    return (unit.base_cost + weaponUpgradesCost) * 2 + unitUpgradesCost;
+    // Double: base cost + non-command upgrades
+    // NOT doubled: command upgrades only
+    return (unit.base_cost + doubledCost) * 2 + notDoubledCost;
   } else {
     // Non-combined unit or hero: simple calculation
     let cost = unit.base_cost;
