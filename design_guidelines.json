@@ -1,0 +1,147 @@
+{
+  "identity": {
+    "name": "OPR Army Forge",
+    "tone": "Tactical, Precise, Wargaming, Dark, Functional",
+    "description": "A specialized army list builder for OnePageRules wargames. The design prioritizes data density, clarity, and a 'command center' aesthetic."
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Barlow Condensed, sans-serif",
+      "body": "Inter, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "google_fonts_import": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap",
+    "usage": {
+      "h1": "text-4xl font-bold tracking-tight font-headings uppercase",
+      "h2": "text-2xl font-semibold tracking-tight font-headings uppercase",
+      "h3": "text-xl font-semibold font-headings",
+      "body": "text-base font-normal font-body leading-relaxed",
+      "small": "text-sm font-medium font-body text-muted-foreground",
+      "data": "text-sm font-mono font-medium"
+    }
+  },
+  "colors": {
+    "palette": {
+      "background": "#2e2f2b",
+      "foreground": "#e5e7eb",
+      "card": "#3a3c36",
+      "card_foreground": "#ffffff",
+      "primary": "#60a5fa",
+      "primary_foreground": "#0f172a",
+      "secondary": "#4b5563",
+      "secondary_foreground": "#ffffff",
+      "muted": "#44463e",
+      "muted_foreground": "#9ca3af",
+      "accent": "#84cc16",
+      "accent_foreground": "#1a2e05",
+      "destructive": "#ef4444",
+      "destructive_foreground": "#ffffff",
+      "border": "#4b4d46",
+      "input": "#27272a",
+      "ring": "#60a5fa"
+    },
+    "semantic": {
+      "app_bg": "bg-[#2e2f2b]",
+      "card_bg": "bg-[#3a3c36]",
+      "selected_border": "border-blue-400",
+      "validation_error": "text-red-400",
+      "validation_success": "text-green-400"
+    }
+  },
+  "layout": {
+    "spacing": {
+      "container_padding": "p-6 md:p-8",
+      "section_gap": "gap-8",
+      "item_gap": "gap-4"
+    },
+    "grid_systems": {
+      "game_selection": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+      "builder_layout": "grid grid-cols-1 lg:grid-cols-12 gap-6",
+      "builder_columns": {
+        "unit_browser": "lg:col-span-3",
+        "roster_view": "lg:col-span-6",
+        "validation_panel": "lg:col-span-3"
+      }
+    },
+    "container": "max-w-7xl mx-auto"
+  },
+  "components": {
+    "GameCard": {
+      "style": "relative overflow-hidden rounded-lg border-2 border-transparent hover:border-blue-400 transition-all duration-200 cursor-pointer group bg-[#3a3c36]",
+      "active_state": "border-blue-500 ring-2 ring-blue-500/20",
+      "image_style": "w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105",
+      "title_style": "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4 pt-12 text-white font-headings text-xl font-bold uppercase tracking-wider"
+    },
+    "UnitCard": {
+      "style": "bg-[#3a3c36] border border-[#4b4d46] rounded-md p-4 mb-3 shadow-sm hover:border-gray-500 transition-colors",
+      "header": "flex justify-between items-start mb-2",
+      "title": "font-bold text-lg text-white font-headings",
+      "cost": "font-mono text-yellow-400 font-bold",
+      "stats_grid": "grid grid-cols-4 gap-2 text-xs text-gray-300 mb-3 bg-[#2e2f2b] p-2 rounded",
+      "upgrades_container": "space-y-2 mt-3 border-t border-[#4b4d46] pt-3"
+    },
+    "Button": {
+      "primary": "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg shadow-blue-500/20 transition-all active:scale-95",
+      "secondary": "bg-[#4b5563] hover:bg-[#586270] text-white font-medium py-2 px-4 rounded transition-all",
+      "destructive": "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20"
+    },
+    "ValidationPanel": {
+      "style": "bg-[#3a3c36]/80 backdrop-blur-sm border border-[#4b4d46] rounded-lg p-4 sticky top-4",
+      "warning_item": "flex items-center gap-2 text-yellow-400 text-sm py-1",
+      "error_item": "flex items-center gap-2 text-red-400 text-sm py-1 font-medium"
+    }
+  },
+  "assets": {
+    "images": {
+      "grimdark_future": {
+        "url": "https://images.unsplash.com/photo-1636255520934-0ac5f0361cd9?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Grimdark Future - Sci-Fi Cityscape",
+        "category": "game_cover"
+      },
+      "age_of_fantasy": {
+        "url": "https://images.unsplash.com/photo-1764011643213-1f3b3691f678?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Age of Fantasy - Army Marching",
+        "category": "game_cover"
+      },
+      "age_of_fantasy_regiments": {
+        "url": "https://images.unsplash.com/photo-1529981188441-8a2e6fe30103?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Age of Fantasy Regiments - Knight on Dragon",
+        "category": "game_cover"
+      }
+    },
+    "icons": {
+      "library": "lucide-react",
+      "preferred_icons": ["Sword", "Shield", "Skull", "Scroll", "Save", "Download", "Trash2", "AlertTriangle", "CheckCircle2"]
+    }
+  },
+  "instructions_to_main_agent": [
+    "1. THEME SETUP: Update 'tailwind.config.js' and 'index.css' to use the custom color palette defined in 'colors.palette'. The background MUST be #2e2f2b and cards #3a3c36.",
+    "2. FONTS: Add the Google Fonts import to 'index.css' or 'index.html'. Configure Tailwind to use 'Barlow Condensed' for headings and 'Inter' for body.",
+    "3. LAYOUT: Implement the 'Game Selection' screen as the home page. When a game is selected, transition to the 'Builder' layout.",
+    "4. STATE MANAGEMENT: Use React Context or State to manage the 'Current Army' list, 'Selected Game', and 'Points Total'.",
+    "5. VALIDATION: Implement real-time validation logic. If (Hero Count > Points/375), show warning. If (Unit Cost > Total Points * 0.35), show error.",
+    "6. EXPORT: The 'Export HTML' button should generate a downloadable .html file with the specific dark theme background (#2e2f2b) inline styles.",
+    "7. COMPONENTS: Use Shadcn UI components as a base but OVERRIDE their styles with the 'components' styles defined in this JSON. Do not use default white/black Shadcn cards.",
+    "8. TESTING: Add 'data-testid' to all interactive elements (e.g., 'game-card-grimdark', 'add-unit-btn', 'export-html-btn')."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy",
+    "Use glass-morphism effects with backdrop filters (12-24px blur)",
+    "You MUST NOT apply universal transition. Eg: 'transition: all'. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms",
+    "You MUST NOT center align the app container, ie do not add '.App { text-align: center; }' in the css file. This disrupts the human natural reading flow of text",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯📚🎭🎬🎪🎉🎊🎁🎀🎂🍰🎈🎨🎰💰💵💳🏦💎🪙💸🤑📊📈📉💹🔢🏆🥇 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories (especially sponsor logos) = main agent will use placeholder text which is FORBIDDEN",
+    "Prioritize using pre-existing components from src/components/ui when applicable",
+    "Create new components that match the style and conventions of existing components when needed",
+    "Examine existing components to understand the project's component patterns before creating new ones",
+    "Components MUST use named exports (export const ComponentName = ...)",
+    "Pages MUST use default exports (export default function PageName() {...})",
+    "Use 'sonner' for toasts. Sonner component are located in '/app/src/components/ui/sonner.tsx'"
+  ]
+}
