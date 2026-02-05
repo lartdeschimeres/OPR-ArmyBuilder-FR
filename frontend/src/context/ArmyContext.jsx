@@ -1,5 +1,13 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+
+// Simple UUID generator
+function generateId() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 
 const ArmyContext = createContext(null);
 
@@ -120,7 +128,7 @@ function armyReducer(state, action) {
     case 'ADD_UNIT': {
       const { unit } = action.payload;
       const newUnit = {
-        id: uuidv4(),
+        id: generateId(),
         unitName: unit.name,
         unitType: unit.type,
         baseCost: unit.base_cost,
