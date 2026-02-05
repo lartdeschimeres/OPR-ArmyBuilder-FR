@@ -305,16 +305,16 @@ export const UnitCard = ({ rosterUnit }) => {
                 <Sword className="w-3 h-3" />
                 Qualité {unit.quality}+
               </span>
+              <span className="flex items-center gap-1">
+                <Shield className="w-3 h-3" />
+                Défense {unit.defense}+
+              </span>
               {totalToughValue > 0 && (
                 <span className="flex items-center gap-1 text-red-400">
                   <Heart className="w-3 h-3" />
                   Coriace ({totalToughValue})
                 </span>
               )}
-              <span className="flex items-center gap-1">
-                <Shield className="w-3 h-3" />
-                Défense {unit.defense}+
-              </span>
               <span>
                 Taille: {unit.size}{rosterUnit.combinedUnit ? ' x2' : ''}
               </span>
