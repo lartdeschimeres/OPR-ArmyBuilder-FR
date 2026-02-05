@@ -1,11 +1,24 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Trash2, ChevronDown, ChevronUp, Shield, Sword } from 'lucide-react';
+import { Trash2, ChevronDown, ChevronUp, Shield, Sword, Heart } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Checkbox } from '../components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Label } from '../components/ui/label';
 import { Switch } from '../components/ui/switch';
 import { useArmy } from '../context/ArmyContext';
+
+// Helper to extract Coriace (Tough) value from special rules
+function extractToughValue(specialRules) {
+  if (!specialRules || !Array.isArray(specialRules)) return 0;
+  for (const rule of specialRules) {
+    // Match patterns like "Coriace (3)", "Coriace(6)", "Tough (3)"
+    const match = rule.match(/[Cc]oriace\s*\((\d+)\)|[Tt]ough\s*\((\d+)\)/);
+    if (match) {
+      return parseInt(match[1] || match[2]);
+    }
+  }
+  return 0;
+}
 
 // Helper to format weapon stats
 function formatWeaponStats(weapon) {
