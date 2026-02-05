@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -6,10 +6,9 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List
+from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone
-
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -25,46 +24,630 @@ app = FastAPI()
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
-# Define Models
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # Ignore MongoDB's _id field
+# ===== MODELS =====
+
+class Weapon(BaseModel):
+    name: str
+    range: str = "-"
+    attacks: int
+    armor_piercing: Any = "-"
+    special_rules: List[str] = []
+
+class Mount(BaseModel):
+    name: str
+    special_rules: List[str] = []
+
+class UpgradeOption(BaseModel):
+    name: str
+    cost: int
+    weapon: Optional[Weapon] = None
+    mount: Optional[Mount] = None
+    special_rules: List[str] = []
+
+class UpgradeGroup(BaseModel):
+    group: str
+    type: str  # "weapon", "upgrades", "mount"
+    description: str = ""
+    options: List[UpgradeOption] = []
+
+class Unit(BaseModel):
+    name: str
+    original_name: Optional[str] = None
+    type: str = "unit"  # "hero" or "unit"
+    size: int = 1
+    base_cost: int
+    quality: int
+    defense: int
+    equipment: List[str] = []
+    special_rules: List[str] = []
+    weapons: List[Weapon] = []
+    upgrade_groups: List[UpgradeGroup] = []
+
+class Spell(BaseModel):
+    cost: int
+    description: str
+    range: str = ""
+    target: str = ""
+
+class Faction(BaseModel):
+    model_config = ConfigDict(extra="ignore")
     
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    faction: str
+    game: str
+    version: str = ""
+    status: str = "complete"
+    description: str = ""
+    special_rules_descriptions: Dict[str, str] = {}
+    spells: Dict[str, Spell] = {}
+    units: List[Unit] = []
 
-class StatusCheckCreate(BaseModel):
-    client_name: str
+class FactionCreate(BaseModel):
+    faction: str
+    game: str
+    version: str = ""
+    status: str = "complete"
+    description: str = ""
+    special_rules_descriptions: Dict[str, str] = {}
+    spells: Dict[str, Any] = {}
+    units: List[Dict[str, Any]] = []
 
-# Add your routes to the router instead of directly to app
+# Army roster models
+class SelectedUpgrade(BaseModel):
+    group: str
+    option_name: str
+    cost: int
+
+class RosterUnit(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    unit_name: str
+    unit_type: str  # "hero" or "unit"
+    base_cost: int
+    selected_upgrades: List[SelectedUpgrade] = []
+    combined_unit: bool = False
+    total_cost: int = 0
+
+class Army(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    game: str
+    faction: str
+    points_limit: int
+    units: List[RosterUnit] = []
+    total_points: int = 0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ArmyCreate(BaseModel):
+    name: str
+    game: str
+    faction: str
+    points_limit: int
+    units: List[Dict[str, Any]] = []
+
+class ArmyUpdate(BaseModel):
+    name: Optional[str] = None
+    points_limit: Optional[int] = None
+    units: Optional[List[Dict[str, Any]]] = None
+
+# Validation models
+class ValidationError(BaseModel):
+    type: str  # "error" or "warning"
+    message: str
+    unit_id: Optional[str] = None
+
+class ValidationResult(BaseModel):
+    valid: bool
+    errors: List[ValidationError] = []
+    total_points: int = 0
+    max_hero_count: int = 0
+    current_hero_count: int = 0
+
+# ===== GAME DATA =====
+
+GAMES = [
+    {
+        "id": "grimdark-future",
+        "name": "Grimdark Future",
+        "short_name": "GF",
+        "description": "Sci-fi wargame in a dark future",
+        "image": "https://images.unsplash.com/photo-1636255520934-0ac5f0361cd9?crop=entropy&cs=srgb&fm=jpg&q=85"
+    },
+    {
+        "id": "age-of-fantasy",
+        "name": "Age of Fantasy",
+        "short_name": "AoF",
+        "description": "Fantasy wargame with magic and monsters",
+        "image": "https://images.unsplash.com/photo-1764011643213-1f3b3691f678?crop=entropy&cs=srgb&fm=jpg&q=85"
+    },
+    {
+        "id": "age-of-fantasy-regiments",
+        "name": "Age of Fantasy Regiments",
+        "short_name": "AoFR",
+        "description": "Ranked combat fantasy wargame",
+        "image": "https://images.unsplash.com/photo-1529981188441-8a2e6fe30103?crop=entropy&cs=srgb&fm=jpg&q=85"
+    }
+]
+
+# Sample faction data to seed
+SAMPLE_FACTIONS = [
+    {
+        "faction": "Disciples de la Guerre",
+        "game": "Age of Fantasy",
+        "version": "FR-3.5.2",
+        "status": "complete",
+        "description": "Les Disciples de la Guerre sont une faction brutale et impitoyable.",
+        "special_rules_descriptions": {
+            "Warbound [Guerrier-né]": "Les ennemis qui lancent les dés pour bloquer les touches infligées par les armes de cette figurine subissent une blessure supplémentaire pour chaque résultat non modifié de 1 obtenu.",
+            "Bloodthirsty Fighter [Combattant sanguinaire]": "Pour chaque résultat de 1 non modifié obtenu par les ennemis lorsqu'ils bloquent les touches portées par les armes de cette figurine en mêlée, cette figurine peut effectuer un jet d'attaque supplémentaire."
+        },
+        "spells": {
+            "Terrifying Fury [Fureur terrifiante]": {
+                "cost": 1,
+                "description": "Choisissez une unité ennemie à 18\" ou moins, qui doit effectuer un Test de Moral.",
+                "range": "18\"",
+                "target": "1 unité ennemie"
+            }
+        },
+        "units": [
+            {
+                "name": "Maître du Ravage de la Guerre Élu",
+                "type": "hero",
+                "size": 1,
+                "base_cost": 65,
+                "quality": 3,
+                "defense": 3,
+                "special_rules": ["Attaque versatile", "Coriace (3)", "Héros", "Guerrier-né"],
+                "weapons": [
+                    {"name": "Arme à une main lourde", "range": "-", "attacks": 3, "armor_piercing": 1}
+                ],
+                "upgrade_groups": [
+                    {
+                        "group": "Améliorations de rôle",
+                        "type": "upgrades",
+                        "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
+                        "options": [
+                            {"name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
+                            {"name": "Marauder (Aura de Combattant imprévisible)", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
+                            {"name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
+                            {"name": "Maître Sorcier (Lanceur de sorts (3))", "cost": 65, "special_rules": ["Lanceur de sorts (3)"]}
+                        ]
+                    },
+                    {
+                        "group": "Remplacement d'arme",
+                        "type": "weapon",
+                        "description": "Remplacez l'arme de base par:",
+                        "options": [
+                            {"name": "Hallebarde lourde", "cost": 5, "weapon": {"name": "Hallebarde lourde", "range": "-", "attacks": 3, "armor_piercing": 1, "special_rules": ["Perforant"]}},
+                            {"name": "Grande arme lourde", "cost": 15, "weapon": {"name": "Grande arme lourde", "range": "-", "attacks": 3, "armor_piercing": 3}}
+                        ]
+                    },
+                    {
+                        "group": "Montures",
+                        "type": "mount",
+                        "description": "Ajoutez une monture",
+                        "options": [
+                            {"name": "Cheval", "cost": 15, "mount": {"name": "Cheval", "special_rules": ["Impact (1)", "Rapide"]}},
+                            {"name": "Dragon du Ravage", "cost": 325, "mount": {"name": "Dragon du Ravage", "special_rules": ["Griffes lourdes (A6, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]}}
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Maître du Ravage de la Guerre",
+                "type": "hero",
+                "size": 1,
+                "base_cost": 55,
+                "quality": 3,
+                "defense": 3,
+                "special_rules": ["Coriace (3)", "Héros", "Guerrier-né"],
+                "weapons": [{"name": "Arme à une main lourde", "range": "-", "attacks": 3, "armor_piercing": 1}],
+                "upgrade_groups": [
+                    {
+                        "group": "Améliorations de rôle",
+                        "type": "upgrades",
+                        "description": "Choisissez un rôle spécial",
+                        "options": [
+                            {"name": "Conquérant", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
+                            {"name": "Sorcier", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]}
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Champion Barbare de la Guerre",
+                "type": "hero",
+                "size": 1,
+                "base_cost": 30,
+                "quality": 5,
+                "defense": 5,
+                "special_rules": ["Coriace (3)", "Éclaireur", "Furieux", "Guerrier-né", "Héros"],
+                "weapons": [{"name": "Arme à une main", "range": "-", "attacks": 3, "armor_piercing": "-"}],
+                "upgrade_groups": []
+            },
+            {
+                "name": "Pillards Barbares de la Guerre",
+                "type": "unit",
+                "size": 10,
+                "base_cost": 95,
+                "quality": 5,
+                "defense": 5,
+                "special_rules": ["Éclaireur", "Furieux", "Guerrier-né"],
+                "weapons": [{"name": "Armes à une main", "range": "-", "attacks": 1, "armor_piercing": "-"}],
+                "upgrade_groups": [
+                    {
+                        "group": "Remplacement d'armes",
+                        "type": "weapon",
+                        "description": "Remplacez toutes les armes de base par:",
+                        "options": [
+                            {"name": "Lance", "cost": 35, "weapon": {"name": "Lance", "range": "-", "attacks": 1, "armor_piercing": "-", "special_rules": ["Contre-charge"]}},
+                            {"name": "Fléau", "cost": 20, "weapon": {"name": "Fléau", "range": "-", "attacks": 1, "armor_piercing": 1}}
+                        ]
+                    },
+                    {
+                        "group": "Améliorations d'unité",
+                        "type": "upgrades",
+                        "description": "Améliorations disponibles pour l'unité",
+                        "options": [
+                            {"name": "Icône du Ravage", "cost": 20, "special_rules": ["Aura de Défense versatile"]},
+                            {"name": "Sergent", "cost": 5},
+                            {"name": "Bannière", "cost": 5},
+                            {"name": "Musicien", "cost": 10}
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Guerriers de la Guerre",
+                "type": "unit",
+                "size": 5,
+                "base_cost": 80,
+                "quality": 3,
+                "defense": 3,
+                "special_rules": ["Guerrier-né"],
+                "weapons": [{"name": "Armes à une main lourdes", "range": "-", "attacks": 1, "armor_piercing": 1}],
+                "upgrade_groups": [
+                    {
+                        "group": "Améliorations d'unité",
+                        "type": "upgrades",
+                        "description": "Améliorations disponibles",
+                        "options": [
+                            {"name": "Sergent", "cost": 5},
+                            {"name": "Bannière", "cost": 5},
+                            {"name": "Musicien", "cost": 10}
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Limiers du Ravage de la Guerre",
+                "type": "unit",
+                "size": 5,
+                "base_cost": 70,
+                "quality": 4,
+                "defense": 5,
+                "special_rules": ["Arpenteur", "Guerrier-né", "Rapide"],
+                "weapons": [{"name": "Griffes perforantes", "range": "-", "attacks": 1, "armor_piercing": "-", "special_rules": ["Perforant"]}],
+                "upgrade_groups": []
+            }
+        ]
+    },
+    {
+        "faction": "Disciples de la Guerre",
+        "game": "Age of Fantasy Regiments",
+        "version": "FR-3.5.2",
+        "status": "complete",
+        "description": "Les Disciples de la Guerre - version Regiments.",
+        "units": [
+            {
+                "name": "Maître du Ravage de la Guerre Élu",
+                "type": "hero",
+                "size": 1,
+                "base_cost": 65,
+                "quality": 3,
+                "defense": 3,
+                "special_rules": ["Attaque versatile", "Coriace (3)", "Héros", "Guerrier-né"],
+                "weapons": [{"name": "Arme à une main lourde", "range": "-", "attacks": 3, "armor_piercing": 1}],
+                "upgrade_groups": []
+            },
+            {
+                "name": "Guerriers de la Guerre",
+                "type": "unit",
+                "size": 5,
+                "base_cost": 80,
+                "quality": 3,
+                "defense": 3,
+                "special_rules": ["Guerrier-né"],
+                "weapons": [{"name": "Armes à une main lourdes", "range": "-", "attacks": 1, "armor_piercing": 1}],
+                "upgrade_groups": []
+            }
+        ]
+    },
+    {
+        "faction": "Sœurs Bénies",
+        "game": "Grimdark Future",
+        "version": "FR-0.1",
+        "status": "complete",
+        "description": "Les Sœurs Bénies sont des guerrières fanatiques.",
+        "units": [
+            {
+                "name": "Chanoinesse",
+                "type": "hero",
+                "size": 1,
+                "base_cost": 95,
+                "quality": 3,
+                "defense": 4,
+                "equipment": ["Arme énergétique", "Pistolet"],
+                "special_rules": ["Héroïne", "Foi"],
+                "weapons": [
+                    {"name": "Arme énergétique", "range": "-", "attacks": 4, "armor_piercing": 2},
+                    {"name": "Pistolet", "range": "12\"", "attacks": 1, "armor_piercing": 0}
+                ],
+                "upgrade_groups": []
+            },
+            {
+                "name": "Sœurs de Bataille",
+                "type": "unit",
+                "size": 5,
+                "base_cost": 110,
+                "quality": 4,
+                "defense": 4,
+                "equipment": ["Fusils", "Armure lourde"],
+                "special_rules": ["Foi", "Zèle"],
+                "weapons": [{"name": "Fusils", "range": "24\"", "attacks": 1, "armor_piercing": 0}],
+                "upgrade_groups": [
+                    {
+                        "group": "Armes spéciales",
+                        "type": "upgrades",
+                        "description": "Ajoutez des armes spéciales",
+                        "options": [
+                            {"name": "Lance-flammes", "cost": 10, "weapon": {"name": "Lance-flammes", "range": "12\"", "attacks": 6, "armor_piercing": 0}},
+                            {"name": "Fusil à plasma", "cost": 15, "weapon": {"name": "Fusil à plasma", "range": "24\"", "attacks": 1, "armor_piercing": 3}}
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Sœurs d'Élite",
+                "type": "unit",
+                "size": 5,
+                "base_cost": 150,
+                "quality": 4,
+                "defense": 3,
+                "equipment": ["Fusils énergétiques", "Armure lourde"],
+                "special_rules": ["Foi", "Zèle"],
+                "weapons": [{"name": "Fusils énergétiques", "range": "24\"", "attacks": 2, "armor_piercing": 1}],
+                "upgrade_groups": []
+            },
+            {
+                "name": "Repentantes",
+                "type": "unit",
+                "size": 5,
+                "base_cost": 120,
+                "quality": 4,
+                "defense": 5,
+                "equipment": ["Armes lourdes de mêlée"],
+                "special_rules": ["Frénésie", "Sans Peur"],
+                "weapons": [{"name": "Armes lourdes de mêlée", "range": "-", "attacks": 2, "armor_piercing": 1}],
+                "upgrade_groups": []
+            },
+            {
+                "name": "Séraphines",
+                "type": "unit",
+                "size": 5,
+                "base_cost": 160,
+                "quality": 4,
+                "defense": 4,
+                "equipment": ["Pistolets jumelés", "Réacteurs dorsaux"],
+                "special_rules": ["Vol", "Foi"],
+                "weapons": [{"name": "Pistolets jumelés", "range": "12\"", "attacks": 4, "armor_piercing": 0}],
+                "upgrade_groups": []
+            },
+            {
+                "name": "Exorciste",
+                "type": "unit",
+                "size": 1,
+                "base_cost": 220,
+                "quality": 4,
+                "defense": 2,
+                "equipment": ["Missiles sacrés", "Blindage lourd"],
+                "special_rules": ["Tir Indirect"],
+                "weapons": [{"name": "Missiles sacrés", "range": "48\"", "attacks": 6, "armor_piercing": 2, "special_rules": ["Explosion(3)"]}],
+                "upgrade_groups": []
+            }
+        ]
+    }
+]
+
+# ===== ROUTES =====
+
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "OPR Army Forge API"}
 
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.model_dump()
-    status_obj = StatusCheck(**status_dict)
-    
-    # Convert to dict and serialize datetime to ISO string for MongoDB
-    doc = status_obj.model_dump()
-    doc['timestamp'] = doc['timestamp'].isoformat()
-    
-    _ = await db.status_checks.insert_one(doc)
-    return status_obj
+@api_router.get("/health")
+async def health_check():
+    return {"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}
 
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    # Exclude MongoDB's _id field from the query results
-    status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
+# Games routes
+@api_router.get("/games")
+async def get_games():
+    """Get all available games"""
+    return GAMES
+
+@api_router.get("/games/{game_id}")
+async def get_game(game_id: str):
+    """Get a specific game by ID"""
+    for game in GAMES:
+        if game["id"] == game_id:
+            return game
+    raise HTTPException(status_code=404, detail="Game not found")
+
+# Factions routes
+@api_router.get("/factions")
+async def get_factions(game: Optional[str] = None):
+    """Get all factions, optionally filtered by game"""
+    query = {}
+    if game:
+        query["game"] = game
     
-    # Convert ISO string timestamps back to datetime objects
-    for check in status_checks:
-        if isinstance(check['timestamp'], str):
-            check['timestamp'] = datetime.fromisoformat(check['timestamp'])
+    factions = await db.factions.find(query, {"_id": 0}).to_list(1000)
     
-    return status_checks
+    # If no factions exist, seed the database
+    if not factions:
+        for faction_data in SAMPLE_FACTIONS:
+            faction_obj = {**faction_data, "id": str(uuid.uuid4())}
+            await db.factions.insert_one(faction_obj)
+        factions = await db.factions.find(query, {"_id": 0}).to_list(1000)
+    
+    return factions
+
+@api_router.get("/factions/{faction_id}")
+async def get_faction(faction_id: str):
+    """Get a specific faction by ID"""
+    faction = await db.factions.find_one({"id": faction_id}, {"_id": 0})
+    if not faction:
+        raise HTTPException(status_code=404, detail="Faction not found")
+    return faction
+
+@api_router.post("/factions", response_model=dict)
+async def create_faction(faction_data: FactionCreate):
+    """Create a new faction"""
+    faction_dict = faction_data.model_dump()
+    faction_dict["id"] = str(uuid.uuid4())
+    await db.factions.insert_one(faction_dict)
+    return {"id": faction_dict["id"], "message": "Faction created successfully"}
+
+@api_router.delete("/factions/{faction_id}")
+async def delete_faction(faction_id: str):
+    """Delete a faction"""
+    result = await db.factions.delete_one({"id": faction_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Faction not found")
+    return {"message": "Faction deleted successfully"}
+
+# Import faction from JSON
+@api_router.post("/factions/import")
+async def import_faction(faction_data: dict):
+    """Import a faction from raw JSON data"""
+    faction_data["id"] = str(uuid.uuid4())
+    await db.factions.insert_one(faction_data)
+    return {"id": faction_data["id"], "message": "Faction imported successfully"}
+
+# Army routes
+@api_router.get("/armies")
+async def get_armies():
+    """Get all armies"""
+    armies = await db.armies.find({}, {"_id": 0}).to_list(1000)
+    return armies
+
+@api_router.get("/armies/{army_id}")
+async def get_army(army_id: str):
+    """Get a specific army by ID"""
+    army = await db.armies.find_one({"id": army_id}, {"_id": 0})
+    if not army:
+        raise HTTPException(status_code=404, detail="Army not found")
+    return army
+
+@api_router.post("/armies", response_model=dict)
+async def create_army(army_data: ArmyCreate):
+    """Create a new army"""
+    army_dict = army_data.model_dump()
+    army_dict["id"] = str(uuid.uuid4())
+    army_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    army_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+    army_dict["total_points"] = calculate_army_points(army_dict.get("units", []))
+    
+    await db.armies.insert_one(army_dict)
+    return {"id": army_dict["id"], "message": "Army created successfully"}
+
+@api_router.put("/armies/{army_id}")
+async def update_army(army_id: str, army_update: ArmyUpdate):
+    """Update an existing army"""
+    update_data = {k: v for k, v in army_update.model_dump().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    if "units" in update_data:
+        update_data["total_points"] = calculate_army_points(update_data["units"])
+    
+    result = await db.armies.update_one({"id": army_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Army not found")
+    
+    return {"message": "Army updated successfully"}
+
+@api_router.delete("/armies/{army_id}")
+async def delete_army(army_id: str):
+    """Delete an army"""
+    result = await db.armies.delete_one({"id": army_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Army not found")
+    return {"message": "Army deleted successfully"}
+
+# Validation route
+@api_router.post("/validate")
+async def validate_army(army_data: dict):
+    """Validate an army against OPR rules"""
+    errors = []
+    points_limit = army_data.get("points_limit", 1000)
+    units = army_data.get("units", [])
+    
+    total_points = calculate_army_points(units)
+    
+    # Count heroes
+    hero_count = sum(1 for u in units if u.get("unit_type") == "hero")
+    max_heroes = points_limit // 375
+    
+    # Check hero limit
+    if hero_count > max_heroes:
+        errors.append({
+            "type": "error",
+            "message": f"Trop de héros! Maximum {max_heroes} héros pour {points_limit} pts (1 héros / 375 pts)",
+            "unit_id": None
+        })
+    
+    # Check 35% rule for each unit
+    max_unit_cost = int(points_limit * 0.35)
+    for unit in units:
+        unit_cost = unit.get("total_cost", 0)
+        if unit_cost > max_unit_cost:
+            errors.append({
+                "type": "error",
+                "message": f"L'unité '{unit.get('unit_name', 'Unknown')}' coûte {unit_cost} pts, maximum autorisé: {max_unit_cost} pts (35% de {points_limit})",
+                "unit_id": unit.get("id")
+            })
+    
+    # Check total points
+    if total_points > points_limit:
+        errors.append({
+            "type": "error",
+            "message": f"L'armée dépasse la limite de points! {total_points}/{points_limit} pts",
+            "unit_id": None
+        })
+    
+    return {
+        "valid": len([e for e in errors if e["type"] == "error"]) == 0,
+        "errors": errors,
+        "total_points": total_points,
+        "max_hero_count": max_heroes,
+        "current_hero_count": hero_count
+    }
+
+def calculate_army_points(units: List[dict]) -> int:
+    """Calculate total points for an army"""
+    total = 0
+    for unit in units:
+        total += unit.get("total_cost", unit.get("base_cost", 0))
+    return total
 
 # Include the router in the main app
 app.include_router(api_router)
@@ -76,13 +659,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
