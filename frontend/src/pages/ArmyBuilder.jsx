@@ -39,30 +39,33 @@ export default function ArmyBuilder() {
   }, [state.selectedGame, navigate]);
 
   // Fetch factions for selected game
-  useEffect(() => {
-    const fetchFactions = async () => {
-      if (!state.selectedGame) return;
+  const fetchFactions = useCallback(async () => {
+    if (!state.selectedGame) return;
+    
+    setLoadingFactions(true);
+    try {
+      // Map game ID to game name for API
+      const gameNameMap = {
+        'grimdark-future': 'Grimdark Future',
+        'age-of-fantasy': 'Age of Fantasy',
+        'age-of-fantasy-regiments': 'Age of Fantasy Regiments'
+      };
+      const gameName = gameNameMap[state.selectedGame.id] || state.selectedGame.name;
       
-      setLoadingFactions(true);
-      try {
-        // Map game ID to game name for API
-        const gameNameMap = {
-          'grimdark-future': 'Grimdark Future',
-          'age-of-fantasy': 'Age of Fantasy',
-          'age-of-fantasy-regiments': 'Age of Fantasy Regiments'
-        };
-        const gameName = gameNameMap[state.selectedGame.id] || state.selectedGame.name;
-        
-        const response = await axios.get(`${API}/factions`, {
-          params: { game: gameName }
-        });
-        setFactions(response.data);
-      } catch (err) {
-        console.error('Error fetching factions:', err);
-        toast.error('Erreur lors du chargement des factions');
-      } finally {
-        setLoadingFactions(false);
-      }
+      const response = await axios.get(`${API}/factions`, {
+        params: { game: gameName }
+      });
+      setFactions(response.data);
+    } catch (err) {
+      console.error('Error fetching factions:', err);
+      toast.error('Erreur lors du chargement des factions');
+    } finally {
+      setLoadingFactions(false);
+    }
+  }, [state.selectedGame]);
+
+  useEffect(() => {
+    fetchFactions();
     };
 
     fetchFactions();
