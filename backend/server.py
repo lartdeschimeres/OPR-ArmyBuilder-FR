@@ -573,6 +573,26 @@ async def get_game(game_id: str):
             return game
     raise HTTPException(status_code=404, detail="Game not found")
 
+# Helper function to load factions from JSON files
+async def seed_factions_from_files():
+    """Load faction data from JSON files in /data directory"""
+    if DATA_DIR.exists():
+        for json_file in DATA_DIR.glob("*.json"):
+            try:
+                with open(json_file, 'r', encoding='utf-8') as f:
+                    faction_data = json.load(f)
+                    # Check if faction already exists
+                    existing = await db.factions.find_one({
+                        "faction": faction_data.get("faction"),
+                        "game": faction_data.get("game")
+                    })
+                    if not existing:
+                        faction_data["id"] = str(uuid.uuid4())
+                        await db.factions.insert_one(faction_data)
+                        logger.info(f"Loaded faction: {faction_data.get('faction')} ({faction_data.get('game')})")
+            except Exception as e:
+                logger.error(f"Error loading {json_file}: {e}")
+
 # Factions routes
 @api_router.get("/factions")
 async def get_factions(game: Optional[str] = None):
@@ -583,11 +603,20 @@ async def get_factions(game: Optional[str] = None):
     
     factions = await db.factions.find(query, {"_id": 0}).to_list(1000)
     
-    # If no factions exist, seed the database
+    # If no factions exist, seed from JSON files first, then from SAMPLE_FACTIONS
     if not factions:
+        await seed_factions_from_files()
+        
+        # Also seed from SAMPLE_FACTIONS for games not in files
         for faction_data in SAMPLE_FACTIONS:
-            faction_obj = {**faction_data, "id": str(uuid.uuid4())}
-            await db.factions.insert_one(faction_obj)
+            existing = await db.factions.find_one({
+                "faction": faction_data.get("faction"),
+                "game": faction_data.get("game")
+            })
+            if not existing:
+                faction_obj = {**faction_data, "id": str(uuid.uuid4())}
+                await db.factions.insert_one(faction_obj)
+        
         factions = await db.factions.find(query, {"_id": 0}).to_list(1000)
     
     return factions
