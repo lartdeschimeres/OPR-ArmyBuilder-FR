@@ -161,22 +161,57 @@ GAMES = [
         "id": "grimdark-future",
         "name": "Grimdark Future",
         "short_name": "GF",
-        "description": "Sci-fi wargame in a dark future",
-        "image": "https://images.unsplash.com/photo-1636255520934-0ac5f0361cd9?crop=entropy&cs=srgb&fm=jpg&q=85"
+        "description": "Sci-fi wargame in a dark future where there is only war",
+        "image": "https://customer-assets.emergentagent.com/job_tabletop-roster/artifacts/4yhnbky1_gf_cover.jpg"
+    },
+    {
+        "id": "grimdark-future-firefight",
+        "name": "Grimdark Future Firefight",
+        "short_name": "GFF",
+        "description": "Small-scale skirmish battles in the grimdark future",
+        "image": "https://customer-assets.emergentagent.com/job_tabletop-roster/artifacts/x3uaye60_gff_cover.jpg"
+    },
+    {
+        "id": "grimdark-future-squad",
+        "name": "Grimdark Future Squad",
+        "short_name": "GFSQ",
+        "description": "Squad-based tactical combat in the grimdark future",
+        "image": "https://customer-assets.emergentagent.com/job_tabletop-roster/artifacts/n649vrml_gfsq_cover.jpg"
     },
     {
         "id": "age-of-fantasy",
         "name": "Age of Fantasy",
         "short_name": "AoF",
-        "description": "Fantasy wargame with magic and monsters",
-        "image": "https://images.unsplash.com/photo-1764011643213-1f3b3691f678?crop=entropy&cs=srgb&fm=jpg&q=85"
+        "description": "Fantasy wargame with magic, monsters and epic battles",
+        "image": "https://customer-assets.emergentagent.com/job_tabletop-roster/artifacts/ef8vm2eh_aof_cover.jpg"
     },
     {
         "id": "age-of-fantasy-regiments",
         "name": "Age of Fantasy Regiments",
         "short_name": "AoFR",
-        "description": "Ranked combat fantasy wargame",
-        "image": "https://images.unsplash.com/photo-1529981188441-8a2e6fe30103?crop=entropy&cs=srgb&fm=jpg&q=85"
+        "description": "Ranked combat fantasy wargame with massive armies",
+        "image": "https://customer-assets.emergentagent.com/job_tabletop-roster/artifacts/egkkuekh_aofr_cover.jpg"
+    },
+    {
+        "id": "age-of-fantasy-skirmish",
+        "name": "Age of Fantasy Skirmish",
+        "short_name": "AoFS",
+        "description": "Small-scale skirmish battles in a fantasy world",
+        "image": "https://customer-assets.emergentagent.com/job_tabletop-roster/artifacts/mnmh2se3_aofs_cover.jpg"
+    },
+    {
+        "id": "age-of-fantasy-quest",
+        "name": "Age of Fantasy Quest",
+        "short_name": "AoFQ",
+        "description": "Cooperative dungeon crawling adventure game",
+        "image": "https://customer-assets.emergentagent.com/job_tabletop-roster/artifacts/00yl2v7x_aofq_cover.jpg"
+    },
+    {
+        "id": "warfleets-ftl",
+        "name": "Warfleets: FTL",
+        "short_name": "FTL",
+        "description": "Space fleet combat and interstellar warfare",
+        "image": "https://customer-assets.emergentagent.com/job_tabletop-roster/artifacts/gk19bhic_ftl_cover.jpg"
     }
 ]
 
