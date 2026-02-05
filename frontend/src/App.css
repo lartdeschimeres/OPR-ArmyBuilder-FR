@@ -1,34 +1,95 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* OPR Army Forge Styles */
+
+.font-headings {
+    font-family: 'Barlow Condensed', sans-serif;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.font-mono {
+    font-family: 'JetBrains Mono', monospace;
 }
 
-.App-header {
-    background-color: #0f0f10;
+/* Remove text-align center from App */
+.App {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
 }
 
-.App-link {
-    color: #61dafb;
+/* Custom transitions for interactive elements */
+button,
+input,
+select {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
+/* Line clamp utility */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
     }
-    to {
-        transform: rotate(360deg);
+    to { 
+        opacity: 1;
+        transform: translateY(0);
     }
+}
+
+@keyframes scaleIn {
+    from { 
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to { 
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slideUp {
+    animation: slideUp 0.4s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-scaleIn {
+    animation: scaleIn 0.3s ease-out forwards;
+}
+
+/* Hover effects */
+.hover-scale:hover {
+    transform: scale(1.02);
+}
+
+/* Scrollbar styling for scrollable areas */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #4b4d46;
+    border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #5a5c54;
 }
