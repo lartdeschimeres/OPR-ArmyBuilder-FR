@@ -2,5 +2,5 @@ fastapi==0.95.2
 uvicorn==0.22.0
 motor==3.1.2
 python-dotenv==1.0.0
-pydantic==1.10.7
+pydantic==1.10.13
 gunicorn==20.1.0
