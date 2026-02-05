@@ -137,6 +137,42 @@ export const UnitCard = ({ rosterUnit }) => {
     return weapons;
   }, [unit.weapons, upgradeGroups, rosterUnit.selectedUpgrades]);
 
+  // Calculate total Tough (Coriace) value including mount
+  const totalToughValue = useMemo(() => {
+    // Get hero's base Tough value
+    const heroTough = extractToughValue(unit.special_rules);
+    
+    // Get mount's Tough value if a mount is selected
+    let mountTough = 0;
+    const mountGroups = upgradeGroups.filter(g => g.type === 'mount');
+    mountGroups.forEach(group => {
+      const selectedUpgrade = rosterUnit.selectedUpgrades.find(u => u.group === group.group);
+      if (selectedUpgrade) {
+        const option = group.options.find(o => o.name === selectedUpgrade.name);
+        if (option && option.mount && option.mount.special_rules) {
+          mountTough += extractToughValue(option.mount.special_rules);
+        }
+      }
+    });
+    
+    return heroTough + mountTough;
+  }, [unit.special_rules, upgradeGroups, rosterUnit.selectedUpgrades]);
+
+  // Get selected mount name
+  const selectedMount = useMemo(() => {
+    const mountGroups = upgradeGroups.filter(g => g.type === 'mount');
+    for (const group of mountGroups) {
+      const selectedUpgrade = rosterUnit.selectedUpgrades.find(u => u.group === group.group);
+      if (selectedUpgrade) {
+        const option = group.options.find(o => o.name === selectedUpgrade.name);
+        if (option && option.mount) {
+          return option.mount.name;
+        }
+      }
+    }
+    return null;
+  }, [upgradeGroups, rosterUnit.selectedUpgrades]);
+
   // Calculate effective special rules
   const effectiveSpecialRules = useMemo(() => {
     let rules = [...(unit.special_rules || [])];
@@ -151,7 +187,7 @@ export const UnitCard = ({ rosterUnit }) => {
       });
     });
     
-    // Add mount special rules (non-weapon ones)
+    // Add mount special rules (non-weapon ones, excluding Coriace which is summed)
     const mountGroups = upgradeGroups.filter(g => g.type === 'mount');
     mountGroups.forEach(group => {
       const selectedUpgrade = rosterUnit.selectedUpgrades.find(u => u.group === group.group);
@@ -159,8 +195,8 @@ export const UnitCard = ({ rosterUnit }) => {
         const option = group.options.find(o => o.name === selectedUpgrade.name);
         if (option && option.mount && option.mount.special_rules) {
           option.mount.special_rules.forEach(rule => {
-            // Only add non-weapon rules (don't match pattern like "Griffes (A6)")
-            if (!rule.match(/\(A\d+/)) {
+            // Only add non-weapon rules and exclude Coriace (we handle it separately)
+            if (!rule.match(/\(A\d+/) && !rule.match(/[Cc]oriace\s*\(\d+\)/)) {
               rules.push(rule);
             }
           });
@@ -168,9 +204,16 @@ export const UnitCard = ({ rosterUnit }) => {
       }
     });
     
+    // Update Coriace value in rules if mount is selected
+    if (selectedMount && totalToughValue > 0) {
+      // Remove existing Coriace rules and add the combined one
+      rules = rules.filter(r => !r.match(/[Cc]oriace\s*\(\d+\)/));
+      rules.unshift(`Coriace (${totalToughValue})`);
+    }
+    
     // Remove duplicates
     return [...new Set(rules)];
-  }, [unit.special_rules, upgradeGroups, rosterUnit.selectedUpgrades]);
+  }, [unit.special_rules, upgradeGroups, rosterUnit.selectedUpgrades, selectedMount, totalToughValue]);
   
   // Find selected upgrade for a radio group
   const getSelectedRadio = (groupName) => {
