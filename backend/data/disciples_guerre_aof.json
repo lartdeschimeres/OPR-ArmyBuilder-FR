@@ -1,0 +1,481 @@
+{
+  "faction": "Disciples de la Guerre",
+  "game": "Age of Fantasy",
+  "version": "FR-3.5.2",
+  "status": "complete",
+  "description": "Les Disciples de la Guerre sont une faction brutale et impitoyable, composée de guerriers fanatiques et de monstres déchaînés.",
+  "special_rules_descriptions": {
+    "Warbound [Guerrier-né]": "Les ennemis qui lancent les dés pour bloquer les touches infligées par les armes de cette figurine subissent une blessure supplémentaire pour chaque résultat non modifié de 1 obtenu.",
+    "Bloodthirsty Fighter [Combattant sanguinaire]": "Pour chaque résultat de 1 non modifié obtenu par les ennemis lorsqu'ils bloquent les touches portées par les armes de cette figurine en mêlée, cette figurine peut effectuer un jet d'attaque supplémentaire avec cette arme.",
+    "Break [Dislocation]": "Ignore la Régénération, et sur les résultats non modifiés de 6 pour toucher, ces coups obtiennent PA (+2).",
+    "Breath Attack [Attaque de souffle]": "Une fois par activation de cette figurine, avant d'attaquer, lancez 1D6 : sur un résultat de 2+, une unité ennemie dans un rayon de 6\" en ligne de mire subit une touche avec Explosion (3) et PA (1).",
+    "Melee Evasion [Esquive en mêlée]": "Les ennemis subissent un malus de -1 aux jets d'attaque en mêlée lorsqu'ils attaquent des unités dont toutes les figurines possèdent cette règle.",
+    "Piercing Assault [Assaut tranchant]": "Cette figurine gagne PA (+1) lorsqu'elle charge.",
+    "Unpredictable Fighter [Combattant imprévisible]": "En mêlée, lancez un dé et appliquez un effet : sur 1-3, PA (+1), sur 4-6, +1 aux jets d'attaque.",
+    "Versatile Attack [Attaque versatile]": "Lorsque cette unité est activée, choisissez: PA (+1) ou +1 aux jets pour toucher.",
+    "Versatile Defense [Défense versatile]": "Lorsqu'une unité est déployée ou activée, choisissez: +1 aux jets de Défense, ou -1 aux jets ennemis pour la toucher."
+  },
+  "spells": {
+    "Terrifying Fury [Fureur terrifiante]": {"cost": 1, "description": "Choisissez une unité ennemie à 18\" ou moins, qui doit effectuer un Test de Moral. En cas d'échec, elle devient Fatiguée.", "range": "18\"", "target": "1 unité ennemie"},
+    "Flame of Destruction [Flammes de la destruction]": {"cost": 1, "description": "Choisissez une unité ennemie à 18\" ou moins, qui subit une touche avec Explosion (3).", "range": "18\"", "target": "1 unité ennemie"},
+    "Fiery Protection [Protection ardente]": {"cost": 2, "description": "Choisissez jusqu'à deux unités amies à 12\" ou moins, qui obtiennent Esquive en mêlée une seule fois.", "range": "12\"", "target": "jusqu'à 2 unités amies"},
+    "Brutal Massacre [Massacre brutal]": {"cost": 2, "description": "Choisissez une unité ennemie à 6\" ou moins qui subit six touches avec Dislocation.", "range": "6\"", "target": "1 unité ennemie"},
+    "War Boon [Bénédiction guerrière]": {"cost": 3, "description": "Choisissez jusqu'à trois unités amies à 12\" ou moins, qui bénéficient une fois de Boost de Guerrier-né.", "range": "12\"", "target": "jusqu'à 3 unités amies"},
+    "Headtaker Strike [Décapitation]": {"cost": 3, "description": "Choisissez jusqu'à deux unités ennemies à 12\" ou moins, qui subissent chacune trois blessures avec PA (2).", "range": "12\"", "target": "jusqu'à 2 unités ennemies"}
+  },
+  "units": [
+    {
+      "name": "Maître du Ravage de la Guerre Élu",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 65,
+      "quality": 3,
+      "defense": 3,
+      "special_rules": ["Attaque versatile", "Coriace (3)", "Héros", "Guerrier-né"],
+      "weapons": [{"name": "Arme à une main lourde", "range": "-", "attacks": 3, "armor_piercing": 1}],
+      "upgrade_groups": [
+        {
+          "group": "Améliorations de rôle",
+          "type": "upgrades",
+          "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
+          "options": [
+            {"name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
+            {"name": "Marauder (Aura de Combattant imprévisible)", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
+            {"name": "Porteur de la bannière de l'armée (Effrayant (3))", "cost": 30, "special_rules": ["Effrayant (3)"]},
+            {"name": "Ensorceleur (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
+            {"name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
+            {"name": "Seigneur de Guerre (Aura de Boost de Guerrier-né)", "cost": 50, "special_rules": ["Aura de Boost de Guerrier-né"]},
+            {"name": "Maître Sorcier (Lanceur de sorts (3))", "cost": 65, "special_rules": ["Lanceur de sorts (3)"]}
+          ]
+        },
+        {
+          "group": "Remplacement d'arme",
+          "type": "weapon",
+          "description": "Remplacez l'arme de base par:",
+          "options": [
+            {"name": "Hallebarde lourde", "cost": 5, "weapon": {"name": "Hallebarde lourde", "range": "-", "attacks": 3, "armor_piercing": 1, "special_rules": ["Perforant"]}},
+            {"name": "Paire d'armes à une main lourdes", "cost": 15, "weapon": {"name": "Paire d'armes à une main lourdes", "range": "-", "attacks": 4, "armor_piercing": 1}},
+            {"name": "Grande arme lourde", "cost": 15, "weapon": {"name": "Grande arme lourde", "range": "-", "attacks": 3, "armor_piercing": 3}},
+            {"name": "Lance lourde", "cost": 15, "weapon": {"name": "Lance lourde", "range": "-", "attacks": 3, "armor_piercing": 1, "special_rules": ["Percée"]}}
+          ]
+        },
+        {
+          "group": "Montures",
+          "type": "mount",
+          "description": "Ajoutez une monture",
+          "options": [
+            {"name": "Cheval", "cost": 15, "mount": {"name": "Cheval", "special_rules": ["Impact (1)", "Rapide"]}},
+            {"name": "Grande bête", "cost": 70, "mount": {"name": "Grande bête", "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Impact (2)", "Rapide"]}},
+            {"name": "Monture démoniaque", "cost": 80, "mount": {"name": "Monture démoniaque", "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Effrayant (1)", "Impact (2)", "Rapide"]}},
+            {"name": "Char", "cost": 125, "mount": {"name": "Char", "special_rules": ["Sabots (A2)", "Coriace (6)", "Impact (4)", "Rapide"]}},
+            {"name": "Char bestial", "cost": 140, "mount": {"name": "Char bestial", "special_rules": ["Griffes lourdes (A2, PA(1))", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]}},
+            {"name": "Manticore", "cost": 165, "mount": {"name": "Manticore", "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (6)", "Effrayant (1)", "Volant"]}},
+            {"name": "Dragon du Ravage", "cost": 325, "mount": {"name": "Dragon du Ravage", "special_rules": ["Griffes lourdes (A6, PA(1))", "Piétinement (A4, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]}}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Maître du Ravage de la Guerre",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 55,
+      "quality": 3,
+      "defense": 3,
+      "special_rules": ["Coriace (3)", "Héros", "Guerrier-né"],
+      "weapons": [{"name": "Arme à une main lourde", "range": "-", "attacks": 3, "armor_piercing": 1}],
+      "upgrade_groups": [
+        {
+          "group": "Améliorations de rôle",
+          "type": "upgrades",
+          "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
+          "options": [
+            {"name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
+            {"name": "Marauder (Aura de Combattant imprévisible)", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
+            {"name": "Porteur de la bannière de l'armée (Effrayant (3))", "cost": 30, "special_rules": ["Effrayant (3)"]},
+            {"name": "Ensorceleur (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
+            {"name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
+            {"name": "Seigneur de Guerre (Aura de Boost de Guerrier-né)", "cost": 50, "special_rules": ["Aura de Boost de Guerrier-né"]},
+            {"name": "Maître Sorcier (Lanceur de sorts (3))", "cost": 65, "special_rules": ["Lanceur de sorts (3)"]}
+          ]
+        },
+        {
+          "group": "Remplacement d'arme",
+          "type": "weapon",
+          "description": "Remplacez l'arme de base par:",
+          "options": [
+            {"name": "Hallebarde lourde", "cost": 5, "weapon": {"name": "Hallebarde lourde", "range": "-", "attacks": 3, "armor_piercing": 1, "special_rules": ["Perforant"]}},
+            {"name": "Paire d'armes à une main lourdes", "cost": 10, "weapon": {"name": "Paire d'armes à une main lourdes", "range": "-", "attacks": 4, "armor_piercing": 1}},
+            {"name": "Grande arme lourde", "cost": 15, "weapon": {"name": "Grande arme lourde", "range": "-", "attacks": 3, "armor_piercing": 3}},
+            {"name": "Lance lourde", "cost": 15, "weapon": {"name": "Lance lourde", "range": "-", "attacks": 3, "armor_piercing": 1, "special_rules": ["Percée"]}}
+          ]
+        },
+        {
+          "group": "Montures",
+          "type": "mount",
+          "description": "Ajoutez une monture",
+          "options": [
+            {"name": "Cheval", "cost": 15, "mount": {"name": "Cheval", "special_rules": ["Impact (1)", "Rapide"]}},
+            {"name": "Grande bête", "cost": 65, "mount": {"name": "Grande bête", "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Impact (2)", "Rapide"]}},
+            {"name": "Monture démoniaque", "cost": 75, "mount": {"name": "Monture démoniaque", "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Effrayant (1)", "Impact (2)", "Rapide"]}},
+            {"name": "Char", "cost": 115, "mount": {"name": "Char", "special_rules": ["Sabots (A2)", "Coriace (6)", "Impact (4)", "Rapide"]}},
+            {"name": "Char bestial", "cost": 130, "mount": {"name": "Char bestial", "special_rules": ["Griffes lourdes (A2, PA(1))", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]}},
+            {"name": "Manticore", "cost": 145, "mount": {"name": "Manticore", "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (6)", "Effrayant (1)", "Volant"]}},
+            {"name": "Dragon du Ravage", "cost": 295, "mount": {"name": "Dragon du Ravage", "special_rules": ["Griffes lourdes (A6, PA(1))", "Piétinement (A4, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]}}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Champion Barbare de la Guerre",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 30,
+      "quality": 5,
+      "defense": 5,
+      "special_rules": ["Coriace (3)", "Éclaireur", "Furieux", "Guerrier-né", "Héros"],
+      "weapons": [{"name": "Arme à une main", "range": "-", "attacks": 3, "armor_piercing": "-"}],
+      "upgrade_groups": [
+        {
+          "group": "Améliorations de rôle",
+          "type": "upgrades",
+          "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
+          "options": [
+            {"name": "Héraut (Aura de Lacération au tir)", "cost": 25, "special_rules": ["Aura de Lacération au tir"]},
+            {"name": "Marauder (Aura de Combattant imprévisible)", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
+            {"name": "Ensorceleur (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
+            {"name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
+            {"name": "Seigneur de Guerre (Aura de Boost de Guerrier-né)", "cost": 50, "special_rules": ["Aura de Boost de Guerrier-né"]}
+          ]
+        },
+        {
+          "group": "Remplacement d'arme",
+          "type": "weapon",
+          "description": "Remplacez l'arme de base par:",
+          "options": [
+            {"name": "Paire d'armes à une main", "cost": 5, "weapon": {"name": "Paire d'armes à une main", "range": "-", "attacks": 4, "armor_piercing": "-"}},
+            {"name": "Hallebarde", "cost": 10, "weapon": {"name": "Hallebarde", "range": "-", "attacks": 3, "armor_piercing": "-", "special_rules": ["Perforant"]}},
+            {"name": "Lance", "cost": 10, "weapon": {"name": "Lance", "range": "-", "attacks": 3, "armor_piercing": "-", "special_rules": ["Percée"]}},
+            {"name": "Grande arme", "cost": 10, "weapon": {"name": "Grande arme", "range": "-", "attacks": 3, "armor_piercing": 2}}
+          ]
+        },
+        {
+          "group": "Améliorations d'arme",
+          "type": "weapon",
+          "description": "Améliorer avec une des options suivantes (un seul choix possible)",
+          "options": [
+            {"name": "Arc court", "cost": 10, "weapon": {"name": "Arc court", "range": "18\"", "attacks": 2, "armor_piercing": "-"}},
+            {"name": "Javelots barbelés", "cost": 10, "weapon": {"name": "Javelots barbelés", "range": "18\"", "attacks": 2, "armor_piercing": 1, "special_rules": ["Éclatement"]}}
+          ]
+        },
+        {
+          "group": "Montures",
+          "type": "mount",
+          "description": "Ajoutez une monture à ce héros",
+          "options": [
+            {"name": "Cheval", "cost": 15, "mount": {"name": "Cheval", "special_rules": ["Impact (1)", "Rapide"]}}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pillards Barbares de la Guerre",
+      "type": "unit",
+      "size": 10,
+      "base_cost": 95,
+      "quality": 5,
+      "defense": 5,
+      "special_rules": ["Éclaireur", "Furieux", "Guerrier-né"],
+      "weapons": [{"name": "Armes à une main", "range": "-", "attacks": 1, "armor_piercing": "-"}],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes de base par:",
+          "options": [
+            {"name": "Lance", "cost": 35, "weapon": {"name": "Lance", "range": "-", "attacks": 1, "armor_piercing": "-", "special_rules": ["Contre-charge"]}},
+            {"name": "Fléau", "cost": 20, "weapon": {"name": "Fléau", "range": "-", "attacks": 1, "armor_piercing": 1}}
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {"name": "Icône du Ravage (Aura de Défense versatile)", "cost": 20, "special_rules": ["Aura de Défense versatile"]},
+            {"name": "Sergent", "cost": 5},
+            {"name": "Bannière", "cost": 5},
+            {"name": "Musicien", "cost": 10}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pillards Sanguinaires",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 100,
+      "quality": 5,
+      "defense": 5,
+      "special_rules": ["Combattant sanguinaire", "Guerrier-né"],
+      "weapons": [{"name": "Grandes armes", "range": "-", "attacks": 1, "armor_piercing": 2}],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes de base par:",
+          "options": [
+            {"name": "Paire d'armes à une main", "cost": 10, "weapon": {"name": "Paire d'armes à une main", "range": "-", "attacks": 2, "armor_piercing": "-"}}
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {"name": "Sergent", "cost": 5},
+            {"name": "Bannière", "cost": 5},
+            {"name": "Musicien", "cost": 10}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Guerriers de la Guerre",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 80,
+      "quality": 3,
+      "defense": 3,
+      "special_rules": ["Guerrier-né"],
+      "weapons": [{"name": "Armes à une main lourdes", "range": "-", "attacks": 1, "armor_piercing": 1}],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes de base par:",
+          "options": [
+            {"name": "Hallebarde lourde", "cost": 10, "weapon": {"name": "Hallebarde lourde", "range": "-", "attacks": 1, "armor_piercing": 1, "special_rules": ["Perforant"]}},
+            {"name": "Grande arme lourde", "cost": 20, "weapon": {"name": "Grande arme lourde", "range": "-", "attacks": 1, "armor_piercing": 3}},
+            {"name": "Paire d'armes à une main lourdes", "cost": 45, "weapon": {"name": "Paire d'armes à une main lourdes", "range": "-", "attacks": 2, "armor_piercing": 1}}
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {"name": "Icône du Ravage (Aura de Défense versatile)", "cost": 20, "special_rules": ["Aura de Défense versatile"]},
+            {"name": "Sergent", "cost": 5},
+            {"name": "Bannière", "cost": 5},
+            {"name": "Musicien", "cost": 10}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Guerriers du Ravage de la Guerre",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 100,
+      "quality": 3,
+      "defense": 3,
+      "special_rules": ["Attaque versatile", "Guerrier-né"],
+      "weapons": [{"name": "Armes à une main lourdes", "range": "-", "attacks": 1, "armor_piercing": 1}],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes de base par:",
+          "options": [
+            {"name": "Hallebarde lourde", "cost": 10, "weapon": {"name": "Hallebarde lourde", "range": "-", "attacks": 1, "armor_piercing": 1, "special_rules": ["Perforant"]}},
+            {"name": "Grande arme lourde", "cost": 25, "weapon": {"name": "Grande arme lourde", "range": "-", "attacks": 1, "armor_piercing": 3}},
+            {"name": "Paire d'armes à une main lourdes", "cost": 65, "weapon": {"name": "Paire d'armes à une main lourdes", "range": "-", "attacks": 2, "armor_piercing": 1}}
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {"name": "Icône du Ravage (Aura de Défense versatile)", "cost": 20, "special_rules": ["Aura de Défense versatile"]},
+            {"name": "Sergent", "cost": 5},
+            {"name": "Bannière", "cost": 5},
+            {"name": "Musicien", "cost": 10}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mutants de la Guerre",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 105,
+      "quality": 4,
+      "defense": 4,
+      "special_rules": ["Combattant imprévisible", "Guerrier-né", "Sans peur"],
+      "weapons": [{"name": "Membres mutants", "range": "-", "attacks": 2, "armor_piercing": "-"}],
+      "upgrade_groups": []
+    },
+    {
+      "name": "Guerriers Sanguinaires",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 90,
+      "quality": 3,
+      "defense": 4,
+      "special_rules": ["Assaut tranchant", "Combattant sanguinaire", "Guerrier-né"],
+      "weapons": [{"name": "Armes à une main lourdes", "range": "-", "attacks": 1, "armor_piercing": 1}],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes de base par:",
+          "options": [
+            {"name": "Paire d'armes à une main", "cost": 35, "weapon": {"name": "Paire d'armes à une main", "range": "-", "attacks": 2, "armor_piercing": "-"}}
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {"name": "Sergent", "cost": 5},
+            {"name": "Bannière", "cost": 5},
+            {"name": "Musicien", "cost": 10}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Guerriers Moissonneurs de Mort",
+      "type": "unit",
+      "size": 3,
+      "base_cost": 170,
+      "quality": 3,
+      "defense": 4,
+      "special_rules": ["Coriace (3)", "Guerrier-né", "Impact (2)"],
+      "weapons": [{"name": "Paire de marteau-fléaux", "range": "-", "attacks": 2, "armor_piercing": 2}],
+      "upgrade_groups": []
+    },
+    {
+      "name": "Guerriers Semeurs de Mort",
+      "type": "unit",
+      "size": 3,
+      "base_cost": 200,
+      "quality": 3,
+      "defense": 4,
+      "special_rules": ["Assaut tranchant", "Coriace (3)", "Guerrier-né"],
+      "weapons": [{"name": "Paires d'armes ensorcelées", "range": "-", "attacks": 4, "armor_piercing": "-", "special_rules": ["Perforant"]}],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes de base par:",
+          "options": [
+            {"name": "Grande arme ensorcelée", "cost": 15, "weapon": {"name": "Grande arme ensorcelée", "range": "-", "attacks": 4, "armor_piercing": 2, "special_rules": ["Perforant"]}}
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {"name": "Bannière", "cost": 5},
+            {"name": "Sergent", "cost": 10},
+            {"name": "Musicien", "cost": 10}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chasseurs barbares de la Guerre",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 65,
+      "quality": 5,
+      "defense": 5,
+      "special_rules": ["Éclaireur", "Guerrier-né"],
+      "weapons": [
+        {"name": "Arcs courts", "range": "18\"", "attacks": 1, "armor_piercing": "-"},
+        {"name": "Armes à une main", "range": "-", "attacks": 1, "armor_piercing": "-"}
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez tous les Arcs courts par:",
+          "options": [
+            {"name": "Javelots barbelés", "cost": 5, "weapon": {"name": "Javelots barbelés", "range": "12\"", "attacks": 1, "armor_piercing": 1, "special_rules": ["Éclatement"]}}
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {"name": "Icône du Ravage (Aura de Défense versatile)", "cost": 20, "special_rules": ["Aura de Défense versatile"]}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Limiers du Ravage de la Guerre",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 70,
+      "quality": 4,
+      "defense": 5,
+      "special_rules": ["Arpenteur", "Guerrier-né", "Rapide"],
+      "weapons": [{"name": "Griffes perforantes", "range": "-", "attacks": 1, "armor_piercing": "-", "special_rules": ["Perforant"]}],
+      "upgrade_groups": [
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {"name": "Vicieux", "cost": 5, "special_rules": ["Lacération en mêlée"]},
+            {"name": "Éclaireur", "cost": 10, "special_rules": ["Éclaireur"]}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cavaliers barbares de la Guerre",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 80,
+      "quality": 3,
+      "defense": 5,
+      "special_rules": ["Éclaireur", "Furieux", "Guerrier-né", "Impact (1)", "Rapide"],
+      "weapons": [{"name": "Armes à une main", "range": "-", "attacks": 1, "armor_piercing": 0}],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes à une main par:",
+          "options": [
+            {"name": "Fléau", "cost": 10, "weapon": {"name": "Fléau", "range": "-", "attacks": 1, "armor_piercing": 1}}
+          ]
+        },
+        {
+          "group": "Améliorations d'armes",
+          "type": "weapon",
+          "description": "Améliorer toutes les figurines avec une des options suivantes (un seul choix possible)",
+          "options": [
+            {"name": "Arc court", "cost": 25, "weapon": {"name": "Arc court", "range": "12\"", "attacks": 1, "armor_piercing": 0}},
+            {"name": "Javelot barbelé", "cost": 30, "weapon": {"name": "Javelot barbelé", "range": "12\"", "attacks": 1, "armor_piercing": 1, "special_rules": ["Éclatement"]}}
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {"name": "Icône du Ravage (Aura de Défense versatile)", "cost": 20, "special_rules": ["Aura de Défense versatile"]}
+          ]
+        }
+      ]
+    }
+  ]
+}
