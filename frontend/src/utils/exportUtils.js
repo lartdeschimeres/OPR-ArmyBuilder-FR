@@ -208,13 +208,15 @@ function generateHTMLContent(armyData, printFriendly) {
   const accentColor = printFriendly ? '#1a56db' : '#60a5fa';
   const costColor = printFriendly ? '#b45309' : '#fbbf24';
   const statsBgColor = printFriendly ? '#e5e5e5' : '#2e2f2b';
+  const toughColor = printFriendly ? '#dc2626' : '#f87171';
 
   const unitsHTML = armyData.units.map(unit => {
     const upgradeGroups = unit.unitData.upgrade_groups || [];
     
-    // Calculate effective weapons and rules
+    // Calculate effective weapons, rules, and tough value
     const effectiveWeapons = calculateEffectiveWeapons(unit);
     const effectiveRules = calculateEffectiveRules(unit);
+    const toughData = calculateTotalTough(unit);
     
     // Format upgrades with details
     const upgradesHTML = unit.selectedUpgrades.length > 0
@@ -226,6 +228,17 @@ function generateHTMLContent(armyData, printFriendly) {
               <span style="color: ${costColor}; font-family: 'JetBrains Mono', monospace; margin-left: 8px;">+${u.cost} pts</span>
             </div>
           `).join('')}
+        </div>`
+      : '';
+    
+    // Mount info with combined tough display
+    const mountInfoHTML = toughData.mountName
+      ? `<div style="margin-top: 12px; background: ${printFriendly ? '#f3e8ff' : 'rgba(168, 85, 247, 0.1)'}; border: 1px solid ${printFriendly ? '#c084fc' : 'rgba(168, 85, 247, 0.3)'}; border-radius: 4px; padding: 8px;">
+          <div style="font-size: 12px; color: ${printFriendly ? '#7c3aed' : '#c084fc'}; display: flex; align-items: center; gap: 8px;">
+            <span>🐴</span>
+            <span style="font-weight: 600;">Monture: ${toughData.mountName}</span>
+            ${toughData.total > 0 ? `<span style="color: ${printFriendly ? '#666' : '#9ca3af'};">(Coriace ${toughData.heroTough} + ${toughData.mountTough} = <span style="color: ${toughColor}; font-weight: bold;">${toughData.total}</span>)</span>` : ''}
+          </div>
         </div>`
       : '';
 
