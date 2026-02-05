@@ -355,11 +355,17 @@ export const UnitCard = ({ rosterUnit }) => {
       {isExpanded && (
         <div className="px-4 pb-4 border-t border-[#4b4d46]">
           {/* Stats Grid */}
-          <div className="grid grid-cols-4 gap-2 text-xs text-gray-300 bg-[#2e2f2b] p-2 rounded mt-3 mb-3">
+          <div className={`grid ${totalToughValue > 0 ? 'grid-cols-5' : 'grid-cols-4'} gap-2 text-xs text-gray-300 bg-[#2e2f2b] p-2 rounded mt-3 mb-3`}>
             <div className="text-center">
               <div className="text-gray-500">Qualité</div>
               <div className="font-bold">{unit.quality}+</div>
             </div>
+            {totalToughValue > 0 && (
+              <div className="text-center">
+                <div className="text-gray-500">Coriace</div>
+                <div className="font-bold text-red-400">{totalToughValue}</div>
+              </div>
+            )}
             <div className="text-center">
               <div className="text-gray-500">Défense</div>
               <div className="font-bold">{unit.defense}+</div>
@@ -373,6 +379,21 @@ export const UnitCard = ({ rosterUnit }) => {
               <div className="font-bold">{unit.size}{rosterUnit.combinedUnit ? ' x2' : ''}</div>
             </div>
           </div>
+          
+          {/* Selected Mount Info */}
+          {selectedMount && (
+            <div className="mb-3 bg-purple-500/10 border border-purple-500/30 rounded p-2">
+              <div className="text-xs text-purple-400 flex items-center gap-2">
+                <span>🐴</span>
+                <span className="font-semibold">Monture: {selectedMount}</span>
+                {totalToughValue > 0 && (
+                  <span className="text-gray-400">
+                    (Coriace {extractToughValue(unit.special_rules)} + {totalToughValue - extractToughValue(unit.special_rules)} = <span className="text-red-400 font-bold">{totalToughValue}</span>)
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
           
           {/* Effective Weapons (updated based on upgrades) */}
           {effectiveWeapons && effectiveWeapons.length > 0 && (
