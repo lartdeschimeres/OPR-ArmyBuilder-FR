@@ -546,4 +546,4 @@ export const UnitCard = ({ rosterUnit }) => {
 };
 
 // Export helper functions for use in exports
-export { formatWeaponStats, formatMountStats, formatUpgradeOption };
+export { formatWeaponStats, formatMountStats, formatUpgradeOption, extractToughValue };
