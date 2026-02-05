@@ -68,11 +68,10 @@ function validateArmy(state) {
   const errors = [];
   const { pointsLimit, units, totalPoints } = state;
   
-  // Count heroes
+  // === RULE 1: Hero limit (1 per 375 pts) ===
   const heroCount = units.filter(u => u.unitType === 'hero').length;
-  const maxHeroes = Math.floor(pointsLimit / 375);
+  const maxHeroes = Math.max(1, Math.floor(pointsLimit / 375));
   
-  // Check hero limit
   if (heroCount > maxHeroes) {
     errors.push({
       type: 'error',
@@ -81,7 +80,27 @@ function validateArmy(state) {
     });
   }
   
-  // Check 35% rule
+  // === RULE 2: Max copies of same unit (1 + pointsLimit/750) ===
+  const maxCopies = 1 + Math.floor(pointsLimit / 750);
+  const unitCounts = {};
+  
+  units.forEach(unit => {
+    // Combined units count as 1 unit
+    const unitKey = unit.unitName;
+    unitCounts[unitKey] = (unitCounts[unitKey] || 0) + 1;
+  });
+  
+  Object.entries(unitCounts).forEach(([unitName, count]) => {
+    if (count > maxCopies) {
+      errors.push({
+        type: 'error',
+        message: `Trop de copies de "${unitName}"! Maximum ${maxCopies} copies pour ${pointsLimit} pts (1+${Math.floor(pointsLimit / 750)} copies)`,
+        unitId: null
+      });
+    }
+  });
+  
+  // === RULE 3: 35% max cost per unit ===
   const maxUnitCost = Math.floor(pointsLimit * 0.35);
   units.forEach(unit => {
     if (unit.totalCost > maxUnitCost) {
@@ -93,7 +112,19 @@ function validateArmy(state) {
     }
   });
   
-  // Check total points
+  // === RULE 4: Max total units (1 per 150 pts) ===
+  const maxTotalUnits = Math.max(1, Math.floor(pointsLimit / 150));
+  const totalUnitCount = units.length;
+  
+  if (totalUnitCount > maxTotalUnits) {
+    errors.push({
+      type: 'error',
+      message: `Trop d'unités! Maximum ${maxTotalUnits} unités pour ${pointsLimit} pts (1 unité / 150 pts)`,
+      unitId: null
+    });
+  }
+  
+  // === RULE 5: Total points limit ===
   if (totalPoints > pointsLimit) {
     errors.push({
       type: 'error',
@@ -106,7 +137,11 @@ function validateArmy(state) {
     valid: errors.filter(e => e.type === 'error').length === 0,
     errors,
     maxHeroCount: maxHeroes,
-    currentHeroCount: heroCount
+    currentHeroCount: heroCount,
+    maxCopies,
+    maxTotalUnits,
+    currentUnitCount: totalUnitCount,
+    unitCounts
   };
 }
 
