@@ -259,11 +259,16 @@ function generateHTMLContent(armyData, printFriendly) {
         </div>`
       : '';
 
-    // All effective rules
-    const rulesHTML = effectiveRules.length > 0
+    // All effective rules (excluding Coriace if mount is selected - we show it separately)
+    let filteredRules = effectiveRules;
+    if (toughData.mountName && toughData.total > 0) {
+      filteredRules = effectiveRules.filter(r => !r.match(/[Cc]oriace\s*\(\d+\)/));
+    }
+    
+    const rulesHTML = filteredRules.length > 0
       ? `<div style="margin-top: 12px;">
           <div style="font-size: 12px; color: ${printFriendly ? '#666' : '#9ca3af'}; margin-bottom: 6px; font-weight: 600;">Règles spéciales:</div>
-          <div style="color: ${accentColor}; font-size: 12px; line-height: 1.6;">${effectiveRules.join(', ')}</div>
+          <div style="color: ${accentColor}; font-size: 12px; line-height: 1.6;">${filteredRules.join(', ')}</div>
         </div>`
       : '';
 
@@ -274,6 +279,7 @@ function generateHTMLContent(armyData, printFriendly) {
             <div style="font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 20px; font-weight: bold; text-transform: uppercase; color: ${textColor};">
               ${unit.unitName}
               ${unit.combinedUnit ? `<span style="font-size: 11px; background: ${printFriendly ? '#6b7280' : '#4b5563'}; color: white; padding: 2px 8px; border-radius: 4px; margin-left: 8px; text-transform: none;">COMBINÉE</span>` : ''}
+              ${toughData.mountName ? `<span style="font-size: 11px; background: ${printFriendly ? '#7c3aed' : '#8b5cf6'}; color: white; padding: 2px 8px; border-radius: 4px; margin-left: 8px; text-transform: none;">🐴 ${toughData.mountName}</span>` : ''}
             </div>
             <div style="font-size: 12px; color: ${printFriendly ? '#666' : '#9ca3af'}; margin-top: 4px;">
               ${unit.unitType === 'hero' ? '⭐ Héros' : '🛡️ Unité'} | Taille: ${unit.unitData.size}${unit.combinedUnit ? ' ×2' : ''}
@@ -284,11 +290,17 @@ function generateHTMLContent(armyData, printFriendly) {
           </div>
         </div>
         
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: ${statsBgColor}; padding: 12px; border-radius: 6px; text-align: center; font-size: 12px;">
+        <div style="display: grid; grid-template-columns: ${toughData.total > 0 ? 'repeat(5, 1fr)' : 'repeat(4, 1fr)'}; gap: 8px; background: ${statsBgColor}; padding: 12px; border-radius: 6px; text-align: center; font-size: 12px;">
           <div>
             <div style="color: ${printFriendly ? '#666' : '#9ca3af'}; font-size: 10px; text-transform: uppercase;">Qualité</div>
             <div style="font-weight: bold; font-size: 16px; color: ${textColor};">${unit.unitData.quality}+</div>
           </div>
+          ${toughData.total > 0 ? `
+          <div>
+            <div style="color: ${printFriendly ? '#666' : '#9ca3af'}; font-size: 10px; text-transform: uppercase;">Coriace</div>
+            <div style="font-weight: bold; font-size: 16px; color: ${toughColor};">${toughData.total}</div>
+          </div>
+          ` : ''}
           <div>
             <div style="color: ${printFriendly ? '#666' : '#9ca3af'}; font-size: 10px; text-transform: uppercase;">Défense</div>
             <div style="font-weight: bold; font-size: 16px; color: ${textColor};">${unit.unitData.defense}+</div>
@@ -303,6 +315,7 @@ function generateHTMLContent(armyData, printFriendly) {
           </div>
         </div>
         
+        ${mountInfoHTML}
         ${weaponsHTML}
         ${rulesHTML}
         ${upgradesHTML}
