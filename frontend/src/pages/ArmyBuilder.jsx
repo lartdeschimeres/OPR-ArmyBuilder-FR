@@ -66,10 +66,7 @@ export default function ArmyBuilder() {
 
   useEffect(() => {
     fetchFactions();
-    };
-
-    fetchFactions();
-  }, [state.selectedGame]);
+  }, [fetchFactions]);
 
   const handleFactionChange = (factionId) => {
     const faction = factions.find(f => f.id === factionId);
