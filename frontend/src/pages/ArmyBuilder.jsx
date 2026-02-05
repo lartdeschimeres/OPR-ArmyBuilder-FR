@@ -47,8 +47,13 @@ export default function ArmyBuilder() {
       // Map game ID to game name for API
       const gameNameMap = {
         'grimdark-future': 'Grimdark Future',
+        'grimdark-future-firefight': 'Grimdark Future Firefight',
+        'grimdark-future-squad': 'Grimdark Future Squad',
         'age-of-fantasy': 'Age of Fantasy',
-        'age-of-fantasy-regiments': 'Age of Fantasy Regiments'
+        'age-of-fantasy-regiments': 'Age of Fantasy Regiments',
+        'age-of-fantasy-skirmish': 'Age of Fantasy Skirmish',
+        'age-of-fantasy-quest': 'Age of Fantasy Quest',
+        'warfleets-ftl': 'Warfleets: FTL'
       };
       const gameName = gameNameMap[state.selectedGame.id] || state.selectedGame.name;
       
