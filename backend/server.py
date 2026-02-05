@@ -185,18 +185,18 @@ SAMPLE_FACTIONS = [
         "game": "Age of Fantasy",
         "version": "FR-3.5.2",
         "status": "complete",
-        "description": "Les Disciples de la Guerre sont une faction brutale et impitoyable.",
+        "description": "Les Disciples de la Guerre sont une faction brutale et impitoyable, composée de guerriers fanatiques et de monstres déchaînés.",
         "special_rules_descriptions": {
             "Warbound [Guerrier-né]": "Les ennemis qui lancent les dés pour bloquer les touches infligées par les armes de cette figurine subissent une blessure supplémentaire pour chaque résultat non modifié de 1 obtenu.",
             "Bloodthirsty Fighter [Combattant sanguinaire]": "Pour chaque résultat de 1 non modifié obtenu par les ennemis lorsqu'ils bloquent les touches portées par les armes de cette figurine en mêlée, cette figurine peut effectuer un jet d'attaque supplémentaire."
         },
         "spells": {
-            "Terrifying Fury [Fureur terrifiante]": {
-                "cost": 1,
-                "description": "Choisissez une unité ennemie à 18\" ou moins, qui doit effectuer un Test de Moral.",
-                "range": "18\"",
-                "target": "1 unité ennemie"
-            }
+            "Terrifying Fury [Fureur terrifiante]": {"cost": 1, "description": "Choisissez une unité ennemie à 18\" ou moins, qui doit effectuer un Test de Moral.", "range": "18\"", "target": "1 unité ennemie"},
+            "Flame of Destruction [Flammes de la destruction]": {"cost": 1, "description": "Choisissez une unité ennemie à 18\" ou moins, qui subit une touche avec Explosion (3).", "range": "18\"", "target": "1 unité ennemie"},
+            "Fiery Protection [Protection ardente]": {"cost": 2, "description": "Choisissez jusqu'à deux unités amies à 12\" ou moins, qui obtiennent Esquive en mêlée.", "range": "12\"", "target": "jusqu'à 2 unités amies"},
+            "Brutal Massacre [Massacre brutal]": {"cost": 2, "description": "Choisissez une unité ennemie à 6\" ou moins qui subit six touches avec Dislocation.", "range": "6\"", "target": "1 unité ennemie"},
+            "War Boon [Bénédiction guerrière]": {"cost": 3, "description": "Choisissez jusqu'à trois unités amies à 12\" ou moins, qui bénéficient une fois de Boost de Guerrier-né.", "range": "12\"", "target": "jusqu'à 3 unités amies"},
+            "Headtaker Strike [Décapitation]": {"cost": 3, "description": "Choisissez jusqu'à deux unités ennemies à 12\" ou moins, qui subissent chacune trois blessures avec PA (2).", "range": "12\"", "target": "jusqu'à 2 unités ennemies"}
         },
         "units": [
             {
@@ -207,9 +207,7 @@ SAMPLE_FACTIONS = [
                 "quality": 3,
                 "defense": 3,
                 "special_rules": ["Attaque versatile", "Coriace (3)", "Héros", "Guerrier-né"],
-                "weapons": [
-                    {"name": "Arme à une main lourde", "range": "-", "attacks": 3, "armor_piercing": 1}
-                ],
+                "weapons": [{"name": "Arme à une main lourde", "range": "-", "attacks": 3, "armor_piercing": 1}],
                 "upgrade_groups": [
                     {
                         "group": "Améliorations de rôle",
@@ -218,7 +216,10 @@ SAMPLE_FACTIONS = [
                         "options": [
                             {"name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
                             {"name": "Marauder (Aura de Combattant imprévisible)", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
+                            {"name": "Porteur de la bannière de l'armée (Effrayant (3))", "cost": 30, "special_rules": ["Effrayant (3)"]},
+                            {"name": "Ensorceleur (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
                             {"name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
+                            {"name": "Seigneur de Guerre (Aura de Boost de Guerrier-né)", "cost": 50, "special_rules": ["Aura de Boost de Guerrier-né"]},
                             {"name": "Maître Sorcier (Lanceur de sorts (3))", "cost": 65, "special_rules": ["Lanceur de sorts (3)"]}
                         ]
                     },
@@ -228,7 +229,9 @@ SAMPLE_FACTIONS = [
                         "description": "Remplacez l'arme de base par:",
                         "options": [
                             {"name": "Hallebarde lourde", "cost": 5, "weapon": {"name": "Hallebarde lourde", "range": "-", "attacks": 3, "armor_piercing": 1, "special_rules": ["Perforant"]}},
-                            {"name": "Grande arme lourde", "cost": 15, "weapon": {"name": "Grande arme lourde", "range": "-", "attacks": 3, "armor_piercing": 3}}
+                            {"name": "Paire d'armes à une main lourdes", "cost": 15, "weapon": {"name": "Paire d'armes à une main lourdes", "range": "-", "attacks": 4, "armor_piercing": 1}},
+                            {"name": "Grande arme lourde", "cost": 15, "weapon": {"name": "Grande arme lourde", "range": "-", "attacks": 3, "armor_piercing": 3}},
+                            {"name": "Lance lourde", "cost": 15, "weapon": {"name": "Lance lourde", "range": "-", "attacks": 3, "armor_piercing": 1, "special_rules": ["Percée"]}}
                         ]
                     },
                     {
@@ -237,7 +240,12 @@ SAMPLE_FACTIONS = [
                         "description": "Ajoutez une monture",
                         "options": [
                             {"name": "Cheval", "cost": 15, "mount": {"name": "Cheval", "special_rules": ["Impact (1)", "Rapide"]}},
-                            {"name": "Dragon du Ravage", "cost": 325, "mount": {"name": "Dragon du Ravage", "special_rules": ["Griffes lourdes (A6, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]}}
+                            {"name": "Grande bête", "cost": 70, "mount": {"name": "Grande bête", "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Impact (2)", "Rapide"]}},
+                            {"name": "Monture démoniaque", "cost": 80, "mount": {"name": "Monture démoniaque", "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Effrayant (1)", "Impact (2)", "Rapide"]}},
+                            {"name": "Char", "cost": 125, "mount": {"name": "Char", "special_rules": ["Sabots (A2)", "Coriace (6)", "Impact (4)", "Rapide"]}},
+                            {"name": "Char bestial", "cost": 140, "mount": {"name": "Char bestial", "special_rules": ["Griffes lourdes (A2, PA(1))", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]}},
+                            {"name": "Manticore", "cost": 165, "mount": {"name": "Manticore", "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (6)", "Effrayant (1)", "Volant"]}},
+                            {"name": "Dragon du Ravage", "cost": 325, "mount": {"name": "Dragon du Ravage", "special_rules": ["Griffes lourdes (A6, PA(1))", "Piétinement (A4, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]}}
                         ]
                     }
                 ]
@@ -255,10 +263,40 @@ SAMPLE_FACTIONS = [
                     {
                         "group": "Améliorations de rôle",
                         "type": "upgrades",
-                        "description": "Choisissez un rôle spécial",
+                        "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
                         "options": [
-                            {"name": "Conquérant", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
-                            {"name": "Sorcier", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]}
+                            {"name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
+                            {"name": "Marauder (Aura de Combattant imprévisible)", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
+                            {"name": "Porteur de la bannière de l'armée (Effrayant (3))", "cost": 30, "special_rules": ["Effrayant (3)"]},
+                            {"name": "Ensorceleur (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
+                            {"name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
+                            {"name": "Seigneur de Guerre (Aura de Boost de Guerrier-né)", "cost": 50, "special_rules": ["Aura de Boost de Guerrier-né"]},
+                            {"name": "Maître Sorcier (Lanceur de sorts (3))", "cost": 65, "special_rules": ["Lanceur de sorts (3)"]}
+                        ]
+                    },
+                    {
+                        "group": "Remplacement d'arme",
+                        "type": "weapon",
+                        "description": "Remplacez l'arme de base par:",
+                        "options": [
+                            {"name": "Hallebarde lourde", "cost": 5, "weapon": {"name": "Hallebarde lourde", "range": "-", "attacks": 3, "armor_piercing": 1, "special_rules": ["Perforant"]}},
+                            {"name": "Paire d'armes à une main lourdes", "cost": 10, "weapon": {"name": "Paire d'armes à une main lourdes", "range": "-", "attacks": 4, "armor_piercing": 1}},
+                            {"name": "Grande arme lourde", "cost": 15, "weapon": {"name": "Grande arme lourde", "range": "-", "attacks": 3, "armor_piercing": 3}},
+                            {"name": "Lance lourde", "cost": 15, "weapon": {"name": "Lance lourde", "range": "-", "attacks": 3, "armor_piercing": 1, "special_rules": ["Percée"]}}
+                        ]
+                    },
+                    {
+                        "group": "Montures",
+                        "type": "mount",
+                        "description": "Ajoutez une monture",
+                        "options": [
+                            {"name": "Cheval", "cost": 15, "mount": {"name": "Cheval", "special_rules": ["Impact (1)", "Rapide"]}},
+                            {"name": "Grande bête", "cost": 65, "mount": {"name": "Grande bête", "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Impact (2)", "Rapide"]}},
+                            {"name": "Monture démoniaque", "cost": 75, "mount": {"name": "Monture démoniaque", "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Effrayant (1)", "Impact (2)", "Rapide"]}},
+                            {"name": "Char", "cost": 115, "mount": {"name": "Char", "special_rules": ["Sabots (A2)", "Coriace (6)", "Impact (4)", "Rapide"]}},
+                            {"name": "Char bestial", "cost": 130, "mount": {"name": "Char bestial", "special_rules": ["Griffes lourdes (A2, PA(1))", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]}},
+                            {"name": "Manticore", "cost": 145, "mount": {"name": "Manticore", "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (6)", "Effrayant (1)", "Volant"]}},
+                            {"name": "Dragon du Ravage", "cost": 295, "mount": {"name": "Dragon du Ravage", "special_rules": ["Griffes lourdes (A6, PA(1))", "Piétinement (A4, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]}}
                         ]
                     }
                 ]
@@ -272,7 +310,48 @@ SAMPLE_FACTIONS = [
                 "defense": 5,
                 "special_rules": ["Coriace (3)", "Éclaireur", "Furieux", "Guerrier-né", "Héros"],
                 "weapons": [{"name": "Arme à une main", "range": "-", "attacks": 3, "armor_piercing": "-"}],
-                "upgrade_groups": []
+                "upgrade_groups": [
+                    {
+                        "group": "Améliorations de rôle",
+                        "type": "upgrades",
+                        "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
+                        "options": [
+                            {"name": "Héraut (Aura de Lacération au tir)", "cost": 25, "special_rules": ["Aura de Lacération au tir"]},
+                            {"name": "Marauder (Aura de Combattant imprévisible)", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
+                            {"name": "Ensorceleur (Aura de Voile fluctuant)", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
+                            {"name": "Sorcier (Lanceur de sorts (2))", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
+                            {"name": "Seigneur de Guerre (Aura de Boost de Guerrier-né)", "cost": 50, "special_rules": ["Aura de Boost de Guerrier-né"]}
+                        ]
+                    },
+                    {
+                        "group": "Remplacement d'arme",
+                        "type": "weapon",
+                        "description": "Remplacez l'arme de base par:",
+                        "options": [
+                            {"name": "Paire d'armes à une main", "cost": 5, "weapon": {"name": "Paire d'armes à une main", "range": "-", "attacks": 4, "armor_piercing": "-"}},
+                            {"name": "Hallebarde", "cost": 10, "weapon": {"name": "Hallebarde", "range": "-", "attacks": 3, "armor_piercing": "-", "special_rules": ["Perforant"]}},
+                            {"name": "Lance", "cost": 10, "weapon": {"name": "Lance", "range": "-", "attacks": 3, "armor_piercing": "-", "special_rules": ["Percée"]}},
+                            {"name": "Grande arme", "cost": 10, "weapon": {"name": "Grande arme", "range": "-", "attacks": 3, "armor_piercing": 2}}
+                        ]
+                    },
+                    {
+                        "group": "Améliorations d'arme",
+                        "type": "weapon",
+                        "description": "Améliorer avec une des options suivantes (un seul choix possible)",
+                        "options": [
+                            {"name": "Arc court", "cost": 10, "weapon": {"name": "Arc court", "range": "18", "attacks": 2, "armor_piercing": "-"}},
+                            {"name": "Javelots barbelés", "cost": 10, "weapon": {"name": "Javelots barbelés", "range": "18", "attacks": 2, "armor_piercing": 1, "special_rules": ["Éclatement"]}}
+                        ]
+                    },
+                    {
+                        "group": "Montures",
+                        "type": "mount",
+                        "description": "Ajoutez une monture à ce héros",
+                        "options": [
+                            {"name": "Cheval", "cost": 15, "mount": {"name": "Cheval", "special_rules": ["Impact (1)", "Rapide"]}}
+                        ]
+                    }
+                ]
             },
             {
                 "name": "Pillards Barbares de la Guerre",
