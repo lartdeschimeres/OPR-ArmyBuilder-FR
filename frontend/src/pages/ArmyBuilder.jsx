@@ -5,7 +5,6 @@ import { UnitBrowser } from '../components/UnitBrowser';
 import { RosterView } from '../components/RosterView';
 import { ValidationPanel } from '../components/ValidationPanel';
 import { ExportButtons } from '../components/ExportButtons';
-import { FactionImport } from '../components/FactionImport';
 import { useArmy } from '../context/ArmyContext';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
