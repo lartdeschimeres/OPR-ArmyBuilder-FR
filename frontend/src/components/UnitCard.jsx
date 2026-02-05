@@ -360,16 +360,16 @@ export const UnitCard = ({ rosterUnit }) => {
               <div className="text-gray-500">Qualité</div>
               <div className="font-bold">{unit.quality}+</div>
             </div>
+            <div className="text-center">
+              <div className="text-gray-500">Défense</div>
+              <div className="font-bold">{unit.defense}+</div>
+            </div>
             {totalToughValue > 0 && (
               <div className="text-center">
                 <div className="text-gray-500">Coriace</div>
                 <div className="font-bold text-red-400">{totalToughValue}</div>
               </div>
             )}
-            <div className="text-center">
-              <div className="text-gray-500">Défense</div>
-              <div className="font-bold">{unit.defense}+</div>
-            </div>
             <div className="text-center">
               <div className="text-gray-500">Coût Base</div>
               <div className="font-bold">{unit.base_cost} pts</div>
