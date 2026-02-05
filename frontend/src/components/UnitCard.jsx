@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Trash2, ChevronDown, ChevronUp, Shield, Sword } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Checkbox } from '../components/ui/checkbox';
@@ -6,6 +6,52 @@ import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Label } from '../components/ui/label';
 import { Switch } from '../components/ui/switch';
 import { useArmy } from '../context/ArmyContext';
+
+// Helper to format weapon stats
+function formatWeaponStats(weapon) {
+  if (!weapon) return '';
+  const parts = [];
+  if (weapon.range && weapon.range !== '-') {
+    parts.push(`Portée ${weapon.range}`);
+  } else {
+    parts.push('Mêlée');
+  }
+  parts.push(`A${weapon.attacks}`);
+  if (weapon.armor_piercing && weapon.armor_piercing !== '-' && weapon.armor_piercing !== 0) {
+    parts.push(`PA(${weapon.armor_piercing})`);
+  }
+  if (weapon.special_rules && weapon.special_rules.length > 0) {
+    parts.push(weapon.special_rules.join(', '));
+  }
+  return parts.join(', ');
+}
+
+// Helper to format mount stats
+function formatMountStats(mount) {
+  if (!mount) return '';
+  if (mount.special_rules && mount.special_rules.length > 0) {
+    return mount.special_rules.join(', ');
+  }
+  return '';
+}
+
+// Helper to format upgrade option display
+function formatUpgradeOption(option, groupType) {
+  let details = '';
+  
+  if (groupType === 'weapon' && option.weapon) {
+    details = formatWeaponStats(option.weapon);
+  } else if (groupType === 'mount' && option.mount) {
+    details = formatMountStats(option.mount);
+  } else if (option.special_rules && option.special_rules.length > 0) {
+    details = option.special_rules.join(', ');
+  }
+  
+  if (details) {
+    return `${option.name} (${details})`;
+  }
+  return option.name;
+}
 
 export const UnitCard = ({ rosterUnit }) => {
   const { removeUnit, updateUnitUpgrades, state } = useArmy();
@@ -16,6 +62,102 @@ export const UnitCard = ({ rosterUnit }) => {
   
   // Group upgrades by type
   const upgradeGroups = unit.upgrade_groups || [];
+  
+  // Calculate effective weapons based on selected upgrades
+  const effectiveWeapons = useMemo(() => {
+    // Start with base weapons
+    let weapons = [...(unit.weapons || [])];
+    
+    // Find weapon replacement upgrades
+    const weaponGroups = upgradeGroups.filter(g => g.type === 'weapon');
+    
+    weaponGroups.forEach(group => {
+      const selectedUpgrade = rosterUnit.selectedUpgrades.find(u => u.group === group.group);
+      if (selectedUpgrade) {
+        const option = group.options.find(o => o.name === selectedUpgrade.name);
+        if (option && option.weapon) {
+          // Check if this is a replacement or addition based on group description
+          const isReplacement = group.description?.toLowerCase().includes('remplac');
+          if (isReplacement) {
+            // Replace base weapons with upgrade weapon
+            weapons = [option.weapon];
+          } else {
+            // Add weapon to existing weapons
+            weapons = [...weapons, option.weapon];
+          }
+        }
+      }
+    });
+    
+    // Find mount upgrades that add weapons
+    const mountGroups = upgradeGroups.filter(g => g.type === 'mount');
+    mountGroups.forEach(group => {
+      const selectedUpgrade = rosterUnit.selectedUpgrades.find(u => u.group === group.group);
+      if (selectedUpgrade) {
+        const option = group.options.find(o => o.name === selectedUpgrade.name);
+        if (option && option.mount) {
+          // Extract mount attacks as pseudo-weapons for display
+          const mountRules = option.mount.special_rules || [];
+          mountRules.forEach(rule => {
+            // Parse rules like "Griffes lourdes (A6, PA(1))"
+            const match = rule.match(/^([^(]+)\s*\(([^)]+)\)/);
+            if (match) {
+              const weaponName = match[1].trim();
+              const stats = match[2];
+              const attackMatch = stats.match(/A(\d+)/);
+              const paMatch = stats.match(/PA\((\d+)\)/);
+              if (attackMatch) {
+                weapons.push({
+                  name: `${weaponName} (${option.mount.name})`,
+                  range: '-',
+                  attacks: parseInt(attackMatch[1]),
+                  armor_piercing: paMatch ? parseInt(paMatch[1]) : '-',
+                  special_rules: []
+                });
+              }
+            }
+          });
+        }
+      }
+    });
+    
+    return weapons;
+  }, [unit.weapons, upgradeGroups, rosterUnit.selectedUpgrades]);
+
+  // Calculate effective special rules
+  const effectiveSpecialRules = useMemo(() => {
+    let rules = [...(unit.special_rules || [])];
+    
+    // Add rules from selected upgrades
+    rosterUnit.selectedUpgrades.forEach(selectedUpgrade => {
+      upgradeGroups.forEach(group => {
+        const option = group.options.find(o => o.name === selectedUpgrade.name);
+        if (option && option.special_rules) {
+          rules = [...rules, ...option.special_rules];
+        }
+      });
+    });
+    
+    // Add mount special rules (non-weapon ones)
+    const mountGroups = upgradeGroups.filter(g => g.type === 'mount');
+    mountGroups.forEach(group => {
+      const selectedUpgrade = rosterUnit.selectedUpgrades.find(u => u.group === group.group);
+      if (selectedUpgrade) {
+        const option = group.options.find(o => o.name === selectedUpgrade.name);
+        if (option && option.mount && option.mount.special_rules) {
+          option.mount.special_rules.forEach(rule => {
+            // Only add non-weapon rules (don't match pattern like "Griffes (A6)")
+            if (!rule.match(/\(A\d+/)) {
+              rules.push(rule);
+            }
+          });
+        }
+      }
+    });
+    
+    // Remove duplicates
+    return [...new Set(rules)];
+  }, [unit.special_rules, upgradeGroups, rosterUnit.selectedUpgrades]);
   
   // Find selected upgrade for a radio group
   const getSelectedRadio = (groupName) => {
@@ -161,35 +303,42 @@ export const UnitCard = ({ rosterUnit }) => {
             </div>
             <div className="text-center">
               <div className="text-gray-500">Taille</div>
-              <div className="font-bold">{unit.size}</div>
+              <div className="font-bold">{unit.size}{rosterUnit.combinedUnit ? ' x2' : ''}</div>
             </div>
           </div>
           
-          {/* Weapons */}
-          {unit.weapons && unit.weapons.length > 0 && (
+          {/* Effective Weapons (updated based on upgrades) */}
+          {effectiveWeapons && effectiveWeapons.length > 0 && (
             <div className="mb-3">
               <div className="text-xs text-gray-500 mb-1">Armes:</div>
               <div className="space-y-1">
-                {unit.weapons.map((weapon, idx) => (
-                  <div key={idx} className="text-xs bg-[#2e2f2b] p-2 rounded flex justify-between">
-                    <span className="font-medium text-white">{weapon.name}</span>
-                    <span className="text-gray-400">
-                      {weapon.range !== '-' ? `${weapon.range}"` : 'Mêlée'} | 
-                      A{weapon.attacks} | 
-                      PA{weapon.armor_piercing !== '-' ? weapon.armor_piercing : '0'}
-                    </span>
+                {effectiveWeapons.map((weapon, idx) => (
+                  <div key={idx} className="text-xs bg-[#2e2f2b] p-2 rounded">
+                    <div className="flex justify-between items-start">
+                      <span className="font-medium text-white">{weapon.name}</span>
+                      <span className="text-gray-400 text-right">
+                        {weapon.range && weapon.range !== '-' ? `${weapon.range}` : 'Mêlée'} | 
+                        A{weapon.attacks} | 
+                        PA({weapon.armor_piercing && weapon.armor_piercing !== '-' ? weapon.armor_piercing : '0'})
+                      </span>
+                    </div>
+                    {weapon.special_rules && weapon.special_rules.length > 0 && (
+                      <div className="text-blue-400 mt-1">
+                        {weapon.special_rules.join(', ')}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
           )}
           
-          {/* Special Rules */}
-          {unit.special_rules && unit.special_rules.length > 0 && (
+          {/* Effective Special Rules (updated based on upgrades) */}
+          {effectiveSpecialRules && effectiveSpecialRules.length > 0 && (
             <div className="mb-3">
               <div className="text-xs text-gray-500 mb-1">Règles spéciales:</div>
               <div className="flex flex-wrap gap-1">
-                {unit.special_rules.map((rule, idx) => (
+                {effectiveSpecialRules.map((rule, idx) => (
                   <span key={idx} className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">
                     {rule}
                   </span>
@@ -205,7 +354,7 @@ export const UnitCard = ({ rosterUnit }) => {
                 <Label htmlFor={`combined-${rosterUnit.id}`} className="text-sm text-white">
                   Unité Combinée
                 </Label>
-                <p className="text-xs text-gray-500">Double la taille et le coût</p>
+                <p className="text-xs text-gray-500">Double la taille et le coût de base + armes</p>
               </div>
               <Switch
                 id={`combined-${rosterUnit.id}`}
@@ -249,21 +398,22 @@ export const UnitCard = ({ rosterUnit }) => {
                   </div>
                   {group.options.map((option, optIdx) => (
                     <div key={optIdx} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 flex-1 min-w-0">
                         <RadioGroupItem 
                           value={option.name} 
                           id={`${rosterUnit.id}-${groupIdx}-${optIdx}`}
                           data-testid={`radio-${rosterUnit.id}-${option.name.replace(/\s+/g, '-').toLowerCase()}`}
-                          className="border-gray-500 data-[state=checked]:border-blue-500"
+                          className="border-gray-500 data-[state=checked]:border-blue-500 flex-shrink-0"
                         />
                         <Label 
                           htmlFor={`${rosterUnit.id}-${groupIdx}-${optIdx}`}
-                          className="text-sm text-gray-300 cursor-pointer"
+                          className="text-sm text-gray-300 cursor-pointer truncate"
+                          title={formatUpgradeOption(option, group.type)}
                         >
-                          {option.name}
+                          {formatUpgradeOption(option, group.type)}
                         </Label>
                       </div>
-                      <span className="text-xs font-mono text-yellow-400">
+                      <span className="text-xs font-mono text-yellow-400 flex-shrink-0 ml-2">
                         +{option.cost} pts
                       </span>
                     </div>
@@ -274,7 +424,7 @@ export const UnitCard = ({ rosterUnit }) => {
                 <div className="space-y-2">
                   {group.options.map((option, optIdx) => (
                     <div key={optIdx} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 flex-1 min-w-0">
                         <Checkbox 
                           id={`${rosterUnit.id}-${groupIdx}-${optIdx}`}
                           data-testid={`checkbox-${rosterUnit.id}-${option.name.replace(/\s+/g, '-').toLowerCase()}`}
@@ -282,16 +432,17 @@ export const UnitCard = ({ rosterUnit }) => {
                           onCheckedChange={(checked) => 
                             handleCheckboxChange(group.group, option, checked)
                           }
-                          className="border-gray-500 data-[state=checked]:bg-blue-500"
+                          className="border-gray-500 data-[state=checked]:bg-blue-500 flex-shrink-0"
                         />
                         <Label 
                           htmlFor={`${rosterUnit.id}-${groupIdx}-${optIdx}`}
-                          className="text-sm text-gray-300 cursor-pointer"
+                          className="text-sm text-gray-300 cursor-pointer truncate"
+                          title={formatUpgradeOption(option, group.type)}
                         >
-                          {option.name}
+                          {formatUpgradeOption(option, group.type)}
                         </Label>
                       </div>
-                      <span className="text-xs font-mono text-yellow-400">
+                      <span className="text-xs font-mono text-yellow-400 flex-shrink-0 ml-2">
                         +{option.cost} pts
                       </span>
                     </div>
@@ -305,3 +456,6 @@ export const UnitCard = ({ rosterUnit }) => {
     </div>
   );
 };
+
+// Export helper functions for use in exports
+export { formatWeaponStats, formatMountStats, formatUpgradeOption };
