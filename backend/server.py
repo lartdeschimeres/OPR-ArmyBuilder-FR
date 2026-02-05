@@ -649,9 +649,62 @@ async def delete_faction(faction_id: str):
 @api_router.post("/factions/import")
 async def import_faction(faction_data: dict):
     """Import a faction from raw JSON data"""
-    faction_data["id"] = str(uuid.uuid4())
-    await db.factions.insert_one(faction_data)
-    return {"id": faction_data["id"], "message": "Faction imported successfully"}
+    # Check if faction already exists
+    existing = await db.factions.find_one({
+        "faction": faction_data.get("faction"),
+        "game": faction_data.get("game")
+    })
+    if existing:
+        # Update existing faction
+        faction_data["id"] = existing["id"]
+        await db.factions.replace_one({"id": existing["id"]}, faction_data)
+        return {"id": existing["id"], "message": "Faction updated successfully"}
+    else:
+        faction_data["id"] = str(uuid.uuid4())
+        await db.factions.insert_one(faction_data)
+        return {"id": faction_data["id"], "message": "Faction imported successfully"}
+
+# Upload faction JSON file
+@api_router.post("/factions/upload")
+async def upload_faction_file(file: UploadFile = File(...)):
+    """Upload a faction JSON file"""
+    if not file.filename.endswith('.json'):
+        raise HTTPException(status_code=400, detail="File must be a JSON file")
+    
+    try:
+        content = await file.read()
+        faction_data = json.loads(content.decode('utf-8'))
+        
+        # Validate basic structure
+        if "faction" not in faction_data or "game" not in faction_data:
+            raise HTTPException(status_code=400, detail="JSON must contain 'faction' and 'game' fields")
+        
+        # Check if faction already exists
+        existing = await db.factions.find_one({
+            "faction": faction_data.get("faction"),
+            "game": faction_data.get("game")
+        })
+        
+        if existing:
+            faction_data["id"] = existing["id"]
+            await db.factions.replace_one({"id": existing["id"]}, faction_data)
+            return {
+                "id": existing["id"], 
+                "message": f"Faction '{faction_data['faction']}' updated successfully",
+                "units_count": len(faction_data.get("units", []))
+            }
+        else:
+            faction_data["id"] = str(uuid.uuid4())
+            await db.factions.insert_one(faction_data)
+            return {
+                "id": faction_data["id"], 
+                "message": f"Faction '{faction_data['faction']}' imported successfully",
+                "units_count": len(faction_data.get("units", []))
+            }
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON format")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Army routes
 @api_router.get("/armies")
