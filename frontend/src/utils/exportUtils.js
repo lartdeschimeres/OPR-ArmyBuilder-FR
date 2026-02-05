@@ -7,6 +7,18 @@ export function generateFileName(armyName, extension) {
   return `${safeName}_${dateStr}.${extension}`;
 }
 
+// Helper to extract Coriace (Tough) value from special rules
+function extractToughValue(specialRules) {
+  if (!specialRules || !Array.isArray(specialRules)) return 0;
+  for (const rule of specialRules) {
+    const match = rule.match(/[Cc]oriace\s*\((\d+)\)|[Tt]ough\s*\((\d+)\)/);
+    if (match) {
+      return parseInt(match[1] || match[2]);
+    }
+  }
+  return 0;
+}
+
 export function exportToJSON(armyData) {
   const jsonString = JSON.stringify(armyData, null, 2);
   const blob = new Blob([jsonString], { type: 'application/json' });
@@ -34,6 +46,34 @@ export function exportToHTML(armyData, printFriendly = false) {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+}
+
+// Calculate total Tough value (hero + mount)
+function calculateTotalTough(unit) {
+  const upgradeGroups = unit.unitData.upgrade_groups || [];
+  const heroTough = extractToughValue(unit.unitData.special_rules);
+  
+  let mountTough = 0;
+  let mountName = null;
+  
+  const mountGroups = upgradeGroups.filter(g => g.type === 'mount');
+  mountGroups.forEach(group => {
+    const selectedUpgrade = unit.selectedUpgrades.find(u => u.group === group.group);
+    if (selectedUpgrade) {
+      const option = group.options.find(o => o.name === selectedUpgrade.name);
+      if (option && option.mount) {
+        mountTough = extractToughValue(option.mount.special_rules);
+        mountName = option.mount.name;
+      }
+    }
+  });
+  
+  return {
+    total: heroTough + mountTough,
+    heroTough,
+    mountTough,
+    mountName
+  };
 }
 
 // Calculate effective weapons based on selected upgrades
