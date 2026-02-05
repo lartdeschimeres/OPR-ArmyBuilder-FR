@@ -122,6 +122,7 @@ export default function ArmyBuilder() {
             </div>
             
             <div className="flex items-center gap-4">
+              <FactionImport onImportSuccess={fetchFactions} />
               <ExportButtons />
               
               <Button
