@@ -36,6 +36,130 @@ export function exportToHTML(armyData, printFriendly = false) {
   URL.revokeObjectURL(url);
 }
 
+// Calculate effective weapons based on selected upgrades
+function calculateEffectiveWeapons(unit) {
+  const upgradeGroups = unit.unitData.upgrade_groups || [];
+  let weapons = [...(unit.unitData.weapons || [])];
+  
+  // Find weapon replacement upgrades
+  const weaponGroups = upgradeGroups.filter(g => g.type === 'weapon');
+  
+  weaponGroups.forEach(group => {
+    const selectedUpgrade = unit.selectedUpgrades.find(u => u.group === group.group);
+    if (selectedUpgrade) {
+      const option = group.options.find(o => o.name === selectedUpgrade.name);
+      if (option && option.weapon) {
+        // Check if this is a replacement or addition
+        const isReplacement = group.description?.toLowerCase().includes('remplac');
+        if (isReplacement) {
+          weapons = [option.weapon];
+        } else {
+          weapons = [...weapons, option.weapon];
+        }
+      }
+    }
+  });
+  
+  // Find mount upgrades that add weapons
+  const mountGroups = upgradeGroups.filter(g => g.type === 'mount');
+  mountGroups.forEach(group => {
+    const selectedUpgrade = unit.selectedUpgrades.find(u => u.group === group.group);
+    if (selectedUpgrade) {
+      const option = group.options.find(o => o.name === selectedUpgrade.name);
+      if (option && option.mount) {
+        const mountRules = option.mount.special_rules || [];
+        mountRules.forEach(rule => {
+          // Parse rules like "Griffes lourdes (A6, PA(1))"
+          const match = rule.match(/^([^(]+)\s*\(([^)]+)\)/);
+          if (match) {
+            const weaponName = match[1].trim();
+            const stats = match[2];
+            const attackMatch = stats.match(/A(\d+)/);
+            const paMatch = stats.match(/PA\((\d+)\)/);
+            if (attackMatch) {
+              weapons.push({
+                name: `${weaponName} (${option.mount.name})`,
+                range: '-',
+                attacks: parseInt(attackMatch[1]),
+                armor_piercing: paMatch ? parseInt(paMatch[1]) : '-',
+                special_rules: []
+              });
+            }
+          }
+        });
+      }
+    }
+  });
+  
+  return weapons;
+}
+
+// Calculate effective special rules based on selected upgrades
+function calculateEffectiveRules(unit) {
+  const upgradeGroups = unit.unitData.upgrade_groups || [];
+  let rules = [...(unit.unitData.special_rules || [])];
+  
+  // Add rules from selected upgrades
+  unit.selectedUpgrades.forEach(selectedUpgrade => {
+    upgradeGroups.forEach(group => {
+      const option = group.options.find(o => o.name === selectedUpgrade.name);
+      if (option && option.special_rules) {
+        rules = [...rules, ...option.special_rules];
+      }
+    });
+  });
+  
+  // Add mount special rules (non-weapon ones)
+  const mountGroups = upgradeGroups.filter(g => g.type === 'mount');
+  mountGroups.forEach(group => {
+    const selectedUpgrade = unit.selectedUpgrades.find(u => u.group === group.group);
+    if (selectedUpgrade) {
+      const option = group.options.find(o => o.name === selectedUpgrade.name);
+      if (option && option.mount && option.mount.special_rules) {
+        option.mount.special_rules.forEach(rule => {
+          if (!rule.match(/\(A\d+/)) {
+            rules.push(rule);
+          }
+        });
+      }
+    }
+  });
+  
+  return [...new Set(rules)];
+}
+
+// Format upgrade option with details
+function formatUpgradeWithDetails(upgrade, upgradeGroups) {
+  for (const group of upgradeGroups) {
+    const option = group.options.find(o => o.name === upgrade.name);
+    if (option) {
+      let details = '';
+      if (group.type === 'weapon' && option.weapon) {
+        const w = option.weapon;
+        const parts = [];
+        parts.push(w.range && w.range !== '-' ? `Portée ${w.range}` : 'Mêlée');
+        parts.push(`A${w.attacks}`);
+        if (w.armor_piercing && w.armor_piercing !== '-' && w.armor_piercing !== 0) {
+          parts.push(`PA(${w.armor_piercing})`);
+        }
+        if (w.special_rules && w.special_rules.length > 0) {
+          parts.push(w.special_rules.join(', '));
+        }
+        details = parts.join(', ');
+      } else if (group.type === 'mount' && option.mount) {
+        details = option.mount.special_rules?.join(', ') || '';
+      } else if (option.special_rules && option.special_rules.length > 0) {
+        details = option.special_rules.join(', ');
+      }
+      
+      if (details) {
+        return `${upgrade.name} (${details})`;
+      }
+    }
+  }
+  return upgrade.name;
+}
+
 function generateHTMLContent(armyData, printFriendly) {
   const bgColor = printFriendly ? '#ffffff' : '#2e2f2b';
   const cardBgColor = printFriendly ? '#f5f5f5' : '#3a3c36';
@@ -43,76 +167,86 @@ function generateHTMLContent(armyData, printFriendly) {
   const borderColor = printFriendly ? '#cccccc' : '#4b4d46';
   const accentColor = printFriendly ? '#1a56db' : '#60a5fa';
   const costColor = printFriendly ? '#b45309' : '#fbbf24';
+  const statsBgColor = printFriendly ? '#e5e5e5' : '#2e2f2b';
 
   const unitsHTML = armyData.units.map(unit => {
+    const upgradeGroups = unit.unitData.upgrade_groups || [];
+    
+    // Calculate effective weapons and rules
+    const effectiveWeapons = calculateEffectiveWeapons(unit);
+    const effectiveRules = calculateEffectiveRules(unit);
+    
+    // Format upgrades with details
     const upgradesHTML = unit.selectedUpgrades.length > 0
-      ? `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid ${borderColor};">
-          <div style="font-size: 12px; color: ${printFriendly ? '#666' : '#9ca3af'}; margin-bottom: 4px;">Améliorations:</div>
+      ? `<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid ${borderColor};">
+          <div style="font-size: 12px; color: ${printFriendly ? '#666' : '#9ca3af'}; margin-bottom: 6px; font-weight: 600;">Améliorations sélectionnées:</div>
           ${unit.selectedUpgrades.map(u => `
-            <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 2px 0;">
-              <span>${u.name}</span>
-              <span style="color: ${costColor};">+${u.cost} pts</span>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; align-items: flex-start;">
+              <span style="flex: 1; color: ${textColor};">${formatUpgradeWithDetails(u, upgradeGroups)}</span>
+              <span style="color: ${costColor}; font-family: 'JetBrains Mono', monospace; margin-left: 8px;">+${u.cost} pts</span>
             </div>
           `).join('')}
         </div>`
       : '';
 
-    const weaponsHTML = unit.unitData.weapons && unit.unitData.weapons.length > 0
-      ? `<div style="margin-top: 8px; background: ${printFriendly ? '#e5e5e5' : '#2e2f2b'}; padding: 8px; border-radius: 4px;">
-          <div style="font-size: 11px; color: ${printFriendly ? '#666' : '#9ca3af'}; margin-bottom: 4px;">Armes:</div>
-          ${unit.unitData.weapons.map(w => `
-            <div style="font-size: 12px; display: flex; gap: 8px;">
-              <span style="font-weight: 500;">${w.name}</span>
-              <span style="color: ${printFriendly ? '#666' : '#9ca3af'};">
-                ${w.range !== '-' ? `Portée: ${w.range}` : 'Mêlée'} | 
-                A${w.attacks} | 
-                PA${w.armor_piercing !== '-' ? w.armor_piercing : '0'}
-              </span>
-            </div>
-          `).join('')}
+    // All effective weapons
+    const weaponsHTML = effectiveWeapons.length > 0
+      ? `<div style="margin-top: 12px;">
+          <div style="font-size: 12px; color: ${printFriendly ? '#666' : '#9ca3af'}; margin-bottom: 6px; font-weight: 600;">Armes:</div>
+          <div style="background: ${statsBgColor}; padding: 10px; border-radius: 4px;">
+            ${effectiveWeapons.map(w => `
+              <div style="font-size: 12px; display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid ${borderColor};">
+                <span style="font-weight: 500; color: ${textColor};">${w.name}</span>
+                <span style="color: ${printFriendly ? '#666' : '#9ca3af'};">
+                  ${w.range && w.range !== '-' ? w.range : 'Mêlée'} | A${w.attacks} | PA(${w.armor_piercing && w.armor_piercing !== '-' ? w.armor_piercing : '0'})${w.special_rules && w.special_rules.length > 0 ? ` | ${w.special_rules.join(', ')}` : ''}
+                </span>
+              </div>
+            `).join('')}
+          </div>
         </div>`
       : '';
 
-    const rulesHTML = unit.unitData.special_rules && unit.unitData.special_rules.length > 0
-      ? `<div style="margin-top: 8px; font-size: 12px;">
-          <span style="color: ${printFriendly ? '#666' : '#9ca3af'};">Règles: </span>
-          <span style="color: ${accentColor};">${unit.unitData.special_rules.join(', ')}</span>
+    // All effective rules
+    const rulesHTML = effectiveRules.length > 0
+      ? `<div style="margin-top: 12px;">
+          <div style="font-size: 12px; color: ${printFriendly ? '#666' : '#9ca3af'}; margin-bottom: 6px; font-weight: 600;">Règles spéciales:</div>
+          <div style="color: ${accentColor}; font-size: 12px; line-height: 1.6;">${effectiveRules.join(', ')}</div>
         </div>`
       : '';
 
     return `
-      <div style="background: ${cardBgColor}; border: 1px solid ${borderColor}; border-radius: 6px; padding: 16px; margin-bottom: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+      <div style="background: ${cardBgColor}; border: 1px solid ${borderColor}; border-radius: 8px; padding: 16px; margin-bottom: 16px; page-break-inside: avoid;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
           <div>
-            <div style="font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 18px; font-weight: bold; text-transform: uppercase;">
+            <div style="font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 20px; font-weight: bold; text-transform: uppercase; color: ${textColor};">
               ${unit.unitName}
-              ${unit.combinedUnit ? '<span style="font-size: 12px; background: #4b5563; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">COMBINÉE</span>' : ''}
+              ${unit.combinedUnit ? `<span style="font-size: 11px; background: ${printFriendly ? '#6b7280' : '#4b5563'}; color: white; padding: 2px 8px; border-radius: 4px; margin-left: 8px; text-transform: none;">COMBINÉE</span>` : ''}
             </div>
-            <div style="font-size: 12px; color: ${printFriendly ? '#666' : '#9ca3af'};">
-              ${unit.unitType === 'hero' ? 'Héros' : 'Unité'} | Taille: ${unit.unitData.size}${unit.combinedUnit ? ' x2' : ''}
+            <div style="font-size: 12px; color: ${printFriendly ? '#666' : '#9ca3af'}; margin-top: 4px;">
+              ${unit.unitType === 'hero' ? '⭐ Héros' : '🛡️ Unité'} | Taille: ${unit.unitData.size}${unit.combinedUnit ? ' ×2' : ''}
             </div>
           </div>
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: bold; color: ${costColor};">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: bold; color: ${costColor};">
             ${unit.totalCost} pts
           </div>
         </div>
         
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: ${printFriendly ? '#e5e5e5' : '#2e2f2b'}; padding: 8px; border-radius: 4px; text-align: center; font-size: 12px;">
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: ${statsBgColor}; padding: 12px; border-radius: 6px; text-align: center; font-size: 12px;">
           <div>
-            <div style="color: ${printFriendly ? '#666' : '#9ca3af'};">Qualité</div>
-            <div style="font-weight: bold;">${unit.unitData.quality}+</div>
+            <div style="color: ${printFriendly ? '#666' : '#9ca3af'}; font-size: 10px; text-transform: uppercase;">Qualité</div>
+            <div style="font-weight: bold; font-size: 16px; color: ${textColor};">${unit.unitData.quality}+</div>
           </div>
           <div>
-            <div style="color: ${printFriendly ? '#666' : '#9ca3af'};">Défense</div>
-            <div style="font-weight: bold;">${unit.unitData.defense}+</div>
+            <div style="color: ${printFriendly ? '#666' : '#9ca3af'}; font-size: 10px; text-transform: uppercase;">Défense</div>
+            <div style="font-weight: bold; font-size: 16px; color: ${textColor};">${unit.unitData.defense}+</div>
           </div>
           <div>
-            <div style="color: ${printFriendly ? '#666' : '#9ca3af'};">Coût Base</div>
-            <div style="font-weight: bold;">${unit.baseCost} pts</div>
+            <div style="color: ${printFriendly ? '#666' : '#9ca3af'}; font-size: 10px; text-transform: uppercase;">Coût Base</div>
+            <div style="font-weight: bold; font-size: 16px; color: ${textColor};">${unit.baseCost} pts</div>
           </div>
           <div>
-            <div style="color: ${printFriendly ? '#666' : '#9ca3af'};">Taille</div>
-            <div style="font-weight: bold;">${unit.unitData.size}${unit.combinedUnit ? ' x2' : ''}</div>
+            <div style="color: ${printFriendly ? '#666' : '#9ca3af'}; font-size: 10px; text-transform: uppercase;">Taille</div>
+            <div style="font-weight: bold; font-size: 16px; color: ${textColor};">${unit.unitData.size}${unit.combinedUnit ? ' ×2' : ''}</div>
           </div>
         </div>
         
@@ -140,29 +274,30 @@ function generateHTMLContent(armyData, printFriendly) {
       line-height: 1.5;
     }
     @media print {
-      body { padding: 12px; }
+      body { padding: 12px; background: white; }
+      @page { margin: 1cm; }
     }
   </style>
 </head>
 <body>
   <div style="max-width: 800px; margin: 0 auto;">
-    <header style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid ${borderColor};">
-      <h1 style="font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 32px; font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">
+    <header style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 3px solid ${borderColor};">
+      <h1 style="font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 36px; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; color: ${textColor};">
         ${armyData.armyName || 'Liste Sans Nom'}
       </h1>
       <div style="display: flex; gap: 24px; font-size: 14px; color: ${printFriendly ? '#666' : '#9ca3af'};">
-        <span><strong>Jeu:</strong> ${armyData.selectedGame?.name || 'N/A'}</span>
-        <span><strong>Faction:</strong> ${armyData.selectedFaction?.faction || 'N/A'}</span>
-        <span><strong>Limite:</strong> ${armyData.pointsLimit} pts</span>
+        <span><strong style="color: ${textColor};">Jeu:</strong> ${armyData.selectedGame?.name || 'N/A'}</span>
+        <span><strong style="color: ${textColor};">Faction:</strong> ${armyData.selectedFaction?.faction || 'N/A'}</span>
+        <span><strong style="color: ${textColor};">Limite:</strong> ${armyData.pointsLimit} pts</span>
       </div>
     </header>
     
-    <div style="display: flex; justify-content: space-between; align-items: center; background: ${cardBgColor}; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
-      <div style="font-size: 14px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; background: ${cardBgColor}; padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid ${borderColor};">
+      <div style="font-size: 14px; color: ${textColor};">
         <span style="color: ${printFriendly ? '#666' : '#9ca3af'};">Nombre d'unités:</span>
-        <strong style="margin-left: 8px;">${armyData.units.length}</strong>
+        <strong style="margin-left: 8px; font-size: 18px;">${armyData.units.length}</strong>
       </div>
-      <div style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: bold; color: ${costColor};">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: bold; color: ${costColor};">
         ${armyData.totalPoints} / ${armyData.pointsLimit} pts
       </div>
     </div>
@@ -171,7 +306,7 @@ function generateHTMLContent(armyData, printFriendly) {
       ${unitsHTML}
     </div>
     
-    <footer style="margin-top: 24px; padding-top: 16px; border-top: 1px solid ${borderColor}; font-size: 12px; color: ${printFriendly ? '#999' : '#6b7280'}; text-align: center;">
+    <footer style="margin-top: 32px; padding-top: 16px; border-top: 1px solid ${borderColor}; font-size: 12px; color: ${printFriendly ? '#999' : '#6b7280'}; text-align: center;">
       Généré par OPR Army Forge - ${new Date().toLocaleDateString('fr-FR')}
     </footer>
   </div>
