@@ -19,7 +19,7 @@ export default function GameSelection() {
   useEffect(() => {
     fetch("/data/games.json")
       .then(res => {
-        if (!res.ok) throw new Error("Failed to load games.json");
+        if (!res.ok) throw new Error("Impossible de charger les jeux");
         return res.json();
       })
       .then(data => {
