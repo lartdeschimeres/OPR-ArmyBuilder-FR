@@ -1,9 +1,10 @@
 
 {
-  "faction": "Sœurs Bénies",
+  "id": "soeurs_benies_gf",
   "game": "Grimdark Future",
-  "version": "FR-0.1",
-  "status": "stub",
+  "faction": "Sœurs Bénies",
+  "version": "3.5.2",
+  "status": "exemple",
   "units": [
     {
       "name": "Sœurs de Bataille",
