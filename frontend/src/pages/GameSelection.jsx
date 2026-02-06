@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { GameCard } from '../components/GameCard';
 import { useArmy } from '../context/ArmyContext';
 import { Sword, Shield, Scroll, ChevronRight } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -60,7 +59,7 @@ export default function GameSelection() {
                 <p className="text-xs text-gray-400">OnePageRules Army Builder</p>
               </div>
             </div>
-            
+
             {state.selectedGame && (
               <Button
                 data-testid="continue-to-builder-btn"
@@ -89,7 +88,7 @@ export default function GameSelection() {
               <Scroll className="w-8 h-8 text-green-400" />
             </div>
           </div>
-          
+
           <h2 className="font-headings text-4xl md:text-5xl font-bold text-white uppercase tracking-tight mb-4">
             Sélectionnez Votre Jeu
           </h2>
@@ -112,16 +111,29 @@ export default function GameSelection() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {games.map((game, idx) => (
-                <div 
-                  key={game.id} 
-                  className="animate-slideUp"
+                <div
+                  key={game.id}
+                  className={`bg-[#3a3c36] rounded-lg overflow-hidden border-2 cursor-pointer transition-all hover:shadow-lg ${
+                    state.selectedGame?.id === game.id ? 'border-blue-500' : 'border-transparent'
+                  } animate-slideUp`}
                   style={{ animationDelay: `${idx * 0.1}s` }}
+                  onClick={() => handleGameSelect(game)}
                 >
-                  <GameCard
-                    game={game}
-                    isSelected={state.selectedGame?.id === game.id}
-                    onClick={() => handleGameSelect(game)}
-                  />
+                  {/* Conteneur pour l'image : centré, fond clair, hauteur fixe */}
+                  <div className="flex justify-center items-center bg-gray-800 p-4 h-48">
+                    <img
+                      src={game.image}
+                      alt={game.name}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+
+                  {/* Titre du jeu : centré et en majuscules */}
+                  <div className="p-4 text-center">
+                    <h3 className="font-bold text-white uppercase tracking-wider">
+                      {game.name}
+                    </h3>
+                  </div>
                 </div>
               ))}
             </div>
@@ -135,7 +147,7 @@ export default function GameSelection() {
           <h3 className="font-headings text-2xl font-bold text-white uppercase text-center mb-12">
             Fonctionnalités
           </h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-[#3a3c36] border border-[#4b4d46] rounded-lg p-6 text-center">
               <div className="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center mx-auto mb-4">
@@ -146,7 +158,7 @@ export default function GameSelection() {
                 Vérification automatique des règles de construction d'armée OPR
               </p>
             </div>
-            
+
             <div className="bg-[#3a3c36] border border-[#4b4d46] rounded-lg p-6 text-center">
               <div className="w-12 h-12 rounded-lg bg-yellow-500/20 flex items-center justify-center mx-auto mb-4">
                 <Sword className="w-6 h-6 text-yellow-400" />
@@ -156,7 +168,7 @@ export default function GameSelection() {
                 Configurez chaque unité avec des armes, montures et améliorations
               </p>
             </div>
-            
+
             <div className="bg-[#3a3c36] border border-[#4b4d46] rounded-lg p-6 text-center">
               <div className="w-12 h-12 rounded-lg bg-green-500/20 flex items-center justify-center mx-auto mb-4">
                 <Scroll className="w-6 h-6 text-green-400" />
