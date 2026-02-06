@@ -1,4 +1,3 @@
-import "@/App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ArmyProvider } from "./context/ArmyContext";
 import { Toaster } from "./components/ui/sonner";
@@ -8,12 +7,8 @@ import ArmyBuilder from "./pages/ArmyBuilder";
 function App() {
   return (
     <ArmyProvider>
-      <div className="App min-h-screen bg-[#2e2f2b]">
-        <Toaster 
-          position="top-right" 
-          richColors 
-          theme="dark"
-        />
+      <div className="min-h-screen bg-[#2e2f2b]">
+        <Toaster position="top-right" richColors theme="dark" />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<GameSelection />} />
