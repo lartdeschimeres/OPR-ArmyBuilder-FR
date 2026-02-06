@@ -17,7 +17,7 @@ export const GameCard = ({ game, isSelected, onClick }) => {
     >
       <div className="relative h-48 overflow-hidden">
         <img
-          src={`/images/games/${game.image}`}
+          src={game.image}
           alt={game.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           onError={(e) => {
