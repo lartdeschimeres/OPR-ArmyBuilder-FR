@@ -1,1 +1,42 @@
-
+[
+  {
+    "id": "grimdark_future",
+    "name": "Grimdark Future",
+    "image": "gf_cover.jpg"
+  },
+  {
+    "id": "age_of_fantasy",
+    "name": "Age of Fantasy",
+    "image": "aof_cover.jpg"
+  },
+  {
+    "id": "grimdark_future_firefight",
+    "name": "Grimdark Future Firefight",
+    "image": "gff_cover.jpg"
+  },
+  {
+    "id": "age_of_fantasy_skirmish",
+    "name": "Age of Fantasy Skirmish",
+    "image": "aofs_cover.jpg""
+  },
+  {
+    "id": "age_of_fantasy_regiments",
+    "name": "Age of Fantasy Regiments",
+    "image": "aofr_cover.jpg""
+  },
+  {
+    "id": "age_of_fantasy_quest",
+    "name": "Age of Fantasy Quest",
+    "image": "aofq_cover.jpg""
+  },
+  {
+    "id": "grimdark_future_starquest",
+    "name": "Grimdark Future Starquest",
+    "image": "gfsq_cover.jpg"
+  },
+  {
+    "id": "grimdark_future_warfleets",
+    "name": "Grimdark Future Warfleets",
+    "image": "ftl_cover.jpg"
+  }
+]
