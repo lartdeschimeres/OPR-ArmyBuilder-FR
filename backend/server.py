@@ -23,6 +23,10 @@ db = client[os.environ['DB_NAME']]
 # Create the main app without a prefix
 app = FastAPI()
 
+# Pour charger les images des jeux
+from fastapi.staticfiles import StaticFiles
+app.mount("/images", StaticFiles(directory="frontend/public/images"), name="images")
+
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
