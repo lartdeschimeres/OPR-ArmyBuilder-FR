@@ -1,7 +1,9 @@
+// frontend/src/App.js
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ArmyProvider } from "./context/ArmyContext";
 import { Toaster } from "./components/ui/sonner";
 import GameSelection from "./pages/GameSelection";
+import FactionSelection from "./pages/FactionSelection"; // Nouveau composant
 import ArmyBuilder from "./pages/ArmyBuilder";
 
 function App() {
@@ -12,6 +14,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<GameSelection />} />
+            <Route path="/factions" element={<FactionSelection />} /> {/* Nouvelle route */}
             <Route path="/builder" element={<ArmyBuilder />} />
           </Routes>
         </BrowserRouter>
