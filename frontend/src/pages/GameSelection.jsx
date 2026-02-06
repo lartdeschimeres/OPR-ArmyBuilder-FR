@@ -36,7 +36,7 @@ export default function GameSelection() {
 
   const handleContinue = () => {
     if (state.selectedGame) {
-      navigate('/builder');
+      navigate('/factions'); // Redirige vers la sélection des faction
     }
   };
 
