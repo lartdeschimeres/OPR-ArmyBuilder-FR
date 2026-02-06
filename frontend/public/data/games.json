@@ -17,22 +17,22 @@
   {
     "id": "age_of_fantasy_skirmish",
     "name": "Age of Fantasy Skirmish",
-    "image": "/images/games/aofs_cover.jpg""
+    "image": "/images/games/aofs_cover.jpg"
   },
   {
     "id": "age_of_fantasy_regiments",
     "name": "Age of Fantasy Regiments",
-    "image": "/images/games/aofr_cover.jpg""
+    "image": "/images/games/aofr_cover.jpg"
   },
   {
     "id": "age_of_fantasy_quest",
     "name": "Age of Fantasy Quest",
-    "image": "/images/games/aofq_cover.jpg""
+    "image": "/images/games/aofq_cover.jpg"
   },
   {
     "id": "grimdark_future_starquest",
     "name": "Grimdark Future Starquest",
-    "image": "/images/games/gfsq_cover.jpg"
+    "image": "/images/games/gfstarquest_cover.jpg"
   },
   {
     "id": "grimdark_future_warfleets",
