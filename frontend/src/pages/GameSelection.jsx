@@ -6,9 +6,6 @@ import { useArmy } from '../context/ArmyContext';
 import { Sword, Shield, Scroll, ChevronRight } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
 export default function GameSelection() {
   const navigate = useNavigate();
   const { state, setGame } = useArmy();
