@@ -17,43 +17,20 @@ export default function GameSelection() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const response = await axios.get(`${API}/games`);
-        setGames(response.data);
-      } catch (err) {
-        console.error('Error fetching games:', err);
-        setError('Failed to load games');
-        // Use fallback data
-        setGames([
-          {
-            id: 'grimdark-future',
-            name: 'Grimdark Future',
-            short_name: 'GF',
-            description: 'Sci-fi wargame in a dark future',
-            image: 'https://images.unsplash.com/photo-1636255520934-0ac5f0361cd9?crop=entropy&cs=srgb&fm=jpg&q=85'
-          },
-          {
-            id: 'age-of-fantasy',
-            name: 'Age of Fantasy',
-            short_name: 'AoF',
-            description: 'Fantasy wargame with magic and monsters',
-            image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?crop=entropy&cs=srgb&fm=jpg&q=85'
-          },
-          {
-            id: 'age-of-fantasy-regiments',
-            name: 'Age of Fantasy Regiments',
-            short_name: 'AoFR',
-            description: 'Ranked combat fantasy wargame',
-            image: 'https://images.unsplash.com/photo-1529981188441-8a2e6fe30103?crop=entropy&cs=srgb&fm=jpg&q=85'
-          }
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGames();
+    fetch("/data/games.json")
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to load games.json");
+        return res.json();
+      })
+      .then(data => {
+        setGames(data);
+        setError(null);
+      })
+      .catch(err => {
+        console.error(err);
+        setError("Impossible de charger les jeux");
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const handleGameSelect = (game) => {
