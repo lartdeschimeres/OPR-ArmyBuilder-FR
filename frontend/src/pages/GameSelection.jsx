@@ -120,7 +120,7 @@ export default function GameSelection() {
                   onClick={() => handleGameSelect(game)}
                 >
                   {/* Conteneur pour l'image : centré, fond clair, hauteur fixe */}
-                  <div className="flex justify-center items-center bg-gray-800 p-4 h-32">
+                  <div className="flex justify-center items-center bg-gray-800 p-4 h-48">
                     <img
                       src={game.image}
                       alt={game.name}
