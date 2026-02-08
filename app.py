@@ -180,6 +180,52 @@ st.markdown("""
         font-size: 12px;
         color: #bbb;
     }
+    .unit-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+    }
+    .hero-badge {
+        color: gold;
+        font-weight: bold;
+    }
+    .rule-badge {
+        background-color: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-right: 5px;
+        font-size: 12px;
+    }
+    .weapon-info {
+        font-style: normal;
+        color: #333;
+    }
+    .mount-info {
+        font-style: normal;
+        color: #333;
+    }
+    .role-improvement {
+        background-color: #f0f2f6;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+    .stRadio > div {
+        display: flex;
+        flex-direction: column;
+    }
+    .stRadio > div > label {
+        margin-bottom: 8px;
+    }
+    .stCheckbox > div {
+        display: flex;
+        flex-direction: column;
+    }
+    .stCheckbox > div > label {
+        margin-bottom: 8px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -353,7 +399,7 @@ def format_mount_details(mount):
         if 'quality' in mount_data:
             details += f"Qua{mount_data['quality']}+"
         if 'defense' in mount_data:
-            details += f" Déf{mount_data['defense']}+"
+            details += f" Défense {mount_data['defense']}+"
         details += ")"
     if 'special_rules' in mount_data and mount_data['special_rules']:
         details += " | " + ", ".join(mount_data['special_rules'])
@@ -426,8 +472,7 @@ def export_html(army_list, army_name, army_limit):
     # Trier la liste pour afficher les héros en premier
     sorted_army_list = sorted(army_list, key=lambda x: 0 if x.get("type") == "hero" else 1)
 
-    html = f"""
-<!DOCTYPE html>
+    html = f"""<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="utf-8">
@@ -471,7 +516,7 @@ body {{
   border: 1px solid var(--border);
   margin-bottom: 40px;
   padding: 16px;
-  page-break-inside: avoid;  /* Évite la coupure d'une unité sur plusieurs pages */
+  page-break-inside: avoid;
 }}
 
 .unit-header {{
@@ -531,10 +576,9 @@ th {{
   font-size: 12px;
 }}
 
-.rules span {{
-  display: inline-block;
-  margin-right: 8px;
-  color: var(--accent);
+.rules div {{
+  margin-bottom: 6px;
+  color: var(--text-main);
 }}
 
 .section-title {{
@@ -625,8 +669,43 @@ th {{
 </thead>
 <tbody>
 """
-            for w in weapons:
-                html += f"""
+            # Pour les héros, n'afficher que l'arme de remplacement si elle existe
+            if unit.get("type", "").lower() == "hero":
+                # Trouver l'arme de remplacement (si elle existe)
+                replacement_weapon = None
+                for w in weapons:
+                    if w.get("name") != "Arme de base" and w.get("name") != "Arme à une main lourde":
+                        replacement_weapon = w
+                        break
+
+                # Si une arme de remplacement existe, n'afficher que celle-ci
+                if replacement_weapon:
+                    w = replacement_weapon
+                    html += f"""
+<tr>
+  <td>{esc(w.get('name', '-'))}</td>
+  <td>{esc(w.get('range', '-'))}</td>
+  <td>{esc(w.get('attacks', '-'))}</td>
+  <td>{esc(w.get('ap', '-'))}</td>
+  <td>{esc(", ".join(w.get('special', [])) if w.get('special') else '-')}</td>
+</tr>
+"""
+                else:
+                    # Sinon, afficher toutes les armes de base
+                    for w in weapons:
+                        html += f"""
+<tr>
+  <td>{esc(w.get('name', '-'))}</td>
+  <td>{esc(w.get('range', '-'))}</td>
+  <td>{esc(w.get('attacks', '-'))}</td>
+  <td>{esc(w.get('ap', '-'))}</td>
+  <td>{esc(", ".join(w.get('special', [])) if w.get('special') else '-')}</td>
+</tr>
+"""
+            else:
+                # Pour les unités normales, afficher toutes les armes
+                for w in weapons:
+                    html += f"""
 <tr>
   <td>{esc(w.get('name', '-'))}</td>
   <td>{esc(w.get('range', '-'))}</td>
@@ -642,8 +721,7 @@ th {{
         if rules:
             html += '<div class="section-title">Règles spéciales :</div>'
             html += "<div class='rules'>"
-            for r in rules:
-                html += f"<span>{esc(r)}</span>"
+            html += "<div>" + ", ".join(f"<span style='font-size: 12px;'>{esc(r)}</span>" for r in rules) + "</div>"
             html += "</div>"
 
         # ---- OPTIONS ----
@@ -740,11 +818,45 @@ th {{
                 </div>
                 """
 
+    # ---- SORTS DE LA FACTION (en dehors des unités, en une seule colonne) ----
+    if 'faction' in st.session_state:
+        faction_data = factions_by_game.get(st.session_state.game, {}).get(st.session_state.faction, {})
+        if 'spells' in faction_data:
+            spells = faction_data['spells']
+            if spells:
+                html += """
+                <div style="margin-top: 40px;">
+                    <h3 style="text-align: center; color: var(--accent); border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 15px;">
+                        Sorts de la faction
+                    </h3>
+                    <div style="display: flex; flex-direction: column; font-size: 12px; margin-bottom: 20px; max-width: 100%;">
+                        <div style="flex: 1; padding: 0 10px; width: 100%;">
+                """
+
+                # Utilise directement les clés du dictionnaire `spells` sans trier
+                spell_names = spells.keys()
+
+                # Afficher chaque sort en une seule colonne, dans l'ordre du JSON
+                for spell_name in spell_names:
+                    spell_info = spells[spell_name]
+                    cost = spell_info.get('cost', '?')
+                    description = spell_info.get('description', '')
+                    html += f"""
+                    <div style="margin-bottom: 12px; line-height: 1.4; width: 100%;">
+                        <strong>{esc(spell_name)} [{cost}]</strong>: {esc(description)}
+                    </div>
+                    """
+
+                html += """
+                        </div>
+                    </div>
+                </div>
+                """
+
     html += """
 </div>
 </body>
-</html>
-"""
+</html>"""
     return html
 
 # ======================================================
@@ -754,131 +866,6 @@ th {{
 def load_factions():
     factions = {}
     games = set()
-    if not list(FACTIONS_DIR.glob("*.json")):
-        default_faction = {
-            "game": "Age of Fantasy",
-            "faction": "Disciples de la Guerre",
-            "special_rules_descriptions": {
-                "Éclaireur": "Déplacement facilité en terrain difficile.",
-                "Furieux": "Relance les 1 en attaque.",
-                "Né pour la guerre": "Relance les 1 en test de moral.",
-                "Héros": "Personnage inspirant.",
-                "Coriace(1)": "Ignore 1 point de dégât par phase.",
-                "Magique(1)": "Ignore 1 point de défense.",
-                "Contre-charge": "+1 aux jets de dégât lors d'une charge.",
-                "Attaque venimeuse": "Les blessures infligées par cette unité ne peuvent pas être régénérées.",
-                "Perforant": "Ignore 1 point de défense supplémentaire.",
-                "Volant": "Peut voler par-dessus les obstacles et les unités.",
-                "Effrayant(1)": "Les unités ennemies à 6\" doivent passer un test de moral ou reculer de 3\".",
-                "Lanceur de sorts (3)": "Peut lancer 3 sorts par tour."
-            },
-            "units": [
-                {
-                    "name": "Barbares de la Guerre",
-                    "type": "unit",
-                    "size": 10,
-                    "base_cost": 50,
-                    "quality": 3,
-                    "defense": 5,
-                    "special_rules": ["Éclaireur", "Furieux", "Né pour la guerre"],
-                    "weapons": [
-                        {
-                            "name": "Arcs courts",
-                            "attacks": 1,
-                            "armor_piercing": 0,
-                            "special_rules": []
-                        },
-                        {
-                            "name": "Armes à une main",
-                            "attacks": 1,
-                            "armor_piercing": 0,
-                            "special_rules": []
-                        }
-                    ],
-                    "upgrade_groups": [
-                        {
-                            "group": "Remplacement d'armes",
-                            "type": "weapon",
-                            "options": [
-                                {
-                                    "name": "Lance",
-                                    "cost": 35,
-                                    "weapon": {
-                                        "name": "Lance",
-                                        "attacks": 1,
-                                        "armor_piercing": 0,
-                                        "special_rules": ["Contre-charge"]
-                                    }
-                                },
-                                {
-                                    "name": "Fléau",
-                                    "cost": 20,
-                                    "weapon": {
-                                        "name": "Fléau",
-                                        "attacks": 1,
-                                        "armor_piercing": 1,
-                                        "special_rules": []
-                                    }
-                                },
-                                {
-                                    "name": "Javelots barbelés",
-                                    "cost": 10,
-                                    "weapon": {
-                                        "name": "Javelots barbelés",
-                                        "attacks": 1,
-                                        "armor_piercing": 1,
-                                        "special_rules": ["Éclatement"]
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "group": "Améliorations d'unité",
-                            "type": "upgrades",
-                            "options": [
-                                {
-                                    "name": "Icône du Ravage",
-                                    "cost": 20,
-                                    "special_rules": ["Aura de Défense versatile"]
-                                },
-                                {
-                                    "name": "Sergent",
-                                    "cost": 5,
-                                    "special_rules": []
-                                },
-                                {
-                                    "name": "Bannière",
-                                    "cost": 5,
-                                    "special_rules": []
-                                },
-                                {
-                                    "name": "Musicien",
-                                    "cost": 10,
-                                    "special_rules": []
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "name": "Maître de la Guerre Élu",
-                    "type": "hero",
-                    "size": 1,
-                    "base_cost": 150,
-                    "quality": 3,
-                    "defense": 5,
-                    "special_rules": ["Héros", "Éclaireur", "Furieux"],
-                    "weapons": [{
-                        "name": "Arme héroïque",
-                        "attacks": 2,
-                        "armor_piercing": 1,
-                        "special_rules": ["Magique(1)"]
-                    }]
-                }
-            ]
-        }
-        with open(FACTIONS_DIR / "default.json", "w", encoding="utf-8") as f:
-            json.dump(default_faction, f, indent=2)
     for fp in FACTIONS_DIR.glob("*.json"):
         try:
             with open(fp, encoding="utf-8") as f:
@@ -886,7 +873,9 @@ def load_factions():
                 game = data.get("game")
                 faction = data.get("faction")
                 if game and faction:
-                    factions.setdefault(game, {})[faction] = data
+                    if game not in factions:
+                        factions[game] = {}
+                    factions[game][faction] = data
                     games.add(game)
         except Exception as e:
             st.warning(f"Erreur chargement {fp.name}: {e}")
@@ -1124,23 +1113,38 @@ elif st.session_state.page == "army":
     weapon_cost = 0
     mount_cost = 0
     upgrades_cost = 0
+
+    # Ajoute un compteur global pour les clés uniques
+    if "widget_counter" not in st.session_state:
+        st.session_state.widget_counter = 0
+
     for group in unit.get("upgrade_groups", []):
         st.markdown(f"**{group['group']}**")
+
+        # Incrémente le compteur pour chaque groupe d'améliorations
+        st.session_state.widget_counter += 1
+        unique_key = f"{unit['name']}_{st.session_state.widget_counter}"
+
         if group["type"] == "weapon":
             weapon_options = ["Arme de base"]
             for o in group["options"]:
                 weapon_details = format_weapon_details(o["weapon"])
                 cost_diff = o["cost"]
                 weapon_options.append(f"{o['name']} (A{weapon_details['attacks']}, PA({weapon_details['ap']}){', ' + ', '.join(weapon_details['special']) if weapon_details['special'] else ''}) (+{cost_diff} pts)")
-            selected_weapon = st.radio("Arme", weapon_options, key=f"{unit['name']}_weapon")
+            selected_weapon = st.radio("Arme", weapon_options, key=f"{unique_key}_weapon")
             if selected_weapon != "Arme de base":
                 opt_name = selected_weapon.split(" (")[0]
                 opt = next((o for o in group["options"] if o["name"] == opt_name), None)
                 if opt:
-                    # Remplace uniquement l'arme concernée (ex: "Arcs courts" → "Javelots barbelés")
-                    # Conserve l'arme à une main
-                    weapon = [w for w in unit.get("weapons", []) if w.get("name") != "Arcs courts"]
-                    weapon.append(opt["weapon"])
+                    if unit.get("type", "").lower() == "hero":
+                        weapon = [opt["weapon"]]  # Remplacer toutes les armes par l'arme de remplacement
+                    else:
+                        new_weapons = []
+                        for w in unit.get("weapons", []):
+                            if w.get("name") != "Arcs courts":  # Conserver les armes de base
+                                new_weapons.append(w)
+                        new_weapons.append(opt["weapon"])  # Ajouter l'arme de remplacement
+                        weapon = new_weapons
                     weapon_cost = opt["cost"]
         elif group["type"] == "mount":
             mount_labels = ["Aucune monture"]
@@ -1150,41 +1154,35 @@ elif st.session_state.page == "army":
                 label = f"{mount_details} (+{o['cost']} pts)"
                 mount_labels.append(label)
                 mount_map[label] = o
-            selected_mount = st.radio("Monture", mount_labels, key=f"{unit['name']}_mount")
+            selected_mount = st.radio("Monture", mount_labels, key=f"{unique_key}_mount")
             if selected_mount != "Aucune monture":
                 opt = mount_map[selected_mount]
                 mount = opt
                 mount_cost = opt["cost"]
-
         else:
             is_hero = unit.get("type", "").lower() == "hero"
-
             if is_hero:
                 option_labels = ["Aucune amélioration"]
                 option_map = {}
-
                 for o in group["options"]:
                     label = f"{o['name']} (+{o['cost']} pts)"
                     option_labels.append(label)
                     option_map[label] = o
-
                 selected = st.radio(
                     f"Amélioration – {group['group']}",
                     option_labels,
-                    key=f"{unit['name']}_{group['group']}_hero"
+                    key=f"{unique_key}_hero"
                 )
-
                 if selected != "Aucune amélioration":
                     opt = option_map[selected]
                     selected_options[group['group']] = [opt]
                     upgrades_cost += opt["cost"]
-
             else:
                 st.write("Sélectionnez les améliorations (plusieurs choix possibles):")
                 for o in group["options"]:
                     if st.checkbox(
                         f"{o['name']} (+{o['cost']} pts)",
-                        key=f"{unit['name']}_{group['group']}_{o['name']}"
+                        key=f"{unique_key}_{o['name']}"
                     ):
                         selected_options.setdefault(group["group"], []).append(o)
                         upgrades_cost += o["cost"]
@@ -1194,7 +1192,7 @@ elif st.session_state.page == "army":
         double_size = st.checkbox(
             "Unité combinée (doubler les effectifs)",
             value=False,
-            key=f"double_{unit['name']}"
+            key=f"{unique_key}_double"
         )
         multiplier = 2 if double_size else 1
     else:
