@@ -583,7 +583,34 @@ elif st.session_state.page == "army":
                 mount = opt_map[choice]
                 mount_cost = mount["cost"]
 
-        # ---------- OPTIONS ----------
+        # ---------- OPTIONS / RÔLES ----------
+        elif group.get("type") == "role" and unit.get("type") == "hero":
+
+            choices = ["Aucun rôle"]
+            opt_map = {}
+
+            for o in group.get("options", []):
+                label = f"{o['name']} (+{o['cost']} pts)"
+                choices.append(label)
+                opt_map[label] = o
+
+            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
+
+            choice = st.radio(
+                "Rôle du héros",
+                choices,
+                index=choices.index(current) if current in choices else 0,
+                key=f"{unit_key}_{g_key}_role",
+            )
+
+            st.session_state.unit_selections[unit_key][g_key] = choice
+
+            if choice != "Aucun rôle":
+                opt = opt_map[choice]
+                upgrades_cost += opt["cost"]
+                selected_options[group.get("group", "Rôle")] = [opt]
+
+        # ---------- OPTIONS NORMALES (checkbox) ----------
         else:
             for o in group.get("options", []):
                 opt_key = f"{unit_key}_{g_key}_{o['name']}"
@@ -598,7 +625,7 @@ elif st.session_state.page == "army":
                     selected_options.setdefault(
                         group.get("group", "Options"), []
                     ).append(o)
-
+    
     # ======================================================
     # EFFECTIFS & COÛT
     # ======================================================
