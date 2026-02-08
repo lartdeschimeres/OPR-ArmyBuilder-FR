@@ -18,7 +18,7 @@ header {visibility: hidden;}
 
 /* --- Fond général --- */
 .stApp {
-    background: #0f0f0f;
+    background: #2a352a; /* Gris-vert moyen clair */
     color: #d0d0d0;
     font-family: 'Courier New', monospace;
 }
@@ -32,7 +32,7 @@ h1, h2, h3 {
 
 /* --- Cartes --- */
 .card {
-    background: linear-gradient(180deg, #1a231a, #0d140d);
+    background: linear-gradient(180deg, #3a453a, #2d382d);
     border: 1px solid #5fd381;
     border-radius: 6px;
     padding: 1rem;
@@ -70,7 +70,7 @@ h1, h2, h3 {
 div[data-baseweb="select"] > div,
 div[data-baseweb="input"] input,
 div[data-baseweb="base-input"] input {
-    background-color: #1a231a !important;
+    background-color: #3a453a !important;
     color: #5fd381 !important;
     border: 1px solid #5fd381 !important;
     border-radius: 4px !important;
@@ -112,9 +112,9 @@ button[kind="primary"]:hover {
 
 /* --- Export HTML --- */
 body {
-    background: #0f0f0f;
-    color: #d0d0d0;
-    font-family: 'Courier New', monospace;
+    background: #f8f8f8; /* Fond clair pour l'export HTML */
+    color: #333;
+    font-family: Arial, sans-serif;
 }
 
 h1 {
@@ -126,7 +126,7 @@ h1 {
     border-radius: 6px;
     padding: 10px;
     margin-bottom: 10px;
-    background: #1a231a;
+    background: #fff; /* Fond blanc pour les unités dans l'export */
 }
 
 /* --- Sélecteurs radio --- */
@@ -135,7 +135,7 @@ h1 {
 }
 
 [role="radiogroup"] >  div[data-baseweb="radio"] div {
-    background: #1a231a;
+    background: #3a453a;
     border: 1px solid #5fd381;
 }
 
@@ -151,6 +151,7 @@ h1 {
 
 </style>
 """, unsafe_allow_html=True)
+
 
 # ======================================================
 # INITIALISATION
