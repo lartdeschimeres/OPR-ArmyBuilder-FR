@@ -646,8 +646,7 @@ elif st.session_state.page == "army":
     # ======================================================
     # AJOUT À L’ARMÉE
     # ======================================================
-    disabled = st.session_state.army_cost + final_cost > st.session_state.points
-    st.button("➕ Ajouter à l’armée", disabled=disabled)
+    if st.button("➕ Ajouter à l’armée"):
 
     # --- Vérification du plafond de points ---
     if st.session_state.army_cost + final_cost > st.session_state.points:
