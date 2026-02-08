@@ -29,8 +29,8 @@ h1, h2, h3 {
 
 /* --- Cartes --- */
 .card {
-    background: linear-gradient(180deg, #1f2432, #171a24);
-    border: 1px solid #2a3042;
+    background: linear-gradient(180deg, #23283a, #191d2b);
+    border: 1px solid #303650;
     border-radius: 16px;
     padding: 1.5rem;
     transition: all 0.25s ease;
@@ -61,10 +61,7 @@ h1, h2, h3 {
     margin-bottom: 0.6rem;
 }
 
-</style>
-""", unsafe_allow_html=True)
-
-/* --- Inputs dans les cartes --- */
+/* --- Inputs visibles --- */
 div[data-baseweb="select"] > div,
 div[data-baseweb="input"] input,
 div[data-baseweb="base-input"] input {
@@ -74,15 +71,8 @@ div[data-baseweb="base-input"] input {
     font-weight: 500;
 }
 
-/* Placeholder / texte interne */
 div[data-baseweb="select"] span {
     color: #111827 !important;
-}
-
-/* Carte plus visible */
-.card {
-    background: linear-gradient(180deg, #23283a, #191d2b);
-    border: 1px solid #303650;
 }
 
 /* --- Bouton principal --- */
@@ -97,6 +87,9 @@ button[kind="primary"] {
 button[kind="primary"]:hover {
     filter: brightness(1.1);
 }
+
+</style>
+""", unsafe_allow_html=True)
 
 # ======================================================
 # INITIALISATION
@@ -423,6 +416,31 @@ elif st.session_state.page == "army":
         st.session_state.page = "setup"
         st.rerun()
 
+    st.divider()
+    st.subheader("📤 Export de la liste")
+
+    colE1, colE2 = st.columns(2)
+
+    with colE1:
+        json_data = json.dumps(export_army_json(), indent=2, ensure_ascii=False)
+        st.download_button(
+            "📄 Export JSON",
+            data=json_data,
+            file_name=f"{st.session_state.list_name}.json",
+            mime="application/json",
+            use_container_width=True
+        )
+
+    with colE2:
+        html_data = export_army_html()
+        st.download_button(
+            "🌐 Export HTML",
+            data=html_data,
+            file_name=f"{st.session_state.list_name}.html",
+            mime="text/html",
+            use_container_width=True
+        )
+    
     # ======================================================
     # BARRE DE PROGRESSION – PALIERS D’ARMÉE
     # ======================================================
