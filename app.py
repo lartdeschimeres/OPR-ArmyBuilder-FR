@@ -11,7 +11,7 @@ import math
 st.markdown("""
 <style>
 
-/* --- Nettoyage Streamlit --- */
+/* --- Nettoyage Streamlit (ne pas masquer la sidebar) --- */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}
@@ -19,8 +19,14 @@ header {visibility: hidden;}
 /* --- Fond général --- */
 .stApp {
     background: #2a352a; /* Gris-vert moyen clair */
-    color: #d0d0d0;
-    font-family: 'Courier New', monospace;
+    color: #e0e0e0; /* Texte clair pour un bon contraste */
+}
+
+/* --- Sidebar --- */
+section[data-testid="stSidebar"] {
+    background: #1e281e; /* Fond légèrement plus foncé pour la sidebar */
+    color: #e0e0e0;
+    border-right: 1px solid #5fd381;
 }
 
 /* --- Titres --- */
@@ -40,6 +46,7 @@ h1, h2, h3 {
     cursor: pointer;
     height: 100%;
     box-shadow: 0 0 8px rgba(95, 211, 129, 0.2);
+    color: #e0e0e0; /* Texte clair dans les cartes */
 }
 
 .card:hover {
@@ -50,7 +57,7 @@ h1, h2, h3 {
 
 /* --- Texte secondaire --- */
 .muted {
-    color: #8a8a8a;
+    color: #b0b0b0; /* Gris clair pour le texte secondaire */
     font-size: 0.85rem;
 }
 
@@ -71,14 +78,14 @@ div[data-baseweb="select"] > div,
 div[data-baseweb="input"] input,
 div[data-baseweb="base-input"] input {
     background-color: #3a453a !important;
-    color: #5fd381 !important;
+    color: #e0e0e0 !important; /* Texte clair dans les inputs */
     border: 1px solid #5fd381 !important;
     border-radius: 4px !important;
     font-weight: 500;
 }
 
 div[data-baseweb="select"] span {
-    color: #5fd381 !important;
+    color: #e0e0e0 !important;
 }
 
 /* --- Bouton principal --- */
@@ -110,9 +117,29 @@ button[kind="primary"]:hover {
     background: linear-gradient(90deg, #5fd381, #a0ffb5);
 }
 
+/* --- Sélecteurs radio --- */
+[role="radiogroup"] > div[data-baseweb="radio"] label {
+    color: #e0e0e0; /* Texte clair pour les radios */
+}
+
+[role="radiogroup"] > div[data-baseweb="radio"] div {
+    background: #3a453a;
+    border: 1px solid #5fd381;
+}
+
+[role="radiogroup"] > div[data-baseweb="radio"] div:hover {
+    background: #5fd381;
+    color: #000;
+}
+
+/* --- Checkbox --- */
+[role="checkbox"] {
+    color: #e0e0e0; /* Texte clair pour les checkboxes */
+}
+
 /* --- Export HTML --- */
 body {
-    background: #f8f8f8; /* Fond clair pour l'export HTML */
+    background: #f8f8f8;
     color: #333;
     font-family: Arial, sans-serif;
 }
@@ -126,31 +153,26 @@ h1 {
     border-radius: 6px;
     padding: 10px;
     margin-bottom: 10px;
-    background: #fff; /* Fond blanc pour les unités dans l'export */
+    background: #fff;
+    color: #333;
 }
 
-/* --- Sélecteurs radio --- */
-[role="radiogroup"] >  div[data-baseweb="radio"] label {
-    color: #5fd381;
+/* --- Sélecteurs de liste déroulante --- */
+select {
+    color: #e0e0e0 !important;
+    background-color: #3a453a !important;
+    border: 1px solid #5fd381 !important;
 }
 
-[role="radiogroup"] >  div[data-baseweb="radio"] div {
-    background: #3a453a;
-    border: 1px solid #5fd381;
-}
-
-[role="radiogroup"] >  div[data-baseweb="radio"] div:hover {
-    background: #5fd381;
-    color: #000;
-}
-
-/* --- Checkbox --- */
-[role="checkbox"] {
-    color: #5fd381;
+/* --- Options de liste déroulante --- */
+select option {
+    color: #000 !important;
+    background-color: #fff !important;
 }
 
 </style>
 """, unsafe_allow_html=True)
+
 
 
 # ======================================================
