@@ -122,19 +122,9 @@ button[kind="primary"]:hover {
     padding: 0.8rem;
 }
 
-/* --- Barre de progression vide --- */
-[data-testid="stProgress"] > div > div {
-    background-color: #e9ecef !important; /* Fond de la barre de progression */
-}
-
-/* --- Barre de progression remplie --- */
-[data-testid="stProgress"] > div > div > div {
-    background: linear-gradient(90deg, #3498db, #2980b9) !important; /* Bleu clair et bleu légèrement plus foncé */
-}
-
-/* --- Barre de progression vide (Pantone 324 C) --- */
-.stProgress > div > div {
-    background-color: #006ba6 !important; /* Pantone 324 C */
+/* --- Barre de progression --- */
+.stProgress > div > div > div {
+    background: linear-gradient(90deg, #3498db, #2980b9); /* Bleu clair et bleu légèrement plus foncé */
 }
 
 /* --- Export HTML --- */
@@ -179,7 +169,6 @@ h1 {
 
 </style>
 """, unsafe_allow_html=True)
-
 # ======================================================
 # INITIALISATION
 # ======================================================
