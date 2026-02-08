@@ -18,50 +18,51 @@ header {visibility: hidden;}
 
 /* --- Fond général --- */
 .stApp {
-    background: #0a0a0a;
-    color: #e0e0e0;
+    background: #0f0f0f;
+    color: #d0d0d0;
+    font-family: 'Courier New', monospace;
 }
 
 /* --- Titres --- */
 h1, h2, h3 {
-    color: #ff8c00;
-    letter-spacing: 0.04em;
-    text-shadow: 0 0 5px rgba(255, 140, 0, 0.5);
+    color: #5fd381;
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 3px rgba(95, 211, 129, 0.7);
 }
 
 /* --- Cartes --- */
 .card {
-    background: linear-gradient(180deg, #1a1a1a, #0d0d0d);
-    border: 2px solid #ff8c00;
-    border-radius: 8px;
-    padding: 1.2rem;
+    background: linear-gradient(180deg, #1a231a, #0d140d);
+    border: 1px solid #5fd381;
+    border-radius: 6px;
+    padding: 1rem;
     transition: all 0.2s ease;
     cursor: pointer;
     height: 100%;
-    box-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
+    box-shadow: 0 0 8px rgba(95, 211, 129, 0.2);
 }
 
 .card:hover {
-    border-color: #ffcc00;
-    box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
+    border-color: #a0ffb5;
+    box-shadow: 0 0 12px rgba(95, 211, 129, 0.5);
     transform: translateY(-2px);
 }
 
 /* --- Texte secondaire --- */
 .muted {
-    color: #aaa;
-    font-size: 0.9rem;
+    color: #8a8a8a;
+    font-size: 0.85rem;
 }
 
 /* --- Badge --- */
 .badge {
     display: inline-block;
-    padding: 0.2rem 0.6rem;
+    padding: 0.2rem 0.5rem;
     border-radius: 4px;
-    background: #ff8c00;
+    background: #5fd381;
     color: #000;
-    font-size: 0.75rem;
-    margin-bottom: 0.6rem;
+    font-size: 0.7rem;
+    margin-bottom: 0.5rem;
     font-weight: bold;
 }
 
@@ -69,63 +70,83 @@ h1, h2, h3 {
 div[data-baseweb="select"] > div,
 div[data-baseweb="input"] input,
 div[data-baseweb="base-input"] input {
-    background-color: #1a1a1a !important;
-    color: #ff8c00 !important;
-    border: 1px solid #ff8c00 !important;
-    border-radius: 6px !important;
+    background-color: #1a231a !important;
+    color: #5fd381 !important;
+    border: 1px solid #5fd381 !important;
+    border-radius: 4px !important;
     font-weight: 500;
 }
 
 div[data-baseweb="select"] span {
-    color: #ff8c00 !important;
+    color: #5fd381 !important;
 }
 
 /* --- Bouton principal --- */
 button[kind="primary"] {
-    background: linear-gradient(135deg, #ff8c00, #ffcc00) !important;
+    background: linear-gradient(135deg, #5fd381, #a0ffb5) !important;
     color: #000 !important;
     font-weight: bold !important;
-    border-radius: 6px !important;
-    padding: 0.6rem 1rem !important;
+    border-radius: 4px !important;
+    padding: 0.5rem 1rem !important;
     border: none !important;
-    box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+    box-shadow: 0 0 6px rgba(95, 211, 129, 0.5);
 }
 
 button[kind="primary"]:hover {
     filter: brightness(1.2);
-    box-shadow: 0 0 20px rgba(255, 204, 0, 0.8);
+    box-shadow: 0 0 12px rgba(95, 211, 129, 0.8);
 }
 
 /* --- Avertissements --- */
 .stAlert {
-    background: #ff8c00;
+    background: #5fd381;
     color: #000;
-    border-radius: 6px;
-    padding: 0.8rem;
+    border-radius: 4px;
+    padding: 0.6rem;
 }
 
 /* --- Barre de progression --- */
 .stProgress > div > div > div {
-    background: linear-gradient(90deg, #ff8c00, #ffcc00);
+    background: linear-gradient(90deg, #5fd381, #a0ffb5);
 }
 
 /* --- Export HTML --- */
 body {
-    background: #0a0a0a;
-    color: #e0e0e0;
-    font-family: Arial, sans-serif;
+    background: #0f0f0f;
+    color: #d0d0d0;
+    font-family: 'Courier New', monospace;
 }
 
 h1 {
-    color: #ff8c00;
+    color: #5fd381;
 }
 
 .unit {
-    border: 1px solid #ff8c00;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 12px;
-    background: #1a1a1a;
+    border: 1px solid #5fd381;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #1a231a;
+}
+
+/* --- Sélecteurs radio --- */
+[role="radiogroup"] >  div[data-baseweb="radio"] label {
+    color: #5fd381;
+}
+
+[role="radiogroup"] >  div[data-baseweb="radio"] div {
+    background: #1a231a;
+    border: 1px solid #5fd381;
+}
+
+[role="radiogroup"] >  div[data-baseweb="radio"] div:hover {
+    background: #5fd381;
+    color: #000;
+}
+
+/* --- Checkbox --- */
+[role="checkbox"] {
+    color: #5fd381;
 }
 
 </style>
