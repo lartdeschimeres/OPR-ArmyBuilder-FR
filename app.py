@@ -17,22 +17,22 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* --- Nettoyage Streamlit (ne pas masquer les éléments natifs) --- */
-#MainMenu {visibility: visible;}
+/* --- Nettoyage Streamlit (ne pas masquer la sidebar) --- */
+#MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: visible;}
 
 /* --- Fond général --- */
 .stApp {
-    background: #0a0a0a;
-    color: #e0e0e0;
+    background: #9e9e9e; /* Pantone 420 C - gris clair moyen */
+    color: #333333; /* Texte foncé pour un bon contraste */
 }
 
 /* --- Sidebar --- */
 section[data-testid="stSidebar"] {
-    background: #1a1a1a;
-    color: #e0e0e0;
-    border-right: 1px solid #ff8c00;
+    background: #8a8a8a; /* Gris légèrement plus foncé pour la sidebar */
+    color: #333333;
+    border-right: 1px solid #5c7d47; /* Pantone 5747 C - vert militaire */
 }
 
 /* --- Bouton pour afficher/masquer la sidebar --- */
@@ -42,32 +42,33 @@ button[data-testid="SidebarToggle"] {
 
 /* --- Titres --- */
 h1, h2, h3 {
-    color: #ff8c00;
+    color: #5c7d47; /* Pantone 5747 C - vert militaire */
     letter-spacing: 0.04em;
-    text-shadow: 0 0 5px rgba(255, 140, 0, 0.5);
+    text-shadow: 0 0 3px rgba(92, 125, 71, 0.5);
 }
 
 /* --- Cartes --- */
 .card {
-    background: linear-gradient(180deg, #1a1a1a, #0d0d0d);
-    border: 2px solid #ff8c00;
+    background: linear-gradient(180deg, #ffffff, #e0e0e0);
+    border: 2px solid #5c7d47; /* Pantone 5747 C */
     border-radius: 8px;
     padding: 1.2rem;
     transition: all 0.2s ease;
     cursor: pointer;
     height: 100%;
-    box-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
+    box-shadow: 0 0 10px rgba(92, 125, 71, 0.3);
+    color: #333333; /* Texte foncé pour un bon contraste */
 }
 
 .card:hover {
-    border-color: #ffcc00;
-    box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
+    border-color: #4a6b3a; /* Nuance plus foncée du Pantone 5747 C */
+    box-shadow: 0 0 20px rgba(92, 125, 71, 0.6);
     transform: translateY(-2px);
 }
 
 /* --- Texte secondaire --- */
 .muted {
-    color: #aaa;
+    color: #666666;
     font-size: 0.9rem;
 }
 
@@ -76,8 +77,8 @@ h1, h2, h3 {
     display: inline-block;
     padding: 0.2rem 0.6rem;
     border-radius: 4px;
-    background: #ff8c00;
-    color: #000;
+    background: #5c7d47; /* Pantone 5747 C */
+    color: #ffffff;
     font-size: 0.75rem;
     margin-bottom: 0.6rem;
     font-weight: bold;
@@ -87,63 +88,84 @@ h1, h2, h3 {
 div[data-baseweb="select"] > div,
 div[data-baseweb="input"] input,
 div[data-baseweb="base-input"] input {
-    background-color: #1a1a1a !important;
-    color: #ff8c00 !important;
-    border: 1px solid #ff8c00 !important;
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #5c7d47 !important; /* Pantone 5747 C */
     border-radius: 6px !important;
     font-weight: 500;
 }
 
 div[data-baseweb="select"] span {
-    color: #ff8c00 !important;
+    color: #333333 !important;
 }
 
 /* --- Bouton principal --- */
 button[kind="primary"] {
-    background: linear-gradient(135deg, #ff8c00, #ffcc00) !important;
-    color: #000 !important;
+    background: linear-gradient(135deg, #5c7d47, #4a6b3a) !important; /* Pantone 5747 C et nuance plus foncée */
+    color: #ffffff !important;
     font-weight: bold !important;
     border-radius: 6px !important;
     padding: 0.6rem 1rem !important;
     border: none !important;
-    box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+    box-shadow: 0 0 10px rgba(92, 125, 71, 0.5);
 }
 
 button[kind="primary"]:hover {
-    filter: brightness(1.2);
-    box-shadow: 0 0 20px rgba(255, 204, 0, 0.8);
+    filter: brightness(1.1);
+    box-shadow: 0 0 20px rgba(92, 125, 71, 0.8);
 }
 
 /* --- Avertissements --- */
 .stAlert {
-    background: #ff8c00;
-    color: #000;
+    background: #5c7d47; /* Pantone 5747 C */
+    color: #ffffff;
     border-radius: 6px;
     padding: 0.8rem;
 }
 
 /* --- Barre de progression --- */
 .stProgress > div > div > div {
-    background: linear-gradient(90deg, #ff8c00, #ffcc00);
+    background: linear-gradient(90deg, #5c7d47, #4a6b3a); /* Pantone 5747 C et nuance plus foncée */
 }
 
 /* --- Export HTML --- */
 body {
-    background: #0a0a0a;
-    color: #e0e0e0;
+    background: #ffffff; /* Fond blanc pour l'export HTML */
+    color: #333333;
     font-family: Arial, sans-serif;
 }
 
 h1 {
-    color: #ff8c00;
+    color: #5c7d47; /* Pantone 5747 C */
 }
 
 .unit {
-    border: 1px solid #ff8c00;
+    border: 1px solid #5c7d47; /* Pantone 5747 C */
     border-radius: 8px;
     padding: 12px;
     margin-bottom: 12px;
-    background: #1a1a1a;
+    background: #f5f5f5; /* Fond très clair pour les unités */
+    color: #333333;
+}
+
+/* --- Sélecteurs radio --- */
+[role="radiogroup"] > div[data-baseweb="radio"] label {
+    color: #333333;
+}
+
+[role="radiogroup"] > div[data-baseweb="radio"] div {
+    background: #ffffff;
+    border: 1px solid #5c7d47; /* Pantone 5747 C */
+}
+
+[role="radiogroup"] > div[data-baseweb="radio"] div:hover {
+    background: #5c7d47; /* Pantone 5747 C */
+    color: #ffffff;
+}
+
+/* --- Checkbox --- */
+[role="checkbox"] {
+    color: #333333;
 }
 
 </style>
