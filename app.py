@@ -6,6 +6,65 @@ import re
 import math
 
 # ======================================================
+# CSS global
+# ======================================================
+st.markdown("""
+<style>
+
+/* --- Nettoyage Streamlit --- */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+/* --- Fond général --- */
+.stApp {
+    background: radial-gradient(circle at top, #1b1f2a, #0e1016);
+    color: #e6e6e6;
+}
+
+/* --- Titres --- */
+h1, h2, h3 {
+    letter-spacing: 0.04em;
+}
+
+/* --- Cartes --- */
+.card {
+    background: linear-gradient(180deg, #1f2432, #171a24);
+    border: 1px solid #2a3042;
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    height: 100%;
+}
+
+.card:hover {
+    border-color: #4da6ff;
+    box-shadow: 0 0 0 1px rgba(77,166,255,0.4),
+                0 12px 30px rgba(0,0,0,0.6);
+    transform: translateY(-2px);
+}
+
+/* --- Texte secondaire --- */
+.muted {
+    color: #9aa4bf;
+    font-size: 0.9rem;
+}
+
+/* --- Badge --- */
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 8px;
+    background: #2a3042;
+    font-size: 0.75rem;
+    margin-bottom: 0.6rem;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ======================================================
 # INITIALISATION
 # ======================================================
 if "page" not in st.session_state:
@@ -167,31 +226,93 @@ def load_factions():
 # PAGE 1 – CONFIGURATION
 # ======================================================
 if st.session_state.page == "setup":
-    st.title("OPR Army Forge - Configuration")
+
+    st.markdown("## 🛡️ OPR Army Forge")
+    st.markdown(
+        "<p class='muted'>Construisez, équilibrez et façonnez vos armées pour "
+        "Age of Fantasy et Grimdark Future.</p>",
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
 
     factions_by_game, games = load_factions()
     if not games:
         st.error("Aucun jeu trouvé")
         st.stop()
 
-    game = st.selectbox("Jeu", games)
-    faction = st.selectbox("Faction", factions_by_game[game].keys())
-    points = st.number_input("Points", min_value=250, max_value=10000, value=1000)
-    list_name = st.text_input("Nom de la liste", f"Liste_{datetime.now().strftime('%Y%m%d')}")
+    # --- Sélection en cartes ---
+    col1, col2, col3 = st.columns(3)
 
-    if st.button("Construire l'armée"):
-        st.session_state.game = game
-        st.session_state.faction = faction
-        st.session_state.points = points
-        st.session_state.list_name = list_name
-        faction_data = factions_by_game[game][faction]
-        st.session_state.units = faction_data["units"]
-        st.session_state.faction_rules = faction_data.get("special_rules", [])
-        st.session_state.faction_spells = faction_data.get("spells", [])
-        st.session_state.army_list = []
-        st.session_state.army_cost = 0
-        st.session_state.page = "army"
-        st.rerun()
+    with col1:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<span class='badge'>Jeu</span>", unsafe_allow_html=True)
+        game = st.selectbox(
+            "Choisissez un système",
+            games,
+            label_visibility="collapsed"
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<span class='badge'>Faction</span>", unsafe_allow_html=True)
+        faction = st.selectbox(
+            "Faction",
+            factions_by_game[game].keys(),
+            label_visibility="collapsed"
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with col3:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<span class='badge'>Format</span>", unsafe_allow_html=True)
+        points = st.number_input(
+            "Points",
+            min_value=250,
+            max_value=10000,
+            value=1000,
+            step=250,
+            label_visibility="collapsed"
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("")
+
+    colA, colB = st.columns([2, 1])
+
+    with colA:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<span class='badge'>Liste</span>", unsafe_allow_html=True)
+        list_name = st.text_input(
+            "Nom de la liste",
+            f"Liste_{datetime.now().strftime('%Y%m%d')}",
+            label_visibility="collapsed"
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with colB:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<span class='badge'>Action</span>", unsafe_allow_html=True)
+        st.markdown("Prêt à forger votre armée ?", unsafe_allow_html=True)
+
+        if st.button("🔥 Construire l’armée", use_container_width=True):
+            st.session_state.game = game
+            st.session_state.faction = faction
+            st.session_state.points = points
+            st.session_state.list_name = list_name
+
+            faction_data = factions_by_game[game][faction]
+            st.session_state.units = faction_data["units"]
+            st.session_state.faction_rules = faction_data.get("special_rules", [])
+            st.session_state.faction_spells = faction_data.get("spells", [])
+
+            st.session_state.army_list = []
+            st.session_state.army_cost = 0
+            st.session_state.page = "army"
+            st.rerun()
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # ======================================================
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE
