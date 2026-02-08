@@ -5,21 +5,39 @@ from datetime import datetime
 import re
 import math
 
+st.set_page_config(
+    page_title="OPR Army Forge",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 # ======================================================
 # CSS GLOBAL
 # ======================================================
 st.markdown("""
 <style>
 
-/* --- Nettoyage Streamlit --- */
-#MainMenu {visibility: hidden;}
+/* --- Nettoyage Streamlit (ne pas masquer les éléments natifs) --- */
+#MainMenu {visibility: visible;}
 footer {visibility: hidden;}
-header {visibility: hidden;}
+header {visibility: visible;}
 
 /* --- Fond général --- */
 .stApp {
     background: #0a0a0a;
     color: #e0e0e0;
+}
+
+/* --- Sidebar --- */
+section[data-testid="stSidebar"] {
+    background: #1a1a1a;
+    color: #e0e0e0;
+    border-right: 1px solid #ff8c00;
+}
+
+/* --- Bouton pour afficher/masquer la sidebar --- */
+button[data-testid="SidebarToggle"] {
+    visibility: visible !important;
 }
 
 /* --- Titres --- */
