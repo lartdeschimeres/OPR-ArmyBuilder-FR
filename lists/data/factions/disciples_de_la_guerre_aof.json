@@ -87,7 +87,7 @@
       "upgrade_groups": [
         {
           "group": "Améliorations de rôle",
-          "type": "upgrades",
+          "type": "role",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
             {"name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
@@ -232,7 +232,7 @@
       "upgrade_groups": [
         {
           "group": "Améliorations de rôle",
-          "type": "upgrades",
+          "type": "role",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
             {"name": "Conquérant (Aura d'Éclaireur)", "cost": 20, "special_rules": ["Aura d'Éclaireur"]},
@@ -377,7 +377,7 @@
       "upgrade_groups": [
         {
           "group": "Améliorations de rôle",
-          "type": "upgrades",
+          "type": "role",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
             {"name": "Héraut (Aura de Lacération au tir)", "cost": 25, "special_rules": ["Aura de Lacération au tir"]},
