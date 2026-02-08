@@ -648,37 +648,37 @@ elif st.session_state.page == "army":
     # ======================================================
     if st.button("➕ Ajouter à l’armée"):
 
-    # --- Vérification du plafond de points ---
-    if st.session_state.army_cost + final_cost > st.session_state.points:
-        st.error(
-            f"⛔ Dépassement du format : "
-            f"{st.session_state.army_cost + final_cost} / {st.session_state.points} pts"
-        )
-        st.stop()
+        # --- Vérification du plafond de points ---
+        if st.session_state.army_cost + final_cost > st.session_state.points:
+            st.error(
+                f"⛔ Dépassement du format : "
+                f"{st.session_state.army_cost + final_cost} / {st.session_state.points} pts"
+            )
+            st.stop()
 
-    unit_data = {
-        "name": unit["name"],
-        "type": unit.get("type", "unit"),
-        "cost": final_cost,
-        "size": (
-            unit.get("size", 10) * multiplier
-            if unit.get("type") != "hero"
-            else 1
-        ),
-        "quality": unit.get("quality"),
-        "defense": unit.get("defense"),
-        "weapon": weapons,
-        "options": selected_options,
-        "mount": mount,
-    }
+        unit_data = {
+            "name": unit["name"],
+            "type": unit.get("type", "unit"),
+            "cost": final_cost,
+            "size": (
+                unit.get("size", 10) * multiplier
+                if unit.get("type") != "hero"
+                else 1
+            ),
+            "quality": unit.get("quality"),
+            "defense": unit.get("defense"),
+            "weapon": weapons,
+            "options": selected_options,
+            "mount": mount,
+        }
 
-    test_army = st.session_state.army_list + [unit_data]
+        test_army = st.session_state.army_list + [unit_data]
 
-    if validate_army_rules(
-        test_army,
-        st.session_state.points,
-        st.session_state.game,
-    ):
-        st.session_state.army_list.append(unit_data)
-        st.session_state.army_cost += final_cost
-        st.rerun() 
+        if validate_army_rules(
+            test_army,
+            st.session_state.points,
+            st.session_state.game,
+        ):
+            st.session_state.army_list.append(unit_data)
+            st.session_state.army_cost += final_cost
+            st.rerun() 
