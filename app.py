@@ -11,65 +11,57 @@ import math
 st.markdown("""
 <style>
 
-/* --- Nettoyage Streamlit (ne pas masquer la sidebar) --- */
+/* --- Nettoyage Streamlit --- */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}
 
 /* --- Fond général --- */
 .stApp {
-    background: #2a352a; /* Gris-vert moyen clair */
-    color: #e0e0e0; /* Texte clair pour un bon contraste */
-}
-
-/* --- Sidebar --- */
-section[data-testid="stSidebar"] {
-    background: #1e281e; /* Fond légèrement plus foncé pour la sidebar */
+    background: #0a0a0a;
     color: #e0e0e0;
-    border-right: 1px solid #5fd381;
 }
 
 /* --- Titres --- */
 h1, h2, h3 {
-    color: #5fd381;
-    letter-spacing: 0.08em;
-    text-shadow: 0 0 3px rgba(95, 211, 129, 0.7);
+    color: #ff8c00;
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 5px rgba(255, 140, 0, 0.5);
 }
 
 /* --- Cartes --- */
 .card {
-    background: linear-gradient(180deg, #3a453a, #2d382d);
-    border: 1px solid #5fd381;
-    border-radius: 6px;
-    padding: 1rem;
+    background: linear-gradient(180deg, #1a1a1a, #0d0d0d);
+    border: 2px solid #ff8c00;
+    border-radius: 8px;
+    padding: 1.2rem;
     transition: all 0.2s ease;
     cursor: pointer;
     height: 100%;
-    box-shadow: 0 0 8px rgba(95, 211, 129, 0.2);
-    color: #e0e0e0; /* Texte clair dans les cartes */
+    box-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
 }
 
 .card:hover {
-    border-color: #a0ffb5;
-    box-shadow: 0 0 12px rgba(95, 211, 129, 0.5);
+    border-color: #ffcc00;
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
     transform: translateY(-2px);
 }
 
 /* --- Texte secondaire --- */
 .muted {
-    color: #b0b0b0; /* Gris clair pour le texte secondaire */
-    font-size: 0.85rem;
+    color: #aaa;
+    font-size: 0.9rem;
 }
 
 /* --- Badge --- */
 .badge {
     display: inline-block;
-    padding: 0.2rem 0.5rem;
+    padding: 0.2rem 0.6rem;
     border-radius: 4px;
-    background: #5fd381;
+    background: #ff8c00;
     color: #000;
-    font-size: 0.7rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.6rem;
     font-weight: bold;
 }
 
@@ -77,103 +69,67 @@ h1, h2, h3 {
 div[data-baseweb="select"] > div,
 div[data-baseweb="input"] input,
 div[data-baseweb="base-input"] input {
-    background-color: #3a453a !important;
-    color: #e0e0e0 !important; /* Texte clair dans les inputs */
-    border: 1px solid #5fd381 !important;
-    border-radius: 4px !important;
+    background-color: #1a1a1a !important;
+    color: #ff8c00 !important;
+    border: 1px solid #ff8c00 !important;
+    border-radius: 6px !important;
     font-weight: 500;
 }
 
 div[data-baseweb="select"] span {
-    color: #e0e0e0 !important;
+    color: #ff8c00 !important;
 }
 
 /* --- Bouton principal --- */
 button[kind="primary"] {
-    background: linear-gradient(135deg, #5fd381, #a0ffb5) !important;
+    background: linear-gradient(135deg, #ff8c00, #ffcc00) !important;
     color: #000 !important;
     font-weight: bold !important;
-    border-radius: 4px !important;
-    padding: 0.5rem 1rem !important;
+    border-radius: 6px !important;
+    padding: 0.6rem 1rem !important;
     border: none !important;
-    box-shadow: 0 0 6px rgba(95, 211, 129, 0.5);
+    box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
 }
 
 button[kind="primary"]:hover {
     filter: brightness(1.2);
-    box-shadow: 0 0 12px rgba(95, 211, 129, 0.8);
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.8);
 }
 
 /* --- Avertissements --- */
 .stAlert {
-    background: #5fd381;
+    background: #ff8c00;
     color: #000;
-    border-radius: 4px;
-    padding: 0.6rem;
+    border-radius: 6px;
+    padding: 0.8rem;
 }
 
 /* --- Barre de progression --- */
 .stProgress > div > div > div {
-    background: linear-gradient(90deg, #5fd381, #a0ffb5);
-}
-
-/* --- Sélecteurs radio --- */
-[role="radiogroup"] > div[data-baseweb="radio"] label {
-    color: #e0e0e0; /* Texte clair pour les radios */
-}
-
-[role="radiogroup"] > div[data-baseweb="radio"] div {
-    background: #3a453a;
-    border: 1px solid #5fd381;
-}
-
-[role="radiogroup"] > div[data-baseweb="radio"] div:hover {
-    background: #5fd381;
-    color: #000;
-}
-
-/* --- Checkbox --- */
-[role="checkbox"] {
-    color: #e0e0e0; /* Texte clair pour les checkboxes */
+    background: linear-gradient(90deg, #ff8c00, #ffcc00);
 }
 
 /* --- Export HTML --- */
 body {
-    background: #f8f8f8;
-    color: #333;
+    background: #0a0a0a;
+    color: #e0e0e0;
     font-family: Arial, sans-serif;
 }
 
 h1 {
-    color: #5fd381;
+    color: #ff8c00;
 }
 
 .unit {
-    border: 1px solid #5fd381;
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 10px;
-    background: #fff;
-    color: #333;
-}
-
-/* --- Sélecteurs de liste déroulante --- */
-select {
-    color: #e0e0e0 !important;
-    background-color: #3a453a !important;
-    border: 1px solid #5fd381 !important;
-}
-
-/* --- Options de liste déroulante --- */
-select option {
-    color: #000 !important;
-    background-color: #fff !important;
+    border: 1px solid #ff8c00;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: #1a1a1a;
 }
 
 </style>
 """, unsafe_allow_html=True)
-
-
 
 # ======================================================
 # INITIALISATION
