@@ -581,11 +581,11 @@ elif st.session_state.page == "army":
     # RÈGLES SPÉCIALES DE FACTION
     # ======================================================
     if st.session_state.get("faction_rules"):
-        with st.expander("📜 Règles spéciales de la faction", expanded=True):
+        with st.expander("📜 Règles spéciales de la faction", expanded=False):
             for rule in st.session_state.faction_rules:
                 if isinstance(rule, dict):
                     st.markdown(
-                        f"**{rule.get('name', 'Règle')}**\n\n"
+                        f"**{rule.get('name', 'Règle sans nom')}**\n\n"
                         f"{rule.get('description', '')}"
                     )
                 else:
