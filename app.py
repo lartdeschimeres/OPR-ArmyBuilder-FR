@@ -91,6 +91,20 @@ if "army_cost" not in st.session_state:
     st.session_state.army_cost = 0
 if "unit_selections" not in st.session_state:
     st.session_state.unit_selections = {}
+if "game" not in st.session_state:
+    st.session_state.game = None
+if "faction" not in st.session_state:
+    st.session_state.faction = None
+if "points" not in st.session_state:
+    st.session_state.points = 0
+if "list_name" not in st.session_state:
+    st.session_state.list_name = ""
+if "units" not in st.session_state:
+    st.session_state.units = []
+if "faction_rules" not in st.session_state:
+    st.session_state.faction_rules = []
+if "faction_spells" not in st.session_state:
+    st.session_state.faction_spells = []
 
 # ======================================================
 # SIDEBAR – CONTEXTE & NAVIGATION
@@ -131,8 +145,11 @@ with st.sidebar:
         st.rerun()
 
     if st.button("🧩 Construction", use_container_width=True):
-        st.session_state.page = "army"
-        st.rerun()
+        if all(key in st.session_state for key in ["game", "faction", "points", "list_name"]):
+            st.session_state.page = "army"
+            st.rerun()
+        else:
+            st.error("Veuillez compléter la configuration avant de passer à la construction.")
 
 # ======================================================
 # CONFIGURATION DES JEUX OPR (EXTENSIBLE)
@@ -636,6 +653,9 @@ if st.session_state.page == "setup":
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE
 # ======================================================
 elif st.session_state.page == "army":
+    if not all(key in st.session_state for key in ["game", "faction", "points", "list_name", "units", "faction_rules", "faction_spells"]):
+        st.error("Erreur de configuration. Veuillez retourner à la page de configuration.")
+        st.stop()
 
     # ======================================================
     # SÉCURISATION DU SESSION STATE
