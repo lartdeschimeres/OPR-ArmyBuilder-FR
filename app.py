@@ -274,21 +274,20 @@ def export_army_html():
         <style>
             body {{
                 font-family: Arial, sans-serif;
-                background-color: #121212;
-                color: #e0e0e0;
+                background-color: #000;
+                color: #fff;
                 margin: 0;
                 padding: 20px;
             }}
             .container {{
                 max-width: 800px;
                 margin: 0 auto;
-                background-color: #1e1e1e;
+                background-color: #111;
                 padding: 20px;
                 border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             }}
             h1 {{
-                color: #bb86fc;
+                color: #9c27b0;
                 text-align: center;
                 font-size: 24px;
                 margin-bottom: 10px;
@@ -309,14 +308,14 @@ def export_army_html():
                 color: #ccc;
             }}
             h2 {{
-                color: #bb86fc;
+                color: #9c27b0;
                 text-align: center;
                 font-size: 20px;
                 margin-bottom: 20px;
             }}
             .unit {{
-                background-color: #2d2d2d;
-                border: 1px solid #bb86fc;
+                background-color: #1e1e1e;
+                border: 2px solid #9c27b0;
                 border-radius: 8px;
                 padding: 15px;
                 margin-bottom: 15px;
@@ -330,10 +329,10 @@ def export_army_html():
             .unit-name {{
                 font-weight: bold;
                 font-size: 16px;
-                color: #bb86fc;
+                color: #9c27b0;
             }}
             .unit-cost {{
-                color: #ff6b6b;
+                color: #ff5252;
                 font-weight: bold;
             }}
             .unit-characteristics {{
@@ -347,7 +346,7 @@ def export_army_html():
                 justify-content: space-between;
             }}
             .characteristic-label {{
-                color: #bb86fc;
+                color: #9c27b0;
             }}
             .characteristic-value {{
                 color: #fff;
@@ -355,9 +354,9 @@ def export_army_html():
             .weapons-section, .mount-section {{
                 margin-top: 10px;
                 padding: 10px;
-                background-color: #1a1a1a;
+                background-color: #2a2a2a;
                 border-radius: 4px;
-                border-left: 3px solid #bb86fc;
+                border-left: 3px solid #9c27b0;
             }}
             .weapon-item {{
                 margin-bottom: 10px;
@@ -373,16 +372,16 @@ def export_army_html():
             .rules-section {{
                 margin-top: 20px;
                 padding: 15px;
-                background-color: #1a1a1a;
+                background-color: #2a2a2a;
                 border-radius: 6px;
-                border-left: 3px solid #bb86fc;
+                border-left: 3px solid #9c27b0;
             }}
             .rule-item {{
                 margin-bottom: 10px;
             }}
             .rule-name {{
                 font-weight: bold;
-                color: #bb86fc;
+                color: #9c27b0;
             }}
         </style>
     </head>
@@ -435,9 +434,9 @@ def export_army_html():
                     <div class="weapon-item">
                         <span class="weapon-name">{weapon.get('name', 'Arme non nommée')}</span>
                         <div class="weapon-details">
-                            <span>Attaques: {weapon.get('attacks', '?')}</span><br>
+                            <span>Attaques: {weapon.get('attacks', '?')}</span>,
                             <span>Pénétration: {weapon.get('armor_piercing', '?')}</span>
-                        """
+                """
                 if weapon.get('special_rules'):
                     html += f'<br><span>Règles spéciales: {", ".join(weapon["special_rules"])}</span>'
                 html += "</div></div>"
@@ -488,7 +487,6 @@ def export_army_html():
     </html>
     """
     return html
-
     
 # ======================================================
 # CHARGEMENT DES FACTIONS
