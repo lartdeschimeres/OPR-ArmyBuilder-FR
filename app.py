@@ -464,7 +464,15 @@ th {{
         cost = unit.get("cost", 0)
         quality = esc(unit.get("quality", "-"))
         defense = esc(unit.get("defense", "-"))
-        coriace = unit.get("coriace", defense)  # Utilise la défense si coriace n'est pas défini
+
+        # Calcul de la valeur Coriace
+        coriace = unit.get("coriace")
+        if coriace is None:
+            coriace = unit.get("defense", 0)
+        try:
+            coriace = int(coriace)
+        except (ValueError, TypeError):
+            coriace = 0
 
         # Détermine l'effectif à afficher
         unit_size = unit.get("size", 10)
@@ -483,7 +491,7 @@ th {{
     <span>Défense {defense}+</span>
 """
 
-        if coriace and coriace > 0:
+        if coriace > 0:
             html += f"<span>Coriace {coriace}</span>"
 
         html += "</div>"
@@ -628,7 +636,6 @@ th {{
 </html>
 """
     return html
-
 # ======================================================
 # CHARGEMENT DES FACTIONS
 # ======================================================
