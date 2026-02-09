@@ -93,6 +93,9 @@ if "unit_selections" not in st.session_state:
 # SIDEBAR – CONTEXTE & NAVIGATION
 # ======================================================
 with st.sidebar:
+    st.markdown("## ☰ Menu")
+    
+with st.sidebar:
     st.title("🛡️ Army Forge")
 
     st.subheader("📋 Armée")
