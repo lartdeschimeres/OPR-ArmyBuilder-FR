@@ -523,17 +523,16 @@ def load_factions():
                 if game and faction:
                     if game not in factions:
                         factions[game] = {}
-                    factions[game][faction] = data
-                    games.add(game)
-                    # Vérification des règles spéciales
-                    if "faction_special_rules" not in data:  # Modifié
-                        data["faction_special_rules"] = []  # Modifié
+                    if "faction_special_rules" not in data:
+                        data["faction_special_rules"] = []
                     if "spells" not in data:
                         data["spells"] = []
+                    factions[game][faction] = data
+                    games.add(game)
         except Exception as e:
             st.warning(f"Erreur chargement {fp.name}: {e}")
     return factions, sorted(games) if games else list(GAME_CONFIG.keys())
-
+    
 # ======================================================
 # PAGE 1 – CONFIGURATION
 # ======================================================
@@ -630,7 +629,6 @@ if st.session_state.page == "setup":
             type="primary",
             disabled=not can_build
         ):
-            # --- SESSION STATE ---
             st.session_state.game = game
             st.session_state.faction = faction
             st.session_state.points = points
@@ -638,15 +636,13 @@ if st.session_state.page == "setup":
 
             faction_data = factions_by_game[game][faction]
             st.session_state.units = faction_data["units"]
-            st.session_state.faction_special_rules = faction_data.get("faction_special_rules", [])  # Modifié
+            st.session_state.faction_special_rules = faction_data.get("faction_special_rules", [])
             st.session_state.faction_spells = faction_data.get("spells", [])
 
-            # --- RESET ARMÉE ---
             st.session_state.army_list = []
             st.session_state.army_cost = 0
             st.session_state.unit_selections = {}
 
-            # --- NAVIGATION ---
             st.session_state.page = "army"
             st.rerun()
 
@@ -654,7 +650,7 @@ if st.session_state.page == "setup":
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE
 # ======================================================
 elif st.session_state.page == "army":
-    if not all(key in st.session_state for key in ["game", "faction", "points", "list_name", "units", "faction_special_rules", "faction_spells"]):  # Modifié
+    if not all(key in st.session_state for key in ["game", "faction", "points", "list_name", "units", "faction_spells"]):
         st.error("Erreur de configuration. Veuillez retourner à la page de configuration.")
         st.stop()
 
@@ -762,14 +758,13 @@ elif st.session_state.page == "army":
     # ======================================================
     # RÈGLES SPÉCIALES DE FACTION
     # ======================================================
-    if hasattr(st.session_state, 'faction_special_rules') and st.session_state.faction_special_rules:  # Modifié
-        with st.expander("📜 Règles spéciales de la faction", expanded=False):
-            for rule in st.session_state.faction_special_rules:  # Modifié
+    if hasattr(st.session_state, 'faction_special_rules') and st.session_state.faction_special_rules:
+        with st.expander("📜 Règles spéciales de la faction", expanded=True):  # Expanded par défaut
+            for rule in st.session_state.faction_special_rules:
                 if isinstance(rule, dict):
-                    st.markdown(
-                        f"**{rule.get('name', 'Règle sans nom')}**\n\n"
-                        f"{rule.get('description', '')}"
-                    )
+                    st.markdown(f"**{rule.get('name', 'Règle sans nom')}**")
+                    st.markdown(f"{rule.get('description', '')}")
+                    st.markdown("---")  # Séparateur visuel
                 else:
                     st.markdown(f"- {rule}")
 
