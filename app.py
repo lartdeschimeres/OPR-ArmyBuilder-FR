@@ -497,21 +497,21 @@ th {{
         html += "</div>"
 
         # ---- ARMES ----
-        weapons = unit.get("weapon", [])
-        if weapons:
-            if not isinstance(weapons, list):
-                weapons = [weapons]
+        weapon = unit.get("weapon", [])
+        if weapon:
+            if not isinstance(weapon, list):
+                weapon = [weapon]
 
             # Filtrer les armes de base si d'autres armes sont présentes
-            filtered_weapons = []
-            has_custom_weapons = False
+            filtered_weapon = []
+            has_custom_weapon = False
 
-            for w in weapons:
+            for w in weapon:
                 if w.get('name', '').lower() not in ['arme de base', 'armes de base']:
-                    filtered_weapons.append(w)
-                    has_custom_weapons = True
+                    filtered_weapon.append(w)
+                    has_custom_weapon = True
 
-            if filtered_weapons or not has_custom_weapons:
+            if filtered_weapon or not has_custom_weapon:
                 html += '<div class="section-title">Armes équipées :</div>'
                 html += """
     <table>
@@ -522,7 +522,7 @@ th {{
     </thead>
     <tbody>
     """
-                for w in filtered_weapons if filtered_weapons else weapons:
+                for w in filtered_weapon if filtered_weapon else weapon:
                     html += f"""
     <tr>
       <td>{esc(w.get('name', '-'))}</td>
@@ -591,8 +591,8 @@ th {{
             if 'special_rules' in mount_data and mount_data['special_rules']:
                 html += " | " + ", ".join(esc(rule) for rule in mount_data['special_rules'])
 
-            if 'weapons' in mount_data and mount_data['weapons']:
-                for weapon in mount_data['weapons']:
+            if 'weapon' in mount_data and mount_data['weapon']:
+                for weapon in mount_data['weapon']:
                     weapon_details = weapon
                     html += f" | {weapon.get('name', 'Arme')} (Att{weapon_details.get('attacks', '-')}, PA({weapon_details.get('armor_piercing', '-')})"
                     if weapon_details.get('special_rules'):
@@ -966,7 +966,7 @@ elif st.session_state.page == "army":
     unit_key = f"unit_{unit['name']}"
     st.session_state.unit_selections.setdefault(unit_key, {})
 
-    weapons = list(unit.get("weapons", []))
+    weapon = list(unit.get("weapon", []))
     selected_options = {}
     mount = None
     weapon_cost = 0
@@ -1003,10 +1003,10 @@ elif st.session_state.page == "army":
             if choice != "Arme de base":
                 opt = opt_map[choice]
                 weapon_cost += opt["cost"]
-                weapons = (
+                weapon = (
                     [opt["weapon"]]
                     if unit.get("type") == "hero"
-                    else weapons + [opt["weapon"]]
+                    else weapon + [opt["weapon"]]
                 )
 
         # ---------- MONTURE ----------
@@ -1124,7 +1124,7 @@ elif st.session_state.page == "army":
             ),
             "quality": unit.get("quality"),
             "defense": unit.get("defense"),
-            "weapon": weapons,
+            "weapon": weapon,
             "options": selected_options,
             "mount": mount,
         }
