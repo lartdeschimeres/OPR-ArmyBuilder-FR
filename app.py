@@ -79,6 +79,61 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+st.markdown(
+    """
+    <style>
+    .floating-menu {
+        position: fixed;
+        top: 80px;
+        left: 15px;
+        width: 230px;
+        background: #ffffff;
+        border: 2px solid #3498db;
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        z-index: 9999;
+    }
+
+    .floating-menu h3 {
+        margin-top: 0;
+        text-align: center;
+    }
+
+    .floating-menu button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# ======================================================
+# MENU FLOTTANT
+# ======================================================
+with st.container():
+    st.markdown('<div class="floating-menu">', unsafe_allow_html=True)
+
+    st.markdown("### 🛡️ Army Forge")
+
+    if st.button("⚙️ Configuration"):
+        st.session_state.page = "setup"
+        st.rerun()
+
+    if st.button("🧩 Construction"):
+        st.session_state.page = "army"
+        st.rerun()
+
+    if st.button("📤 Export JSON"):
+        st.session_state.page = "export_json"
+        st.rerun()
+
+    if st.button("🖨️ Export HTML"):
+        st.session_state.page = "export_html"
+        st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ======================================================
 # INITIALISATION
