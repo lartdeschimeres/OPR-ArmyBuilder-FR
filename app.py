@@ -115,8 +115,8 @@ if "list_name" not in st.session_state:
     st.session_state.list_name = ""
 if "units" not in st.session_state:
     st.session_state.units = []
-if "faction_special_rules" not in st.session_state:  # Modifié
-    st.session_state.faction_special_rules = []  # Modifié
+if "faction_special_rules" not in st.session_state:
+    st.session_state.faction_special_rules = []
 if "faction_spells" not in st.session_state:
     st.session_state.faction_spells = []
 
@@ -655,7 +655,7 @@ def load_factions():
         except Exception as e:
             st.warning(f"Erreur chargement {fp.name}: {e}")
     return factions, sorted(games) if games else list(GAME_CONFIG.keys())
-    
+
 # ======================================================
 # PAGE 1 – CONFIGURATION
 # ======================================================
@@ -773,29 +773,9 @@ if st.session_state.page == "setup":
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE
 # ======================================================
 elif st.session_state.page == "army":
-    # ... (le reste de votre code)
-
-    colE1, colE2 = st.columns(2)
-
-    with colE1:
-        json_data = json.dumps(export_army_json(), indent=2, ensure_ascii=False)
-        st.download_button(
-            "📄 Export JSON",
-            data=json_data,
-            file_name=f"{st.session_state.list_name}.json",
-            mime="application/json",
-            use_container_width=True
-        )
-
-    with colE2:
-        html_data = export_html(st.session_state.army_list, st.session_state.list_name, st.session_state.points)  # Utilisation de la nouvelle fonction
-        st.download_button(
-            "🌐 Export HTML",
-            data=html_data,
-            file_name=f"{st.session_state.list_name}.html",
-            mime="text/html",
-            use_container_width=True
-        )
+    if not all(key in st.session_state for key in ["game", "faction", "points", "list_name", "units", "faction_special_rules", "faction_spells"]):
+        st.error("Erreur de configuration. Veuillez retourner à la page de configuration.")
+        st.stop()
 
     # ======================================================
     # SÉCURISATION DU SESSION STATE
@@ -833,7 +813,7 @@ elif st.session_state.page == "army":
         )
 
     with colE2:
-        html_data = export_army_html()
+        html_data = export_html(st.session_state.army_list, st.session_state.list_name, st.session_state.points)
         st.download_button(
             "🌐 Export HTML",
             data=html_data,
