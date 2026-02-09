@@ -145,7 +145,7 @@
       "quality": 3,
       "defense": 3,
       "special_rules": ["Attaque versatile", "Coriace (3)", "Héros", "Guerrier-né"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Arme à une main lourde",
           "range": "-",
@@ -290,7 +290,7 @@
       "quality": 3,
       "defense": 3,
       "special_rules": ["Coriace (3)", "Héros", "Guerrier-né"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Arme à une main lourde",
           "range": "-",
@@ -435,7 +435,7 @@
       "quality": 5,
       "defense": 5,
       "special_rules": ["Coriace (3)", "Éclaireur", "Furieux", "Guerrier-né", "Héros"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Arme à une main",
           "range": "-",
@@ -558,7 +558,7 @@
       "quality": 5,
       "defense": 5,
       "special_rules": ["Éclaireur", "Furieux", "Guerrier-né"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Armes à une main",
           "range": "-",
@@ -633,7 +633,7 @@
       "quality": 5,
       "defense": 5,
       "special_rules": ["Combattant sanguinaire", "Guerrier-né"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Grandes armes",
           "range": "-",
@@ -692,7 +692,7 @@
       "quality": 3,
       "defense": 3,
       "special_rules": ["Guerrier-né"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Armes à une main lourdes",
           "range": "-",
@@ -778,7 +778,7 @@
       "quality": 3,
       "defense": 3,
       "special_rules": ["Attaque versatile", "Guerrier-né"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Armes à une main lourdes",
           "range": "-",
@@ -864,7 +864,7 @@
       "quality": 4,
       "defense": 4,
       "special_rules": ["Combattant imprévisible", "Guerrier-né", "Sans peur"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Membres mutants",
           "range": "-",
@@ -881,7 +881,7 @@
       "quality": 3,
       "defense": 4,
       "special_rules": ["Assaut tranchant", "Combattant sanguinaire", "Guerrier-né"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Armes à une main lourdes",
           "range": "-",
@@ -940,7 +940,7 @@
       "quality": 3,
       "defense": 4,
       "special_rules": ["Coriance (3)", "Guerrier-né", "Impact (2)"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Paire de marteau-fléaux",
           "range": "-",
@@ -957,7 +957,7 @@
       "quality": 3,
       "defense": 4,
       "special_rules": ["Assaut tranchant", "Coriace (3)", "Guerrier-né"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Paires d'armes ensorcelées",
           "range": "-",
@@ -1017,7 +1017,7 @@
       "quality": 5,
       "defense": 5,
       "special_rules": ["Éclaireur", "Guerrier-né"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Arcs courts",
           "range": "18",
@@ -1072,7 +1072,7 @@
       "quality": 4,
       "defense": 5,
       "special_rules": ["Arpenteur", "Guerrier-né", "Rapide"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Griffes perforantes",
           "range": "-",
@@ -1109,7 +1109,7 @@
       "quality": 3,
       "defense": 5,
       "special_rules": ["Éclaireur", "Furieux", "Guerrier-né", "Impact (1)", "Rapide"],
-      "weapons": [
+      "weapon": [
         {
           "name": "Armes à une main",
           "range": "-",
