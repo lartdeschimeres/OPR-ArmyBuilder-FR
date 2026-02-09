@@ -84,26 +84,18 @@
         {
             "name": "Shred when Shooting Aura [Aura de Lacération au tir]",
             "description": "Cette figurine et son unité obtiennent la règle spéciale Lacération lorsqu'elles tirent."
-                },
+        },
         {
             "name": "Unpredictable Fighter Aura [Aura de Combattant imprévisible]",
             "description": "Cette figurine et son unité obtiennent la règle spéciale Combattant imprévisible."
-                  },
+        },
         {
             "name": "Versatile Defense Aura [Aura de Défense Versatile]",
             "description": "Cette figurine et son unité obtiennent la règle spéciale Défense versatile."
-                  },
+        },
         {
-            "name": "SWarbound Boost Aura [Aura de Boost de Guerrier-né]",
+            "name": "Warbound Boost Aura [Aura de Boost de Guerrier-né]",
             "description": "Cette figurine et son unité obtiennent la règle spéciale Boost de Guerrier-né."
-                  },
-        {
-            "name": "Shred [Lacération]",
-            "description": "Sur les résultats non modifiés de 1 pour bloquer les touches, cette arme inflige une blessure supplémentaire."
-                  },
-        {
-            "name": "Shred [Lacération]",
-            "description": "Sur les résultats non modifiés de 1 pour bloquer les touches, cette arme inflige une blessure supplémentaire."
         }
     ],
   "spells": {
