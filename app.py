@@ -274,21 +274,21 @@ def export_army_html():
         <style>
             body {{
                 font-family: Arial, sans-serif;
-                background-color: #f5f5f5;
-                color: #333;
+                background-color: #121212;
+                color: #e0e0e0;
                 margin: 0;
                 padding: 20px;
             }}
             .container {{
                 max-width: 800px;
                 margin: 0 auto;
-                background-color: white;
+                background-color: #1e1e1e;
                 padding: 20px;
                 border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             }}
-            h1 {{
-                color: #2c3e50;
+            h1, h2 {{
+                color: #bb86fc;
                 text-align: center;
             }}
             .army-info {{
@@ -296,15 +296,15 @@ def export_army_html():
                 justify-content: space-between;
                 margin-bottom: 20px;
                 padding-bottom: 10px;
-                border-bottom: 1px solid #ddd;
+                border-bottom: 1px solid #444;
             }}
             .army-stats {{
                 font-size: 14px;
-                color: #666;
+                color: #ccc;
             }}
             .unit {{
-                background-color: #f9f9f9;
-                border: 1px solid #ddd;
+                background-color: #2d2d2d;
+                border: 1px solid #bb86fc;
                 border-radius: 6px;
                 padding: 15px;
                 margin-bottom: 15px;
@@ -318,16 +318,17 @@ def export_army_html():
             .unit-name {{
                 font-weight: bold;
                 font-size: 16px;
-                color: #2c3e50;
+                color: #bb86fc;
             }}
             .unit-cost {{
-                color: #dc241f;
+                color: #ff6b6b;
                 font-weight: bold;
             }}
             .unit-details {{
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
+                margin-bottom: 10px;
             }}
             .detail-item {{
                 display: flex;
@@ -335,7 +336,35 @@ def export_army_html():
             }}
             .detail-label {{
                 font-weight: bold;
-                color: #666;
+                color: #bb86fc;
+            }}
+            .weapons, .mount, .special-rules {{
+                margin-top: 10px;
+                padding: 10px;
+                background-color: #1a1a1a;
+                border-radius: 4px;
+                border-left: 3px solid #bb86fc;
+            }}
+            .weapon-item, .mount-item {{
+                margin-bottom: 5px;
+            }}
+            .weapon-name {{
+                font-weight: bold;
+                color: #4dd0e1;
+            }}
+            .rules-section {{
+                margin-top: 20px;
+                padding: 15px;
+                background-color: #1a1a1a;
+                border-radius: 6px;
+                border-left: 3px solid #bb86fc;
+            }}
+            .rule-item {{
+                margin-bottom: 10px;
+            }}
+            .rule-name {{
+                font-weight: bold;
+                color: #bb86fc;
             }}
         </style>
     </head>
@@ -355,6 +384,9 @@ def export_army_html():
     """
 
     for u in st.session_state.army_list:
+        # Calcul de la valeur Coriace
+        coriace_value = u.get('defense', 3) + (u.get('mount', {}).get('defense_bonus', 0) if u.get('mount') else 0)
+
         html += f"""
             <div class="unit">
                 <div class="unit-header">
@@ -362,10 +394,6 @@ def export_army_html():
                     <div class="unit-cost">{u['cost']} pts</div>
                 </div>
                 <div class="unit-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Type:</span>
-                        <span>{u.get('type', 'Unité')}</span>
-                    </div>
                     <div class="detail-item">
                         <span class="detail-label">Taille:</span>
                         <span>{u.get('size', '?')}</span>
@@ -375,12 +403,63 @@ def export_army_html():
                         <span>{u.get('quality', '?')}+</span>
                     </div>
                     <div class="detail-item">
-                        <span class="detail-label">Défense:</span>
-                        <span>{u.get('defense', '?')}+</span>
+                        <span class="detail-label">Coriace:</span>
+                        <span>{coriace_value}+</span>
                     </div>
                 </div>
-            </div>
         """
+
+        # Ajout des armes
+        if u.get('weapon'):
+            html += '<div class="weapons"><strong>Armes:</strong>'
+            for weapon in u['weapon']:
+                html += f"""
+                    <div class="weapon-item">
+                        <span class="weapon-name">{weapon.get('name', 'Arme non nommée')}</span><br>
+                        <span>Attaques: {weapon.get('attacks', '?')}</span><br>
+                        <span>Pénétration: {weapon.get('armor_piercing', '?')}</span>
+                    """
+                if weapon.get('special_rules'):
+                    html += '<br><span>Règles spéciales: ' + ', '.join(weapon['special_rules']) + '</span>'
+                html += "</div>"
+            html += "</div>"
+
+        # Ajout de la monture
+        if u.get('mount'):
+            mount = u['mount']
+            html += f"""
+                <div class="mount">
+                    <strong>Monture:</strong>
+                    <div class="mount-item">
+                        <span class="weapon-name">{mount.get('name', 'Monture non nommée')}</span><br>
+                        <span>Bonus de défense: {mount.get('defense_bonus', 0)}</span>
+                    </div>
+                </div>
+            """
+
+        html += "</div>"
+
+    # Ajout des règles spéciales de la faction
+    if st.session_state.get("faction_rules"):
+        html += """
+            <div class="rules-section">
+                <h2>Règles Spéciales de la Faction</h2>
+        """
+        for rule in st.session_state.faction_rules:
+            if isinstance(rule, dict):
+                html += f"""
+                    <div class="rule-item">
+                        <span class="rule-name">{rule.get('name', 'Règle sans nom')}</span><br>
+                        <span>{rule.get('description', '')}</span>
+                    </div>
+                """
+            else:
+                html += f"""
+                    <div class="rule-item">
+                        <span>{rule}</span>
+                    </div>
+                """
+        html += "</div>"
 
     html += """
         </div>
