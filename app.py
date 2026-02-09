@@ -583,6 +583,28 @@ elif st.session_state.page == "army":
                     st.markdown(f"- {spell}")
 
     # ======================================================
+    # LISTE DE L'ARMÉE
+    # ======================================================
+    st.subheader("Liste de l'Armée")
+
+    if not st.session_state.army_list:
+        st.markdown("Aucune unité ajoutée pour le moment.")
+    else:
+        for i, unit_data in enumerate(st.session_state.army_list):
+            with st.expander(f"{unit_data['name']} - {unit_data['cost']} pts", expanded=False):
+                st.markdown(f"**Type :** {unit_data['type']}")
+                st.markdown(f"**Taille :** {unit_data.get('size', '?')}")
+                st.markdown(f"**Qualité :** {unit_data.get('quality', '?')}+")
+                st.markdown(f"**Défense :** {unit_data.get('defense', '?')}+")
+
+                if st.button(f"Supprimer {unit_data['name']}", key=f"delete_{i}"):
+                    st.session_state.army_cost -= unit_data['cost']
+                    st.session_state.army_list.pop(i)
+                    st.rerun()
+
+    st.divider()
+    
+    # ======================================================
     # SÉLECTION DE L’UNITÉ
     # ======================================================
     unit = st.selectbox(
@@ -722,6 +744,13 @@ elif st.session_state.page == "army":
         + mount_cost
     )
 
+    # ======================================================
+    # VUE EN TEMPS RÉEL DU COÛT DE L'UNITÉ
+    # ======================================================
+    st.subheader("Coût de l'unité sélectionnée")
+    st.markdown(f"**Coût total :** {final_cost} pts")
+    st.divider()
+    
     # ======================================================
     # AJOUT À L’ARMÉE
     # ======================================================
