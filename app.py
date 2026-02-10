@@ -546,6 +546,32 @@ th {{
     """
             html += "</tbody></table>"
 
+        # ---- AMÉLIORATIONS D'ARME ----
+        weapon_upgrades = unit.get("weapon_upgrades", [])
+        if weapon_upgrades:
+            html += '<div class="section-title">Améliorations d\'arme :</div>'
+            html += """
+    <table>
+    <thead>
+    <tr>
+      <th>Arme</th><th>Port</th><th>Att</th><th>PA</th><th>Règles spéciales</th>
+    </tr>
+    </thead>
+    <tbody>
+    """
+            for w in weapon_upgrades:
+                if w:
+                    html += f"""
+    <tr>
+      <td>{esc(w.get('name', '-'))}</td>
+      <td>{esc(w.get('range', '-'))}</td>
+      <td>{esc(w.get('attacks', '-'))}</td>
+      <td>{esc(w.get('armor_piercing', '-'))}</td>
+      <td>{esc(", ".join(w.get('special_rules', [])) if w.get('special_rules') else '-')}</td>
+    </tr>
+    """
+            html += "</tbody></table>"
+
         # ---- RÈGLES SPÉCIALES ----
         rules = unit.get("special_rules", [])
         if rules:
@@ -915,7 +941,7 @@ elif st.session_state.page == "army":
             for spell_name, spell_details in st.session_state.faction_spells.items():
                 if isinstance(spell_details, dict):
                     st.markdown(
-                        f"**{spell_name}** ({spell_details.get('cost', '?')}) : {spell_details.get('description', '')}",
+                        f"**{spell_name}** ({spell_details.get('cost', '?')} pts): {spell_details.get('description', '')}",
                         unsafe_allow_html=True
                     )
 
@@ -954,11 +980,13 @@ elif st.session_state.page == "army":
     weapon_cost = 0
     mount_cost = 0
     upgrades_cost = 0
+    weapon_upgrades = []
 
     for g_idx, group in enumerate(unit.get("upgrade_groups", [])):
         g_key = f"group_{g_idx}"
         st.subheader(group.get("group", "Améliorations"))
 
+        # ---------- ARMES ----------
         if group.get("type") == "weapon":
             choices = ["Arme de base"]
             opt_map = {}
@@ -983,6 +1011,32 @@ elif st.session_state.page == "army":
                 weapon_cost += opt["cost"]
                 weapons = [opt["weapon"]] if unit.get("type") == "hero" else [opt["weapon"]]
 
+        # ---------- AMÉLIORATIONS D'ARME ----------
+        elif group.get("type") == "weapon_upgrades":
+            choices = ["Aucune amélioration d'arme"]
+            opt_map = {}
+
+            for o in group.get("options", []):
+                label = f"{o['name']} (+{o['cost']} pts)"
+                choices.append(label)
+                opt_map[label] = o
+
+            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
+            choice = st.radio(
+                "Amélioration d'arme",
+                choices,
+                index=choices.index(current) if current in choices else 0,
+                key=f"{unit_key}_{g_key}_weapon_upgrade",
+            )
+
+            st.session_state.unit_selections[unit_key][g_key] = choice
+
+            if choice != "Aucune amélioration d'arme":
+                opt = opt_map[choice]
+                upgrades_cost += opt["cost"]
+                weapon_upgrades.append(opt["weapon"])
+
+        # ---------- MONTURE ----------
         elif group.get("type") == "mount":
             choices = ["Aucune monture"]
             opt_map = {}
@@ -1006,6 +1060,7 @@ elif st.session_state.page == "army":
                 mount = opt_map[choice]
                 mount_cost = mount["cost"]
 
+        # ---------- OPTIONS / RÔLES ----------
         elif group.get("type") == "role" and unit.get("type") == "hero":
             choices = ["Aucun rôle"]
             opt_map = {}
@@ -1030,6 +1085,7 @@ elif st.session_state.page == "army":
                 upgrades_cost += opt["cost"]
                 selected_options[group.get("group", "Rôle")] = [opt]
 
+        # ---------- OPTIONS NORMALES (checkbox) ----------
         else:
             for o in group.get("options", []):
                 opt_key = f"{unit_key}_{g_key}_{o['name']}"
@@ -1046,7 +1102,7 @@ elif st.session_state.page == "army":
     multiplier = 2 if unit.get("type") != "hero" and st.checkbox("Unité combinée") else 1
 
     base_cost = unit.get("base_cost", 0)
-    final_cost = (base_cost + weapon_cost) * multiplier + upgrades_cost + mount_cost
+    final_cost = (base_cost + weapon_cost + upgrades_cost) * multiplier + mount_cost
 
     st.subheader("Coût de l'unité sélectionnée")
     st.markdown(f"**Coût total :** {final_cost} pts")
@@ -1071,6 +1127,7 @@ elif st.session_state.page == "army":
             "defense": unit.get("defense"),
             "coriace": coriace,
             "weapon": weapons,
+            "weapon_upgrades": weapon_upgrades,
             "options": selected_options,
             "mount": mount,
         }
