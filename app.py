@@ -285,6 +285,9 @@ def export_army_json():
         "exported_at": datetime.now().isoformat()
     }
 
+# ======================================================
+# EXPORT HTML
+# ======================================================
 def export_html(army_list, army_name, army_limit):
     def esc(txt):
         return str(txt).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -451,7 +454,22 @@ th {{
         cost = unit.get("cost", 0)
         quality = esc(unit.get("quality", "-"))
         defense = esc(unit.get("defense", "-"))
+
+        # Calcul de la valeur Coriace
         coriace = unit.get("coriace", 0)
+        mount = unit.get("mount", {})
+        mount_defense_bonus = 0
+
+        if isinstance(mount, dict):
+            mount_data = mount.get("mount", mount)
+            mount_defense_bonus = mount_data.get("defense_bonus", 0)
+
+        # Si coriace n'est pas défini, utiliser la défense de base
+        if coriace == 0:
+            coriace = int(defense)
+
+        # Ajouter le bonus de défense de la monture
+        coriace += mount_defense_bonus
 
         # Détermine l'effectif à afficher
         unit_size = unit.get("size", 10)
@@ -534,7 +552,6 @@ th {{
                     html += "</div>"
 
         # ---- MONTURE (pour les héros) ----
-        mount = unit.get("mount")
         if mount and isinstance(mount, dict):
             mount_name = esc(mount.get("name", "Monture non nommée"))
             mount_data = mount.get("mount", mount)
@@ -614,12 +631,66 @@ th {{
             </div>
             """
 
+    # ---- SORTS DE LA FACTION (en deux colonnes) ----
+    if sorted_army_list and hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
+        spells = st.session_state.faction_spells
+        all_spells = [{"name": name, "details": details} for name, details in spells.items() if isinstance(details, dict)]
+
+        if all_spells:
+            html += """
+            <div style="margin-top: 40px;">
+                <h3 style="text-align: center; color: var(--accent); border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 15px;">
+                    Légende des sorts de la faction
+                </h3>
+                <div style="display: flex; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 300px; padding-right: 15px;">
+            """
+
+            # Diviser les sorts en deux colonnes de longueur égale
+            half = len(all_spells) // 2
+            if len(all_spells) % 2 != 0:
+                half += 1  # Ajouter un sort à la première colonne si le nombre est impair
+
+            # Première colonne
+            for spell in all_spells[:half]:
+                if isinstance(spell, dict):
+                    html += f"""
+                    <div style="margin-bottom: 12px; font-size: 12px;">
+                        <div style="font-weight: bold; color: var(--accent);">{esc(spell.get('name', ''))}</div>
+                        <div style="color: var(--text-muted);">Coût: {spell.get('details', {}).get('cost', '?')} pts, Portée: {spell.get('details', {}).get('range', '?')}</div>
+                        <div style="color: var(--text-main);">{esc(spell.get('details', {}).get('description', ''))}</div>
+                    </div>
+                    """
+
+            html += """
+                    </div>
+                    <div style="flex: 1; min-width: 300px; padding-left: 15px;">
+            """
+
+            # Deuxième colonne
+            for spell in all_spells[half:]:
+                if isinstance(spell, dict):
+                    html += f"""
+                    <div style="margin-bottom: 12px; font-size: 12px;">
+                        <div style="font-weight: bold; color: var(--accent);">{esc(spell.get('name', ''))}</div>
+                        <div style="color: var(--text-muted);">Coût: {spell.get('details', {}).get('cost', '?')} pts, Portée: {spell.get('details', {}).get('range', '?')}</div>
+                        <div style="color: var(--text-main);">{esc(spell.get('details', {}).get('description', ''))}</div>
+                    </div>
+                    """
+
+            html += """
+                    </div>
+                </div>
+            </div>
+            """
+
     html += """
 </div>
 </body>
 </html>
 """
     return html
+
 # ======================================================
 # CHARGEMENT DES FACTIONS
 # ======================================================
@@ -640,7 +711,7 @@ def load_factions():
                     if "faction_special_rules" not in data:
                         data["faction_special_rules"] = []
                     if "spells" not in data:
-                        data["spells"] = []
+                        data["spells"] = {}
                     factions[game][faction] = data
                     games.add(game)
         except Exception as e:
@@ -735,7 +806,7 @@ if st.session_state.page == "setup":
             faction_data = factions_by_game[game][faction]
             st.session_state.units = faction_data["units"]
             st.session_state.faction_special_rules = faction_data.get("faction_special_rules", [])
-            st.session_state.faction_spells = faction_data.get("spells", [])
+            st.session_state.faction_spells = faction_data.get("spells", {})
 
             st.session_state.army_list = []
             st.session_state.army_cost = 0
@@ -831,6 +902,9 @@ elif st.session_state.page == "army":
 
     st.divider()
 
+    # ======================================================
+    # RÈGLES SPÉCIALES DE FACTION
+    # ======================================================
     if hasattr(st.session_state, 'faction_special_rules') and st.session_state.faction_special_rules:
         with st.expander("📜 Règles spéciales de la faction", expanded=True):
             for rule in st.session_state.faction_special_rules:
@@ -839,13 +913,18 @@ elif st.session_state.page == "army":
                 else:
                     st.markdown(f"- {rule}", unsafe_allow_html=True)
 
+    # ======================================================
+    # SORTS DE LA FACTION
+    # ======================================================
     if hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
         with st.expander("✨ Sorts de la faction", expanded=True):
-            for spell in st.session_state.faction_spells:
-                if isinstance(spell, dict):
-                    st.markdown(f"**{spell.get('name', 'Sort sans nom')}**: Coût: {spell.get('cost', '?')} pts, Portée: {spell.get('range', '?')}, {spell.get('description', '')}", unsafe_allow_html=True)
-                else:
-                    st.markdown(f"- {spell}", unsafe_allow_html=True)
+            for spell_name, spell_details in st.session_state.faction_spells.items():
+                if isinstance(spell_details, dict):
+                    st.markdown(
+                        f"**{spell_name}** (Coût: {spell_details.get('cost', '?')} pts, Portée: {spell_details.get('range', '?')})"
+                        f"<div style='font-size: 14px; margin-left: 10px; color: #ccc;'>{spell_details.get('description', '')}</div>",
+                        unsafe_allow_html=True
+                    )
 
     st.subheader("Liste de l'Armée")
 
@@ -980,37 +1059,32 @@ elif st.session_state.page == "army":
     st.markdown(f"**Coût total :** {final_cost} pts")
     st.divider()
 
-if st.button("➕ Ajouter à l’armée"):
-    if st.session_state.army_cost + final_cost > st.session_state.points:
-        st.error(f"⛔ Dépassement du format : {st.session_state.army_cost + final_cost} / {st.session_state.points} pts")
-        st.stop()
+    if st.button("➕ Ajouter à l’armée"):
+        if st.session_state.army_cost + final_cost > st.session_state.points:
+            st.error(f"⛔ Dépassement du format : {st.session_state.army_cost + final_cost} / {st.session_state.points} pts")
+            st.stop()
 
-    # Calcul de la valeur Coriace
-    coriace = unit.get("defense", 0)
-    if mount:
-        mount_defense_bonus = mount.get("defense_bonus", 0)
-        coriace += mount_defense_bonus
+        coriace = unit.get("defense", 0)
+        if mount:
+            mount_defense_bonus = mount.get("defense_bonus", 0)
+            coriace += mount_defense_bonus
 
-    # Vérifier si l'unité a une valeur coriace spécifique
-    if "coriace" in unit:
-        coriace = unit["coriace"] + mount_defense_bonus
+        unit_data = {
+            "name": unit["name"],
+            "type": unit.get("type", "unit"),
+            "cost": final_cost,
+            "size": unit.get("size", 10) * multiplier if unit.get("type") != "hero" else 1,
+            "quality": unit.get("quality"),
+            "defense": unit.get("defense"),
+            "coriace": coriace,
+            "weapon": weapons,
+            "options": selected_options,
+            "mount": mount,
+        }
 
-    unit_data = {
-        "name": unit["name"],
-        "type": unit.get("type", "unit"),
-        "cost": final_cost,
-        "size": unit.get("size", 10) * multiplier if unit.get("type") != "hero" else 1,
-        "quality": unit.get("quality"),
-        "defense": unit.get("defense"),
-        "coriace": coriace,
-        "weapon": weapons,
-        "options": selected_options,
-        "mount": mount,
-    }
+        test_army = st.session_state.army_list + [unit_data]
 
-    test_army = st.session_state.army_list + [unit_data]
-
-    if validate_army_rules(test_army, st.session_state.points, st.session_state.game):
-        st.session_state.army_list.append(unit_data)
-        st.session_state.army_cost += final_cost
-        st.rerun()
+        if validate_army_rules(test_army, st.session_state.points, st.session_state.game):
+            st.session_state.army_list.append(unit_data)
+            st.session_state.army_cost += final_cost
+            st.rerun()
