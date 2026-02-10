@@ -439,6 +439,30 @@ th {{
 .special-rules-column div {{
   margin-bottom: 8px;
 }}
+
+.spell-container {{
+  margin-top: 20px;
+}}
+
+.spell-item {{
+  margin-bottom: 12px;
+  font-size: 12px;
+}}
+
+.spell-name {{
+  font-weight: bold;
+  color: var(--accent);
+}}
+
+.spell-details {{
+  color: var(--text-muted);
+  font-size: 11px;
+}}
+
+.spell-description {{
+  color: var(--text-main);
+  margin-left: 10px;
+}}
 </style>
 </head>
 <body>
@@ -631,33 +655,31 @@ th {{
             </div>
             """
 
-    # ---- SORTS DE LA FACTION (en une seule colonne) ----
+    # ---- SORTS DE LA FACTION (en une seule colonne, même style que les règles spéciales) ----
     if sorted_army_list and hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
         spells = st.session_state.faction_spells
         all_spells = [{"name": name, "details": details} for name, details in spells.items() if isinstance(details, dict)]
 
         if all_spells:
             html += """
-            <div style="margin-top: 20px;">
+            <div class="spell-container">
                 <h3 style="text-align: center; color: var(--accent); border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 15px;">
                     Légende des sorts de la faction
                 </h3>
-                <div style="display: flex; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 100%;">
+                <div class="special-rules-column" style="min-width: 100%;">
             """
 
-            # Une seule colonne pour les sorts
+            # Une seule colonne pour les sorts, même style que les règles spéciales
             for spell in all_spells:
                 if isinstance(spell, dict):
                     html += f"""
-                    <div style="margin-bottom: 12px; font-size: 12px;">
-                        <div style="font-weight: bold; color: var(--accent);">{esc(spell.get('name', ''))} ({spell.get('details', {}).get('cost', '?')} pts)</div>
-                        <div style="color: var(--text-main); margin-left: 10px;">{esc(spell.get('details', {}).get('description', ''))}</div>
+                    <div class="spell-item">
+                        <span class="spell-name">{esc(spell.get('name', ''))}</span>:
+                        <span class="spell-description">{esc(spell.get('details', {}).get('description', ''))}</span>
                     </div>
                     """
 
             html += """
-                    </div>
                 </div>
             </div>
             """
