@@ -115,7 +115,7 @@ if "units" not in st.session_state:
 if "faction_special_rules" not in st.session_state:
     st.session_state.faction_special_rules = []
 if "faction_spells" not in st.session_state:
-    st.session_state.faction_spells = []
+    st.session_state.faction_spells = {}
 
 # ======================================================
 # SIDEBAR – CONTEXTE & NAVIGATION
@@ -631,50 +631,28 @@ th {{
             </div>
             """
 
-    # ---- SORTS DE LA FACTION (en deux colonnes) ----
+    # ---- SORTS DE LA FACTION (en une seule colonne) ----
     if sorted_army_list and hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
         spells = st.session_state.faction_spells
         all_spells = [{"name": name, "details": details} for name, details in spells.items() if isinstance(details, dict)]
 
         if all_spells:
             html += """
-            <div style="margin-top: 40px;">
+            <div style="margin-top: 20px;">
                 <h3 style="text-align: center; color: var(--accent); border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 15px;">
                     Légende des sorts de la faction
                 </h3>
                 <div style="display: flex; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 300px; padding-right: 15px;">
+                    <div style="flex: 1; min-width: 100%;">
             """
 
-            # Diviser les sorts en deux colonnes de longueur égale
-            half = len(all_spells) // 2
-            if len(all_spells) % 2 != 0:
-                half += 1  # Ajouter un sort à la première colonne si le nombre est impair
-
-            # Première colonne
-            for spell in all_spells[:half]:
+            # Une seule colonne pour les sorts
+            for spell in all_spells:
                 if isinstance(spell, dict):
                     html += f"""
                     <div style="margin-bottom: 12px; font-size: 12px;">
-                        <div style="font-weight: bold; color: var(--accent);">{esc(spell.get('name', ''))}</div>
-                        <div style="color: var(--text-muted);">Coût: {spell.get('details', {}).get('cost', '?')} pts, Portée: {spell.get('details', {}).get('range', '?')}</div>
-                        <div style="color: var(--text-main);">{esc(spell.get('details', {}).get('description', ''))}</div>
-                    </div>
-                    """
-
-            html += """
-                    </div>
-                    <div style="flex: 1; min-width: 300px; padding-left: 15px;">
-            """
-
-            # Deuxième colonne
-            for spell in all_spells[half:]:
-                if isinstance(spell, dict):
-                    html += f"""
-                    <div style="margin-bottom: 12px; font-size: 12px;">
-                        <div style="font-weight: bold; color: var(--accent);">{esc(spell.get('name', ''))}</div>
-                        <div style="color: var(--text-muted);">Coût: {spell.get('details', {}).get('cost', '?')} pts, Portée: {spell.get('details', {}).get('range', '?')}</div>
-                        <div style="color: var(--text-main);">{esc(spell.get('details', {}).get('description', ''))}</div>
+                        <div style="font-weight: bold; color: var(--accent);">{esc(spell.get('name', ''))} ({spell.get('details', {}).get('cost', '?')} pts)</div>
+                        <div style="color: var(--text-main); margin-left: 10px;">{esc(spell.get('details', {}).get('description', ''))}</div>
                     </div>
                     """
 
@@ -793,7 +771,7 @@ if st.session_state.page == "setup":
         can_build = all([game, faction, points > 0, list_name.strip() != ""])
 
         if st.button(
-            "🔥 Construire l’armée",
+            "🔥 Construire l'armée",
             use_container_width=True,
             type="primary",
             disabled=not can_build
@@ -880,7 +858,7 @@ elif st.session_state.page == "army":
     points = st.session_state.points
     game_cfg = GAME_CONFIG.get(st.session_state.game, {})
 
-    st.subheader("📊 Progression de l’armée")
+    st.subheader("📊 Progression de l'armée")
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -921,8 +899,7 @@ elif st.session_state.page == "army":
             for spell_name, spell_details in st.session_state.faction_spells.items():
                 if isinstance(spell_details, dict):
                     st.markdown(
-                        f"**{spell_name}** (Coût: {spell_details.get('cost', '?')} pts, Portée: {spell_details.get('range', '?')})"
-                        f"<div style='font-size: 14px; margin-left: 10px; color: #ccc;'>{spell_details.get('description', '')}</div>",
+                        f"**{spell_name}** ({spell_details.get('cost', '?')} pts) {spell_details.get('description', '')}",
                         unsafe_allow_html=True
                     )
 
@@ -977,7 +954,7 @@ elif st.session_state.page == "army":
 
             current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
             choice = st.radio(
-                "Sélection de l’arme",
+                "Sélection de l'arme",
                 choices,
                 index=choices.index(current) if current in choices else 0,
                 key=f"{unit_key}_{g_key}_weapon",
@@ -1059,7 +1036,7 @@ elif st.session_state.page == "army":
     st.markdown(f"**Coût total :** {final_cost} pts")
     st.divider()
 
-    if st.button("➕ Ajouter à l’armée"):
+    if st.button("➕ Ajouter à l'armée"):
         if st.session_state.army_cost + final_cost > st.session_state.points:
             st.error(f"⛔ Dépassement du format : {st.session_state.army_cost + final_cost} / {st.session_state.points} pts")
             st.stop()
