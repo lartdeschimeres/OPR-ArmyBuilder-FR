@@ -899,7 +899,7 @@ elif st.session_state.page == "army":
             for spell_name, spell_details in st.session_state.faction_spells.items():
                 if isinstance(spell_details, dict):
                     st.markdown(
-                        f"**{spell_name}** ({spell_details.get('cost', '?')}) ( : ) {spell_details.get('description', '')}",
+                        f"**{spell_name}** ({spell_details.get('cost', '?')}) : {spell_details.get('description', '')}",
                         unsafe_allow_html=True
                     )
 
