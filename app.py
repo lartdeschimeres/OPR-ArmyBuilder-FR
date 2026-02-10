@@ -454,14 +454,8 @@ th {{
   color: var(--accent);
 }}
 
-.spell-details {{
-  color: var(--text-muted);
-  font-size: 11px;
-}}
-
 .spell-description {{
   color: var(--text-main);
-  margin-left: 10px;
 }}
 </style>
 </head>
@@ -674,8 +668,8 @@ th {{
                 if isinstance(spell, dict):
                     html += f"""
                     <div class="spell-item">
-                        <span class="spell-name">{esc(spell.get('name', ''))}</span>:
-                        <span class="spell-description">{esc(spell.get('details', {}).get('description', ''))}</span>
+                        <span class="spell-name">{esc(spell.get('name', ''))} ({spell.get('details', {}).get('cost', '?')}):</span>
+                        <span class="spell-description"> {esc(spell.get('details', {}).get('description', ''))}</span>
                     </div>
                     """
 
