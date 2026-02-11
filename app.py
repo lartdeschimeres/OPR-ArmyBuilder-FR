@@ -1275,7 +1275,7 @@ if st.session_state.page == "setup":
             st.rerun()
 
 # ======================================================
-# PAGE 2 – CONSTRUCTEUR D'ARMÉE
+# PAGE 2 – CONSTRUCTEUR D'ARMÉE - AVEC BOUTON D'IMPORT
 # ======================================================
 elif st.session_state.page == "army":
     # Vérification renforcée des données requises
@@ -1307,9 +1307,10 @@ elif st.session_state.page == "army":
         st.rerun()
 
     st.divider()
-    st.subheader("📤 Export de la liste")
+    st.subheader("📤 Export/Import de la liste")
 
-    colE1, colE2 = st.columns(2)
+    # NOUVEAU : Section pour les boutons d'export/import
+    colE1, colE2, colE3 = st.columns(3)
 
     with colE1:
         json_data = json.dumps(export_army_json(), indent=2, ensure_ascii=False)
@@ -1330,6 +1331,43 @@ elif st.session_state.page == "army":
             mime="text/html",
             use_container_width=True
         )
+
+    with colE3:
+        # NOUVEAU : Bouton pour importer une liste d'armée
+        uploaded_file = st.file_uploader(
+            "📥 Importer une liste d'armée",
+            type=["json"],
+            label_visibility="collapsed",
+            accept_multiple_files=False
+        )
+
+        if uploaded_file is not None:
+            try:
+                # Lire le fichier JSON
+                imported_data = json.loads(uploaded_file.getvalue().decode("utf-8"))
+
+                # Vérifier que les données sont valides
+                if all(key in imported_data for key in ["game", "faction", "points", "list_name", "army_list"]):
+                    # Vérifier que le jeu et la faction correspondent
+                    if (imported_data["game"] == st.session_state.game and
+                        imported_data["faction"] == st.session_state.faction):
+
+                        # Mettre à jour les données
+                        st.session_state.list_name = imported_data["list_name"]
+                        st.session_state.points = imported_data["points"]
+                        st.session_state.army_list = imported_data["army_list"]
+
+                        # Recalculer le coût total
+                        st.session_state.army_cost = sum(unit["cost"] for unit in imported_data["army_list"])
+
+                        st.success("Liste d'armée importée avec succès!")
+                        st.rerun()
+                    else:
+                        st.error("Le jeu ou la faction de la liste importée ne correspond pas à la configuration actuelle.")
+                else:
+                    st.error("Fichier JSON invalide. Veuillez importer un fichier de liste d'armée valide.")
+            except Exception as e:
+                st.error(f"Erreur lors de l'import: {str(e)}")
 
     st.subheader("📊 Points de l'Armée")
     points_used = st.session_state.army_cost
