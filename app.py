@@ -428,7 +428,6 @@ def export_html(army_list, army_name, army_limit):
         if not rules:
             return []
 
-        # Convertir toutes les règles en chaînes pour comparaison
         rule_strings = []
         unique_rules = []
 
@@ -443,6 +442,24 @@ def export_html(army_list, army_name, army_limit):
                 unique_rules.append(rule)
 
         return unique_rules
+
+    # Fonction pour obtenir les armes de base d'une unité
+    def get_base_weapons(unit):
+        if "weapon" in unit:
+            return unit["weapon"]
+        return []
+
+    # Fonction pour obtenir les armes de monture
+    def get_mount_weapons(unit):
+        if "mount" in unit and unit["mount"]:
+            mount_data = unit["mount"].get("mount", {})
+            if "weapons" in mount_data:
+                return mount_data["weapons"]
+        return []
+
+    # Fonction pour vérifier si une unité est combinée
+    def is_combined_unit(unit):
+        return unit.get("size", 10) > 10  # Logique simplifiée pour l'exemple
 
     # Trier la liste pour afficher les héros en premier
     sorted_army_list = sorted(army_list, key=lambda x: 0 if x.get("type") == "hero" else 1)
@@ -466,6 +483,8 @@ def export_html(army_list, army_name, army_limit):
   --border: #4b4d46;
   --cost-color: #fbbf24;
   --tough-color: #f87171;
+  --hero-color: #fbbf24;
+  --combined-color: #10b981;
 }}
 
 body {{
@@ -502,6 +521,7 @@ body {{
   padding: 16px;
   page-break-inside: avoid;
   border-radius: 8px;
+  position: relative;
 }}
 
 .unit-header {{
@@ -509,6 +529,12 @@ body {{
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 12px;
+}}
+
+.unit-name-container {{
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }}
 
 .unit-name {{
@@ -531,6 +557,9 @@ body {{
   font-size: 12px;
   color: var(--text-muted);
   margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }}
 
 .unit-cost {{
@@ -542,7 +571,7 @@ body {{
 
 .stats-grid {{
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   background: var(--bg-header);
   padding: 12px;
@@ -735,6 +764,23 @@ body {{
   font-family: 'JetBrains Mono', monospace;
 }}
 
+.combined-badge {{
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--combined-color);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}}
+
+.hero-badge {{
+  color: var(--hero-color);
+}}
+
 @media print {{
   body {{
     background: white;
@@ -782,36 +828,43 @@ body {{
         # Calcul de la valeur de Coriace
         tough_value = calculate_total_tough(unit)
 
-        # Récupération des armes de base depuis le JSON original
-        base_weapons = []
-        if "weapon" in unit:
-            base_weapons = unit["weapon"]
+        # Vérifier si l'unité est combinée (Memory #2)
+        is_combined = unit.get("size", 10) > 10  # Logique simplifiée
+
+        # Récupération des armes de base
+        base_weapons = get_base_weapons(unit)
+        mount_weapons = get_mount_weapons(unit)
 
         html += f'''
 <section class="unit-card">
+  {"<div class='combined-badge'>COMBINÉE</div>" if is_combined else ""}
   <div class="unit-header">
-    <div>
+    <div class="unit-name-container">
       <h2 class="unit-name">{name} <span class="unit-size">[{unit_size}]</span></h2>
-      <div class="unit-type">{'⭐ Héros' if unit_type == 'hero' else '🛡️ Unité'}</div>
+      <div class="unit-type">
+        {"⭐" if unit_type == 'hero' else "🛡️"}
+        {unit_type}
+      </div>
     </div>
     <div class="unit-cost">{cost} pts</div>
   </div>
 '''
 
-        # Section des statistiques
+        # Section des statistiques - Coriace après Qualité et Défense (Memory #1)
         html += '''
   <div class="stats-grid">
-'''
-
-        # Qualité
-        html += f'''
     <div class="stat-item">
       <div class="stat-label">Qualité</div>
       <div class="stat-value">{quality}+</div>
     </div>
+
+    <div class="stat-item">
+      <div class="stat-label">Défense</div>
+      <div class="stat-value">{defense}+</div>
+    </div>
 '''
 
-        # Coriace (seulement si présente)
+        # Coriace après Qualité et Défense (Memory #1)
         if tough_value > 0:
             html += f'''
     <div class="stat-item">
@@ -820,36 +873,16 @@ body {{
     </div>
 '''
 
-        # Défense
-        html += f'''
-    <div class="stat-item">
-      <div class="stat-label">Défense</div>
-      <div class="stat-value">{defense}+</div>
-    </div>
-'''
-
-        # Coût de base (approximation)
-        base_cost = cost
-        if "mount" in unit and unit["mount"]:
-            mount_data = unit["mount"].get("mount", {})
-            base_cost -= mount_data.get("cost", 0)
-
         html += f'''
     <div class="stat-item">
       <div class="stat-label">Coût Base</div>
-      <div class="stat-value">{max(0, base_cost)} pts</div>
+      <div class="stat-value">{max(0, cost - (mount_weapons != [] and 50 or 0))} pts</div>
     </div>
-'''
 
-        # Taille
-        html += f'''
     <div class="stat-item">
       <div class="stat-label">Taille</div>
       <div class="stat-value">{unit_size}</div>
     </div>
-'''
-
-        html += '''
   </div>
 '''
 
@@ -1009,7 +1042,7 @@ body {{
 '''
 
             # Armes de la monture
-            if 'weapons' in mount_data and mount_data['weapons']:
+            if mount_weapons:
                 html += '''
     <div style="margin-top: 8px;">
       <strong>Armes:</strong>
@@ -1017,7 +1050,7 @@ body {{
         <thead>
           <tr>
             <th>Arme</th>
-            <th>Port</th>
+            <th>Portée</th>
             <th>Att</th>
             <th>PA</th>
             <th>Règles</th>
@@ -1025,7 +1058,7 @@ body {{
         </thead>
         <tbody>
 '''
-                for weapon in mount_data['weapons']:
+                for weapon in mount_weapons:
                     if weapon:
                         html += f'''
           <tr>
@@ -1093,7 +1126,7 @@ body {{
     </div>
 '''
 
-    # ---- SORTS DE LA FACTION - MODIFIÉ POUR UNE SEULE COLONNE ET COÛT SANS "PTS" ----
+    # ---- SORTS DE LA FACTION ----
     if sorted_army_list and hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
         spells = st.session_state.faction_spells
         all_spells = [{"name": name, "details": details} for name, details in spells.items() if isinstance(details, dict)]
