@@ -245,6 +245,7 @@
               "cost": 80,
               "mount": {
                 "name": "Monture démoniaque",
+                "coriace_bonus": 3,
                 "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Effrayant (1)", "Impact (2)", "Rapide"]
               }
             },
@@ -253,6 +254,7 @@
               "cost": 125,
               "mount": {
                 "name": "Char",
+                "coriace_bonus": 6,
                 "special_rules": ["Sabots (A2)", "Coriace (6)", "Impact (4)", "Rapide"]
               }
             },
@@ -261,6 +263,7 @@
               "cost": 140,
               "mount": {
                 "name": "Char bestial",
+                "coriace_bonus": 6,
                 "special_rules": ["Griffes lourdes (A2, PA(1))", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]
               }
             },
@@ -269,6 +272,7 @@
               "cost": 165,
               "mount": {
                 "name": "Manticore",
+                "coriace_bonus": 6,
                 "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (6)", "Effrayant (1)", "Volant"]
               }
             },
@@ -277,6 +281,7 @@
               "cost": 325,
               "mount": {
                 "name": "Dragon du Ravage",
+                "coriace_bonus": 12,
                 "special_rules": ["Griffes lourdes (A6, PA(1))", "Piétinement (A4, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]
               }
             }
@@ -291,6 +296,7 @@
       "base_cost": 55,
       "quality": 3,
       "defense": 3,
+      "coriace": 3,
       "special_rules": ["Coriace (3)", "Héros", "Guerrier-né"],
       "weapon": [
         {
@@ -382,6 +388,7 @@
               "cost": 65,
               "mount": {
                 "name": "Grande bête",
+                "coriace_bonus": 3,
                 "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Impact (2)", "Rapide"]
               }
             },
@@ -390,6 +397,7 @@
               "cost": 75,
               "mount": {
                 "name": "Monture démoniaque",
+                "coriace_bonus": 3,
                 "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Effrayant (1)", "Impact (2)", "Rapide"]
               }
             },
@@ -398,6 +406,7 @@
               "cost": 115,
               "mount": {
                 "name": "Char",
+                "coriace_bonus": 6,
                 "special_rules": ["Sabots (A2)", "Coriace (6)", "Impact (4)", "Rapide"]
               }
             },
@@ -406,6 +415,7 @@
               "cost": 130,
               "mount": {
                 "name": "Char bestial",
+                "coriace_bonus": 6,
                 "special_rules": ["Griffes lourdes (A2, PA(1))", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]
               }
             },
@@ -414,6 +424,7 @@
               "cost": 145,
               "mount": {
                 "name": "Manticore",
+                "coriace_bonus": 6,
                 "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (6)", "Effrayant (1)", "Volant"]
               }
             },
@@ -422,6 +433,7 @@
               "cost": 295,
               "mount": {
                 "name": "Dragon du Ravage",
+                "coriace_bonus": 12,
                 "special_rules": ["Griffes lourdes (A6, PA(1))", "Piétinement (A4, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]
               }
             }
@@ -436,6 +448,7 @@
       "base_cost": 30,
       "quality": 5,
       "defense": 5,
+      "coriace": 3,
       "special_rules": ["Coriace (3)", "Éclaireur", "Furieux", "Guerrier-né", "Héros"],
       "weapon": [
         {
@@ -882,6 +895,7 @@
       "base_cost": 90,
       "quality": 3,
       "defense": 4,
+      "coriace": 3,
       "special_rules": ["Assaut tranchant", "Combattant sanguinaire", "Guerrier-né"],
       "weapon": [
         {
@@ -958,6 +972,7 @@
       "base_cost": 170,
       "quality": 3,
       "defense": 4,
+      "coriace": 3,
       "special_rules": ["Coriace (3)", "Guerrier-né", "Impact (2)"],
       "weapon": [
         {
@@ -975,6 +990,7 @@
       "base_cost": 200,
       "quality": 3,
       "defense": 4,
+      "coriace": 3,
       "special_rules": ["Assaut tranchant", "Coriace (3)", "Guerrier-né"],
       "weapon": [
         {
@@ -1194,6 +1210,311 @@
               "name": "Icône du Ravage (Aura de Défense versatile)",
               "cost": 20,
               "special_rules": ["Aura de Défense versatile"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chevaliers du Ravage de la Guerre",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 125,
+      "quality": 3,
+      "defense": 3,
+      "coriace": 3,
+      "special_rules": ["Coriace (3)", "Guerrier-né", "Impact (1)", "Rapide"],
+      "weapon": [
+        {
+          "name": "Armes à une main lourdes",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 1,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes à une main lourdes par :",
+          "options": [
+            {
+              "name": "Lance lourde",
+              "cost": 25,
+              "weapon": {
+                "name": "Lance lourde",
+                "range": "-",
+                "attacks": 1,
+                "armor_piercing": 1,
+                "special_rules": ["Percée"]
+              }
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Icône du Ravage (Aura de Défense versatile)",
+              "cost": 20,
+              "special_rules": ["Aura de Défense versatile"]
+            },
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chevaliers sur Bêtes de Guerre",
+      "type": "unit",
+      "size": 3,
+      "base_cost": 190,
+      "quality": 3,
+      "defense": 3,
+      "coriace": 3,
+      "special_rules": ["Coriace (3)", "Guerrier-né", "Impact (2)", "Rapide"],
+      "weapon": [
+        {
+          "name": "Griffes lourdes",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 1,
+          "special_rules": []
+        },
+        {
+          "name": "Armes à une main lourdes",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 1,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les armes à une main lourdes par :",
+          "options": [
+            {
+              "name": "Lance lourde",
+              "cost": 25,
+              "weapon": {
+                "name": "Lance lourde",
+                "range": "-",
+                "attacks": 1,
+                "armor_piercing": 1,
+                "special_rules": ["Percée"]
+              }
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bête furieuse de la Guerre",
+      "type": "unit",
+      "size": 1,
+      "base_cost": 135,
+      "quality": 3,
+      "defense": 4,
+      "coriace": 6,
+      "special_rules": ["Coriace (6)", "Effrayant (1)", "Furieux", "Guerrier-né"],
+      "weapon": [
+        {
+          "name": "Griffes perforantes",
+          "range": "-",
+          "attacks": 6,
+          "armor_piercing": 1,
+          "special_rules": ["Perforant"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Maître des Bêtes",
+              "cost": 30,
+              "special_rules": ["Régénération", "Sans peur"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Char du Ravage de la Guerre",
+      "type": "unit",
+      "size": 1,
+      "base_cost": 130,
+      "quality": 3,
+      "defense": 3,
+      "coriace": 6,
+      "special_rules": ["Coriace (6)", "Guerrier-né", "Impact (4)", "Rapide"],
+      "weapon": [
+        {
+          "name": "Attaques lourdes de l'équipage",
+          "range": "-",
+          "attacks": 2,
+          "armor_piercing": 2,
+          "special_rules": []
+        },
+        {
+          "name": "Sabots",
+          "range": "-",
+          "attacks": 2,
+          "armor_piercing": "-",
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Remplacement d'armes",
+          "type": "weapon",
+          "description": "Remplacez toutes les attaques lourdes de l'équipage :",
+          "options": [
+            {
+              "name": "Javelots barbelés",
+              "cost": 50,
+              "weapon": {
+                "name": "Javelots barbelés",
+                "range": "12",
+                "attacks": 6,
+                "armor_piercing": 1,
+                "special_rules": ["Éclatement"]
+              }
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Faveur du Ravage",
+              "cost": 15,
+              "special_rules": ["Bonus d'Inébranlable"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Char Bestial de la Guerre",
+      "type": "unit",
+      "size": 1,
+      "base_cost": 145,
+      "quality": 3,
+      "defense": 3,
+      "coriace": 6,
+      "special_rules": ["Coriace (6)", "Effrayant (1)", "Guerrier-né", "Impact (4)", "Rapide"],
+      "weapon": [
+        {
+          "name": "Griffes lourdes",
+          "range": "-",
+          "attacks": 2,
+          "armor_piercing": 1,
+          "special_rules": []
+        },
+        {
+          "name": "Attaques lourdes de l'équipage",
+          "range": "-",
+          "attacks": 2,
+          "armor_piercing": 2,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Faveur du Ravage",
+              "cost": 15,
+              "special_rules": ["Bonus d'Inébranlable"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sanctuaire du Ravage de la Guerre",
+      "type": "unit",
+      "size": 1,
+      "base_cost": 225,
+      "quality": 3,
+      "defense": 3,
+      "coriace": 12,
+      "special_rules": ["Coriace (12)", "Effrayant (2)", "Guerrier-né"],
+      "weapon": [
+        {
+          "name": "Poings géants",
+          "range": "-",
+          "attacks": 8,
+          "armor_piercing": 2,
+          "special_rules": []
+        },
+        {
+          "name": "Piétinement",
+          "range": "-",
+          "attacks": 4,
+          "armor_piercing": 1,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Aura de bataille",
+              "cost": 15,
+              "special_rules": ["Bonus de Combattant précis"]
             }
           ]
         }
