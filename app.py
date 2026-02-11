@@ -423,6 +423,27 @@ def export_html(army_list, army_name, army_limit):
 
         return tough
 
+    # Fonction pour nettoyer les règles spéciales en double
+    def clean_special_rules(rules):
+        if not rules:
+            return []
+
+        # Convertir toutes les règles en chaînes pour comparaison
+        rule_strings = []
+        unique_rules = []
+
+        for rule in rules:
+            if isinstance(rule, dict):
+                rule_str = f"{rule.get('name', '')}: {rule.get('description', '')}"
+            else:
+                rule_str = str(rule)
+
+            if rule_str not in rule_strings:
+                rule_strings.append(rule_str)
+                unique_rules.append(rule)
+
+        return unique_rules
+
     # Trier la liste pour afficher les héros en premier
     sorted_army_list = sorted(army_list, key=lambda x: 0 if x.get("type") == "hero" else 1)
 
@@ -500,13 +521,6 @@ body {{
   margin: 0;
 }}
 
-.unit-cost {{
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 18px;
-  font-weight: bold;
-  color: var(--cost-color);
-}}
-
 .unit-size {{
   font-size: 12px;
   color: var(--text-muted);
@@ -517,6 +531,13 @@ body {{
   font-size: 12px;
   color: var(--text-muted);
   margin-top: 4px;
+}}
+
+.unit-cost {{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--cost-color);
 }}
 
 .stats-grid {{
@@ -559,6 +580,10 @@ body {{
   font-size: 14px;
   border-bottom: 1px solid var(--border);
   padding-bottom: 3px;
+}}
+
+.weapon-section {{
+  margin-bottom: 15px;
 }}
 
 .weapon-table {{
@@ -757,6 +782,11 @@ body {{
         # Calcul de la valeur de Coriace
         tough_value = calculate_total_tough(unit)
 
+        # Récupération des armes de base depuis le JSON original
+        base_weapons = []
+        if "weapon" in unit:
+            base_weapons = unit["weapon"]
+
         html += f'''
 <section class="unit-card">
   <div class="unit-header">
@@ -824,11 +854,7 @@ body {{
 '''
 
         # ---- ARMES DE BASE - TOUJOURS AFFICHÉES ----
-        weapons = unit.get("weapon", [])
-        if not isinstance(weapons, list):
-            weapons = [weapons]
-
-        if weapons:
+        if base_weapons:
             html += '''
   <div class="section-title">Armes de base :</div>
   <table class="weapon-table">
@@ -844,7 +870,7 @@ body {{
     <tbody>
 '''
 
-            for weapon in weapons:
+            for weapon in base_weapons:
                 if weapon:
                     html += f'''
       <tr class="weapon-row">
@@ -899,8 +925,9 @@ body {{
         # ---- RÈGLES SPÉCIALES ----
         rules = unit.get("special_rules", [])
         if rules:
-            # Filtrer les règles de Coriace si elles sont affichées séparément
-            filtered_rules = [r for r in rules if not (isinstance(r, str) and "Coriace" in r)]
+            # Nettoyer les règles en double et filtrer les règles de Coriace si affichées séparément
+            filtered_rules = clean_special_rules(rules)
+            filtered_rules = [r for r in filtered_rules if not (isinstance(r, str) and "Coriace" in r)]
 
             if filtered_rules:
                 html += '''
@@ -967,7 +994,7 @@ body {{
     </div>
 '''
 
-            # Règles spéciales de la monture
+            # Règles spéciales de la monture (sans les armes)
             if 'special_rules' in mount_data and mount_data['special_rules']:
                 mount_rules = [r for r in mount_data['special_rules'] if not r.startswith("Griffes") and not r.startswith("Sabots")]
                 if mount_rules:
@@ -1066,7 +1093,7 @@ body {{
     </div>
 '''
 
-    # ---- SORTS DE LA FACTION ----
+    # ---- SORTS DE LA FACTION - MODIFIÉ POUR UNE SEULE COLONNE ET COÛT SANS "PTS" ----
     if sorted_army_list and hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
         spells = st.session_state.faction_spells
         all_spells = [{"name": name, "details": details} for name, details in spells.items() if isinstance(details, dict)]
@@ -1078,17 +1105,21 @@ body {{
         Légende des sorts de la faction
       </h3>
       <div style="display: flex; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 100%;">
 '''
-
             for spell in all_spells:
                 if isinstance(spell, dict):
                     html += f'''
-        <div style="flex: 1; min-width: 300px; margin-bottom: 12px; font-size: 12px; line-height: 1.4;">
-          <span class="spell-name">{esc(spell.get('name', ''))}</span>
-          <span class="spell-cost"> ({spell.get('details', {}).get('cost', '?')} pts)</span>: {esc(spell.get('details', {}).get('description', ''))}
-        </div>
+            <div class="spell-item" style="margin-bottom: 12px;">
+              <div>
+                <span class="spell-name">{esc(spell.get('name', ''))}</span>
+                <span class="spell-cost"> ({spell.get('details', {}).get('cost', '?')})</span>
+              </div>
+              <div class="rule-description">{esc(spell.get('details', {}).get('description', ''))}</div>
+            </div>
 '''
             html += '''
+        </div>
       </div>
     </div>
 '''
