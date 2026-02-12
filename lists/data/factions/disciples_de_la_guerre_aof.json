@@ -236,7 +236,7 @@
               "cost": 70,
               "mount": {
                 "name": "Grande bête",
-                "coriace_bonus": 0,
+                "coriace_bonus": 3,
                 "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Impact (2)", "Rapide"]
               }
             },
@@ -245,7 +245,7 @@
               "cost": 80,
               "mount": {
                 "name": "Monture démoniaque",
-                "coriace_bonus": 0,
+                "coriace_bonus": 3,
                 "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Effrayant (1)", "Impact (2)", "Rapide"]
               }
             },
@@ -263,7 +263,7 @@
               "cost": 140,
               "mount": {
                 "name": "Char bestial",
-                "coriace_bonus": 0,
+                "coriace_bonus": 6,
                 "special_rules": ["Griffes lourdes (A2, PA(1))", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]
               }
             },
@@ -272,7 +272,7 @@
               "cost": 165,
               "mount": {
                 "name": "Manticore",
-                "coriace_bonus": 0,
+                "coriace_bonus": 6,
                 "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (6)", "Effrayant (1)", "Volant"]
               }
             },
@@ -281,7 +281,7 @@
               "cost": 325,
               "mount": {
                 "name": "Dragon du Ravage",
-                "coriace_bonus": 0,
+                "coriace_bonus": 12,
                 "special_rules": ["Griffes lourdes (A6, PA(1))", "Piétinement (A4, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]
               }
             }
@@ -388,7 +388,7 @@
               "cost": 65,
               "mount": {
                 "name": "Grande bête",
-                "coriace_bonus": 0,
+                "coriace_bonus": 3,
                 "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Impact (2)", "Rapide"]
               }
             },
@@ -397,7 +397,7 @@
               "cost": 75,
               "mount": {
                 "name": "Monture démoniaque",
-                "coriace_bonus": 0,
+                "coriace_bonus": 3,
                 "special_rules": ["Griffes lourdes (A1, PA(1))", "Coriace (3)", "Effrayant (1)", "Impact (2)", "Rapide"]
               }
             },
@@ -406,7 +406,7 @@
               "cost": 115,
               "mount": {
                 "name": "Char",
-                "coriace_bonus": 0,
+                "coriace_bonus": 6,
                 "special_rules": ["Sabots (A2)", "Coriace (6)", "Impact (4)", "Rapide"]
               }
             },
@@ -415,7 +415,7 @@
               "cost": 130,
               "mount": {
                 "name": "Char bestial",
-                "coriace_bonus": 0,
+                "coriace_bonus": 6,
                 "special_rules": ["Griffes lourdes (A2, PA(1))", "Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]
               }
             },
@@ -424,7 +424,7 @@
               "cost": 145,
               "mount": {
                 "name": "Manticore",
-                "coriace_bonus": 0,
+                "coriace_bonus": 6,
                 "special_rules": ["Griffes perforantes (A6, Perforant)", "Coriace (6)", "Effrayant (1)", "Volant"]
               }
             },
@@ -433,7 +433,7 @@
               "cost": 295,
               "mount": {
                 "name": "Dragon du Ravage",
-                "coriace_bonus": 0,
+                "coriace_bonus": 12,
                 "special_rules": ["Griffes lourdes (A6, PA(1))", "Piétinement (A4, PA(1))", "Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]
               }
             }
