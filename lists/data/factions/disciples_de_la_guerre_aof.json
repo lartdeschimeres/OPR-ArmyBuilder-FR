@@ -454,6 +454,7 @@
                     "armor_piercing": 1,
                     "special rules":  []
                     }
+                ],
                 "special_rules": ["Coriace (3)", "Impact (2)", "Rapide"]
               }
             },
@@ -471,6 +472,7 @@
                     "armor_piercing": 1,
                     "special rules":  []
                     }
+                ],
                 "special_rules": ["Coriace (3)", "Effrayant (1)", "Impact (2)", "Rapide"]
               }
             },
@@ -488,6 +490,7 @@
                     "armor_piercing": 0,
                     "special rules":  []
                     }
+                  ],
                 "special_rules": ["Sabots (A2)", "Coriace (6)", "Impact (4)", "Rapide"]
               }
             },
@@ -505,6 +508,7 @@
                     "armor_piercing": 1,
                     "special rules":  []
                     }
+                  ],
                 "special_rules": ["Coriace (6)", "Effrayant (1)", "Impact (4)", "Rapide"]
               }
             },
@@ -522,6 +526,7 @@
                     "armor_piercing": 0,
                     "special rules":  ["Perforant"]
                     }
+                  ],
                 "special_rules": ["Coriace (6)", "Effrayant (1)", "Volant"]
               }
             },
@@ -546,6 +551,7 @@
                     "armor_piercing": 1,
                     "special rules":  []
                     }
+                  ],
                 "special_rules": ["Attaque de souffle", "Coriace (12)", "Effrayant (2)", "Volant"]
               }
             }
