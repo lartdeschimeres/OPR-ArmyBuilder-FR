@@ -311,7 +311,7 @@
                     "range": "Mêlée",
                     "attacks": 6,
                     "armor_piercing": 0,
-                    "special rules":  [Perforant]
+                    "special rules":  ["Perforant"]
                     }
                 ],
                 "special_rules": ["Coriace (6)", "Effrayant (1)", "Volant"]
@@ -520,7 +520,7 @@
                     "range": "Mêlée",
                     "attacks": 6,
                     "armor_piercing": 0,
-                    "special rules":  [Perforant]
+                    "special rules":  ["Perforant"]
                     }
                 "special_rules": ["Coriace (6)", "Effrayant (1)", "Volant"]
               }
