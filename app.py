@@ -395,10 +395,31 @@ def export_html(army_list, army_name, army_limit):
         return str(txt).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
     def calculate_total_tough(unit):
-        """Retourne la Coriace déjà calculée lors de l'ajout à l'armée"""
-        return unit.get("coriace", 0)
+        """Calcule la valeur totale de Coriace"""
+        tough = 0
+
+        # 1. Valeur de base de l'unité
+        if "coriace" in unit:
+            tough = unit["coriace"]
+
+        # 2. Extraction des valeurs Coriace depuis les règles spéciales
+        if "special_rules" in unit:
+            for rule in unit["special_rules"]:
+                if isinstance(rule, str) and "Coriace" in rule:
+                    match = re.search(r'Coriace\s*\((\d+)\)', rule)
+                    if match:
+                        tough = max(tough, int(match.group(1)))
+
+        # 3. Bonus de la monture
+        if "mount" in unit and unit["mount"]:
+            mount_data = unit["mount"].get("mount", {})
+            if "coriace_bonus" in mount_data:
+                tough += mount_data["coriace_bonus"]
+
+        return tough
 
     def format_weapon(weapon):
+        """Formate une arme pour l'affichage"""
         if not weapon:
             return "Arme non spécifiée"
 
@@ -419,6 +440,36 @@ def export_html(army_list, army_name, army_limit):
             result += f" | {special}"
 
         return result
+
+    def get_special_rules(unit):
+        """Extraire et formater les règles spéciales"""
+        rules = []
+
+        # Règles spéciales de base
+        if "special_rules" in unit:
+            for rule in unit["special_rules"]:
+                if isinstance(rule, dict):
+                    rules.append(f'{rule.get("name", "")}')
+                elif isinstance(rule, str) and "Coriace" not in rule:  # Exclure Coriace
+                    rules.append(rule)
+
+        # Règles spéciales des améliorations
+        if "options" in unit:
+            for group_name, opts in unit["options"].items():
+                if isinstance(opts, list):
+                    for opt in opts:
+                        if "special_rules" in opt:
+                            rules.extend(opt["special_rules"])
+
+        # Règles spéciales de la monture
+        if "mount" in unit and unit["mount"]:
+            mount_data = unit["mount"].get("mount", {})
+            if "special_rules" in mount_data:
+                for rule in mount_data["special_rules"]:
+                    if not rule.startswith(("Griffes", "Sabots")):  # Exclure les armes
+                        rules.append(rule)
+
+        return list(set(rules))  # Supprimer les doublons
 
     # Trier la liste pour afficher les héros en premier
     sorted_army_list = sorted(army_list, key=lambda x: 0 if x.get("type") == "hero" else 1)
@@ -529,6 +580,7 @@ body {{
   padding: 12px;
   border-radius: 6px;
   text-align: center;
+  font-size: 12px;
   margin: 12px 0;
 }}
 
@@ -772,6 +824,9 @@ body {{
         options = unit.get("options", {})
         mount = unit.get("mount", None)
 
+        # Récupération des règles spéciales
+        special_rules = get_special_rules(unit)
+
         html += f'''
 <div class="unit-card">
   <div class="unit-header">
@@ -799,7 +854,7 @@ body {{
     </div>
 '''
 
-        # Affichage de la Coriace (Memory #4)
+        # Affichage de la Coriace
         if tough_value > 0:
             html += f'''
     <div class="stat-item">
@@ -820,7 +875,7 @@ body {{
   </div>
 '''
 
-        # Armes de base (Memory #5)
+        # Armes de base
         if base_weapons:
             html += '''
   <div class="section-title">Armes:</div>
@@ -857,21 +912,15 @@ body {{
 '''
 
         # Règles spéciales
-        rules = unit.get("special_rules", [])
-        if rules:
-            filtered_rules = [r for r in rules if not (isinstance(r, str) and "Coriace" in r)]
-            if filtered_rules:
-                html += '''
+        if special_rules:
+            html += '''
   <div class="rules-section">
     <div class="rules-title">Règles spéciales:</div>
     <div class="rules-list">
 '''
-                for rule in filtered_rules:
-                    if isinstance(rule, dict):
-                        html += f'<span class="rule-tag">{esc(rule.get("name", ""))}</span>'
-                    else:
-                        html += f'<span class="rule-tag">{esc(rule)}</span>'
-                html += '''
+            for rule in special_rules:
+                html += f'<span class="rule-tag">{esc(rule)}</span>'
+            html += '''
     </div>
   </div>
 '''
@@ -902,7 +951,7 @@ body {{
         if mount:
             mount_data = mount.get("mount", {})
             mount_name = esc(mount.get("name", "Monture"))
-            mount_weapons = mount_data.get("weapon", [])
+            mount_weapons = mount_data.get("weapons", [])
 
             html += f'''
   <div class="mount-section">
@@ -931,35 +980,19 @@ body {{
             # Armes de la monture
             if mount_weapons:
                 html += '''
-                <div style="margin-top: 8px;">
-                  <div style="font-weight: 600; margin-bottom: 4px; color: var(--text-main);">Armes:</div>
-                  <div class="weapon-list">
-            '''
+    <div style="margin-top: 8px;">
+      <div style="font-weight: 600; margin-bottom: 4px; color: var(--text-main);">Armes:</div>
+      <div class="weapon-list">
+'''
                 for weapon in mount_weapons:
                     if weapon:
                         html += f'''
-                    <div class="weapon-item">
-                      <div class="weapon-name">{esc(weapon.get('name', 'Arme'))}</div>
-                      <div class="weapon-stats">{format_weapon(weapon)}</div>
-                    </div>
-            '''
-                html += '''
-                  </div>
-                </div>
-            '''
-
-            # Règles spéciales de la monture
-            if 'special_rules' in mount_data and mount_data['special_rules']:
-                mount_rules = [r for r in mount_data['special_rules'] if not r.startswith("Griffes") and not r.startswith("Sabots")]
-                if mount_rules:
-                    html += '''
-    <div style="margin-top: 8px;">
-      <div style="font-weight: 600; margin-bottom: 4px; color: var(--text-main);">Règles:</div>
-      <div class="rules-list" style="margin-top: 4px;">
+        <div class="weapon-item">
+          <div class="weapon-name">{esc(weapon.get('name', 'Arme'))}</div>
+          <div class="weapon-stats">{format_weapon(weapon)}</div>
+        </div>
 '''
-                    for rule in mount_rules:
-                        html += f'<span class="rule-tag" style="font-size: 10px;">{esc(rule)}</span> '
-                    html += '''
+                html += '''
       </div>
     </div>
 '''
