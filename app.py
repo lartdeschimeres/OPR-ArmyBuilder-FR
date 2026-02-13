@@ -1326,7 +1326,7 @@ elif st.session_state.page == "army":
 
     # Règles spéciales de faction
     if hasattr(st.session_state, 'faction_special_rules') and st.session_state.faction_special_rules:
-        with st.expander("📜 Règles spéciales de la faction", expanded=True):
+        with st.expander("📜 Règles spéciales de la faction", expanded=False):
             for rule in st.session_state.faction_special_rules:
                 if isinstance(rule, dict):
                     st.markdown(f"**{rule.get('name', 'Règle sans nom')}**: {rule.get('description', '')}", unsafe_allow_html=True)
@@ -1335,7 +1335,7 @@ elif st.session_state.page == "army":
 
     # Sorts de la faction
     if hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
-        with st.expander("✨ Sorts de la faction", expanded=True):
+        with st.expander("✨ Sorts de la faction", expanded=False):
             for spell_name, spell_details in st.session_state.faction_spells.items():
                 if isinstance(spell_details, dict):
                     st.markdown(
