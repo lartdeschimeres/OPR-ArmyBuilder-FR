@@ -1229,7 +1229,7 @@ if st.session_state.page == "setup":
             st.rerun()
 
 # ======================================================
-# PAGE 2 – CONSTRUCTEUR D'ARMÉE - AVEC BOUTON D'IMPORT
+# PAGE 2 – CONSTRUCTEUR D'ARMÉE
 # ======================================================
 elif st.session_state.page == "army":
     # Vérification renforcée des données requises
@@ -1263,7 +1263,7 @@ elif st.session_state.page == "army":
     st.divider()
     st.subheader("📤 Export/Import de la liste")
 
-    # NOUVEAU : Section pour les boutons d'export/import
+    # Section pour les boutons d'export/import
     colE1, colE2, colE3 = st.columns(3)
 
     with colE1:
@@ -1287,7 +1287,6 @@ elif st.session_state.page == "army":
         )
 
     with colE3:
-        # NOUVEAU : Bouton pour importer une liste d'armée
         uploaded_file = st.file_uploader(
             "📥 Importer une liste d'armée",
             type=["json"],
@@ -1297,21 +1296,15 @@ elif st.session_state.page == "army":
 
         if uploaded_file is not None:
             try:
-                # Lire le fichier JSON
                 imported_data = json.loads(uploaded_file.getvalue().decode("utf-8"))
 
-                # Vérifier que les données sont valides
                 if all(key in imported_data for key in ["game", "faction", "points", "list_name", "army_list"]):
-                    # Vérifier que le jeu et la faction correspondent
                     if (imported_data["game"] == st.session_state.game and
                         imported_data["faction"] == st.session_state.faction):
 
-                        # Mettre à jour les données
                         st.session_state.list_name = imported_data["list_name"]
                         st.session_state.points = imported_data["points"]
                         st.session_state.army_list = imported_data["army_list"]
-
-                        # Recalculer le coût total
                         st.session_state.army_cost = sum(unit["cost"] for unit in imported_data["army_list"])
 
                         st.success("Liste d'armée importée avec succès!")
@@ -1366,9 +1359,7 @@ elif st.session_state.page == "army":
 
     st.divider()
 
-    # ======================================================
-    # RÈGLES SPÉCIALES DE FACTION
-    # ======================================================
+    # Règles spéciales de faction
     if hasattr(st.session_state, 'faction_special_rules') and st.session_state.faction_special_rules:
         with st.expander("📜 Règles spéciales de la faction", expanded=True):
             for rule in st.session_state.faction_special_rules:
@@ -1377,9 +1368,7 @@ elif st.session_state.page == "army":
                 else:
                     st.markdown(f"- {rule}", unsafe_allow_html=True)
 
-    # ======================================================
-    # SORTS DE LA FACTION
-    # ======================================================
+    # Sorts de la faction
     if hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
         with st.expander("✨ Sorts de la faction", expanded=True):
             for spell_name, spell_details in st.session_state.faction_spells.items():
@@ -1419,6 +1408,7 @@ elif st.session_state.page == "army":
             st.rerun()
         st.stop()
 
+    # Sélection de l'unité
     unit = st.selectbox(
         "Unité disponible",
         st.session_state.units,
@@ -1437,11 +1427,12 @@ elif st.session_state.page == "army":
     upgrades_cost = 0
     weapon_upgrades = []
 
+    # Configuration des améliorations
     for g_idx, group in enumerate(unit.get("upgrade_groups", [])):
         g_key = f"group_{g_idx}"
         st.subheader(group.get("group", "Améliorations"))
 
-        # ---------- ARMES ----------
+        # ARMES
         if group.get("type") == "weapon":
             choices = ["Arme de base"]
             opt_map = {}
@@ -1466,7 +1457,7 @@ elif st.session_state.page == "army":
                 weapon_cost += opt["cost"]
                 weapons = [opt["weapon"]] if unit.get("type") == "hero" else [opt["weapon"]]
 
-        # ---------- AMÉLIORATIONS D'ARME ----------
+        # AMÉLIORATIONS D'ARME
         elif group.get("type") == "weapon_upgrades":
             choices = ["Aucune amélioration d'arme"]
             opt_map = {}
@@ -1491,7 +1482,7 @@ elif st.session_state.page == "army":
                 upgrades_cost += opt["cost"]
                 weapon_upgrades.append(opt["weapon"])
 
-        # ---------- MONTURE ----------
+        # MONTURE
         elif group.get("type") == "mount":
             choices = ["Aucune monture"]
             opt_map = {}
@@ -1514,11 +1505,8 @@ elif st.session_state.page == "army":
             if choice != "Aucune monture":
                 mount = opt_map[choice]
                 mount_cost = mount["cost"]
-                # Ajout du coriace_bonus si présent (Memory #4)
-                if "mount" in mount and "coriace_bonus" in mount["mount"]:
-                    mount["coriace_bonus"] = mount["mount"]["coriace_bonus"]
 
-        # ---------- OPTIONS / RÔLES ----------
+        # RÔLES
         elif group.get("type") == "role" and unit.get("type") == "hero":
             choices = ["Aucun rôle"]
             opt_map = {}
@@ -1543,7 +1531,7 @@ elif st.session_state.page == "army":
                 upgrades_cost += opt["cost"]
                 selected_options[group.get("group", "Rôle")] = [opt]
 
-        # ---------- OPTIONS NORMALES (checkbox) ----------
+        # OPTIONS NORMALES
         else:
             for o in group.get("options", []):
                 opt_key = f"{unit_key}_{g_key}_{o['name']}"
@@ -1557,7 +1545,7 @@ elif st.session_state.page == "army":
                     upgrades_cost += o["cost"]
                     selected_options.setdefault(group.get("group", "Options"), []).append(o)
 
-    # MODIFICATION: Désactiver l'option "Unité combinée" pour les unités de taille 1 (Memory #5)
+    # Option unité combinée
     multiplier = 1
     if unit.get("type") != "hero" and unit.get("size", 1) > 1:
         if st.checkbox("Unité combinée"):
@@ -1570,15 +1558,13 @@ elif st.session_state.page == "army":
     st.markdown(f"**Coût total :** {final_cost} pts")
     st.divider()
 
-elif st.session_state.page == "army":
-    # [Toutes les parties inchangées jusqu'au bouton d'ajout d'unité]
-
+    # BOUTON D'AJOUT D'UNITÉ AVEC CALCUL DE CORIACE CORRIGÉ
     if st.button("➕ Ajouter à l'armée"):
         if st.session_state.army_cost + final_cost > st.session_state.points:
             st.error(f"⛔ Dépassement du format : {st.session_state.army_cost + final_cost} / {st.session_state.points} pts")
             st.stop()
 
-        # Calcul SIMPLE de la valeur Coriace
+        # Calcul simple de la valeur Coriace
         coriace = 0
 
         # 1. Valeur de base de l'unité
@@ -1591,7 +1577,28 @@ elif st.session_state.page == "army":
             if "coriace_bonus" in mount_data:
                 coriace += mount_data["coriace_bonus"]
 
-        # Création de l'unité avec les données de base
+        # Préparation des règles spéciales
+        all_special_rules = unit.get("special_rules", []).copy()
+
+        # Règles spéciales des améliorations
+        for group in unit.get("upgrade_groups", []):
+            group_key = f"group_{unit.get('upgrade_groups', []).index(group)}"
+            if st.session_state.unit_selections.get(unit_key, {}).get(group_key):
+                selected_option = st.session_state.unit_selections[unit_key][group_key]
+                if selected_option not in ["Arme de base", "Aucune monture", "Aucun rôle"]:
+                    for opt in group.get("options", []):
+                        if f"{opt['name']} (+{opt['cost']} pts)" == selected_option and "special_rules" in opt:
+                            all_special_rules.extend(opt["special_rules"])
+
+        # Règles spéciales de la monture
+        if mount:
+            mount_data = mount.get("mount", {})
+            if "special_rules" in mount_data:
+                for rule in mount_data["special_rules"]:
+                    if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
+                        all_special_rules.append(rule)
+
+        # Création de l'unité
         unit_data = {
             "name": unit["name"],
             "type": unit.get("type", "unit"),
@@ -1603,7 +1610,7 @@ elif st.session_state.page == "army":
             "weapon_upgrades": weapon_upgrades,
             "options": selected_options,
             "mount": mount,
-            "special_rules": unit.get("special_rules", []),
+            "special_rules": all_special_rules,
         }
 
         # Ajout de la valeur Coriace totale
@@ -1623,3 +1630,4 @@ elif st.session_state.page == "army":
             st.session_state.army_list.append(unit_data)
             st.session_state.army_cost += final_cost
             st.rerun()
+
