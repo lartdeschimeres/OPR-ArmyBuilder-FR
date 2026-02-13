@@ -332,7 +332,7 @@
                     "special_rules":  []
                     },
                    {
-                    "name": "Piétinelent",
+                    "name": "Piétinement",
                     "range": "Mêlée",
                     "attacks": 4,
                     "armor_piercing": 1,
