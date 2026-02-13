@@ -1090,34 +1090,36 @@ def load_factions():
     return factions, sorted(games) if games else list(GAME_CONFIG.keys())
 
 # ======================================================
-# PAGE 1 – CONFIGURATION AVEC IMAGES DE FOND LOCALES (version corrigée)
+# PAGE 1 – CONFIGURATION AVEC IMAGES DE FOND (version finale corrigée)
 # ======================================================
 if st.session_state.page == "setup":
     # Définition des images pour chaque jeu + image par défaut
     game_images = {
-        "Age of Fantasy": "assets/games/aof_cover.jpg",
-        "Age of Fantasy: Regiments": "assets/games/aofr_cover.jpg",
-        "Grimdark Future": "assets/games/gf_cover.jpg",
-        "Grimdark Future: Firefight": "assets/games/gff_cover.jpg",
-        "Age of Fantasy: Skirmish": "assets/games/aofs_cover.jpg",
-        "__default__": "https://i.imgur.com/DEFAULT_IMAGE.jpg"  # Image par défaut distante
+        "Age of Fantasy": {"path": "assets/games/aof_cover.jpg", "url": None},
+        "Age of Fantasy: Regiments": {"path": "assets/games/aofr_cover.jpg", "url": None},
+        "Grimdark Future": {"path": "assets/games/gf_cover.jpg", "url": None},
+        "Grimdark Future: Firefight": {"path": "assets/games/gff_cover.jpg", "url": None},
+        "Age of Fantasy: Skirmish": {"path": "assets/games/aofs_cover.jpg", "url": None},
+        "__default__": {"path": None, "url": "https://i.imgur.com/DEFAULT_IMAGE.jpg"}
     }
 
-    # Vérification et sélection de l'image actuelle
-    current_game = st.session_state.get("game")
+    # Conversion des chemins locaux en URLs base64 pour Streamlit
+    for game, img_data in game_images.items():
+        if img_data["path"] and not img_data["url"]:
+            try:
+                image_path = Path(img_data["path"])
+                if image_path.exists():
+                    with open(image_path, "rb") as image_file:
+                        encoded_string = base64.b64encode(image_file.read()).decode()
+                        img_data["url"] = f"data:image/jpg;base64,{encoded_string}"
+                else:
+                    img_data["url"] = game_images["__default__"]["url"]
+            except:
+                img_data["url"] = game_images["__default__"]["url"]
 
-    # Détermination de l'URL de l'image
-    if current_game in game_images:
-        image_path = game_images[current_game]
-        try:
-            if Path(image_path).exists():
-                image_url = f"file/{image_path}"
-            else:
-                image_url = game_images["__default__"]
-        except:
-            image_url = game_images["__default__"]
-    else:
-        image_url = game_images["__default__"]
+    # Sélection de l'URL de l'image actuelle
+    current_game = st.session_state.get("game", "__default__")
+    image_url = game_images.get(current_game, game_images["__default__"])["url"]
 
     # CSS pour l'image de fond avec fondu
     st.markdown(
@@ -1140,6 +1142,8 @@ if st.session_state.page == "setup":
             display: flex;
             align-items: center;
             justify-content: center;
+            color: white;
+            text-align: center;
         }}
 
         .game-bg::before {{
@@ -1159,7 +1163,6 @@ if st.session_state.page == "setup":
             position: relative;
             z-index: 1;
             width: 100%;
-            text-align: center;
         }}
 
         .game-bg h2 {{
@@ -1190,9 +1193,7 @@ if st.session_state.page == "setup":
     st.markdown("</div></div>", unsafe_allow_html=True)
     st.markdown("---")
 
-    # Solution alternative pour le rafraîchissement sans callback
-    game_key = f"game_select_{len(st.session_state.army_list)}"  # Clé unique
-
+    # Solution pour le rafraîchissement
     factions_by_game, games = load_factions()
     if not games:
         st.error("Aucun jeu trouvé")
@@ -1202,18 +1203,17 @@ if st.session_state.page == "setup":
 
     with col1:
         st.markdown("<span class='badge'>Jeu</span>", unsafe_allow_html=True)
-        game = st.selectbox(
+        selected_game = st.selectbox(
             "Choisissez un système",
             games,
             index=games.index(st.session_state.get("game")) if st.session_state.get("game") in games else 0,
-            label_visibility="collapsed",
-            key=game_key  # Utilisation d'une clé unique
+            label_visibility="collapsed"
         )
 
-        # Mise à jour manuelle de l'état
-        if game != st.session_state.get("game"):
-            st.session_state.game = game
-            st.rerun()  # Rafraîchissement manuel après mise à jour de l'état
+        # Mise à jour de l'état et rafraîchissement
+        if selected_game != st.session_state.get("game"):
+            st.session_state.game = selected_game
+            st.rerun()
 
     with col2:
         st.markdown("<span class='badge'>Faction</span>", unsafe_allow_html=True)
