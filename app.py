@@ -1593,10 +1593,6 @@ elif st.session_state.page == "army":
     
         test_army = st.session_state.army_list + [unit_data]
         
-        # Ajout de la valeur Coriace totale
-        if coriace > 0:
-            unit_data["coriace"] = coriace
-
         # Ajout d'une mention pour la monture si elle apporte de la Coriace
         if mount and "coriace_bonus" in mount.get("mount", {}):
             mount_name = mount.get("name", "Monture")
