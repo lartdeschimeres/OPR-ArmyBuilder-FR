@@ -1090,99 +1090,9 @@ def load_factions():
     return factions, sorted(games) if games else list(GAME_CONFIG.keys())
 
 # ======================================================
-# PAGE 1 – CONFIGURATION AVEC IMAGES DE FOND (version finale corrigée)
+# PAGE 1 – CONFIGURATION
 # ======================================================
 if st.session_state.page == "setup":
-    # Définition des images pour chaque jeu + image par défaut
-    game_images = {
-        "Age of Fantasy": {"path": "assets/games/aof_cover.jpg", "url": None},
-        "Age of Fantasy: Regiments": {"path": "assets/games/aofr_cover.jpg", "url": None},
-        "Grimdark Future": {"path": "assets/games/gf_cover.jpg", "url": None},
-        "Grimdark Future: Firefight": {"path": "assets/games/gff_cover.jpg", "url": None},
-        "Age of Fantasy: Skirmish": {"path": "assets/games/aofs_cover.jpg", "url": None},
-        "__default__": {"path": None, "url": "https://i.imgur.com/DEFAULT_IMAGE.jpg"}
-    }
-
-    # Conversion des chemins locaux en URLs base64 pour Streamlit
-    for game, img_data in game_images.items():
-        if img_data["path"] and not img_data["url"]:
-            try:
-                image_path = Path(img_data["path"])
-                if image_path.exists():
-                    with open(image_path, "rb") as image_file:
-                        encoded_string = base64.b64encode(image_file.read()).decode()
-                        img_data["url"] = f"data:image/jpg;base64,{encoded_string}"
-                else:
-                    img_data["url"] = game_images["__default__"]["url"]
-            except:
-                img_data["url"] = game_images["__default__"]["url"]
-
-    # Sélection de l'URL de l'image actuelle
-    current_game = st.session_state.get("game", "__default__")
-    image_url = game_images.get(current_game, game_images["__default__"])["url"]
-
-    # CSS pour l'image de fond avec fondu
-    st.markdown(
-        f"""
-        <style>
-        .game-bg {{
-            background: linear-gradient(to bottom,
-                rgba(0,0,0,0.7) 0%,
-                rgba(0,0,0,0.3) 50%,
-                rgba(0,0,0,0) 100%),
-                url('{image_url}');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            padding: 2rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            position: relative;
-            min-height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
-        }}
-
-        .game-bg::before {{
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to bottom,
-                rgba(0,0,0,0.6) 0%,
-                rgba(0,0,0,0) 100%);
-            border-radius: 10px;
-        }}
-
-        .game-bg .content {{
-            position: relative;
-            z-index: 1;
-            width: 100%;
-        }}
-
-        .game-bg h2 {{
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-            margin-bottom: 0.5rem;
-        }}
-
-        .game-bg p {{
-            color: rgba(255,255,255,0.9);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Conteneur avec l'image de fond
-    st.markdown('<div class="game-bg"><div class="content">', unsafe_allow_html=True)
-
     st.markdown("## 🛡️ OPR Army Forge")
     st.markdown(
         "<p class='muted'>Construisez, équilibrez et façonnez vos armées pour "
@@ -1190,10 +1100,8 @@ if st.session_state.page == "setup":
         unsafe_allow_html=True
     )
 
-    st.markdown("</div></div>", unsafe_allow_html=True)
     st.markdown("---")
 
-    # Solution pour le rafraîchissement
     factions_by_game, games = load_factions()
     if not games:
         st.error("Aucun jeu trouvé")
@@ -1203,17 +1111,12 @@ if st.session_state.page == "setup":
 
     with col1:
         st.markdown("<span class='badge'>Jeu</span>", unsafe_allow_html=True)
-        selected_game = st.selectbox(
+        game = st.selectbox(
             "Choisissez un système",
             games,
             index=games.index(st.session_state.get("game")) if st.session_state.get("game") in games else 0,
             label_visibility="collapsed"
         )
-
-        # Mise à jour de l'état et rafraîchissement
-        if selected_game != st.session_state.get("game"):
-            st.session_state.game = selected_game
-            st.rerun()
 
     with col2:
         st.markdown("<span class='badge'>Faction</span>", unsafe_allow_html=True)
