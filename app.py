@@ -932,11 +932,11 @@ body {{
             mount_weapons = mount_data.get("weapon", [])
 
             html += f'''
-  <div class="mount-section">
-    <div class="mount-title">
-      <span>🐴</span>
-      <span>{mount_name}</span>
-    </div>
+    <div class="mount-section" style="background: rgba(150, 150, 150, 0.1); border: 1px solid rgba(150, 150, 150, 0.3);">
+        <div class="mount-title">
+          <span>🐴</span>
+          <span style="color: var(--text-main);">{mount_name}</span>
+        </div>
 '''
 
             # Caractéristiques de la monture
