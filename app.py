@@ -1096,10 +1096,10 @@ if st.session_state.page == "setup":
     # Définition des images pour chaque jeu + image par défaut
     game_images = {
         "Age of Fantasy": "assets/games/aof_cover.jpg",
-        "Age of Fantasy: Regiments": "assets/games/aofr_cover.jpg",
+        "Age of Fantasy Regiments": "assets/games/aofr_cover.jpg",
         "Grimdark Future": "assets/games/gf_cover.jpg",
-        "Grimdark Future: Firefight": "assets/games/gff_cover.jpg",
-        "Age of Fantasy: Skirmish": "assets/games/aofs_cover.jpg",
+        "Grimdark Future Firefight": "assets/games/gff_cover.jpg",
+        "Age of Fantasy Skirmish": "assets/games/aofs_cover.jpg",
         "__default__": "https://i.imgur.com/DEFAULT_IMAGE.jpg"  # Image par défaut distante
     }
 
