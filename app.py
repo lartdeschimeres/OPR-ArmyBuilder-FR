@@ -388,32 +388,21 @@ def export_army_json():
     }
 
 # ======================================================
-# EXPORT HTML - COMPLÈTEMENT REVU POUR CORRESPONDRE À VOS PRÉFÉRENCES
+# EXPORT HTML - VERSION CORRIGÉE
 # ======================================================
 def export_html(army_list, army_name, army_limit):
     def esc(txt):
         return str(txt).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
     def calculate_total_tough(unit):
-        """Calcule la valeur totale de Coriace en évitant le double comptage"""
+        """Calcule la valeur totale de Coriace de manière simple et fiable"""
         tough = 0
 
         # 1. Valeur de base de l'unité
         if "coriace" in unit:
             tough = unit["coriace"]
 
-        # 2. Extraction des valeurs Coriace depuis les règles spéciales
-        #    (exclut celles qui viennent de la monture)
-        if "special_rules" in unit:
-            for rule in unit["special_rules"]:
-                if isinstance(rule, str) and "Coriace" in rule:
-                    # On ne prend que les règles de Coriace qui ne viennent pas de la monture
-                    if "Monture" not in rule and "mount" not in rule.lower():
-                        match = re.search(r'Coriace\s*\((\d+)\)', rule)
-                        if match:
-                            tough = max(tough, int(match.group(1)))
-
-        # 3. Bonus de la monture (ajouté une seule fois via coriace_bonus)
+        # 2. Bonus de la monture (UNIQUEMENT via coriace_bonus)
         if "mount" in unit and unit["mount"]:
             mount_data = unit["mount"].get("mount", {})
             if "coriace_bonus" in mount_data:
@@ -1581,86 +1570,56 @@ elif st.session_state.page == "army":
     st.markdown(f"**Coût total :** {final_cost} pts")
     st.divider()
 
-if st.button("➕ Ajouter à l'armée"):
-    if st.session_state.army_cost + final_cost > st.session_state.points:
-        st.error(f"⛔ Dépassement du format : {st.session_state.army_cost + final_cost} / {st.session_state.points} pts")
-        st.stop()
+elif st.session_state.page == "army":
+    # [Toutes les parties inchangées jusqu'au bouton d'ajout d'unité]
 
-    # Calcul de la valeur Coriace
-    coriace = 0
+    if st.button("➕ Ajouter à l'armée"):
+        if st.session_state.army_cost + final_cost > st.session_state.points:
+            st.error(f"⛔ Dépassement du format : {st.session_state.army_cost + final_cost} / {st.session_state.points} pts")
+            st.stop()
 
-    # 1. Valeur de base de l'unité
-    if "coriace" in unit:
-        coriace = unit["coriace"]
+        # Calcul SIMPLE de la valeur Coriace
+        coriace = 0
 
-    # 2. Extraction des valeurs Coriace depuis les règles spéciales
-    if "special_rules" in unit:
-        for rule in unit["special_rules"]:
-            if isinstance(rule, str) and "Coriace" in rule:
-                if "Monture" not in rule and "mount" not in rule.lower():
-                    match = re.search(r'Coriace\s*\((\d+)\)', rule)
-                    if match:
-                        coriace = max(coriace, int(match.group(1)))
+        # 1. Valeur de base de l'unité
+        if "coriace" in unit:
+            coriace = unit["coriace"]
 
-    # 3. Bonus de la monture (via coriace_bonus)
-    mount_coriace = 0
-    if mount:
-        mount_data = mount.get("mount", {})
-        mount_coriace = mount_data.get("coriace_bonus", 0)
-        coriace += mount_coriace
+        # 2. Bonus de la monture (UNIQUEMENT via coriace_bonus)
+        if mount:
+            mount_data = mount.get("mount", {})
+            if "coriace_bonus" in mount_data:
+                coriace += mount_data["coriace_bonus"]
 
-    # Préparation des règles spéciales complètes
-    all_special_rules = []
+        # Création de l'unité avec les données de base
+        unit_data = {
+            "name": unit["name"],
+            "type": unit.get("type", "unit"),
+            "cost": final_cost,
+            "size": unit.get("size", 10) * multiplier if unit.get("type") != "hero" else 1,
+            "quality": unit.get("quality"),
+            "defense": unit.get("defense"),
+            "weapon": weapons,
+            "weapon_upgrades": weapon_upgrades,
+            "options": selected_options,
+            "mount": mount,
+            "special_rules": unit.get("special_rules", []),
+        }
 
-    # Règles spéciales de base
-    if "special_rules" in unit:
-        all_special_rules.extend(unit["special_rules"])
+        # Ajout de la valeur Coriace totale
+        if coriace > 0:
+            unit_data["coriace"] = coriace
 
-    # Règles spéciales des améliorations
-    for group in unit.get("upgrade_groups", []):
-        group_key = f"group_{unit.get('upgrade_groups', []).index(group)}"
-        if st.session_state.unit_selections.get(unit_key, {}).get(group_key):
-            selected_option = st.session_state.unit_selections[unit_key][group_key]
-            if selected_option != "Arme de base" and selected_option != "Aucune monture" and selected_option != "Aucun rôle":
-                for opt in group.get("options", []):
-                    if f"{opt['name']} (+{opt['cost']} pts)" == selected_option and "special_rules" in opt:
-                        all_special_rules.extend(opt["special_rules"])
+        # Ajout d'une mention pour la monture si elle apporte de la Coriace
+        if mount and "coriace_bonus" in mount.get("mount", {}):
+            mount_name = mount.get("name", "Monture")
+            mount_bonus = mount.get("mount", {}).get("coriace_bonus", 0)
+            if mount_bonus > 0:
+                unit_data["special_rules"].append(f"{mount_name} (Coriace +{mount_bonus})")
 
-    # Règles spéciales de la monture (sans la Coriace qui est déjà comptée)
-    if mount:
-        mount_data = mount.get("mount", {})
-        if "special_rules" in mount_data:
-            for rule in mount_data["special_rules"]:
-                if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
-                    all_special_rules.append(rule)
+        test_army = st.session_state.army_list + [unit_data]
 
-    # Création de l'unité
-    unit_data = {
-        "name": unit["name"],
-        "type": unit.get("type", "unit"),
-        "cost": final_cost,
-        "size": unit.get("size", 10) * multiplier if unit.get("type") != "hero" else 1,
-        "quality": unit.get("quality"),
-        "defense": unit.get("defense"),
-        "weapon": weapons,
-        "weapon_upgrades": weapon_upgrades,
-        "options": selected_options,
-        "mount": mount,
-        "special_rules": all_special_rules,
-    }
-
-    # Ajout de la valeur Coriace totale
-    if coriace > 0:
-        unit_data["coriace"] = coriace
-
-    # Ajout d'une description pour la monture si elle apporte de la Coriace
-    if mount_coriace > 0 and mount:
-        mount_name = mount.get("name", "Monture")
-        unit_data["special_rules"].append(f"{mount_name} (Coriace +{mount_coriace})")
-
-    test_army = st.session_state.army_list + [unit_data]
-
-    if validate_army_rules(test_army, st.session_state.points, st.session_state.game):
-        st.session_state.army_list.append(unit_data)
-        st.session_state.army_cost += final_cost
-        st.rerun()
+        if validate_army_rules(test_army, st.session_state.points, st.session_state.game):
+            st.session_state.army_list.append(unit_data)
+            st.session_state.army_cost += final_cost
+            st.rerun()
