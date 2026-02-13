@@ -6,7 +6,7 @@ import re
 import math
 
 st.set_page_config(
-    page_title="OPR Army Forge",
+    page_title="OPR ArmyBuilder FR",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -211,7 +211,7 @@ with st.sidebar:
     st.markdown("<div style='height:1px;'></div>", unsafe_allow_html=True)
 
 with st.sidebar:
-    st.title("🛡️ Army Forge")
+    st.title("🛡️ OPR ArmyBuilder FR")
 
     st.subheader("📋 Armée")
 
@@ -1065,7 +1065,7 @@ body {{
 
     html += '''
 <div style="text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-muted);">
-  Généré par OPR Army Forge
+  Généré par OPR ArmyBuilder FR
 </div>
 </div>
 </body>
@@ -1211,7 +1211,7 @@ if st.session_state.page == "setup":
     # Conteneur avec l'image de fond
     st.markdown('<div class="game-bg"><div class="content">', unsafe_allow_html=True)
 
-    st.markdown("## 🛡️ OPR Army Forge")
+    st.markdown("## 🛡️ OPR ArmyBuilder FR")
     st.markdown(
         "<p class='muted'>Construisez, équilibrez et façonnez vos armées pour "
         "Age of Fantasy et Grimdark Future.</p>",
