@@ -205,7 +205,7 @@ if "faction_spells" not in st.session_state:
     st.session_state.faction_spells = {}
 
 # ======================================================
-# SIDEBAR – CONTEXTE & NAVIGATION MODIFIÉE
+# SIDEBAR – CONTEXTE & NAVIGATION MODIFIÉE (version corrigée)
 # ======================================================
 with st.sidebar:
     st.markdown("<div style='height:1px;'></div>", unsafe_allow_html=True)
@@ -231,20 +231,21 @@ with st.sidebar:
         if army_cost > points:
             st.error("⚠️ Dépassement de points")
 
-        # NOUVELLES INFORMATIONS AJOUTÉES
-        if st.session_state.page == "army" and hasattr(st.session_state, 'army_list'):
-            game_cfg = GAME_CONFIG.get(st.session_state.game, {})
-            units_cap = math.floor(points / game_cfg.get("unit_per_points", 150))
-            units_now = len([u for u in st.session_state.army_list if u.get("type") != "hero"])
-            st.markdown(f"**Unités :** {units_now} / {units_cap}")
+        # NOUVELLES INFORMATIONS AJOUTÉES (version corrigée)
+        if st.session_state.page == "army" and hasattr(st.session_state, 'army_list') and 'game' in st.session_state:
+            # Utilisation des valeurs par défaut de GAME_CONFIG
+            units_cap = math.floor(points / 150)  # Valeur par défaut de unit_per_points
+            heroes_cap = math.floor(points / 375)  # Valeur par défaut de hero_limit
 
-            heroes_cap = math.floor(points / game_cfg.get("hero_limit", 375))
+            units_now = len([u for u in st.session_state.army_list if u.get("type") != "hero"])
             heroes_now = len([u for u in st.session_state.army_list if u.get("type") == "hero"])
+
+            st.markdown(f"**Unités :** {units_now} / {units_cap}")
             st.markdown(f"**Héros :** {heroes_now} / {heroes_cap}")
 
     st.divider()
 
-    # BOUTONS DE NAVIGATION SIMPLIFIÉS (sans le menu Navigation)
+    # BOUTONS DE NAVIGATION SIMPLIFIÉS
     if st.session_state.page == "army":
         if st.button("⬅️ Retour à la configuration", use_container_width=True):
             st.session_state.page = "setup"
