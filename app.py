@@ -245,34 +245,6 @@ with st.sidebar:
 
     st.divider()
 
-    # BOUTONS DE NAVIGATION SIMPLIFIÉS
-    if st.session_state.page == "army":
-        if st.button("⬅️ Retour à la configuration", use_container_width=True):
-            st.session_state.page = "setup"
-            st.rerun()
-    else:
-        if st.button("🔥 Construire l'armée", use_container_width=True, type="primary"):
-            if all(key in st.session_state for key in ["game", "faction", "points", "list_name"]):
-                factions_by_game, games = load_factions()
-                faction_data = factions_by_game.get(st.session_state.game, {}).get(st.session_state.faction, {})
-
-                if not faction_data or "units" not in faction_data:
-                    st.error("Aucune donnée disponible pour cette faction.")
-                    st.stop()
-
-                st.session_state.units = faction_data.get("units", [])
-                st.session_state.faction_special_rules = faction_data.get("faction_special_rules", [])
-                st.session_state.faction_spells = faction_data.get("spells", {})
-
-                st.session_state.army_list = []
-                st.session_state.army_cost = 0
-                st.session_state.unit_selections = {}
-
-                st.session_state.page = "army"
-                st.rerun()
-            else:
-                st.error("Veuillez compléter la configuration.")
-
 # ======================================================
 # CONFIGURATION DES JEUX OPR (EXTENSIBLE)
 # ======================================================
