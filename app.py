@@ -1373,31 +1373,50 @@ def format_weapon_option(weapon):
     ap = weapon.get('armor_piercing', '?')
     range_text = weapon.get('range', 'Mêlée')
 
-    return f"{name} (A{attacks}/PA{ap}/{range_text})"
-
-def format_mount_option(mount):
-    """Formate l'option de monture avec ses caractéristiques complètes"""
+ def format_mount_option(mount):
+    """Formate l'option de monture avec ses armes en premier et sans qua/déf"""
     if not mount or not isinstance(mount, dict):
         return "Aucune monture"
 
     name = mount.get('name', 'Monture')
     cost = mount.get('cost', 0)
     mount_data = mount.get('mount', {})
-
-    # Récupération des caractéristiques
-    quality = mount_data.get('quality', '?')
-    defense = mount_data.get('defense', '?')
     special_rules = mount_data.get('special_rules', [])
     coriace = mount_data.get('coriace_bonus', 0)
+    weapons = mount_data.get('weapon', [])
 
     # Construction des caractéristiques
     stats = []
-    stats.append(f"Q{quality}+")
-    stats.append(f"Déf{defense}+")
+
+    # 1. Armes en premier
+    weapon_profiles = []
+    if isinstance(weapons, list) and weapons:
+        for weapon in weapons:
+            if isinstance(weapon, dict):
+                attacks = weapon.get('attacks', '?')
+                ap = weapon.get('armor_piercing', '?')
+                special = ", ".join(weapon.get('special_rules', [])) if weapon.get('special_rules') else ""
+                profile = f"A{attacks}/PA{ap}"
+                if special:
+                    profile += f" ({special})"
+                weapon_profiles.append(profile)
+    elif isinstance(weapons, dict):
+        attacks = weapons.get('attacks', '?')
+        ap = weapons.get('armor_piercing', '?')
+        special = ", ".join(weapons.get('special_rules', [])) if weapons.get('special_rules') else ""
+        profile = f"A{attacks}/PA{ap}"
+        if special:
+            profile += f" ({special})"
+        weapon_profiles.append(profile)
+
+    if weapon_profiles:
+        stats.append("Armes: " + ", ".join(weapon_profiles))
+
+    # 2. Coriace si présent
     if coriace > 0:
         stats.append(f"Coriace+{coriace}")
 
-    # Ajout des règles spéciales
+    # 3. Règles spéciales
     if special_rules:
         rules_text = ", ".join([r for r in special_rules if not r.startswith(("Griffes", "Sabots"))])
         if rules_text:
@@ -1718,23 +1737,26 @@ if st.session_state.page == "army":
                         weapons = [opt["weapon"]] if unit.get("type") == "hero" else [opt["weapon"]]
                         break
 
-        # RÔLES - MODIFIÉ POUR AFFICHER LES RÈGLES SPÉCIALES
+        # RÔLES - MODIFIÉ POUR AFFICHER LE COÛT EN DERNIER
         elif group.get("type") == "role" and unit.get("type") == "hero":
             choices = ["Aucun rôle"]
             opt_map = {}
-
+        
             for o in group.get("options", []):
                 role_name = o.get('name', 'Rôle')
                 cost = o.get('cost', 0)
-                special_rules = ", ".join(o.get('special_rules', [])) if o.get('special_rules') else ""
-
-                label = f"{role_name} (+{cost} pts)"
+                special_rules = o.get('special_rules', [])
+        
+                # Construction du label avec coût en dernier
+                label = f"{role_name}"
                 if special_rules:
-                    label += f" | {special_rules}"
-
+                    rules_text = ", ".join(special_rules)
+                    label += f" | {rules_text}"
+                label += f" (+{cost} pts)"
+        
                 choices.append(label)
                 opt_map[label] = o
-
+        
             current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
             choice = st.radio(
                 "Rôle du héros",
@@ -1742,9 +1764,9 @@ if st.session_state.page == "army":
                 index=choices.index(current) if current in choices else 0,
                 key=f"{unit_key}_{g_key}_role",
             )
-
+        
             st.session_state.unit_selections[unit_key][g_key] = choice
-
+        
             if choice != "Aucun rôle":
                 for opt_label, opt in opt_map.items():
                     if opt_label == choice:
