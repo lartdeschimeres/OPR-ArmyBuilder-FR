@@ -1431,50 +1431,11 @@ def format_weapon_option(weapon):
     return label
 
 # ======================================================
-# FONCTIONS UTILITAIRES MISES À JOUR
+# FONCTIONS UTILITAIRES MISES À JOUR (version corrigée)
 # ======================================================
-def format_unit_option(u):
-    """Formate l'option d'unité avec tous les détails"""
-    name_part = f"{u['name']}"
-    if u.get('type') == "hero":
-        name_part += " [1]"
-    else:
-        name_part += f" [{u.get('size', 10)}]"
 
-    # Récupération des armes de base
-    weapons = u.get('weapon', [])
-    weapon_profiles = []
-    if isinstance(weapons, list):
-        for weapon in weapons:
-            if isinstance(weapon, dict):
-                profile = format_weapon_profile(weapon)
-                weapon_profiles.append(profile)
-    elif isinstance(weapons, dict):
-        profile = format_weapon_profile(weapons)
-        weapon_profiles.append(profile)
-
-    weapon_text = ", ".join(weapon_profiles) if weapon_profiles else "Aucune"
-
-    # Récupération des règles spéciales
-    special_rules = u.get('special_rules', [])
-    rules_text = []
-    if isinstance(special_rules, list):
-        for rule in special_rules:
-            if isinstance(rule, str):
-                if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
-                    rules_text.append(rule)
-            elif isinstance(rule, dict):
-                rules_text.append(rule.get('name', ''))
-
-    rules_text = ", ".join(rules_text) if rules_text else "Aucune"
-
-    qua_def = f"Déf {u.get('defense', '?')}+"
-    cost = f"{u.get('base_cost', 0)}pts"
-
-    return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
-
-def format_weapon_profile(weapon):
-    """Formate le profil complet d'une arme avec portée avant Aa et règles spéciales dans les parenthèses"""
+def format_weapon_option(weapon, cost=0):
+    """Formate le nom de l'arme avec son profil complet"""
     if not weapon or not isinstance(weapon, dict):
         return "Aucune arme"
 
@@ -1492,19 +1453,69 @@ def format_weapon_profile(weapon):
         rules_text = ", ".join(special_rules)
         profile = f"{profile} ({rules_text})"
 
-    return f"{name} {profile}"
-
-def format_weapon_option(weapon, cost=0):
-    """Formate l'option d'arme pour la sélection avec règles spéciales dans les parenthèses"""
-    if not weapon or not isinstance(weapon, dict):
-        return "Aucune arme"
-
-    profile = format_weapon_profile(weapon)
+    profile = f"{name} {profile}"
 
     if cost > 0:
         profile += f" (+{cost} pts)"
 
     return profile
+
+def format_mount_option(mount):
+    """Formate l'option de monture avec ses armes en premier et sans qua/déf"""
+    if not mount or not isinstance(mount, dict):
+        return "Aucune monture"
+
+    name = mount.get('name', 'Monture')
+    cost = mount.get('cost', 0)
+    mount_data = mount.get('mount', {})
+    special_rules = mount_data.get('special_rules', [])
+    coriace = mount_data.get('coriace_bonus', 0)
+    weapons = mount_data.get('weapon', [])
+
+    # Construction des caractéristiques
+    stats = []
+
+    # 1. Armes en premier
+    weapon_profiles = []
+    if isinstance(weapons, list) and weapons:
+        for weapon in weapons:
+            if isinstance(weapon, dict):
+                attacks = weapon.get('attacks', '?')
+                ap = weapon.get('armor_piercing', '?')
+                special = ", ".join(weapon.get('special_rules', [])) if weapon.get('special_rules') else ""
+                profile = f"A{attacks}/PA{ap}"
+                if special:
+                    profile += f" ({special})"
+                weapon_profiles.append(profile)
+    elif isinstance(weapons, dict):
+        attacks = weapons.get('attacks', '?')
+        ap = weapons.get('armor_piercing', '?')
+        special = ", ".join(weapons.get('special_rules', [])) if weapons.get('special_rules') else ""
+        profile = f"A{attacks}/PA{ap}"
+        if special:
+            profile += f" ({special})"
+        weapon_profiles.append(profile)
+
+    if weapon_profiles:
+        stats.append("Armes: " + ", ".join(weapon_profiles))
+
+    # 2. Coriace si présent
+    if coriace > 0:
+        stats.append(f"Coriace+{coriace}")
+
+    # 3. Règles spéciales
+    if special_rules:
+        rules_text = ", ".join([r for r in special_rules if not r.startswith(("Griffes", "Sabots"))])
+        if rules_text:
+            stats.append(rules_text)
+
+    # Construction du label final
+    label = f"{name}"
+    if stats:
+        label += f" ({', '.join(stats)})"
+    label += f" (+{cost} pts)"
+
+    return label
 
 # ======================================================
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE (version complète et corrigée)
@@ -1848,15 +1859,14 @@ if st.session_state.page == "army":
                 choices,
                 index=choices.index(current) if current in choices else 0,
                 key=f"{unit_key}_{g_key}_mount",
-    )
-
-    st.session_state.unit_selections[unit_key][g_key] = choice
-
-    if choice != "Aucune monture":
-        mount = opt_map[choice]
-        mount_cost = mount["cost"]
             )
         
+            st.session_state.unit_selections[unit_key][g_key] = choice
+        
+            if choice != "Aucune monture":
+                mount = opt_map[choice]
+                mount_cost = mount["cost"]
+                    
             st.session_state.unit_selections[unit_key][g_key] = choice
         
             if choice != "Aucune monture":
