@@ -1371,55 +1371,25 @@ def format_weapon_option(weapon):
     name = weapon.get('name', 'Arme')
     attacks = weapon.get('attacks', '?')
     ap = weapon.get('armor_piercing', '?')
-
-# ======================================================
-# FONCTIONS UTILITAIRES MISES À JOUR (version corrigée)
-# ======================================================
-
-def format_weapon_option(weapon, cost=0):
-    """Formate le nom de l'arme avec son profil complet"""
-    if not weapon or not isinstance(weapon, dict):
-        return "Aucune arme"
-
-    name = weapon.get('name', 'Arme')
-    attacks = weapon.get('attacks', '?')
-    ap = weapon.get('armor_piercing', '?')
     range_text = weapon.get('range', 'Mêlée')
-    special_rules = weapon.get('special_rules', [])
 
-    # Construction du profil avec portée avant Aa
-    profile = f"{range_text} A{attacks}/PA{ap}"
+    return f"{name} (A{attacks}/PA{ap}/{range_text})"
 
-    # Ajout des règles spéciales dans les parenthèses
-    if special_rules:
-        rules_text = ", ".join(special_rules)
-        profile = f"{profile} ({rules_text})"
+# ======================================================
+# FONCTIONS UTILITAIRES MISES À JOUR
+# ======================================================
+def format_unit_option(u):
+    """Formate l'option d'unité avec tous les détails"""
+    name_part = f"{u['name']}"
+    if u.get('type') == "hero":
+        name_part += " [1]"
+    else:
+        name_part += f" [{u.get('size', 10)}]"
 
-    profile = f"{name} {profile}"
-
-    if cost > 0:
-        profile += f" (+{cost} pts)"
-
-    return profile
-
-def format_mount_option(mount):
-    """Formate l'option de monture avec ses armes en premier et sans qua/déf"""
-    if not mount or not isinstance(mount, dict):
-        return "Aucune monture"
-
-    name = mount.get('name', 'Monture')
-    cost = mount.get('cost', 0)
-    mount_data = mount.get('mount', {})
-    special_rules = mount_data.get('special_rules', [])
-    coriace = mount_data.get('coriace_bonus', 0)
-    weapons = mount_data.get('weapon', [])
-
-    # Construction des caractéristiques
-    stats = []
-
-    # 1. Armes en premier
+    # Récupération des armes de base
+    weapons = u.get('weapon', [])
     weapon_profiles = []
-    if isinstance(weapons, list) and weapons:
+    if isinstance(weapons, list):
         for weapon in weapons:
             if isinstance(weapon, dict):
                 attacks = weapon.get('attacks', '?')
@@ -1427,7 +1397,7 @@ def format_mount_option(mount):
                 special = ", ".join(weapon.get('special_rules', [])) if weapon.get('special_rules') else ""
                 profile = f"A{attacks}/PA{ap}"
                 if special:
-                    profile += f" ({special})"
+                    profile += f" | {special}"
                 weapon_profiles.append(profile)
     elif isinstance(weapons, dict):
         attacks = weapons.get('attacks', '?')
@@ -1435,29 +1405,47 @@ def format_mount_option(mount):
         special = ", ".join(weapons.get('special_rules', [])) if weapons.get('special_rules') else ""
         profile = f"A{attacks}/PA{ap}"
         if special:
-            profile += f" ({special})"
+            profile += f" | {special}"
         weapon_profiles.append(profile)
 
-    if weapon_profiles:
-        stats.append("Armes: " + ", ".join(weapon_profiles))
+    weapon_text = ", ".join(weapon_profiles) if weapon_profiles else "Aucune"
 
-    # 2. Coriace si présent
-    if coriace > 0:
-        stats.append(f"Coriace+{coriace}")
+    # Récupération des règles spéciales
+    special_rules = u.get('special_rules', [])
+    rules_text = []
+    if isinstance(special_rules, list):
+        for rule in special_rules:
+            if isinstance(rule, str):
+                if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
+                    rules_text.append(rule)
+            elif isinstance(rule, dict):
+                rules_text.append(rule.get('name', ''))
 
-    # 3. Règles spéciales
+    rules_text = ", ".join(rules_text) if rules_text else "Aucune"
+
+    qua_def = f"Déf {u.get('defense', '?')}+"
+    cost = f"{u.get('base_cost', 0)}pts"
+
+    return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
+
+def format_weapon_option(weapon, cost=0):
+    """Formate le nom de l'arme avec son profil complet et ses règles spéciales"""
+    if not weapon or not isinstance(weapon, dict):
+        return "Aucune arme"
+
+    name = weapon.get('name', 'Arme')
+    attacks = weapon.get('attacks', '?')
+    ap = weapon.get('armor_piercing', '?')
+    range_text = weapon.get('range', 'Mêlée')
+    special_rules = ", ".join(weapon.get('special_rules', [])) if weapon.get('special_rules') else ""
+
+    profile = f"{name} (A{attacks}/PA{ap}/{range_text})"
     if special_rules:
-        rules_text = ", ".join([r for r in special_rules if not r.startswith(("Griffes", "Sabots"))])
-        if rules_text:
-            stats.append(rules_text)
+        profile += f" | {special_rules}"
+    if cost > 0:
+        profile += f" (+{cost} pts)"
 
-    # Construction du label final
-    label = f"{name}"
-    if stats:
-        label += f" ({', '.join(stats)})"
-    label += f" (+{cost} pts)"
-
-    return label
+    return profile
 
 # ======================================================
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE (version complète et corrigée)
@@ -1651,11 +1639,11 @@ if st.session_state.page == "army":
         g_key = f"group_{g_idx}"
         st.subheader(group.get("group", "Améliorations"))
 
-        # ARMES - MODIFIÉ POUR AFFICHER LA PORTÉE AVANT Aa
+        # ARMES - MODIFIÉ POUR AFFICHER LES RÈGLES SPÉCIALES
         if group.get("type") == "weapon":
             choices = []
 
-            # Ajout des armes de base
+            # Ajout des armes de base avec leurs profils et règles spéciales
             base_weapons = unit.get("weapon", [])
             if isinstance(base_weapons, list) and base_weapons:
                 for weapon in base_weapons:
@@ -1690,26 +1678,72 @@ if st.session_state.page == "army":
                         weapons = [opt["weapon"]] if unit.get("type") == "hero" else [opt["weapon"]]
                         break
 
-        # RÔLES - MODIFIÉ POUR AFFICHER LE COÛT EN DERNIER
+        # AMÉLIORATIONS D'ARME
+        elif group.get("type") == "weapon_upgrades":
+            choices = ["Aucune amélioration d'arme"]
+            opt_map = {}
+
+            for o in group.get("options", []):
+                label = f"{o['name']} (+{o['cost']} pts)"
+                choices.append(label)
+                opt_map[label] = o
+
+            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
+            choice = st.radio(
+                "Amélioration d'arme",
+                choices,
+                index=choices.index(current) if current in choices else 0,
+                key=f"{unit_key}_{g_key}_weapon_upgrade",
+            )
+
+            st.session_state.unit_selections[unit_key][g_key] = choice
+
+            if choice != "Aucune amélioration d'arme":
+                opt = opt_map[choice]
+                upgrades_cost += opt["cost"]
+                weapon_upgrades.append(opt["weapon"])
+
+        # MONTURE
+        elif group.get("type") == "mount":
+            choices = ["Aucune monture"]
+            opt_map = {}
+
+            for o in group.get("options", []):
+                label = f"{o['name']} (+{o['cost']} pts)"
+                choices.append(label)
+                opt_map[label] = o
+
+            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
+            choice = st.radio(
+                "Monture",
+                choices,
+                index=choices.index(current) if current in choices else 0,
+                key=f"{unit_key}_{g_key}_mount",
+            )
+
+            st.session_state.unit_selections[unit_key][g_key] = choice
+
+            if choice != "Aucune monture":
+                mount = opt_map[choice]
+                mount_cost = mount["cost"]
+
+        # RÔLES - MODIFIÉ POUR AFFICHER LES RÈGLES SPÉCIALES
         elif group.get("type") == "role" and unit.get("type") == "hero":
             choices = ["Aucun rôle"]
             opt_map = {}
-        
+
             for o in group.get("options", []):
                 role_name = o.get('name', 'Rôle')
                 cost = o.get('cost', 0)
-                special_rules = o.get('special_rules', [])
-        
-                # Construction du label avec coût en dernier
-                label = f"{role_name}"
+                special_rules = ", ".join(o.get('special_rules', [])) if o.get('special_rules') else ""
+
+                label = f"{role_name} (+{cost} pts)"
                 if special_rules:
-                    rules_text = ", ".join(special_rules)
-                    label += f" | {rules_text}"
-                label += f" (+{cost} pts)"
-        
+                    label += f" | {special_rules}"
+
                 choices.append(label)
                 opt_map[label] = o
-        
+
             current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
             choice = st.radio(
                 "Rôle du héros",
@@ -1717,9 +1751,9 @@ if st.session_state.page == "army":
                 index=choices.index(current) if current in choices else 0,
                 key=f"{unit_key}_{g_key}_role",
             )
-        
+
             st.session_state.unit_selections[unit_key][g_key] = choice
-        
+
             if choice != "Aucun rôle":
                 for opt_label, opt in opt_map.items():
                     if opt_label == choice:
@@ -1786,29 +1820,7 @@ if st.session_state.page == "army":
                 for rule in mount_data["special_rules"]:
                     if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
                         all_special_rules.append(rule)
-        elif group.get("type") == "mount":
-            choices = ["Aucune monture"]
-            opt_map = {}
-        
-            for o in group.get("options", []):
-                label = format_mount_option(o)
-                choices.append(label)
-                opt_map[label] = o
-        
-            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
-            choice = st.radio(
-                "Monture",
-                choices,
-                index=choices.index(current) if current in choices else 0,
-                key=f"{unit_key}_{g_key}_mount",
-            )
-        
-            st.session_state.unit_selections[unit_key][g_key] = choice
-        
-            if choice != "Aucune monture":
-                mount = opt_map[choice]
-                mount_cost = mount["cost"]
-                        
+
         # Création de l'unité
         unit_data = {
             "name": unit["name"],
