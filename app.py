@@ -1375,6 +1375,42 @@ def format_weapon_option(weapon):
 
     return f"{name} (A{attacks}/PA{ap}/{range_text})"
 
+def format_mount_option(mount):
+    """Formate l'option de monture avec ses caractéristiques complètes"""
+    if not mount or not isinstance(mount, dict):
+        return "Aucune monture"
+
+    name = mount.get('name', 'Monture')
+    cost = mount.get('cost', 0)
+    mount_data = mount.get('mount', {})
+
+    # Récupération des caractéristiques
+    quality = mount_data.get('quality', '?')
+    defense = mount_data.get('defense', '?')
+    special_rules = mount_data.get('special_rules', [])
+    coriace = mount_data.get('coriace_bonus', 0)
+
+    # Construction des caractéristiques
+    stats = []
+    stats.append(f"Q{quality}+")
+    stats.append(f"Déf{defense}+")
+    if coriace > 0:
+        stats.append(f"Coriace+{coriace}")
+
+    # Ajout des règles spéciales
+    if special_rules:
+        rules_text = ", ".join([r for r in special_rules if not r.startswith(("Griffes", "Sabots"))])
+        if rules_text:
+            stats.append(rules_text)
+
+    # Construction du label final
+    label = f"{name}"
+    if stats:
+        label += f" ({', '.join(stats)})"
+    label += f" (+{cost} pts)"
+
+    return label
+
 # ======================================================
 # FONCTIONS UTILITAIRES MISES À JOUR
 # ======================================================
@@ -1775,7 +1811,29 @@ if st.session_state.page == "army":
                 for rule in mount_data["special_rules"]:
                     if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
                         all_special_rules.append(rule)
-
+        elif group.get("type") == "mount":
+            choices = ["Aucune monture"]
+            opt_map = {}
+        
+            for o in group.get("options", []):
+                label = format_mount_option(o)
+                choices.append(label)
+                opt_map[label] = o
+        
+            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
+            choice = st.radio(
+                "Monture",
+                choices,
+                index=choices.index(current) if current in choices else 0,
+                key=f"{unit_key}_{g_key}_mount",
+            )
+        
+            st.session_state.unit_selections[unit_key][g_key] = choice
+        
+            if choice != "Aucune monture":
+                mount = opt_map[choice]
+                mount_cost = mount["cost"]
+                
         # Création de l'unité
         unit_data = {
             "name": unit["name"],
