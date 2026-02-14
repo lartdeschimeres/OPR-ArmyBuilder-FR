@@ -1359,7 +1359,7 @@ def format_unit_option(u):
     return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
 
 # ======================================================
-# PAGE 2 – CONSTRUCTEUR D'ARMÉE (version complète corrigée)
+# PAGE 2 – CONSTRUCTEUR D'ARMÉE (version complète avec filtres)
 # ======================================================
 if st.session_state.page == "army":
     # Vérification renforcée des données requises
@@ -1383,6 +1383,7 @@ if st.session_state.page == "army":
     st.session_state.setdefault("army_cost", 0)
     st.session_state.setdefault("army_list", [])
     st.session_state.setdefault("unit_selections", {})
+    st.session_state.setdefault("unit_filter", "Tous")  # Filtre par défaut
 
     st.title(f"{st.session_state.list_name} - {st.session_state.army_cost}/{st.session_state.points} pts")
 
@@ -1526,14 +1527,113 @@ if st.session_state.page == "army":
 
     st.divider()
 
-    # Sélection de l'unité
-    unit = st.selectbox(
-        "Unité disponible",
-        st.session_state.units,
-        format_func=format_unit_option,
-        key="unit_select",
+    # CSS pour les boutons de filtre
+    st.markdown(
+        """
+        <style>
+        .filter-container {
+            margin-bottom: 20px;
+        }
+        .filter-button {
+            margin-bottom: 10px;
+        }
+        .filter-button .stButton>button {
+            background-color: #f0f2f6;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            font-weight: 500;
+            width: 100%;
+            height: 100%;
+        }
+        .filter-button .stButton>button:hover {
+            background-color: #e9ecef;
+            border-color: #ced4da;
+        }
+        .filter-button.active .stButton>button {
+            background-color: #3498db !important;
+            color: white !important;
+            border-color: #2980b9 !important;
+        }
+        .unit-count {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .unit-selector {
+            margin-top: 15px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
     )
 
+    # Système de filtres par catégorie
+    st.markdown("<div class='filter-container'>", unsafe_allow_html=True)
+    st.subheader("Filtres par type d'unité")
+
+    # Définir les catégories et leurs types associés
+    filter_categories = {
+        "Tous": None,
+        "Héros": ["hero"],
+        "Héros nommés": ["named_hero"],
+        "Unités de base": ["unit"],
+        "Véhicules légers / Petits monstres": ["light_vehicle"],
+        "Véhicules / Monstres": ["vehicle"],
+        "Titans": ["titan"]
+    }
+
+    # Créer une grille de boutons de filtre
+    cols = st.columns(len(filter_categories))
+    for i, (category, _) in enumerate(filter_categories.items()):
+        with cols[i]:
+            # Déterminer si ce filtre est actif
+            button_class = "active" if st.session_state.unit_filter == category else ""
+
+            # Créer le bouton avec la classe CSS appropriée
+            st.markdown(f"<div class='filter-button {button_class}'>", unsafe_allow_html=True)
+            if st.button(category, key=f"filter_{category}"):
+                st.session_state.unit_filter = category
+            st.markdown("</div>", unsafe_allow_html=True)
+
+    # Filtrer les unités selon le filtre sélectionné
+    filtered_units = []
+    if st.session_state.unit_filter == "Tous":
+        filtered_units = st.session_state.units
+    else:
+        relevant_types = filter_categories[st.session_state.unit_filter]
+        filtered_units = [
+            unit for unit in st.session_state.units
+            if unit.get('unit_detail') in relevant_types
+        ]
+
+    # Afficher le nombre d'unités disponibles
+    st.markdown(f"""
+    <div class='unit-count'>
+        {len(filtered_units)} unités {st.session_state.unit_filter.lower()} disponibles |
+        Total: {len(st.session_state.units)} unités
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # Sélection de l'unité (uniquement parmi les unités filtrées)
+    if filtered_units:
+        st.markdown("<div class='unit-selector'>", unsafe_allow_html=True)
+        unit = st.selectbox(
+            "Unité disponible",
+            filtered_units,
+            format_func=format_unit_option,
+            key="unit_select",
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+    else:
+        st.warning(f"Aucune unité {st.session_state.unit_filter.lower()} disponible.")
+        st.stop()
+
+    # Suite du code existant pour les améliorations
     unit_key = f"unit_{unit['name']}"
     st.session_state.unit_selections.setdefault(unit_key, {})
 
@@ -1553,8 +1653,6 @@ if st.session_state.page == "army":
         # ARMES
         if group.get("type") == "weapon":
             choices = []
-
-            # Ajout des armes de base
             base_weapons = unit.get("weapon", [])
             if isinstance(base_weapons, list) and base_weapons:
                 for weapon in base_weapons:
@@ -1565,7 +1663,6 @@ if st.session_state.page == "army":
                 choices.append("Aucune arme de base")
 
             opt_map = {}
-
             for o in group.get("options", []):
                 weapon = o.get("weapon", {})
                 label = format_weapon_option(weapon, o['cost'])
@@ -1761,4 +1858,3 @@ if st.session_state.page == "army":
             st.session_state.army_list.append(unit_data)
             st.session_state.army_cost += final_cost
             st.rerun()
-
