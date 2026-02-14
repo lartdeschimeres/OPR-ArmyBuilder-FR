@@ -1,4 +1,78 @@
-import json
+# ======================================================
+# FONCTIONS UTILITAIRES MISES À JOUR
+# ======================================================
+def format_unit_option(u):
+    """Formate l'option d'unité avec tous les détails"""
+    name_part = f"{u['name']}"
+    if u.get('type') == "hero":
+        name_part += " [1]"
+    else:
+        name_part += f" [{u.get('size', 10)}]"
+
+    # Récupération des armes de base
+    weapons = u.get('weapon', [])
+    weapon_profiles = []
+    if isinstance(weapons, list):
+        for weapon in weapons:
+            if isinstance(weapon, dict):
+                profile = format_weapon_profile(weapon)
+                weapon_profiles.append(profile)
+    elif isinstance(weapons, dict):
+        profile = format_weapon_profile(weapons)
+        weapon_profiles.append(profile)
+
+    weapon_text = ", ".join(weapon_profiles) if weapon_profiles else "Aucune"
+
+    # Récupération des règles spéciales
+    special_rules = u.get('special_rules', [])
+    rules_text = []
+    if isinstance(special_rules, list):
+        for rule in special_rules:
+            if isinstance(rule, str):
+                if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
+                    rules_text.append(rule)
+            elif isinstance(rule, dict):
+                rules_text.append(rule.get('name', ''))
+
+    rules_text = ", ".join(rules_text) if rules_text else "Aucune"
+
+    qua_def = f"Déf {u.get('defense', '?')}+"
+    cost = f"{u.get('base_cost', 0)}pts"
+
+    return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
+
+def format_weapon_profile(weapon):
+    """Formate le profil complet d'une arme avec portée avant Aa et règles spéciales dans les parenthèses"""
+    if not weapon or not isinstance(weapon, dict):
+        return "Aucune arme"
+
+    name = weapon.get('name', 'Arme')
+    attacks = weapon.get('attacks', '?')
+    ap = weapon.get('armor_piercing', '?')
+    range_text = weapon.get('range', 'Mêlée')
+    special_rules = weapon.get('special_rules', [])
+
+    # Construction du profil avec portée avant Aa
+    profile = f"{range_text} A{attacks}/PA{ap}"
+
+    # Ajout des règles spéciales dans les parenthèses
+    if special_rules:
+        rules_text = ", ".join(special_rules)
+        profile = f"{profile} ({rules_text})"
+
+    return f"{name} {profile}"
+
+def format_weapon_option(weapon, cost=0):
+    """Formate l'option d'arme pour la sélection avec règles spéciales dans les parenthèses"""
+    if not weapon or not isinstance(weapon, dict):
+        return "Aucune arme"
+
+    profile = format_weapon_profile(weapon)
+
+    if cost > 0:
+        profile += f" (+{cost} pts)"
+
+    return profileimport json
 import streamlit as st
 from pathlib import Path
 from datetime import datetime
@@ -1419,7 +1493,7 @@ def format_unit_option(u):
     return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
 
 def format_weapon_profile(weapon):
-    """Formate le profil complet d'une arme avec règles spéciales dans les parenthèses"""
+    """Formate le profil complet d'une arme avec portée avant Aa et règles spéciales dans les parenthèses"""
     if not weapon or not isinstance(weapon, dict):
         return "Aucune arme"
 
@@ -1429,15 +1503,15 @@ def format_weapon_profile(weapon):
     range_text = weapon.get('range', 'Mêlée')
     special_rules = weapon.get('special_rules', [])
 
-    # Construction du profil de base
-    profile = f"A{attacks}/PA{ap}"
+    # Construction du profil avec portée avant Aa
+    profile = f"{range_text} A{attacks}/PA{ap}"
 
     # Ajout des règles spéciales dans les parenthèses
     if special_rules:
         rules_text = ", ".join(special_rules)
         profile = f"{profile} ({rules_text})"
 
-    return f"{name} {profile}/{range_text}"
+    return f"{name} {profile}"
 
 def format_weapon_option(weapon, cost=0):
     """Formate l'option d'arme pour la sélection avec règles spéciales dans les parenthèses"""
@@ -1450,7 +1524,7 @@ def format_weapon_option(weapon, cost=0):
         profile += f" (+{cost} pts)"
 
     return profile
-
+    
 # ======================================================
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE (version complète et corrigée)
 # ======================================================
@@ -1643,7 +1717,7 @@ if st.session_state.page == "army":
         g_key = f"group_{g_idx}"
         st.subheader(group.get("group", "Améliorations"))
 
-        # ARMES - MODIFIÉ POUR AFFICHER LES RÈGLES SPÉCIALES DANS LES PARENTHÈSES
+        # ARMES - MODIFIÉ POUR AFFICHER LA PORTÉE AVANT Aa
         if group.get("type") == "weapon":
             choices = []
 
