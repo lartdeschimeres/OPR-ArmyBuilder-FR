@@ -1845,3 +1845,4 @@ if st.session_state.page == "army":
             st.session_state.army_list.append(unit_data)
             st.session_state.army_cost += final_cost
             st.rerun()
+
