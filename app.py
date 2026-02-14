@@ -1392,20 +1392,10 @@ def format_unit_option(u):
     if isinstance(weapons, list):
         for weapon in weapons:
             if isinstance(weapon, dict):
-                attacks = weapon.get('attacks', '?')
-                ap = weapon.get('armor_piercing', '?')
-                special = ", ".join(weapon.get('special_rules', [])) if weapon.get('special_rules') else ""
-                profile = f"A{attacks}/PA{ap}"
-                if special:
-                    profile += f" | {special}"
+                profile = format_weapon_profile(weapon)
                 weapon_profiles.append(profile)
     elif isinstance(weapons, dict):
-        attacks = weapons.get('attacks', '?')
-        ap = weapons.get('armor_piercing', '?')
-        special = ", ".join(weapons.get('special_rules', [])) if weapons.get('special_rules') else ""
-        profile = f"A{attacks}/PA{ap}"
-        if special:
-            profile += f" | {special}"
+        profile = format_weapon_profile(weapons)
         weapon_profiles.append(profile)
 
     weapon_text = ", ".join(weapon_profiles) if weapon_profiles else "Aucune"
@@ -1428,8 +1418,8 @@ def format_unit_option(u):
 
     return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
 
-def format_weapon_option(weapon, cost=0):
-    """Formate le nom de l'arme avec son profil complet et ses règles spéciales"""
+def format_weapon_profile(weapon):
+    """Formate le profil complet d'une arme avec règles spéciales dans les parenthèses"""
     if not weapon or not isinstance(weapon, dict):
         return "Aucune arme"
 
@@ -1437,11 +1427,25 @@ def format_weapon_option(weapon, cost=0):
     attacks = weapon.get('attacks', '?')
     ap = weapon.get('armor_piercing', '?')
     range_text = weapon.get('range', 'Mêlée')
-    special_rules = ", ".join(weapon.get('special_rules', [])) if weapon.get('special_rules') else ""
+    special_rules = weapon.get('special_rules', [])
 
-    profile = f"{name} (A{attacks}/PA{ap}/{range_text})"
+    # Construction du profil de base
+    profile = f"A{attacks}/PA{ap}"
+
+    # Ajout des règles spéciales dans les parenthèses
     if special_rules:
-        profile += f" | {special_rules}"
+        rules_text = ", ".join(special_rules)
+        profile = f"{profile} ({rules_text})"
+
+    return f"{name} {profile}/{range_text}"
+
+def format_weapon_option(weapon, cost=0):
+    """Formate l'option d'arme pour la sélection avec règles spéciales dans les parenthèses"""
+    if not weapon or not isinstance(weapon, dict):
+        return "Aucune arme"
+
+    profile = format_weapon_profile(weapon)
+
     if cost > 0:
         profile += f" (+{cost} pts)"
 
@@ -1639,11 +1643,11 @@ if st.session_state.page == "army":
         g_key = f"group_{g_idx}"
         st.subheader(group.get("group", "Améliorations"))
 
-        # ARMES - MODIFIÉ POUR AFFICHER LES RÈGLES SPÉCIALES
+        # ARMES - MODIFIÉ POUR AFFICHER LES RÈGLES SPÉCIALES DANS LES PARENTHÈSES
         if group.get("type") == "weapon":
             choices = []
 
-            # Ajout des armes de base avec leurs profils et règles spéciales
+            # Ajout des armes de base
             base_weapons = unit.get("weapon", [])
             if isinstance(base_weapons, list) and base_weapons:
                 for weapon in base_weapons:
@@ -1678,6 +1682,40 @@ if st.session_state.page == "army":
                         weapons = [opt["weapon"]] if unit.get("type") == "hero" else [opt["weapon"]]
                         break
 
+        # RÔLES - MODIFIÉ POUR AFFICHER LES RÈGLES SPÉCIALES
+        elif group.get("type") == "role" and unit.get("type") == "hero":
+            choices = ["Aucun rôle"]
+            opt_map = {}
+
+            for o in group.get("options", []):
+                role_name = o.get('name', 'Rôle')
+                cost = o.get('cost', 0)
+                special_rules = o.get('special_rules', [])
+
+                label = f"{role_name} (+{cost} pts)"
+                if special_rules:
+                    rules_text = ", ".join(special_rules)
+                    label += f" | {rules_text}"
+
+                choices.append(label)
+                opt_map[label] = o
+
+            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
+            choice = st.radio(
+                "Rôle du héros",
+                choices,
+                index=choices.index(current) if current in choices else 0,
+                key=f"{unit_key}_{g_key}_role",
+            )
+
+            st.session_state.unit_selections[unit_key][g_key] = choice
+
+            if choice != "Aucun rôle":
+                for opt_label, opt in opt_map.items():
+                    if opt_label == choice:
+                        upgrades_cost += opt["cost"]
+                        selected_options[group.get("group", "Rôle")] = [opt]
+                        break
         # AMÉLIORATIONS D'ARME
         elif group.get("type") == "weapon_upgrades":
             choices = ["Aucune amélioration d'arme"]
