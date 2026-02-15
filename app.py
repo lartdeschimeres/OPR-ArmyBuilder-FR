@@ -427,15 +427,16 @@ def export_html(army_list, army_name, army_limit):
     def get_special_rules(unit):
         """Extraire et formater les règles spéciales (triées par ordre alphabétique)"""
         rules = set()
-
+    
         if "special_rules" in unit:
             for rule in unit["special_rules"]:
                 if isinstance(rule, dict):
                     rules.add(rule.get("name", ""))
                 elif isinstance(rule, str):
                     if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
+                        # Normaliser les caractères accentués pour le tri
                         rules.add(rule)
-
+    
         if "options" in unit:
             for group_name, opts in unit["options"].items():
                 if isinstance(opts, list):
@@ -446,15 +447,16 @@ def export_html(army_list, army_name, army_limit):
                                     rules.add(rule)
                             elif isinstance(opt["special_rules"], str):
                                 rules.add(opt["special_rules"])
-
+    
         if "mount" in unit and unit.get("mount"):
             mount_data = unit["mount"].get("mount", {})
             if "special_rules" in mount_data:
                 for rule in mount_data["special_rules"]:
                     if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
                         rules.add(rule)
-
-        return sorted(rules)
+    
+        # Tri alphabétique en ignorant les accents
+        return sorted(rules, key=lambda x: x.lower().replace('é', 'e').replace('è', 'e').replace('ê', 'e')))
 
     def get_french_type(unit):
         """Retourne le type français basé sur unit_detail et type"""
@@ -778,11 +780,12 @@ body {{
     <div class="rules-title">Règles spéciales:</div>
     <div class="rules-list">
 '''
-            for rule in sorted(special_rules):  # Tri alphabétique ici
+            # Tri alphabétique en ignorant les accents
+            for rule in sorted(special_rules, key=lambda x: x.lower().replace('é', 'e').replace('è', 'e').replace('ê', 'e')):
                 html += f'<span class="rule-tag">{esc(rule)}</span>'
             html += '''
-    </div>
-  </div>
+            </div>
+          </div>
 '''
 
         # Améliorations d'unité
