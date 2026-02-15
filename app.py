@@ -393,7 +393,7 @@ def format_weapon_option(weapon):
     range_text = weapon.get('range', 'Mêlée')
 
     return f"{name} (A{attacks}/PA{ap}/{range_text})"
-
+    
 # ======================================================
 # EXPORT HTML - VERSION CORRIGÉE
 # ======================================================
@@ -425,63 +425,36 @@ def export_html(army_list, army_name, army_limit):
         return result
 
     def get_special_rules(unit):
-        """Extraire et formater les règles spéciales (triées par ordre alphabétique)"""
-        rules = set()
-    
+        """Extraire et formater les règles spéciales"""
+        rules = []
+
+        # Règles spéciales de base
         if "special_rules" in unit:
             for rule in unit["special_rules"]:
                 if isinstance(rule, dict):
-                    rules.add(rule.get("name", ""))
+                    rules.append(f'{rule.get("name", "")}')
                 elif isinstance(rule, str):
-                    if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
-                        # Normaliser les caractères accentués pour le tri
-                        rules.add(rule)
-    
+                    # Exclure les règles de Coriace qui sont déjà affichées dans les stats
+                    if "Coriace" not in rule or "Monture" in rule:
+                        rules.append(rule)
+
+        # Règles spéciales des améliorations
         if "options" in unit:
             for group_name, opts in unit["options"].items():
                 if isinstance(opts, list):
                     for opt in opts:
                         if "special_rules" in opt:
-                            if isinstance(opt["special_rules"], list):
-                                for rule in opt["special_rules"]:
-                                    rules.add(rule)
-                            elif isinstance(opt["special_rules"], str):
-                                rules.add(opt["special_rules"])
-    
-        if "mount" in unit and unit.get("mount"):
+                            rules.extend(opt["special_rules"])
+
+        # Règles spéciales de la monture (sans la Coriace qui est déjà comptée)
+        if "mount" in unit and unit["mount"]:
             mount_data = unit["mount"].get("mount", {})
             if "special_rules" in mount_data:
                 for rule in mount_data["special_rules"]:
                     if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
-                        rules.add(rule)
-    
-        # Tri alphabétique en ignorant les accents
-        return sorted(rules, key=lambda x: x.lower().replace('é', 'e').replace('è', 'e').replace('ê', 'e'))
+                        rules.append(rule)
 
-    def get_french_type(unit):
-        """Retourne le type français basé sur unit_detail et type"""
-        unit_detail = unit.get('unit_detail', 'unit')
-        unit_type = unit.get('type', 'unit')
-
-        # Mappage des types
-        type_mapping = {
-            'hero': 'Héros',
-            'named_hero': 'Héros nommé',
-            'unit': 'Unité de base',
-            'light_vehicle': 'Véhicule léger',
-            'vehicle': 'Véhicule/Monstre',
-            'titan': 'Titan'
-        }
-
-        # Cas particuliers pour les héros
-        if unit_type == "hero":
-            if unit_detail == "named_hero":
-                return "Héros nommé"
-            else:
-                return "Héros"
-        else:
-            # Pour les autres types, utiliser unit_detail
-            return type_mapping.get(unit_detail, 'Unité')
+        return list(set(rules))  # Supprimer les doublons
 
     # Trier la liste pour afficher les héros en premier
     sorted_army_list = sorted(army_list, key=lambda x: 0 if x.get("type") == "hero" else 1)
@@ -495,28 +468,82 @@ def export_html(army_list, army_name, army_limit):
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {{
-  --bg-dark: #f8f9fa;
-  --bg-card: #ffffff;
-  --bg-header: #e9ecef;
-  --accent: #3498db;
-  --accent-dark: #1f201d;
-  --text-main: #212529;
-  --text-muted: #6c757d;
-  --border: #dee2e6;
-  --cost-color: #ff6b6b;
+  --bg-dark: #f8f9fa;          /* Fond clair pour PDF */
+  --bg-card: #ffffff;          /* Cartes blanches */
+  --bg-header: #e9ecef;        /* En-têtes clairs */
+  --accent: #3498db;           /* Bleu plus foncé */
+  --accent-dark: #2980b9;
+  --text-main: #212529;        /* Noir pour meilleur contraste */
+  --text-muted: #6c757d;       /* Gris plus foncé */
+  --border: #dee2e6;           /* Bordures claires */
+  --cost-color: #ff6b6b;       /* Rouge pour les coûts */
   --tough-color: #e74c3c;
   --hero-color: #f39c12;
   --unit-color: #3498db;
   --highlight: #8e44ad;
 }}
 
-body {{
-  background: var(--bg-dark);
-  color: var(--text-main);
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  padding: 20px;
-  line-height: 1.5;
+@media screen {{
+  body {{
+    background: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.5;
+  }}
+}}
+
+@media print {{
+  body {{
+    background: white !important;
+    color: black !important;
+    font-family: 'Inter', Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+    font-size: 12pt;  /* Taille de police augmentée pour PDF */
+  }}
+
+  .unit-card, .army-summary {{
+    background: white !important;
+    border: 1px solid #ccc !important;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+  }}
+
+  .stat-value {{
+    font-size: 14pt !important;  /* Taille augmentée pour les stats */
+    font-weight: bold !important;
+  }}
+
+  .rule-tag {{
+    background: #f0f0f0 !important;
+    color: black !important;
+    border: 1px solid #ddd !important;
+    padding: 4px 8px !important;
+    margin: 2px !important;
+  }}
+
+  .weapon-stats {{
+    font-size: 11pt !important;
+  }}
+
+  .rule-name, .spell-name {{
+    color: #2c3e50 !important;
+    font-weight: bold !important;
+  }}
+
+  h3, .unit-name {{
+    color: #2c3e50 !important;
+    font-size: 14pt !important;
+  }}
+
+  .section-title {{
+    font-size: 12pt !important;
+    font-weight: bold !important;
+    margin: 12px 0 6px 0 !important;
+  }}
 }}
 
 .army {{
@@ -526,12 +553,12 @@ body {{
 
 .army-title {{
   text-align: center;
-  font-size: 24px;
+  font-size: 18pt;  /* Taille augmentée */
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   color: var(--accent);
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 8px;
 }}
 
 .unit-card {{
@@ -552,18 +579,15 @@ body {{
 }}
 
 .unit-name {{
-  font-size: 18px;
+  font-size: 16pt;  /* Taille augmentée */
   font-weight: 600;
   color: var(--text-main);
   margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }}
 
 .unit-cost {{
   font-family: monospace;
-  font-size: 18px;
+  font-size: 16pt;  /* Taille augmentée */
   font-weight: bold;
   color: var(--cost-color);
 }}
@@ -576,21 +600,14 @@ body {{
   padding: 12px;
   border-radius: 6px;
   text-align: center;
-  font-size: 12px;
+  font-size: 11pt;  /* Taille augmentée */
   margin: 12px 0;
 }}
 
 .stat-value {{
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14pt;  /* Taille augmentée */
   color: var(--text-main);
-}}
-
-.section-title {{
-  font-weight: 600;
-  margin: 15px 0 8px 0;
-  color: var(--text-main);
-  font-size: 14px;
 }}
 
 .weapon-item {{
@@ -600,36 +617,22 @@ body {{
   margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }}
 
 .weapon-name {{
-  font-weight: 500;
-  color: var(--text-main);
-}}
-
-.rules-section {{
-  margin: 12px 0;
-}}
-
-.rules-title {{
   font-weight: 600;
-  margin-bottom: 6px;
   color: var(--text-main);
-}}
-
-.rules-list {{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  font-size: 11pt;  /* Taille légèrement augmentée */
 }}
 
 .rule-tag {{
   background: var(--bg-header);
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 10pt;  /* Taille légèrement augmentée */
   color: var(--text-main);
+  margin: 2px;
+  display: inline-block;
 }}
 
 .army-summary {{
@@ -645,21 +648,34 @@ body {{
 
 .summary-cost {{
   font-family: monospace;
-  font-size: 24px;
+  font-size: 18pt;  /* Taille augmentée */
   font-weight: bold;
   color: var(--cost-color);
 }}
 
-@media print {{
-  body {{
-    background: white;
-    color: black;
-  }}
-  .unit-card, .army-summary {{
-    background: white;
-    border: 1px solid #ccc;
-    page-break-inside: avoid;
-  }}
+.faction-rules, .spells-section {{
+  margin: 30px 0;
+  border-top: 2px solid var(--border);
+  padding-top: 15px;
+}}
+
+.rule-item, .spell-item {{
+  margin-bottom: 12px;
+  font-size: 11pt;  /* Taille augmentée */
+  line-height: 1.5;
+}}
+
+.rule-name, .spell-name {{
+  font-weight: bold;
+  color: var(--accent);
+  display: block;  /* Pour une meilleure mise en page */
+  margin-bottom: 2px;
+}}
+
+.rule-description, .spell-description {{
+  color: var(--text-main);
+  display: block;
+  margin-bottom: 8px;
 }}
 </style>
 </head>
@@ -687,10 +703,10 @@ body {{
         cost = unit.get("cost", 0)
         quality = esc(unit.get("quality", "-"))
         defense = esc(unit.get("defense", "-"))
-        unit_type_french = get_french_type(unit)  # Utilisation de la fonction corrigée
+        unit_type = unit.get("type", "unit")
         unit_size = unit.get("size", 10)
 
-        if unit.get("type") == "hero":
+        if unit_type.lower() == "hero":
             unit_size = 1
 
         # Calcul de la valeur de Coriace
@@ -701,12 +717,13 @@ body {{
         if not isinstance(base_weapons, list):
             base_weapons = [base_weapons]
 
-        # Récupération des règles spéciales
-        special_rules = get_special_rules(unit)
-
-        # Récupération des options et montures
+        # Récupération des améliorations
+        weapon_upgrades = unit.get("weapon_upgrades", [])
         options = unit.get("options", {})
         mount = unit.get("mount", None)
+
+        # Récupération des règles spéciales
+        special_rules = get_special_rules(unit)
 
         html += f'''
 <div class="unit-card">
@@ -717,7 +734,8 @@ body {{
         <span style="font-size: 12px; color: var(--text-muted); margin-left: 8px;">[{unit_size}]</span>
       </h3>
       <div class="unit-type">
-        {"⭐" if unit.get("type") == "hero" else "🛡️"} {unit_type_french}
+        {"⭐" if unit_type == "hero" else "🛡️"} {unit_type}
+        {" | Taille: " + str(unit_size) if unit_type != "hero" else ""}
       </div>
     </div>
     <div class="unit-cost">{cost} pts</div>
@@ -773,19 +791,36 @@ body {{
   </div>
 '''
 
-        # Règles spéciales (triées)
+        # Améliorations d'arme
+        if weapon_upgrades:
+            html += '''
+  <div class="section-title">Améliorations d'arme:</div>
+  <div class="weapon-list">
+'''
+            for weapon in weapon_upgrades:
+                if weapon:
+                    html += f'''
+    <div class="weapon-item">
+      <div class="weapon-name">{esc(weapon.get('name', 'Amélioration'))}</div>
+      <div class="weapon-stats">{format_weapon(weapon)}</div>
+    </div>
+'''
+            html += '''
+  </div>
+'''
+
+        # Règles spéciales
         if special_rules:
             html += '''
   <div class="rules-section">
     <div class="rules-title">Règles spéciales:</div>
     <div class="rules-list">
 '''
-            # Tri alphabétique en ignorant les accents
-            for rule in sorted(special_rules, key=lambda x: x.lower().replace('é', 'e').replace('è', 'e').replace('ê', 'e')):
+            for rule in sorted(special_rules):
                 html += f'<span class="rule-tag">{esc(rule)}</span>'
             html += '''
-            </div>
-          </div>
+    </div>
+  </div>
 '''
 
         # Améliorations d'unité
@@ -884,7 +919,18 @@ body {{
                 half += 1
 
             html += '<div class="rule-column" style="flex: 1; min-width: 300px; padding-right: 15px;">'
-            for rule in sorted(all_rules, key=lambda x: x.get('name', '')):  # Tri alphabétique des règles de faction
+            for rule in all_rules[:half]:
+                if isinstance(rule, dict):
+                    html += f'''
+    <div class="rule-item">
+      <div class="rule-name">{esc(rule.get('name', ''))}:</div>
+      <div class="rule-description">{esc(rule.get('description', ''))}</div>
+    </div>
+'''
+            html += '</div>'
+
+            html += '<div class="rule-column" style="flex: 1; min-width: 300px; padding-left: 15px;">'
+            for rule in all_rules[half:]:
                 if isinstance(rule, dict):
                     html += f'''
     <div class="rule-item">
@@ -913,7 +959,7 @@ body {{
   <div style="display: flex; flex-wrap: wrap;">
     <div style="flex: 1; min-width: 100%;">
 '''
-            for spell in sorted(all_spells, key=lambda x: x['name']):  # Tri alphabétique des sorts
+            for spell in all_spells:
                 if isinstance(spell, dict):
                     html += f'''
       <div class="spell-item" style="margin-bottom: 12px;">
@@ -939,7 +985,7 @@ body {{
 </html>
 '''
     return html
-
+    
 # ======================================================
 # CHARGEMENT DES FACTIONS
 # ======================================================
@@ -1481,47 +1527,43 @@ if st.session_state.page == "army":
 
     st.divider()
 
-    # CSS pour les boutons de filtre avec mise en évidence simple
+    # CSS pour les boutons de filtre
     st.markdown(
         """
         <style>
         .filter-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 20px 0;
+            margin-bottom: 20px;
         }
-
         .filter-button {
-            padding: 8px 15px;
-            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .filter-button .stButton>button {
+            background-color: #f0f2f6;
+            color: #333;
             border: 1px solid #ddd;
-            background-color: #f8f9fa;
-            color: #495057;
+            border-radius: 4px;
+            padding: 8px;
             font-weight: 500;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
+            width: 100%;
+            height: 100%;
         }
-
-        .filter-button:hover {
+        .filter-button .stButton>button:hover {
             background-color: #e9ecef;
+            border-color: #ced4da;
         }
-
-        /* Style pour le filtre actif - simple et efficace */
-        .filter-button.active {
-            background-color: #3498db;
-            color: white;
-            font-weight: 600;
+        .filter-button.active .stButton>button {
+            background-color: #3498db !important;
+            color: white !important;
+            border-color: #2980b9 !important;
         }
-
-        @media (max-width: 768px) {
-            .filter-container {
-                flex-direction: column;
-            }
-            .filter-button {
-                width: 100%;
-            }
+        .unit-count {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .unit-selector {
+            margin-top: 15px;
         }
         </style>
         """,
@@ -1543,39 +1585,18 @@ if st.session_state.page == "army":
         "Titans": ["titan"]
     }
 
-    # Créer les boutons de filtre
-    for category in filter_categories.keys():
-        # Créer un bouton Streamlit normal
-        btn = st.button(
-            category,
-            key=f"filter_{category}",
-            use_container_width=True
-        )
+    # Créer une grille de boutons de filtre
+    cols = st.columns(len(filter_categories))
+    for i, (category, _) in enumerate(filter_categories.items()):
+        with cols[i]:
+            # Déterminer si ce filtre est actif
+            button_class = "active" if st.session_state.unit_filter == category else ""
 
-        # Si le bouton est cliqué, mettre à jour le filtre
-        if btn:
-            st.session_state.unit_filter = category
-            st.rerun()
-
-    # Appliquer le style actif après les boutons
-    st.markdown(
-        f"""
-        <script>
-        // Appliquer le style actif au bouton correspondant
-        document.querySelectorAll('button').forEach(btn => {{
-            if (btn.textContent === '{st.session_state.unit_filter}') {{
-                btn.style.backgroundColor = '#3498db';
-                btn.style.color = 'white';
-                btn.style.fontWeight = '600';
-                btn.style.borderColor = '#2980b9';
-            }}
-        }});
-        </script>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown("</div>", unsafe_allow_html=True)
+            # Créer le bouton avec la classe CSS appropriée
+            st.markdown(f"<div class='filter-button {button_class}'>", unsafe_allow_html=True)
+            if st.button(category, key=f"filter_{category}"):
+                st.session_state.unit_filter = category
+            st.markdown("</div>", unsafe_allow_html=True)
 
     # Filtrer les unités selon le filtre sélectionné
     filtered_units = []
@@ -1590,21 +1611,26 @@ if st.session_state.page == "army":
 
     # Afficher le nombre d'unités disponibles
     st.markdown(f"""
-    <div style='text-align: center; margin: 10px 0; color: #6c757d; font-size: 0.9em;'>
-        {len(filtered_units)} unités disponibles (filtre: {st.session_state.unit_filter})
+    <div class='unit-count'>
+        {len(filtered_units)} unités {st.session_state.unit_filter.lower()} disponibles |
+        Total: {len(st.session_state.units)} unités
     </div>
     """, unsafe_allow_html=True)
 
-    # Sélection de l'unité
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # Sélection de l'unité (uniquement parmi les unités filtrées)
     if filtered_units:
+        st.markdown("<div class='unit-selector'>", unsafe_allow_html=True)
         unit = st.selectbox(
             "Unité disponible",
             filtered_units,
             format_func=format_unit_option,
             key="unit_select",
         )
+        st.markdown("</div>", unsafe_allow_html=True)
     else:
-        st.warning(f"Aucune unité disponible pour le filtre '{st.session_state.unit_filter}'.")
+        st.warning(f"Aucune unité {st.session_state.unit_filter.lower()} disponible.")
         st.stop()
 
     # Suite du code existant pour les améliorations
