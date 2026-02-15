@@ -1518,50 +1518,64 @@
       ]
     },
     {
-      "name": "Char du Ravage de la Guerre",
-      "type": "unit",
-      "unit_detail": "light_vehicle",
-      "size": 1,
-      "base_cost": 130,
-      "quality": 3,
-      "defense": 3,
-      "coriace": 6,
-      "special_rules": ["Guerrier-né", "Impact (4)", "Rapide"],
-      "weapon": [
+  "name": "Char du Ravage de la Guerre",
+  "type": "unit",
+  "unit_detail": "light_vehicle",
+  "size": 1,
+  "base_cost": 130,
+  "quality": 3,
+  "defense": 3,
+  "coriace": 6,
+  "special_rules": ["Guerrier-né", "Impact (4)", "Rapide"],
+  "weapon": [
+    {
+      "name": "Attaques lourdes de l'équipage",
+      "range": "-",
+      "attacks": 2,
+      "armor_piercing": 2,
+      "special_rules": []
+    },
+    {
+      "name": "Sabots",
+      "range": "-",
+      "attacks": 2,
+      "armor_piercing": 0,
+      "special_rules": []
+    }
+  ],
+  "upgrade_groups": [
+    {
+      "group": "Remplacement d'armes de l'équipage",
+      "type": "weapon",
+      "description": "Remplacez uniquement les attaques lourdes de l'équipage :",
+      "options": [
         {
-          "name": "Attaques lourdes de l'équipage",
-          "range": "-",
-          "attacks": 2,
-          "armor_piercing": 2,
-          "special_rules": []
-        },
-        {
-          "name": "Sabots",
-          "range": "-",
-          "attacks": 2,
-          "armor_piercing": "-",
-          "special_rules": []
+          "name": "Javelots barbelés",
+          "cost": 50,
+          "weapon": {
+            "name": "Javelots barbelés",
+            "range": "12",
+            "attacks": 6,
+            "armor_piercing": 1,
+            "special_rules": ["Éclatement"]
+          }
         }
-      ],
-      "upgrade_groups": [
+      ]
+    },
+    {
+      "group": "Améliorations d'unité",
+      "type": "upgrades",
+      "description": "Améliorations disponibles pour l'unité",
+      "options": [
         {
-          "group": "Remplacement d'armes",
-          "type": "weapon",
-          "description": "Remplacez toutes les attaques lourdes de l'équipage :",
-          "options": [
-            {
-              "name": "Javelots barbelés",
-              "cost": 50,
-              "weapon": {
-                "name": "Javelots barbelés",
-                "range": "12",
-                "attacks": 6,
-                "armor_piercing": 1,
-                "special_rules": ["Éclatement"]
-              }
-            }
-          ]
-        },
+          "name": "Faveur du Ravage",
+          "cost": 15,
+          "special_rules": ["Bonus d'Inébranlable"]
+        }
+      ]
+    }
+  ]
+},
         {
           "group": "Améliorations d'unité",
           "type": "upgrades",
