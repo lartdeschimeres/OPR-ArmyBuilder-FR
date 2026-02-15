@@ -461,6 +461,22 @@ def export_html(army_list, army_name, army_limit):
         sorted_rules = sorted(rules)
         return sorted_rules
 
+    # Mappage des unit_detail vers leur nom français
+    def get_french_type(unit):
+        unit_detail = unit.get('unit_detail', 'unit')
+        type_mapping = {
+            'hero': 'Héros',
+            'named_hero': 'Héros nommé',
+            'unit': 'Unité de base',
+            'light_vehicle': 'Véhicule léger',
+            'vehicle': 'Véhicule/Monstre',
+            'titan': 'Titan'
+        }
+        return type_mapping.get(unit_detail, 'Unité')
+
+    # Trier la liste pour afficher les héros en premier
+    sorted_army_list = sorted(army_list, key=lambda x: 0 if x.get("type") == "hero" else 1)
+    
     # Trier la liste pour afficher les héros en premier
     sorted_army_list = sorted(army_list, key=lambda x: 0 if x.get("type") == "hero" else 1)
 
@@ -665,7 +681,7 @@ body {{
         cost = unit.get("cost", 0)
         quality = esc(unit.get("quality", "-"))
         defense = esc(unit.get("defense", "-"))
-        unit_type = unit.get("type", "unit")
+        unit_type = get_french_type(unit)
         unit_size = unit.get("size", 10)
 
         if unit_type.lower() == "hero":
@@ -695,7 +711,7 @@ body {{
         <span style="font-size: 12px; color: var(--text-muted); margin-left: 8px;">[{unit_size}]</span>
       </h3>
       <div class="unit-type">
-        {"⭐" if unit_type == "hero" else "🛡️"} {unit_type}
+        {"⭐" if unit.get("type") == "hero" else "🛡️"} {unit_type} {unit_type}
       </div>
     </div>
     <div class="unit-cost">{cost} pts</div>
