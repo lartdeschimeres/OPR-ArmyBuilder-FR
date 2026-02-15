@@ -425,18 +425,17 @@ def export_html(army_list, army_name, army_limit):
         return result
 
     def get_special_rules(unit):
-        """Extraire et formater les règles spéciales"""
-        rules = []
+        """Extraire et formater les règles spéciales (triées par ordre alphabétique)"""
+        rules = set()  # Utilisation d'un set pour éviter les doublons
 
         # Règles spéciales de base
         if "special_rules" in unit:
             for rule in unit["special_rules"]:
                 if isinstance(rule, dict):
-                    rules.append(f'{rule.get("name", "")}')
+                    rules.add(rule.get("name", ""))
                 elif isinstance(rule, str):
-                    # Exclure les règles de Coriace qui sont déjà affichées dans les stats
-                    if "Coriace" not in rule or "Monture" in rule:
-                        rules.append(rule)
+                    if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
+                        rules.add(rule)
 
         # Règles spéciales des améliorations
         if "options" in unit:
@@ -444,17 +443,20 @@ def export_html(army_list, army_name, army_limit):
                 if isinstance(opts, list):
                     for opt in opts:
                         if "special_rules" in opt:
-                            rules.extend(opt["special_rules"])
+                            for rule in opt["special_rules"]:
+                                rules.add(rule)
 
-        # Règles spéciales de la monture (sans la Coriace qui est déjà comptée)
+        # Règles spéciales de la monture
         if "mount" in unit and unit["mount"]:
             mount_data = unit["mount"].get("mount", {})
             if "special_rules" in mount_data:
                 for rule in mount_data["special_rules"]:
                     if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
-                        rules.append(rule)
+                        rules.add(rule)
 
-        return list(set(rules))  # Supprimer les doublons
+        # Conversion en liste et tri alphabétique
+        sorted_rules = sorted(rules)
+        return sorted_rules
 
     # Trier la liste pour afficher les héros en premier
     sorted_army_list = sorted(army_list, key=lambda x: 0 if x.get("type") == "hero" else 1)
@@ -468,82 +470,28 @@ def export_html(army_list, army_name, army_limit):
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {{
-  --bg-dark: #f8f9fa;          /* Fond clair pour PDF */
-  --bg-card: #ffffff;          /* Cartes blanches */
-  --bg-header: #e9ecef;        /* En-têtes clairs */
-  --accent: #3498db;           /* Bleu plus foncé */
-  --accent-dark: #2980b9;
-  --text-main: #212529;        /* Noir pour meilleur contraste */
-  --text-muted: #6c757d;       /* Gris plus foncé */
-  --border: #dee2e6;           /* Bordures claires */
-  --cost-color: #ff6b6b;       /* Rouge pour les coûts */
+  --bg-dark: #f8f9fa;
+  --bg-card: #ffffff;
+  --bg-header: #e9ecef;
+  --accent: #3498db;
+  --accent-dark: #1f201d;
+  --text-main: #212529;
+  --text-muted: #6c757d;
+  --border: #dee2e6;
+  --cost-color: #ff6b6b;
   --tough-color: #e74c3c;
   --hero-color: #f39c12;
   --unit-color: #3498db;
   --highlight: #8e44ad;
 }}
 
-@media screen {{
-  body {{
-    background: var(--bg-dark);
-    color: var(--text-main);
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 20px;
-    line-height: 1.5;
-  }}
-}}
-
-@media print {{
-  body {{
-    background: white !important;
-    color: black !important;
-    font-family: 'Inter', Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    line-height: 1.6;
-    font-size: 12pt;  /* Taille de police augmentée pour PDF */
-  }}
-
-  .unit-card, .army-summary {{
-    background: white !important;
-    border: 1px solid #ccc !important;
-    page-break-inside: avoid;
-    box-shadow: none !important;
-  }}
-
-  .stat-value {{
-    font-size: 14pt !important;  /* Taille augmentée pour les stats */
-    font-weight: bold !important;
-  }}
-
-  .rule-tag {{
-    background: #f0f0f0 !important;
-    color: black !important;
-    border: 1px solid #ddd !important;
-    padding: 4px 8px !important;
-    margin: 2px !important;
-  }}
-
-  .weapon-stats {{
-    font-size: 11pt !important;
-  }}
-
-  .rule-name, .spell-name {{
-    color: #2c3e50 !important;
-    font-weight: bold !important;
-  }}
-
-  h3, .unit-name {{
-    color: #2c3e50 !important;
-    font-size: 14pt !important;
-  }}
-
-  .section-title {{
-    font-size: 12pt !important;
-    font-weight: bold !important;
-    margin: 12px 0 6px 0 !important;
-  }}
+body {{
+  background: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 20px;
+  line-height: 1.5;
 }}
 
 .army {{
@@ -553,12 +501,12 @@ def export_html(army_list, army_name, army_limit):
 
 .army-title {{
   text-align: center;
-  font-size: 18pt;  /* Taille augmentée */
+  font-size: 24px;
   font-weight: 700;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   color: var(--accent);
-  border-bottom: 2px solid var(--border);
-  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
 }}
 
 .unit-card {{
@@ -579,15 +527,18 @@ def export_html(army_list, army_name, army_limit):
 }}
 
 .unit-name {{
-  font-size: 16pt;  /* Taille augmentée */
+  font-size: 18px;
   font-weight: 600;
   color: var(--text-main);
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }}
 
 .unit-cost {{
   font-family: monospace;
-  font-size: 16pt;  /* Taille augmentée */
+  font-size: 18px;
   font-weight: bold;
   color: var(--cost-color);
 }}
@@ -600,14 +551,21 @@ def export_html(army_list, army_name, army_limit):
   padding: 12px;
   border-radius: 6px;
   text-align: center;
-  font-size: 11pt;  /* Taille augmentée */
+  font-size: 12px;
   margin: 12px 0;
 }}
 
 .stat-value {{
   font-weight: bold;
-  font-size: 14pt;  /* Taille augmentée */
+  font-size: 16px;
   color: var(--text-main);
+}}
+
+.section-title {{
+  font-weight: 600;
+  margin: 15px 0 8px 0;
+  color: var(--text-main);
+  font-size: 14px;
 }}
 
 .weapon-item {{
@@ -617,22 +575,36 @@ def export_html(army_list, army_name, army_limit):
   margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }}
 
 .weapon-name {{
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-main);
-  font-size: 11pt;  /* Taille légèrement augmentée */
+}}
+
+.rules-section {{
+  margin: 12px 0;
+}}
+
+.rules-title {{
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}}
+
+.rules-list {{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }}
 
 .rule-tag {{
   background: var(--bg-header);
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 10pt;  /* Taille légèrement augmentée */
+  font-size: 11px;
   color: var(--text-main);
-  margin: 2px;
-  display: inline-block;
 }}
 
 .army-summary {{
@@ -648,34 +620,21 @@ def export_html(army_list, army_name, army_limit):
 
 .summary-cost {{
   font-family: monospace;
-  font-size: 18pt;  /* Taille augmentée */
+  font-size: 24px;
   font-weight: bold;
   color: var(--cost-color);
 }}
 
-.faction-rules, .spells-section {{
-  margin: 30px 0;
-  border-top: 2px solid var(--border);
-  padding-top: 15px;
-}}
-
-.rule-item, .spell-item {{
-  margin-bottom: 12px;
-  font-size: 11pt;  /* Taille augmentée */
-  line-height: 1.5;
-}}
-
-.rule-name, .spell-name {{
-  font-weight: bold;
-  color: var(--accent);
-  display: block;  /* Pour une meilleure mise en page */
-  margin-bottom: 2px;
-}}
-
-.rule-description, .spell-description {{
-  color: var(--text-main);
-  display: block;
-  margin-bottom: 8px;
+@media print {{
+  body {{
+    background: white;
+    color: black;
+  }}
+  .unit-card, .army-summary {{
+    background: white;
+    border: 1px solid #ccc;
+    page-break-inside: avoid;
+  }}
 }}
 </style>
 </head>
@@ -717,12 +676,7 @@ def export_html(army_list, army_name, army_limit):
         if not isinstance(base_weapons, list):
             base_weapons = [base_weapons]
 
-        # Récupération des améliorations
-        weapon_upgrades = unit.get("weapon_upgrades", [])
-        options = unit.get("options", {})
-        mount = unit.get("mount", None)
-
-        # Récupération des règles spéciales
+        # Récupération des règles spéciales (triées)
         special_rules = get_special_rules(unit)
 
         html += f'''
@@ -735,7 +689,6 @@ def export_html(army_list, army_name, army_limit):
       </h3>
       <div class="unit-type">
         {"⭐" if unit_type == "hero" else "🛡️"} {unit_type}
-        {" | Taille: " + str(unit_size) if unit_type != "hero" else ""}
       </div>
     </div>
     <div class="unit-cost">{cost} pts</div>
@@ -791,38 +744,19 @@ def export_html(army_list, army_name, army_limit):
   </div>
 '''
 
-        # Améliorations d'arme
-        if weapon_upgrades:
-            html += '''
-  <div class="section-title">Améliorations d'arme:</div>
-  <div class="weapon-list">
-'''
-            for weapon in weapon_upgrades:
-                if weapon:
-                    html += f'''
-    <div class="weapon-item">
-      <div class="weapon-name">{esc(weapon.get('name', 'Amélioration'))}</div>
-      <div class="weapon-stats">{format_weapon(weapon)}</div>
-    </div>
-'''
-            html += '''
-  </div>
-'''
-
-        # Règles spéciales
+        # Règles spéciales (triées)
         if special_rules:
             html += '''
   <div class="rules-section">
     <div class="rules-title">Règles spéciales:</div>
     <div class="rules-list">
 '''
-            for rule in sorted(special_rules):
+            for rule in sorted(special_rules):  # Tri alphabétique ici
                 html += f'<span class="rule-tag">{esc(rule)}</span>'
             html += '''
     </div>
   </div>
-'''
-
+'''    
         # Améliorations d'unité
         if options:
             html += '''
