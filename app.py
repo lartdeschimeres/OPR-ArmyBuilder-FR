@@ -456,7 +456,7 @@ def export_html(army_list, army_name, army_limit):
                         rules.add(rule)
     
         # Tri alphabétique en ignorant les accents
-        return sorted(rules, key=lambda x: x.lower().replace('é', 'e').replace('è', 'e').replace('ê', 'e')))
+        return sorted(rules, key=lambda x: x.lower().replace('é', 'e').replace('è', 'e').replace('ê', 'e'))
 
     def get_french_type(unit):
         """Retourne le type français basé sur unit_detail et type"""
