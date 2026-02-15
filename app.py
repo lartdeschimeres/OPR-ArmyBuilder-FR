@@ -443,11 +443,14 @@ def export_html(army_list, army_name, army_limit):
                 if isinstance(opts, list):
                     for opt in opts:
                         if "special_rules" in opt:
-                            for rule in opt["special_rules"]:
-                                rules.add(rule)
+                            if isinstance(opt["special_rules"], list):
+                                for rule in opt["special_rules"]:
+                                    rules.add(rule)
+                            elif isinstance(opt["special_rules"], str):
+                                rules.add(opt["special_rules"])
 
         # Règles spéciales de la monture
-        if "mount" in unit and unit["mount"]:
+        if "mount" in unit and unit.get("mount"):
             mount_data = unit["mount"].get("mount", {})
             if "special_rules" in mount_data:
                 for rule in mount_data["special_rules"]:
@@ -679,6 +682,10 @@ body {{
         # Récupération des règles spéciales (triées)
         special_rules = get_special_rules(unit)
 
+        # Récupération des options et montures
+        options = unit.get("options", {})
+        mount = unit.get("mount", None)
+
         html += f'''
 <div class="unit-card">
   <div class="unit-header">
@@ -756,7 +763,8 @@ body {{
             html += '''
     </div>
   </div>
-'''    
+'''
+
         # Améliorations d'unité
         if options:
             html += '''
@@ -853,18 +861,7 @@ body {{
                 half += 1
 
             html += '<div class="rule-column" style="flex: 1; min-width: 300px; padding-right: 15px;">'
-            for rule in all_rules[:half]:
-                if isinstance(rule, dict):
-                    html += f'''
-    <div class="rule-item">
-      <div class="rule-name">{esc(rule.get('name', ''))}:</div>
-      <div class="rule-description">{esc(rule.get('description', ''))}</div>
-    </div>
-'''
-            html += '</div>'
-
-            html += '<div class="rule-column" style="flex: 1; min-width: 300px; padding-left: 15px;">'
-            for rule in all_rules[half:]:
+            for rule in sorted(all_rules, key=lambda x: x.get('name', '')):  # Tri alphabétique des règles de faction
                 if isinstance(rule, dict):
                     html += f'''
     <div class="rule-item">
@@ -893,7 +890,7 @@ body {{
   <div style="display: flex; flex-wrap: wrap;">
     <div style="flex: 1; min-width: 100%;">
 '''
-            for spell in all_spells:
+            for spell in sorted(all_spells, key=lambda x: x['name']):  # Tri alphabétique des sorts
                 if isinstance(spell, dict):
                     html += f'''
       <div class="spell-item" style="margin-bottom: 12px;">
