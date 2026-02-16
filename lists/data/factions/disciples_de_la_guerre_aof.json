@@ -1427,17 +1427,21 @@
       "weapon": [
         {
           "name": "Armes à une main lourdes et Griffes lourdes",
-          "range": "-",
+          "range": "-/-",
           "attacks": "1/1",
           "armor_piercing": "1/1",
           "special_rules": []
+          "special_rules_description": {
+            "Armes à une main lourdes": [],
+            "Griffes lourdes": []
+          }
         }
       ],
       "upgrade_groups": [
         {
           "group": "Remplacement d'armes",
           "type": "weapon",
-          "description": "Remplacez toutes les Armes à une main lourdes par :",
+          "description": "Remplacez toutes les Armes à une main lourdes et Griffes lourdes par :",
           "options": [
             {
               "name": "Lance lourde et Griffes lourdes",
@@ -1452,32 +1456,32 @@
                 "Mance lourde": ["Percée"],
                 "Sabots": []
               }
-            }
-          ]
-        },
-        {
-          "group": "Améliorations d'unité",
-          "type": "upgrades",
-          "description": "Améliorations disponibles pour l'unité",
-          "options": [
-            {
-              "name": "Bannière",
-              "cost": 5,
-              "special_rules": []
             },
-            {
-              "name": "Sergent",
-              "cost": 5,
-              "special_rules": []
-            },
-            {
-              "name": "Musicien",
-              "cost": 10,
-              "special_rules": []
-            }
-          ]
-        }
-      ]
+        "replaces": ["Attaques de l'équipage et sabots"]
+      }
+      },
+      {
+        "group": "Améliorations d'unité",
+        "type": "upgrades",
+        "description": "Améliorations disponibles pour l'unité",
+        "options": [
+          {
+            "name": "Bannière",
+            "cost": 5,
+            "special_rules": []
+          },
+          {
+            "name": "Sergent",
+            "cost": 5,
+            "special_rules": []
+          },
+          {
+            "name": "Musicien",
+            "cost": 10,
+            "special_rules": []
+          }
+        ]
+      }
     },
     {
       "name": "Bête furieuse de la Guerre",
@@ -1525,33 +1529,38 @@
       "special_rules": ["Guerrier-né", "Impact (4)", "Rapide"],
       "weapon": [
         {
-          "name": "Attaques lourdes de l'équipage et Sabots",
-          "range": "-",
-          "attacks": "2/2",
-          "armor_piercing": "2/0",
-          "special_rules": []
-        }        
+          "name": "Attaques de l'équipage et sabots",
+          "range": "-/-",  // Format "Attaques/Sabots"
+          "attacks": "2/2",  // Format "Attaques/Sabots"
+          "armor_piercing": "2/0",  // Format "Attaques/Sabots"
+          "special_rules": [],
+          "special_rules_description": {
+            "Attaques de l'équipage": [],
+            "Sabots": []
+          }
+        }
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d'armes de l'équipage",
+          "group": "Remplacement d'armes",
           "type": "weapon",
-          "description": "Remplacez uniquement les attaques lourdes de l'équipage par :",
+          "description": "Remplacez les attaques de l'équipage par des javelots barbelés",
           "options": [
             {
-              "name": "Javelots barbelés et Sabots",
+              "name": "Javelots barbelés et sabots",
               "cost": 50,
               "weapon": {
-                "name": "Javelots barbelés et Sabots",
-                "range": "12\"/-",
-                "attacks": "6/2",
-                "armor_piercing": "1/0",
-                "special_rules": ["Eclatement"]
+                "name": "Javelots barbelés et sabots",
+                "range": "12\"/-",  // Format "Javelots/Sabots"
+                "attacks": "6/2",   // Format "Javelots/Sabots"
+                "armor_piercing": "1/0",  // Format "Javelots/Sabots"
+                "special_rules": ["Éclatement"],
+                "special_rules_description": {
+                  "Javelots barbelés": ["Éclatement"],
+                  "Sabots": []
+                }
               },
-              "special_rules_description": {
-                "Javelots barbelés": ["Eclatement"],
-                "Sabots": []
-              }
+              "replaces": ["Attaques de l'équipage et sabots"]
             }
           ]
         },
