@@ -1425,7 +1425,6 @@
       "coriace": 3,
       "special_rules": ["Guerrier-né", "Impact (2)", "Rapide"],
       "weapon": [
-        "weapon": [
         {
           "name": "Armes à une main lourdes",
           "range": "-",
@@ -1445,44 +1444,45 @@
         {
           "group": "Remplacement d'armes",
           "type": "weapon",
-          "description": "Remplacez les Armes à une main lourdes par des lances lourdes",
+          "description": "Remplacez les armes à une main lourdes par des lances lourdes",
           "options": [
             {
-              "name": "Lance lourde (remplace armes à une main lourde)",
+              "name": "Lance lourde",
               "cost": 25,
               "weapon": {
-                "name": "Mance lourde",
+                "name": "Lance lourde",
                 "range": "-",
                 "attacks": 1,
                 "armor_piercing": 1,
                 "special_rules": ["Percée"]
               },
-              "replaces": ["Armes à une main lourde"]
+              "replaces": ["Armes à une main lourdes"]
             }
           ]
         },
-      {
-        "group": "Améliorations d'unité",
-        "type": "upgrades",
-        "description": "Améliorations disponibles pour l'unité",
-        "options": [
-          {
-            "name": "Bannière",
-            "cost": 5,
-            "special_rules": []
-          },
-          {
-            "name": "Sergent",
-            "cost": 5,
-            "special_rules": []
-          },
-          {
-            "name": "Musicien",
-            "cost": 10,
-            "special_rules": []
-          }
-        ]
-      }
+        {
+          "group": "Améliorations d'unité",
+          "type": "upgrades",
+          "description": "Améliorations disponibles pour l'unité",
+          "options": [
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "Bête furieuse de la Guerre",
@@ -1551,7 +1551,7 @@
           "description": "Remplacez les attaques de l'équipage par des javelots barbelés",
           "options": [
             {
-              "name": "Javelots barbelés (remplace attaques de l'équipage)",
+              "name": "Javelots barbelés",
               "cost": 50,
               "weapon": {
                 "name": "Javelots barbelés",
