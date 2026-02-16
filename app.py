@@ -395,33 +395,49 @@ def format_weapon_option(weapon):
     return f"{name} (A{attacks}/PA{ap}/{range_text})"
     
 # ======================================================
-# EXPORT HTML - VERSION CORRIGÉE
+# EXPORT HTML
 # ======================================================
 def export_html(army_list, army_name, army_limit):
     def esc(txt):
         return str(txt).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
     def format_weapon(weapon):
-        """Formate une arme pour l'affichage"""
+        """Formate une arme pour l'affichage, avec gestion des armes combinées"""
         if not weapon:
             return "Arme non spécifiée"
-
+    
         range_text = weapon.get('range', '-')
         if range_text == "-" or range_text is None:
             range_text = "Mêlée"
-
+    
+        # Gestion des armes combinées (format "valeur1/valeur2")
         attacks = weapon.get('attacks', '-')
         ap = weapon.get('armor_piercing', '-')
-        special_rules = weapon.get('special_rules', [])
-
+        special = ", ".join(weapon.get('special_rules', [])) if weapon.get('special_rules') else ""
+    
+        # Si c'est une arme combinée (contient "/")
+        if isinstance(attacks, str) and "/" in attacks:
+            attack_parts = attacks.split("/")
+            ap_parts = ap.split("/") if isinstance(ap, str) and "/" in ap else [ap, ap]
+    
+            # Format spécial pour les armes combinées
+            weapon_names = weapon.get('name', 'Arme').split(" et ")
+            if len(weapon_names) == 2:
+                result = f"{weapon_names[0]}: {range_text} | A{attack_parts[0]} | PA{ap_parts[0]}<br>"
+                result += f"{weapon_names[1]}: {range_text} | A{attack_parts[1]} | PA{ap_parts[1]}"
+                if special:
+                    result += f" | {special}"
+                return result
+    
+        # Format normal pour les armes simples
         result = f"{range_text} | A{attacks}"
-
+    
         if ap not in ("-", 0, "0", None):
             result += f" | PA({ap})"
-
-        if special_rules:
-            result += f" | {', '.join(special_rules)}"
-
+    
+        if special:
+            result += f" | {special}"
+    
         return result
 
     def get_special_rules(unit):
