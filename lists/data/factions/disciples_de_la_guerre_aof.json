@@ -1522,10 +1522,17 @@
       "special_rules": ["Guerrier-né", "Impact (4)", "Rapide"],
       "weapon": [
         {
-          "name": "Sabots et Attaques de l'équipage",
-          "range": "Mêlée/Mêlée",
-          "attacks": "2/2",
-          "armor_piercing": "0/2",
+          "name": "Sabots",
+          "range": "Mêlée",
+          "attacks": 2,
+          "armor_piercing": 0,
+          "special_rules": []
+        },
+        {
+          "name": "Attaques de l'équipage",
+          "range": "Mêlée",
+          "attacks": "2",
+          "armor_piercing": "2",
           "special_rules": []
         }
       ],
@@ -1538,13 +1545,23 @@
             {
               "name": "Sabots et Javelots barbelés",
               "cost": 50,
-              "weapon": {
-                "name": "Sabots et Javelots barbelés",
-                "range": "Mêlée/12\"",
-                "attacks": "2/6",
-                "armor_piercing": "0/1",
+              "weapon": [
+                {
+                "name": "Sabots",
+                "range": "Mêlée"",
+                "attacks": 2,
+                "armor_piercing": 0,
+                "special_rules": []
+                },
+                {
+                "name": "Javelots barbelés",
+                "range": "12\"",
+                "attacks": 6,
+                "armor_piercing": 1,
                 "special_rules": ["Éclatement"]
-              }
+                },
+              ],
+              "replaces": ["Attaques de l'équipage"]
             }
           ]
         },
