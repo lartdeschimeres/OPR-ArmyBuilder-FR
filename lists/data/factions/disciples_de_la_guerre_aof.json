@@ -1540,7 +1540,7 @@
               "cost": 50,
               "weapon": {
                 "name": "Sabots et Javelots barbelés",
-                "range": "-"\"12",
+                "range": ""\12",
                 "attacks": "2/6",
                 "armor_piercing": "0/1",
                 "special_rules": ["Éclatement"]
