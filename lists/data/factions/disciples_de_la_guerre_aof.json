@@ -1559,7 +1559,7 @@
                 "attacks": 6,
                 "armor_piercing": 1,
                 "special_rules": ["Éclatement"]
-                },
+                }
               ],
               "replaces": ["Attaques de l'équipage"]
             }
