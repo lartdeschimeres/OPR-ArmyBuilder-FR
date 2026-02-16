@@ -1425,41 +1425,42 @@
       "coriace": 3,
       "special_rules": ["Guerrier-né", "Impact (2)", "Rapide"],
       "weapon": [
+        "weapon": [
         {
-          "name": "Armes à une main lourdes et Griffes lourdes",
-          "range": "-/-",
-          "attacks": "1/1",
-          "armor_piercing": "1/1",
+          "name": "Armes à une main lourdes",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 1,
           "special_rules": []
-          "special_rules_description": {
-            "Armes à une main lourdes": [],
-            "Griffes lourdes": []
-          }
+        },
+        {
+          "name": "Griffes lourdes",
+          "range": "-",
+          "attacks": 1,
+          "armor_piercing": 1,
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
         {
           "group": "Remplacement d'armes",
           "type": "weapon",
-          "description": "Remplacez toutes les Armes à une main lourdes et Griffes lourdes par :",
+          "description": "Remplacez les Armes à une main lourdes par des lances lourdes",
           "options": [
             {
-              "name": "Lance lourde et Griffes lourdes",
+              "name": "Lance lourde (remplace armes à une main lourde)",
               "cost": 25,
               "weapon": {
-                "name": "Lance lourde et Griffes lourdes",
+                "name": "Mance lourde",
                 "range": "-",
-                "attacks": "1/1",
-                "armor_piercing": "1/1"
+                "attacks": 1,
+                "armor_piercing": 1,
+                "special_rules": ["Percée"]
               },
-              "special_rules_description": {
-                "Mance lourde": ["Percée"],
-                "Sabots": []
-              }
-            },
-        "replaces": ["Attaques de l'équipage et sabots"]
-      }
-      },
+              "replaces": ["Armes à une main lourde"]
+            }
+          ]
+        },
       {
         "group": "Améliorations d'unité",
         "type": "upgrades",
@@ -1529,15 +1530,18 @@
       "special_rules": ["Guerrier-né", "Impact (4)", "Rapide"],
       "weapon": [
         {
-          "name": "Attaques de l'équipage et sabots",
-          "range": "-/-",  // Format "Attaques/Sabots"
-          "attacks": "2/2",  // Format "Attaques/Sabots"
-          "armor_piercing": "2/0",  // Format "Attaques/Sabots"
-          "special_rules": [],
-          "special_rules_description": {
-            "Attaques de l'équipage": [],
-            "Sabots": []
-          }
+          "name": "Attaques de l'équipage",
+          "range": "-",
+          "attacks": 2,
+          "armor_piercing": 2,
+          "special_rules": []
+        },
+        {
+          "name": "Sabots",
+          "range": "-",
+          "attacks": 2,
+          "armor_piercing": 0,
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -1547,20 +1551,16 @@
           "description": "Remplacez les attaques de l'équipage par des javelots barbelés",
           "options": [
             {
-              "name": "Javelots barbelés et sabots",
+              "name": "Javelots barbelés (remplace attaques de l'équipage)",
               "cost": 50,
               "weapon": {
-                "name": "Javelots barbelés et sabots",
-                "range": "12\"/-",  // Format "Javelots/Sabots"
-                "attacks": "6/2",   // Format "Javelots/Sabots"
-                "armor_piercing": "1/0",  // Format "Javelots/Sabots"
-                "special_rules": ["Éclatement"],
-                "special_rules_description": {
-                  "Javelots barbelés": ["Éclatement"],
-                  "Sabots": []
-                }
+                "name": "Javelots barbelés",
+                "range": "12\"",
+                "attacks": 6,
+                "armor_piercing": 1,
+                "special_rules": ["Éclatement"]
               },
-              "replaces": ["Attaques de l'équipage et sabots"]
+              "replaces": ["Attaques de l'équipage"]
             }
           ]
         },
