@@ -1544,7 +1544,7 @@
                 "attacks": "2/6",
                 "armor_piercing": "0/1",
                 "special_rules": ["Éclatement"]
-              },
+              }
             }
           ]
         },
