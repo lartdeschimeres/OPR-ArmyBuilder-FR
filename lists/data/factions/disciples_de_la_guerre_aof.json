@@ -1427,17 +1427,17 @@
       "weapon": [
         {
           "name": "Griffes lourdes",
-          "range": "-",
+          "range": "Mêlée",
           "attacks": 1,
           "armor_piercing": 1,
           "special_rules": []
         },
         {
-          "name": "Lances lourdes",
-          "range": "-",
+          "name": "Armes à une main lourdes",
+          "range": "Mêlée",
           "attacks": 1,
           "armor_piercing": 1,
-          "special_rules": ["Percée"]
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -1448,14 +1448,24 @@
           "options": [
             {
               "name": "Griffes lourdes et Lances lourdes",
-              "cost": 25,
-              "weapon": {
-                "name": "Griffes lourdes et Lances lourdes",
-                "range": "Mêlée",
-                "attacks": "1/1",
-                "armor_piercing": "1/1",
-                "special_rules": ["Percée"]
-              }
+              "cost": 5,
+              "weapon":2 [
+                {
+                  "name": "Griffes lourdes",
+                  "range": "Mêlée",
+                  "attacks": 1,
+                  "armor_piercing": 1,
+                  "special_rules": []
+                },
+                {
+                  "name": "Lances lourdess",
+                  "range": "Mêlée",
+                  "attacks": 1,
+                  "armor_piercing": 1,
+                  "special_rules": ["Percée"]
+                }
+              ],
+              "replaces": ["Armes à une main lourdes"]
             }
           ]
         },
