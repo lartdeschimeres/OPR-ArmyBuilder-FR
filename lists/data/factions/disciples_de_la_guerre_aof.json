@@ -1447,24 +1447,15 @@
           "description": "Remplacez les Armes à une main lourdes par des Lances lourdes",
           "options": [
             {
-              "name": "Griffes lourdes et Lances lourdes",
+              "name": "Lances lourdes",
               "cost": 25,
-              "weapon": [
-                {
-                  "name": "Griffes lourdes",
-                  "range": "Mêlée",
-                  "attacks": 1,
-                  "armor_piercing": 1,
-                  "special_rules": []
-                },
-                {
+              "weapon": {
                   "name": "Lances lourdess",
                   "range": "Mêlée",
                   "attacks": 1,
                   "armor_piercing": 1,
                   "special_rules": ["Percée"]
                 }
-              ],
               "replaces": ["Armes à une main lourdes"]
             }
           ]
@@ -1562,22 +1553,13 @@
             {
               "name": "Sabots et Javelots barbelés",
               "cost": 50,
-              "weapon": [
-                {
-                  "name": "Sabots",
-                  "range": "-",
-                  "attacks": 2,
-                  "armor_piercing": 0,
-                  "special_rules": []
-                },
-                {
+              "weapon": {
                   "name": "Javelots barbelés",
                   "range": "12\"",
                   "attacks": 6,
                   "armor_piercing": 1,
                   "special_rules": ["Éclatement"]
-                }
-              ],
+                },
               "replaces": ["Attaques de l'équipage"]
             }
           ]
