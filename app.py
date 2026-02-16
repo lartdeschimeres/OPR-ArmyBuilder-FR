@@ -416,7 +416,6 @@ def export_html(army_list, army_name, army_limit):
         if range_text == "-" or range_text is None or range_text.lower() == "mêlée":
             range_text = "Mêlée"
         else:
-            # On enlève les guillemets s'ils sont présents
             range_text = range_text.replace('"', '').replace("'", "")
 
         # Construction du résultat
@@ -670,6 +669,17 @@ body {{
   color: var(--cost-color);
 }}
 
+/* Styles pour les règles spéciales et sorts en bleu et gras */
+.rule-name {{
+  color: var(--accent) !important;
+  font-weight: bold !important;
+}}
+
+.spell-name {{
+  color: var(--accent) !important;
+  font-weight: bold !important;
+}}
+
 @media print {{
   body {{
     background: white;
@@ -800,7 +810,7 @@ body {{
     <div class="rules-list">
 '''
             for rule in special_rules:
-                html += f'<span class="rule-tag">{esc(rule)}</span>'
+                html += f'<span class="rule-tag"><span class="rule-name">{esc(rule)}</span></span>'
             html += '''
     </div>
   </div>
@@ -820,7 +830,7 @@ body {{
       <div class="upgrade-name">{esc(opt.get("name", ""))}</div>
 '''
                         if 'special_rules' in opt and opt['special_rules']:
-                            html += f'<div style="font-size: 10px; color: var(--text-muted);">({", ".join(opt["special_rules"])})</div>'
+                            html += f'<div style="font-size: 10px; color: var(--text-muted);">({", ".join([f"<span class=\'rule-name\'>{esc(r)}</span>" for r in opt["special_rules"]])})</div>'
                         html += '''
     </div>
 '''
@@ -945,10 +955,10 @@ body {{
                     html += f'''
       <div class="spell-item" style="margin-bottom: 12px;">
         <div>
-          <span class="rule-name">{esc(spell.get('name', ''))}</span>
-          <span class="spell-cost"> ({spell.get('details', {}).get('cost', '?')})</span>
+          <span class="spell-name">{esc(spell.get('name', ''))}</span>
+          <span class="spell-cost"> ({spell.get('details', {{}}).get('cost', '?')})</span>
         </div>
-        <div class="rule-description">{esc(spell.get('details', {}).get('description', ''))}</div>
+        <div class="rule-description">{esc(spell.get('details', {{}}).get('description', ''))}</div>
       </div>
 '''
             html += '''
