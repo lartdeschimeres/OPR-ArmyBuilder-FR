@@ -406,16 +406,20 @@ def export_html(army_list, army_name, army_limit):
         if not weapon:
             return "Aucune arme"
 
+        # Récupération des données de l'arme
         range_text = weapon.get('range', '-')
-        if range_text == "-" or range_text is None:
-            range_text = "Mêlée"
-        else:
-            range_text = f"{range_text}\""
-
         attacks = weapon.get('attacks', '-')
         ap = weapon.get('armor_piercing', '-')
         special_rules = weapon.get('special_rules', [])
 
+        # Traitement de la portée (suppression des guillemets)
+        if range_text == "-" or range_text is None or range_text.lower() == "mêlée":
+            range_text = "Mêlée"
+        else:
+            # On enlève les guillemets s'ils sont présents
+            range_text = range_text.replace('"', '').replace("'", "")
+
+        # Construction du résultat
         result = f"{range_text} | A{attacks}"
 
         if ap not in ("-", 0, "0", None):
