@@ -1426,17 +1426,10 @@
       "special_rules": ["Guerrier-né", "Impact (2)", "Rapide"],
       "weapon": [
         {
-          "name": "Griffes lourdes",
+          "name": "Armes à une main lourdes et Griffes lourdes",
           "range": "-",
-          "attacks": 1,
-          "armor_piercing": 1,
-          "special_rules": []
-        },
-        {
-          "name": "Armes à une main lourdes",
-          "range": "-",
-          "attacks": 1,
-          "armor_piercing": 1,
+          "attacks": "1/1",
+          "armor_piercing": "1/1",
           "special_rules": []
         }
       ],
@@ -1444,16 +1437,16 @@
         {
           "group": "Remplacement d'armes",
           "type": "weapon",
-          "description": "Remplacez toutes les armes à une main lourdes par :",
+          "description": "Remplacez toutes les Armes à une main lourdes par :",
           "options": [
             {
-              "name": "Lance lourde",
+              "name": "Lance lourde et Griffes lourdes",
               "cost": 25,
               "weapon": {
-                "name": "Lance lourde",
+                "name": "Lance lourde et Griffes lourdes",
                 "range": "-",
-                "attacks": 1,
-                "armor_piercing": 1,
+                "attacks": 1/1,
+                "armor_piercing": 1/1,
                 "special_rules": ["Percée"]
               }
             }
@@ -1529,19 +1522,12 @@
       "special_rules": ["Guerrier-né", "Impact (4)", "Rapide"],
       "weapon": [
         {
-          "name": "Attaques lourdes de l'équipage",
+          "name": "Attaques lourdes de l'équipage et Sabots",
           "range": "-",
-          "attacks": 2,
-          "armor_piercing": 2,
+          "attacks": 2/2,
+          "armor_piercing": 2/0,
           "special_rules": []
-        },
-        {
-          "name": "Sabots",
-          "range": "-",
-          "attacks": 2,
-          "armor_piercing": 0,
-          "special_rules": []
-        }
+        }        
       ],
       "upgrade_groups": [
         {
@@ -1550,13 +1536,13 @@
           "description": "Remplacez uniquement les attaques lourdes de l'équipage par :",
           "options": [
             {
-              "name": "Javelots barbelés",
+              "name": "Javelots barbelés et Sabots",
               "cost": 50,
               "weapon": {
-                "name": "Javelots barbelés",
+                "name": "Javelots barbelés et Sabots",
                 "range": "12\"",
-                "attacks": 6,
-                "armor_piercing": 1,
+                "attacks": 6/2,
+                "armor_piercing": 1/0,
                 "special_rules": ["Éclatement"]
               }
             }
