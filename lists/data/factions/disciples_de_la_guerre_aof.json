@@ -1455,7 +1455,7 @@
                   "attacks": 1,
                   "armor_piercing": 1,
                   "special_rules": ["Percée"]
-                }
+                },
               "replaces": ["Armes à une main lourdes"]
             }
           ]
