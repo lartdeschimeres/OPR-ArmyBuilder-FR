@@ -575,7 +575,7 @@ body {{
 
 .stats-grid {{
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   background: var(--bg-header);
   padding: 12px;
@@ -587,6 +587,9 @@ body {{
 
 .stat-item {{
   padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }}
 
 .stat-label {{
@@ -594,6 +597,9 @@ body {{
   font-size: 10px;
   text-transform: uppercase;
   margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }}
 
 .stat-value {{
@@ -741,11 +747,11 @@ body {{
 
   <div class="stats-grid">
     <div class="stat-item">
-      <div class="stat-label">Qualité</div>
+      <div class="stat-label"><span>⚔️</span> Qualité</div>
       <div class="stat-value">{quality}+</div>
     </div>
     <div class="stat-item">
-      <div class="stat-label">Défense</div>
+      <div class="stat-label"><span>🛡️</span> Défense</div>
       <div class="stat-value">{defense}+</div>
     </div>
 '''
@@ -753,18 +759,14 @@ body {{
         if tough_value > 0:
             html += f'''
     <div class="stat-item">
-      <div class="stat-label">Coriace</div>
+      <div class="stat-label"><span>❤️</span> Coriace</div>
       <div class="stat-value tough-value">{tough_value}</div>
     </div>
 '''
 
         html += f'''
     <div class="stat-item">
-      <div class="stat-label">Coût Base</div>
-      <div class="stat-value">{cost} pts</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-label">Taille</div>
+      <div class="stat-label"><span>👥</span> Taille</div>
       <div class="stat-value">{unit_size}</div>
     </div>
   </div>
