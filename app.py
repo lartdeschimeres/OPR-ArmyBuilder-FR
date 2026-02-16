@@ -402,32 +402,54 @@ def export_html(army_list, army_name, army_limit):
         return str(txt).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
     def format_weapon(weapon):
-        """Formate une arme pour l'affichage, avec gestion des armes combinées"""
+        """Formate une arme ou un groupe d'armes pour l'affichage"""
         if not weapon:
             return "Arme non spécifiée"
     
+        # Cas où on a un tableau d'armes (comme pour Sabots et Javelots)
+        if isinstance(weapon, list):
+            result = ""
+            for i, w in enumerate(weapon):
+                range_text = w.get('range', '-')
+                if range_text == "-" or range_text is None:
+                    range_text = "Mêlée"
+    
+                attacks = w.get('attacks', '-')
+                ap = w.get('armor_piercing', '-')
+                special_rules = w.get('special_rules', [])
+    
+                weapon_name = w.get('name', 'Arme')
+                result += f"<strong>{weapon_name}:</strong> {range_text} | A{attacks}"
+    
+                if ap not in ("-", 0, "0", None):
+                    result += f" | PA{ap}"
+    
+                if special_rules:
+                    result += f" | {', '.join(special_rules)}"
+    
+                if i < len(weapon) - 1:  # Si ce n'est pas la dernière arme
+                    result += "<br>"
+            return result
+
+    # Cas standard pour une seule arme
+    else:
         range_text = weapon.get('range', '-')
         if range_text == "-" or range_text is None:
             range_text = "Mêlée"
-    
-        # Gestion des armes combinées (format "valeur1/valeur2")
+
         attacks = weapon.get('attacks', '-')
         ap = weapon.get('armor_piercing', '-')
-        special = ", ".join(weapon.get('special_rules', [])) if weapon.get('special_rules') else ""
-    
-        # Si c'est une arme combinée (contient "/")
-        if isinstance(attacks, str) and "/" in attacks:
-            attack_parts = attacks.split("/")
-            ap_parts = ap.split("/") if isinstance(ap, str) and "/" in ap else [ap, ap]
-    
-            # Format spécial pour les armes combinées
-            weapon_names = weapon.get('name', 'Arme').split(" et ")
-            if len(weapon_names) == 2:
-                result = f"{weapon_names[0]}: {range_text} | A{attack_parts[0]} | PA{ap_parts[0]}<br>"
-                result += f"{weapon_names[1]}: {range_text} | A{attack_parts[1]} | PA{ap_parts[1]}"
-                if special:
-                    result += f" | {special}"
-                return result
+        special_rules = weapon.get('special_rules', [])
+
+        result = f"{range_text} | A{attacks}"
+
+        if ap not in ("-", 0, "0", None):
+            result += f" | PA{ap}"
+
+        if special_rules:
+            result += f" | {', '.join(special_rules)}"
+
+        return result
     
         # Format normal pour les armes simples
         result = f"{range_text} | A{attacks}"
@@ -785,44 +807,44 @@ body {{
 '''
 
         # Armes de base et améliorées
-        if base_weapons or weapon_upgrades:
-            html += '''
+if base_weapons or weapon_upgrades:
+    html += '''
   <div class="section-title">Armes:</div>
   <div class="weapon-list">
 '''
 
-            # Afficher les armes de base
-            for weapon in base_weapons:
-                if weapon:
-                    # Vérifier si cette arme a été remplacée
-                    is_replaced = False
-                    if "options" in unit:
-                        for group_name, opts in unit["options"].items():
-                            if isinstance(opts, list):
-                                for opt in opts:
-                                    if "replaces" in opt and weapon.get("name") in opt["replaces"]:
-                                        is_replaced = True
-                                        break
-
-                    weapon_class = "weapon-replaced" if is_replaced else ""
-                    html += f'''
+    # Afficher les armes de base
+    for weapon in base_weapons:
+        if weapon:
+            weapon_name = esc(weapon.get('name', 'Arme'))
+            html += f'''
     <div class="weapon-item">
-      <div class="weapon-name {weapon_class}">{esc(weapon.get('name', 'Arme'))}</div>
+      <div class="weapon-name">{weapon_name}</div>
       <div class="weapon-stats">{format_weapon(weapon)}</div>
     </div>
 '''
 
-            # Afficher les armes améliorées
-            for weapon in weapon_upgrades:
-                if weapon:
-                    html += f'''
+    # Afficher les armes améliorées (qui peuvent être un tableau)
+    for upgrade in weapon_upgrades:
+        if upgrade:
+            if isinstance(upgrade, list):
+                # Cas spécial pour les armes combinées comme Sabots et Javelots
+                html += f'''
     <div class="weapon-item">
-      <div class="weapon-name weapon-upgraded">{esc(weapon.get('name', 'Amélioration'))}</div>
-      <div class="weapon-stats">{format_weapon(weapon)}</div>
+      <div class="weapon-name">{esc(upgrade[0].get('name', 'Arme') + " et " + upgrade[1].get('name', 'Arme'))}</div>
+      <div class="weapon-stats">{format_weapon(upgrade)}</div>
+    </div>
+'''
+            else:
+                # Cas standard pour une seule arme
+                html += f'''
+    <div class="weapon-item">
+      <div class="weapon-name">{esc(upgrade.get('name', 'Amélioration'))}</div>
+      <div class="weapon-stats">{format_weapon(upgrade)}</div>
     </div>
 '''
 
-            html += '''
+    html += '''
   </div>
 '''
 
