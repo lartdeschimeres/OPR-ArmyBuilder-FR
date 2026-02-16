@@ -1555,7 +1555,7 @@
               "cost": 50,
               "weapon": {
                   "name": "Javelots barbelés",
-                  "range": "12\"",
+                  "range": "12\",
                   "attacks": 6,
                   "armor_piercing": 1,
                   "special_rules": ["Éclatement"]
