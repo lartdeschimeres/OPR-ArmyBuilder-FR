@@ -1228,25 +1228,21 @@ def format_weapon_option(weapon, cost=0):
     if not weapon or not isinstance(weapon, dict):
         return "Aucune arme"
 
-    # Cas spécial pour les armes combinées (comme Sabots et Attaques de l'équipage)
-    if isinstance(weapon, list):
-        weapon_profiles = []
-        for w in weapon:
-            name = w.get('name', 'Arme')
-            attacks = w.get('attacks', '?')
-            ap = w.get('armor_piercing', '?')
-            range_text = w.get('range', 'Mêlée')
-            special_rules = w.get('special_rules', [])
+    name = weapon.get('name', 'Arme')
+    attacks = weapon.get('attacks', '?')
+    ap = weapon.get('armor_piercing', '?')
+    range_text = weapon.get('range', 'Mêlée')
+    special_rules = weapon.get('special_rules', [])
 
-            profile = f"{name} {range_text} A{attacks}/PA{ap}"
-            if special_rules:
-                profile += f" ({', '.join(special_rules)})"
-            weapon_profiles.append(profile)
+    profile = f"{name} {range_text} A{attacks}"
+    if ap not in ("-", 0, "0", None):
+        profile += f"/PA{ap}"
+    if special_rules:
+        profile += f" ({', '.join(special_rules)})"
+    if cost > 0:
+        profile += f" (+{cost} pts)"
 
-        weapon_text = " | ".join(weapon_profiles)
-        if cost > 0:
-            weapon_text += f" (+{cost} pts)"
-        return weapon_text
+    return profile
 
     # Cas standard pour une seule arme
     name = weapon.get('name', 'Arme')
@@ -1681,11 +1677,22 @@ if st.session_state.page == "army":
             # Pour les armes de base
             if isinstance(base_weapons, list) and base_weapons:
                 if len(base_weapons) > 1:
-                    # Cas des armes combinées comme Sabots et Attaques de l'équipage
+                    # Cas des armes combinées
                     weapon_profiles = []
                     for weapon in base_weapons:
-                        profile = format_weapon_option(weapon)
+                        name = weapon.get('name', 'Arme')
+                        attacks = weapon.get('attacks', '?')
+                        ap = weapon.get('armor_piercing', '?')
+                        range_text = weapon.get('range', 'Mêlée')
+                        special_rules = weapon.get('special_rules', [])
+        
+                        profile = f"{name} {range_text} A{attacks}"
+                        if ap not in ("-", 0, "0", None):
+                            profile += f"/PA{ap}"
+                        if special_rules:
+                            profile += f" ({', '.join(special_rules)})"
                         weapon_profiles.append(profile)
+        
                     choices.append(" | ".join(weapon_profiles))
                 else:
                     choices.append(format_weapon_option(base_weapons[0]))
@@ -1697,22 +1704,46 @@ if st.session_state.page == "army":
             for o in group.get("options", []):
                 weapon = o.get("weapon", {})
                 option_name = o.get("name", "")
+                cost = o.get("cost", 0)
+                replaces = o.get("replaces", [])
         
                 # Cas spécial pour les options qui remplacent seulement une partie des armes
                 if isinstance(weapon, list) and len(base_weapons) > 1:
                     # On garde les armes non remplacées
                     kept_weapons = []
                     for base_weapon in base_weapons:
-                        if base_weapon.get('name') not in o.get("replaces", []):
-                            kept_weapons.append(format_weapon_option(base_weapon))
+                        if base_weapon.get('name') not in replaces:
+                            name = base_weapon.get('name', 'Arme')
+                            attacks = base_weapon.get('attacks', '?')
+                            ap = base_weapon.get('armor_piercing', '?')
+                            range_text = base_weapon.get('range', 'Mêlée')
+                            special_rules = base_weapon.get('special_rules', [])
+        
+                            profile = f"{name} {range_text} A{attacks}"
+                            if ap not in ("-", 0, "0", None):
+                                profile += f"/PA{ap}"
+                            if special_rules:
+                                profile += f" ({', '.join(special_rules)})"
+                            kept_weapons.append(profile)
         
                     # On ajoute les nouvelles armes
                     for new_weapon in weapon:
-                        kept_weapons.append(format_weapon_option(new_weapon))
+                        name = new_weapon.get('name', 'Arme')
+                        attacks = new_weapon.get('attacks', '?')
+                        ap = new_weapon.get('armor_piercing', '?')
+                        range_text = new_weapon.get('range', 'Mêlée')
+                        special_rules = new_weapon.get('special_rules', [])
         
-                    label = " | ".join(kept_weapons) + f" (+{o['cost']} pts)"
+                        profile = f"{name} {range_text} A{attacks}"
+                        if ap not in ("-", 0, "0", None):
+                            profile += f"/PA{ap}"
+                        if special_rules:
+                            profile += f" ({', '.join(special_rules)})"
+                        kept_weapons.append(profile)
+        
+                    label = " | ".join(kept_weapons) + f" (+{cost} pts)"
                 else:
-                    label = format_weapon_option(weapon, o['cost'])
+                    label = format_weapon_option(weapon, cost)
         
                 choices.append(label)
                 opt_map[label] = o
