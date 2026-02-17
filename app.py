@@ -1894,62 +1894,115 @@ if st.session_state.page == "army":
     st.divider()
 
     # BOUTON D'AJOUT D'UNITÉ
-    if st.button("➕ Ajouter à l'armée"):
-        if st.session_state.army_cost + final_cost > st.session_state.points:
-            st.error(f"⛔ Dépassement du format : {st.session_state.army_cost + final_cost} / {st.session_state.points} pts")
-            st.stop()
+if st.button("➕ Ajouter à l'armée"):
+    if st.session_state.army_cost + final_cost > st.session_state.points:
+        st.error(f"⛔ Dépassement du format : {st.session_state.army_cost + final_cost} / {st.session_state.points} pts")
+        st.stop()
 
-        # Calcul de la Coriace
-        coriace_total = unit.get("coriace", 0)
-        if mount and "mount" in mount:
-            coriace_total += mount["mount"].get("coriace_bonus", 0)
+    # Calcul de la Coriace
+    coriace_total = unit.get("coriace", 0)
+    if mount and "mount" in mount:
+        coriace_total += mount["mount"].get("coriace_bonus", 0)
 
-        # Préparation des règles spéciales
-        all_special_rules = unit.get("special_rules", []).copy()
+    # Préparation des règles spéciales
+    all_special_rules = unit.get("special_rules", []).copy()
 
-        # Règles spéciales des améliorations
-        for group in unit.get("upgrade_groups", []):
-            group_key = f"group_{unit.get('upgrade_groups', []).index(group)}"
-            if st.session_state.unit_selections.get(unit_key, {}).get(group_key):
-                selected_option = st.session_state.unit_selections[unit_key][group_key]
-                if selected_option not in [format_weapon_option(unit.get("weapon", [{}])[0])] and selected_option != "Aucune monture" and selected_option != "Aucun rôle":
-                    for opt in group.get("options", []):
+    # Règles spéciales des améliorations
+    for group in unit.get("upgrade_groups", []):
+        group_key = f"group_{unit.get('upgrade_groups', []).index(group)}"
+        if st.session_state.unit_selections.get(unit_key, {}).get(group_key):
+            selected_option = st.session_state.unit_selections[unit_key][group_key]
+
+            # Trouver l'option sélectionnée
+            for opt in group.get("options", []):
+                if isinstance(opt, dict):
+                    # Vérifier si c'est l'option sélectionnée
+                    if group.get("type") == "weapon":
                         weapon = opt.get("weapon", {})
-                        if f"{format_weapon_option(weapon)} (+{opt['cost']} pts)" == selected_option and "special_rules" in opt:
-                            all_special_rules.extend(opt["special_rules"])
+                        if isinstance(weapon, list):
+                            label = " | ".join([format_weapon_option(w) for w in weapon]) + f" (+{opt['cost']} pts)"
+                        else:
+                            label = format_weapon_option(weapon, opt['cost'])
 
-        # Règles spéciales de la monture
-        if mount:
-            mount_data = mount.get("mount", {})
-            if "special_rules" in mount_data:
-                for rule in mount_data["special_rules"]:
-                    if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
-                        all_special_rules.append(rule)
+                        if label == selected_option:
+                            if "special_rules" in opt:
+                                all_special_rules.extend(opt["special_rules"])
+                            break
+                    elif "special_rules" in opt:
+                        all_special_rules.extend(opt["special_rules"])
 
-        # Création de l'unité
-        unit_data = {
-            "name": unit["name"],
-            "type": unit.get("type", "unit"),
-            "cost": final_cost,
-            "size": unit.get("size", 10) * multiplier if unit.get("type") != "hero" else 1,
-            "quality": unit.get("quality"),
-            "defense": unit.get("defense"),
-            "weapon": weapons,
-            "weapon_upgrades": weapon_upgrades,
-            "options": selected_options,
-            "mount": mount,
-            "special_rules": all_special_rules,
-            "coriace": coriace_total
-        }
+    # Règles spéciales de la monture
+    if mount:
+        mount_data = mount.get("mount", {})
+        if "special_rules" in mount_data:
+            for rule in mount_data["special_rules"]:
+                if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
+                    all_special_rules.append(rule)
 
-        # Ajout d'une mention pour la monture si elle apporte de la Coriace
-        if mount and "coriace_bonus" in mount.get("mount", {}):
-            mount_name = mount.get("name", "Monture")
-            mount_bonus = mount.get("mount", {}).get("coriace_bonus", 0)
-            if mount_bonus > 0:
-                unit_data["special_rules"].append(f"{mount_name} (Coriace +{mount_bonus})")
+    # Gestion des armes - CORRECTION PRINCIPALE ICI
+    final_weapons = []
 
-        if validate_army_rules(st.session_state.army_list + [unit_data], st.session_state.points, st.session_state.game):
-            st.session_state.army_list.append(unit_data)
-            st.session_state.army_cost += final_cost
-            st.rerun()
+    # 1. Ajouter les armes de base
+    base_weapons = unit.get("weapon", [])
+    if not isinstance(base_weapons, list):
+        base_weapons = [base_weapons]
+    final_weapons.extend(base_weapons)
+
+    # 2. Traiter les remplacements d'armes
+    for g_idx, group in enumerate(unit.get("upgrade_groups", [])):
+        g_key = f"group_{g_idx}"
+        if group.get("type") == "weapon" and st.session_state.unit_selections.get(unit_key, {}).get(g_key):
+            selected_option = st.session_state.unit_selections[unit_key][g_key]
+
+            # Trouver l'option sélectionnée
+            for opt in group.get("options", []):
+                if isinstance(opt, dict):
+                    # Vérifier si c'est l'option sélectionnée
+                    if group.get("type") == "weapon":
+                        weapon = opt.get("weapon", {})
+                        if isinstance(weapon, list):
+                            label = " | ".join([format_weapon_option(w) for w in weapon]) + f" (+{opt['cost']} pts)"
+                        else:
+                            label = format_weapon_option(weapon, opt['cost'])
+
+                        if label == selected_option:
+                            # Remplacer les armes spécifiées
+                            replaces = opt.get("replaces", [])
+                            if replaces:
+                                # Retirer les armes remplacées
+                                final_weapons = [w for w in final_weapons if w.get('name') not in replaces]
+
+                            # Ajouter les nouvelles armes
+                            if isinstance(weapon, list):
+                                final_weapons.extend(weapon)
+                            else:
+                                final_weapons.append(weapon)
+                            break
+
+    # Création de l'unité avec les armes correctes
+    unit_data = {
+        "name": unit["name"],
+        "type": unit.get("type", "unit"),
+        "cost": final_cost,
+        "size": unit.get("size", 10) * multiplier if unit.get("type") != "hero" else 1,
+        "quality": unit.get("quality"),
+        "defense": unit.get("defense"),
+        "weapon": final_weapons,  # Utilisation des armes corrigées
+        "weapon_upgrades": weapon_upgrades,
+        "options": selected_options,
+        "mount": mount,
+        "special_rules": all_special_rules,
+        "coriace": coriace_total
+    }
+
+    # Ajout d'une mention pour la monture si elle apporte de la Coriace
+    if mount and "coriace_bonus" in mount.get("mount", {}):
+        mount_name = mount.get("name", "Monture")
+        mount_bonus = mount.get("mount", {}).get("coriace_bonus", 0)
+        if mount_bonus > 0:
+            unit_data["special_rules"].append(f"{mount_name} (Coriace +{mount_bonus})")
+
+    if validate_army_rules(st.session_state.army_list + [unit_data], st.session_state.points, st.session_state.game):
+        st.session_state.army_list.append(unit_data)
+        st.session_state.army_cost += final_cost
+        st.rerun()
