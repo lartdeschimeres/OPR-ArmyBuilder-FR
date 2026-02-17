@@ -406,16 +406,20 @@ def export_html(army_list, army_name, army_limit):
         if not weapon:
             return "Aucune arme"
 
+        # Récupération des données de l'arme
         range_text = weapon.get('range', '-')
         attacks = weapon.get('attacks', '-')
         ap = weapon.get('armor_piercing', '-')
         special_rules = weapon.get('special_rules', [])
 
+        # Traitement de la portée (suppression des guillemets)
         if range_text == "-" or range_text is None or range_text.lower() == "mêlée":
             range_text = "Mêlée"
         else:
+            # On enlève les guillemets s'ils sont présents
             range_text = range_text.replace('"', '').replace("'", "")
 
+        # Construction du résultat
         result = f"{range_text} | A{attacks}"
 
         if ap not in ("-", 0, "0", None):
@@ -430,11 +434,13 @@ def export_html(army_list, army_name, army_limit):
         """Extraire toutes les règles spéciales de l'unité"""
         rules = set()
 
+        # 1. Règles spéciales de base
         if "special_rules" in unit:
             for rule in unit["special_rules"]:
                 if isinstance(rule, str):
                     rules.add(rule)
 
+        # 2. Règles spéciales des améliorations
         if "options" in unit:
             for group_name, opts in unit["options"].items():
                 if isinstance(opts, list):
@@ -444,6 +450,7 @@ def export_html(army_list, army_name, army_limit):
                                 if isinstance(rule, str):
                                     rules.add(rule)
 
+        # 3. Règles spéciales des armes
         weapons = unit.get("weapon", [])
         if not isinstance(weapons, list):
             weapons = [weapons]
@@ -454,6 +461,7 @@ def export_html(army_list, army_name, army_limit):
                     if isinstance(rule, str):
                         rules.add(rule)
 
+        # 4. Règles spéciales de la monture
         if "mount" in unit and unit.get("mount"):
             mount_data = unit["mount"].get("mount", {})
             if "special_rules" in mount_data:
@@ -575,7 +583,7 @@ body {{
 
 .stats-grid {{
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 8px;
   background: var(--bg-header);
   padding: 12px;
@@ -587,9 +595,6 @@ body {{
 
 .stat-item {{
   padding: 5px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }}
 
 .stat-label {{
@@ -597,9 +602,6 @@ body {{
   font-size: 10px;
   text-transform: uppercase;
   margin-bottom: 3px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
 }}
 
 .stat-value {{
@@ -668,16 +670,6 @@ body {{
   color: var(--cost-color);
 }}
 
-.rule-name {{
-  color: var(--accent) !important;
-  font-weight: bold !important;
-}}
-
-.spell-name {{
-  color: var(--accent) !important;
-  font-weight: bold !important;
-}}
-
 @media print {{
   body {{
     background: white;
@@ -721,12 +713,21 @@ body {{
         if unit.get("type") == "hero":
             unit_size = 1
 
+        # Calcul de la valeur de Coriace
         tough_value = unit.get("coriace", 0)
+
+        # Récupération des armes
         weapons = unit.get("weapon", [])
         if not isinstance(weapons, list):
             weapons = [weapons]
+
+        # Récupération des armes améliorées
         weapon_upgrades = unit.get("weapon_upgrades", [])
+
+        # Récupération des règles spéciales
         special_rules = get_special_rules(unit)
+
+        # Récupération des options et montures
         options = unit.get("options", {})
         mount = unit.get("mount", None)
 
@@ -747,33 +748,41 @@ body {{
 
   <div class="stats-grid">
     <div class="stat-item">
-      <div class="stat-label"><span>⚔️</span> Qualité</div>
+      <div class="stat-label">Qualité</div>
       <div class="stat-value">{quality}+</div>
     </div>
     <div class="stat-item">
-      <div class="stat-label"><span>🛡️</span> Défense</div>
+      <div class="stat-label">Défense</div>
       <div class="stat-value">{defense}+</div>
     </div>
 '''
 
+        # Affichage de la Coriace
         if tough_value > 0:
             html += f'''
     <div class="stat-item">
-      <div class="stat-label"><span>❤️</span> Coriace</div>
+      <div class="stat-label">Coriace</div>
       <div class="stat-value tough-value">{tough_value}</div>
     </div>
 '''
 
         html += f'''
     <div class="stat-item">
-      <div class="stat-label"><span>👥</span> Taille</div>
+      <div class="stat-label">Coût Base</div>
+      <div class="stat-value">{cost} pts</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Taille</div>
       <div class="stat-value">{unit_size}</div>
     </div>
   </div>
 '''
 
+        # Armes
         if weapons:
             html += '<div class="section-title">Armes:</div>'
+
+            # Afficher toutes les armes de l'unité
             for weapon in weapons:
                 if weapon:
                     html += f'''
@@ -783,6 +792,7 @@ body {{
     </div>
 '''
 
+        # Règles spéciales
         if special_rules:
             html += '''
   <div class="rules-section">
@@ -790,12 +800,13 @@ body {{
     <div class="rules-list">
 '''
             for rule in special_rules:
-                html += f'<span class="rule-tag"><span class="rule-name">{esc(rule)}</span></span>'
+                html += f'<span class="rule-tag">{esc(rule)}</span>'
             html += '''
     </div>
   </div>
 '''
 
+        # Améliorations d'unité
         if options:
             html += '''
   <div class="upgrades-section">
@@ -809,10 +820,7 @@ body {{
       <div class="upgrade-name">{esc(opt.get("name", ""))}</div>
 '''
                         if 'special_rules' in opt and opt['special_rules']:
-                            rules_html = []
-                            for r in opt["special_rules"]:
-                                rules_html.append(f'<span class="rule-name">{esc(r)}</span>')
-                            html += f'<div style="font-size: 10px; color: var(--text-muted);">({", ".join(rules_html)})</div>'
+                            html += f'<div style="font-size: 10px; color: var(--text-muted);">({", ".join(opt["special_rules"])})</div>'
                         html += '''
     </div>
 '''
@@ -820,6 +828,7 @@ body {{
   </div>
 '''
 
+        # Monture
         if mount:
             mount_data = mount.get("mount", {})
             mount_name = esc(mount.get("name", "Monture"))
@@ -833,6 +842,7 @@ body {{
         </div>
 '''
 
+            # Caractéristiques de la monture
             stats_parts = []
             if 'quality' in mount_data:
                 stats_parts.append(f"Qualité {mount_data['quality']}+")
@@ -845,6 +855,7 @@ body {{
     </div>
 '''
 
+            # Armes de la monture
             if mount_weapons:
                 html += '''
     <div style="margin-top: 8px;">
@@ -931,16 +942,13 @@ body {{
 '''
             for spell in sorted(all_spells, key=lambda x: x['name'].lower().replace('é', 'e').replace('è', 'e')):
                 if isinstance(spell, dict):
-                    spell_name = esc(spell.get('name', ''))
-                    spell_cost = spell.get('details', {}).get('cost', '?')
-                    spell_desc = esc(spell.get('details', {}).get('description', ''))
                     html += f'''
       <div class="spell-item" style="margin-bottom: 12px;">
         <div>
-          <span class="spell-name">{spell_name}</span>
-          <span class="spell-cost"> ({spell_cost})</span>
+          <span class="rule-name">{esc(spell.get('name', ''))}</span>
+          <span class="spell-cost"> ({spell.get('details', {}).get('cost', '?')})</span>
         </div>
-        <div class="rule-description">{spell_desc}</div>
+        <div class="rule-description">{esc(spell.get('details', {}).get('description', ''))}</div>
       </div>
 '''
             html += '''
@@ -1228,32 +1236,7 @@ def format_weapon_option(weapon, cost=0):
     if not weapon or not isinstance(weapon, dict):
         return "Aucune arme"
 
-    name = weapon.get('name', 'Arme')
-    attacks = weapon.get('attacks', '?')
-    ap = weapon.get('armor_piercing', '?')
-    range_text = weapon.get('range', 'Mêlée')
-    special_rules = weapon.get('special_rules', [])
-
-    profile = f"{name} {range_text} A{attacks}"
-    if ap not in ("-", 0, "0", None):
-        profile += f"/PA{ap}"
-    if special_rules:
-        profile += f" ({', '.join(special_rules)})"
-    if cost > 0:
-        profile += f" (+{cost} pts)"
-
-    return profile
-
-    # Cas standard pour une seule arme
-    name = weapon.get('name', 'Arme')
-    attacks = weapon.get('attacks', '?')
-    ap = weapon.get('armor_piercing', '?')
-    range_text = weapon.get('range', 'Mêlée')
-    special_rules = weapon.get('special_rules', [])
-
-    profile = f"{name} {range_text} A{attacks}/PA{ap}"
-    if special_rules:
-        profile += f" ({', '.join(special_rules)})"
+    profile = format_weapon_profile(weapon)
     if cost > 0:
         profile += f" (+{cost} pts)"
 
@@ -1674,106 +1657,66 @@ if st.session_state.page == "army":
             choices = []
             base_weapons = unit.get("weapon", [])
         
-            # Pour les armes de base
+            # Ajouter les armes de base comme première option
             if isinstance(base_weapons, list) and base_weapons:
-                if len(base_weapons) > 1:
-                    # Cas des armes combinées
-                    weapon_profiles = []
-                    for weapon in base_weapons:
-                        name = weapon.get('name', 'Arme')
-                        attacks = weapon.get('attacks', '?')
-                        ap = weapon.get('armor_piercing', '?')
-                        range_text = weapon.get('range', 'Mêlée')
-                        special_rules = weapon.get('special_rules', [])
+                # Créer un label pour les armes de base
+                base_weapons_labels = []
+                for weapon in base_weapons:
+                    base_weapons_labels.append(weapon.get('name', 'Arme'))
         
-                        profile = f"{name} {range_text} A{attacks}"
-                        if ap not in ("-", 0, "0", None):
-                            profile += f"/PA{ap}"
-                        if special_rules:
-                            profile += f" ({', '.join(special_rules)})"
-                        weapon_profiles.append(profile)
-        
-                    choices.append(" | ".join(weapon_profiles))
-                else:
+                if len(base_weapons_labels) == 1:
                     choices.append(format_weapon_option(base_weapons[0]))
+                else:
+                    choices.append(" et ".join(base_weapons_labels))
             elif isinstance(base_weapons, dict):
                 choices.append(format_weapon_option(base_weapons))
         
-            # Pour les options de remplacement
+            # Ajouter les options de remplacement
             opt_map = {}
             for o in group.get("options", []):
                 weapon = o.get("weapon", {})
-                option_name = o.get("name", "")
-                cost = o.get("cost", 0)
-                replaces = o.get("replaces", [])
-        
-                # Cas spécial pour les options qui remplacent seulement une partie des armes
-                if isinstance(weapon, list) and len(base_weapons) > 1:
-                    # On garde les armes non remplacées
-                    kept_weapons = []
-                    for base_weapon in base_weapons:
-                        if base_weapon.get('name') not in replaces:
-                            name = base_weapon.get('name', 'Arme')
-                            attacks = base_weapon.get('attacks', '?')
-                            ap = base_weapon.get('armor_piercing', '?')
-                            range_text = base_weapon.get('range', 'Mêlée')
-                            special_rules = base_weapon.get('special_rules', [])
-        
-                            profile = f"{name} {range_text} A{attacks}"
-                            if ap not in ("-", 0, "0", None):
-                                profile += f"/PA{ap}"
-                            if special_rules:
-                                profile += f" ({', '.join(special_rules)})"
-                            kept_weapons.append(profile)
-        
-                    # On ajoute les nouvelles armes
-                    for new_weapon in weapon:
-                        name = new_weapon.get('name', 'Arme')
-                        attacks = new_weapon.get('attacks', '?')
-                        ap = new_weapon.get('armor_piercing', '?')
-                        range_text = new_weapon.get('range', 'Mêlée')
-                        special_rules = new_weapon.get('special_rules', [])
-        
-                        profile = f"{name} {range_text} A{attacks}"
-                        if ap not in ("-", 0, "0", None):
-                            profile += f"/PA{ap}"
-                        if special_rules:
-                            profile += f" ({', '.join(special_rules)})"
-                        kept_weapons.append(profile)
-        
-                    label = " | ".join(kept_weapons) + f" (+{cost} pts)"
+                if isinstance(weapon, list):
+                    # Cas spécial pour les armes combinées
+                    weapon_names = [w.get('name', 'Arme') for w in weapon]
+                    label = " et ".join(weapon_names) + f" (+{o['cost']} pts)"
                 else:
-                    label = format_weapon_option(weapon, cost)
-        
+                    label = format_weapon_option(weapon, o['cost'])
                 choices.append(label)
                 opt_map[label] = o
         
-            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0] if choices else "Aucune arme")
-            choice = st.radio(
-                "Sélection de l'arme",
-                choices,
-                index=choices.index(current) if current in choices else 0,
-                key=f"{unit_key}_{g_key}_weapon",
-            )
+            # Si on a des choix à afficher
+            if choices:
+                current = st.session_state.unit_selections[unit_key].get(g_key, choices[0] if choices else "Aucune arme")
+                choice = st.radio(
+                    "Sélection de l'arme",
+                    choices,
+                    index=choices.index(current) if current in choices else 0,
+                    key=f"{unit_key}_{g_key}_weapon",
+                )
         
-            st.session_state.unit_selections[unit_key][g_key] = choice
+                st.session_state.unit_selections[unit_key][g_key] = choice
         
-            if choice != choices[0]:
-                for opt_label, opt in opt_map.items():
-                    if opt_label == choice:
-                        weapon_cost += opt["cost"]
-                        if isinstance(opt["weapon"], list):
-                            # Conserver les armes non remplacées
-                            final_weapons = []
-                            for base_weapon in base_weapons:
-                                if base_weapon.get('name') not in opt.get("replaces", []):
-                                    final_weapons.append(base_weapon)
-                            # Ajouter les nouvelles armes
-                            final_weapons.extend(opt["weapon"])
-                            weapons = final_weapons
-                        else:
-                            weapons = [opt["weapon"]]
-                        break
+                # Gérer le choix de l'utilisateur
+                if choice != choices[0]:
+                    for opt_label, opt in opt_map.items():
+                        if opt_label == choice:
+                            weapon_cost += opt["cost"]
+        
+                            # Si c'est une arme simple
+                            if not isinstance(opt["weapon"], list):
+                                weapons = [opt["weapon"]]
+                            # Si c'est une arme combinée
+                            else:
+                                weapons = opt["weapon"]
+        
+                            # Vérifier si on doit remplacer une arme spécifique
+                            if "replaces" in opt:
+                                # Filtrer les armes de base pour enlever celles à remplacer
+                                weapons = [
+                                    w for w in base_weapons
+                                    if w.get('name') not in opt["replaces"]
+                                ] + weapons
+                            break
 
         # RÔLES
         elif group.get("type") == "role" and unit.get("type") == "hero":
