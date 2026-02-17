@@ -1895,8 +1895,9 @@ if st.button("➕ Ajouter à l'armée"):
                     all_special_rules.add(rule)
     
     all_special_rules = list(all_special_rules)
-        # Gestion des armes - CORRECTION COMPLÈTE
-        final_weapons = []
+    
+    # Gestion des armes - CORRECTION COMPLÈTE
+    final_weapons = []
     
     # 1. Ajouter les armes de base
     base_weapons = unit.get("weapon", [])
