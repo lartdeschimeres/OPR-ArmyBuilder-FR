@@ -426,42 +426,35 @@ def export_html(army_list, army_name, army_limit):
 
         return result
 
-    def get_special_rules(unit):
-        """Extraire toutes les règles spéciales de l'unité"""
+    ddef get_special_rules(unit):
+        """Utilise uniquement les règles finales déjà calculées"""
         rules = set()
-
-        if "special_rules" in unit:
-            for rule in unit["special_rules"]:
-                if isinstance(rule, str):
-                    rules.add(rule)
-
-        if "options" in unit:
-            for group_name, opts in unit["options"].items():
-                if isinstance(opts, list):
-                    for opt in opts:
-                        if "special_rules" in opt:
-                            for rule in opt["special_rules"]:
-                                if isinstance(rule, str):
-                                    rules.add(rule)
-
+    
+        # Règles déjà consolidées lors de l'ajout à l'armée
+        for rule in unit.get("special_rules", []):
+            if isinstance(rule, str):
+                rules.add(rule)
+    
+        # Règles provenant des armes finales uniquement
         weapons = unit.get("weapon", [])
         if not isinstance(weapons, list):
             weapons = [weapons]
-
+    
         for weapon in weapons:
-            if isinstance(weapon, dict) and "special_rules" in weapon:
-                for rule in weapon["special_rules"]:
+            if isinstance(weapon, dict):
+                for rule in weapon.get("special_rules", []):
                     if isinstance(rule, str):
                         rules.add(rule)
-
-        if "mount" in unit and unit.get("mount"):
-            mount_data = unit["mount"].get("mount", {})
-            if "special_rules" in mount_data:
-                for rule in mount_data["special_rules"]:
-                    if isinstance(rule, str):
-                        rules.add(rule)
-
-        return sorted(rules, key=lambda x: x.lower().replace('é', 'e').replace('è', 'e'))
+    
+        # Règles de la monture si présente
+        mount = unit.get("mount")
+        if mount and isinstance(mount, dict):
+            mount_data = mount.get("mount", {})
+            for rule in mount_data.get("special_rules", []):
+                if isinstance(rule, str):
+                    rules.add(rule)
+    
+        return sorted(rules, key=lambda x: x.lower().replace('é','e').replace('è','e'))
 
     def get_french_type(unit):
         """Retourne le type français basé sur unit_detail"""
