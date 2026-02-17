@@ -1228,7 +1228,36 @@ def format_weapon_option(weapon, cost=0):
     if not weapon or not isinstance(weapon, dict):
         return "Aucune arme"
 
-    profile = format_weapon_profile(weapon)
+    # Cas spécial pour les armes combinées (comme Sabots et Attaques de l'équipage)
+    if isinstance(weapon, list):
+        weapon_profiles = []
+        for w in weapon:
+            name = w.get('name', 'Arme')
+            attacks = w.get('attacks', '?')
+            ap = w.get('armor_piercing', '?')
+            range_text = w.get('range', 'Mêlée')
+            special_rules = w.get('special_rules', [])
+
+            profile = f"{name} {range_text} A{attacks}/PA{ap}"
+            if special_rules:
+                profile += f" ({', '.join(special_rules)})"
+            weapon_profiles.append(profile)
+
+        weapon_text = " | ".join(weapon_profiles)
+        if cost > 0:
+            weapon_text += f" (+{cost} pts)"
+        return weapon_text
+
+    # Cas standard pour une seule arme
+    name = weapon.get('name', 'Arme')
+    attacks = weapon.get('attacks', '?')
+    ap = weapon.get('armor_piercing', '?')
+    range_text = weapon.get('range', 'Mêlée')
+    special_rules = weapon.get('special_rules', [])
+
+    profile = f"{name} {range_text} A{attacks}/PA{ap}"
+    if special_rules:
+        profile += f" ({', '.join(special_rules)})"
     if cost > 0:
         profile += f" (+{cost} pts)"
 
@@ -1649,66 +1678,47 @@ if st.session_state.page == "army":
             choices = []
             base_weapons = unit.get("weapon", [])
         
-            # Ajouter les armes de base comme première option
+            # Pour les armes de base
             if isinstance(base_weapons, list) and base_weapons:
-                # Créer un label pour les armes de base
-                base_weapons_labels = []
-                for weapon in base_weapons:
-                    base_weapons_labels.append(weapon.get('name', 'Arme'))
-        
-                if len(base_weapons_labels) == 1:
-                    choices.append(format_weapon_option(base_weapons[0]))
+                if len(base_weapons) > 1:
+                    # Cas des armes combinées comme Sabots et Attaques de l'équipage
+                    weapon_profiles = []
+                    for weapon in base_weapons:
+                        profile = format_weapon_option(weapon)
+                        weapon_profiles.append(profile)
+                    choices.append(" | ".join(weapon_profiles))
                 else:
-                    choices.append(" et ".join(base_weapons_labels))
+                    choices.append(format_weapon_option(base_weapons[0]))
             elif isinstance(base_weapons, dict):
                 choices.append(format_weapon_option(base_weapons))
         
-            # Ajouter les options de remplacement
+            # Pour les options de remplacement
             opt_map = {}
             for o in group.get("options", []):
                 weapon = o.get("weapon", {})
-                if isinstance(weapon, list):
-                    # Cas spécial pour les armes combinées
-                    weapon_names = [w.get('name', 'Arme') for w in weapon]
-                    label = " et ".join(weapon_names) + f" (+{o['cost']} pts)"
-                else:
-                    label = format_weapon_option(weapon, o['cost'])
+                label = format_weapon_option(weapon, o['cost'])
                 choices.append(label)
                 opt_map[label] = o
         
-            # Si on a des choix à afficher
-            if choices:
-                current = st.session_state.unit_selections[unit_key].get(g_key, choices[0] if choices else "Aucune arme")
-                choice = st.radio(
-                    "Sélection de l'arme",
-                    choices,
-                    index=choices.index(current) if current in choices else 0,
-                    key=f"{unit_key}_{g_key}_weapon",
-                )
+            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0] if choices else "Aucune arme")
+            choice = st.radio(
+                "Sélection de l'arme",
+                choices,
+                index=choices.index(current) if current in choices else 0,
+                key=f"{unit_key}_{g_key}_weapon",
+            )
         
-                st.session_state.unit_selections[unit_key][g_key] = choice
+            st.session_state.unit_selections[unit_key][g_key] = choice
         
-                # Gérer le choix de l'utilisateur
-                if choice != choices[0]:
-                    for opt_label, opt in opt_map.items():
-                        if opt_label == choice:
-                            weapon_cost += opt["cost"]
-        
-                            # Si c'est une arme simple
-                            if not isinstance(opt["weapon"], list):
-                                weapons = [opt["weapon"]]
-                            # Si c'est une arme combinée
-                            else:
-                                weapons = opt["weapon"]
-        
-                            # Vérifier si on doit remplacer une arme spécifique
-                            if "replaces" in opt:
-                                # Filtrer les armes de base pour enlever celles à remplacer
-                                weapons = [
-                                    w for w in base_weapons
-                                    if w.get('name') not in opt["replaces"]
-                                ] + weapons
-                            break
+            if choice != choices[0]:
+                for opt_label, opt in opt_map.items():
+                    if opt_label == choice:
+                        weapon_cost += opt["cost"]
+                        if isinstance(opt["weapon"], list):
+                            weapons = opt["weapon"]
+                        else:
+                            weapons = [opt["weapon"]]
+                        break
 
         # RÔLES
         elif group.get("type") == "role" and unit.get("type") == "hero":
