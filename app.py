@@ -807,27 +807,55 @@ body {{
 '''
 
         # Armes
-        if weapons:
+        if weapons or weapon_upgrades:
             html += '<div class="section-title">Armes:</div>'
         
-            # Vérifier si on a des armes combinées (tableau)
-            if isinstance(weapons, list) and len(weapons) > 0:
-                if len(weapons) > 1:
-                    # Cas des armes combinées (Sabots + Attaques, Griffes + Armes, etc.)
-                    for weapon in weapons:
-                        if weapon:
-                            html += f'''
+            # 1. Créer une liste complète des armes
+            final_weapons = []
+        
+            # 2. Ajouter les armes de base
+            if isinstance(weapons, list):
+                final_weapons.extend(weapons)
+            elif isinstance(weapons, dict):
+                final_weapons.append(weapons)
+        
+            # 3. Traiter les remplacements d'armes (pour les groupes de type "weapon")
+            if "options" in unit:
+                for group_name, opts in unit["options"].items():
+                    if isinstance(opts, list):
+                        for opt in opts:
+                            # Vérifier si c'est une option de remplacement d'arme
+                            if "replaces" in opt:
+                                # Retirer les armes remplacées
+                                replaces = opt.get("replaces", [])
+                                if isinstance(replaces, list):
+                                    final_weapons = [w for w in final_weapons if w.get('name') not in replaces]
+                                elif isinstance(replaces, str):
+                                    final_weapons = [w for w in final_weapons if w.get('name') != replaces]
+        
+                                # Ajouter les nouvelles armes si elles existent
+                                if "weapon" in opt:
+                                    weapon = opt.get("weapon", {})
+                                    if isinstance(weapon, list):
+                                        final_weapons.extend(weapon)
+                                    else:
+                                        final_weapons.append(weapon)
+        
+            # 4. Ajouter les améliorations d'arme (arc, javelot, etc.)
+            if isinstance(weapon_upgrades, list):
+                for upgrade in weapon_upgrades:
+                    if isinstance(upgrade, dict):
+                        final_weapons.append(upgrade)
+                    elif isinstance(upgrade, list):
+                        final_weapons.extend(upgrade)
+        
+            # 5. Afficher toutes les armes finales
+            for weapon in final_weapons:
+                if weapon and isinstance(weapon, dict):
+                    html += f'''
             <div class="weapon-item">
               <div class="weapon-name">{esc(weapon.get('name', 'Arme'))}</div>
               <div class="weapon-stats">{format_weapon(weapon)}</div>
-            </div>
-        '''
-                else:
-                    # Cas d'une seule arme
-                    html += f'''
-            <div class="weapon-item">
-              <div class="weapon-name">{esc(weapons[0].get('name', 'Arme'))}</div>
-              <div class="weapon-stats">{format_weapon(weapons[0])}</div>
             </div>
 '''
 
