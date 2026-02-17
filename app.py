@@ -426,6 +426,43 @@ def export_html(army_list, army_name, army_limit):
 
         return result
 
+    def get_weapons(unit):
+        """Récupère les armes finales de l'unité en tenant compte des remplacements"""
+        # 1. Commencer avec les armes de base
+        weapons = unit.get("weapon", [])
+        if not isinstance(weapons, list):
+            weapons = [weapons]
+
+        # 2. Traiter les remplacements d'armes
+        if "options" in unit:
+            for group_name, opts in unit["options"].items():
+                if isinstance(opts, list):
+                    for opt in opts:
+                        # Vérifier si c'est une option de remplacement d'arme sélectionnée
+                        if "replaces" in opt and "weapon" in opt:
+                            # Retirer les armes remplacées
+                            replaces = opt.get("replaces", [])
+                            if isinstance(replaces, list):
+                                weapons = [w for w in weapons if w.get('name') not in replaces]
+                            elif isinstance(replaces, str):
+                                weapons = [w for w in weapons if w.get('name') != replaces]
+
+                            # Ajouter les nouvelles armes
+                            weapon = opt.get("weapon", {})
+                            if isinstance(weapon, list):
+                                weapons.extend(weapon)
+                            else:
+                                weapons.append(weapon)
+
+        # 3. Ajouter les améliorations d'arme (arc, javelot, etc.)
+        weapon_upgrades = unit.get("weapon_upgrades", [])
+        if isinstance(weapon_upgrades, list):
+            for upgrade in weapon_upgrades:
+                if isinstance(upgrade, dict):
+                    weapons.append(upgrade)
+
+        return weapons
+
     def get_special_rules(unit):
         """Extraire toutes les règles spéciales de l'unité"""
         rules = set()
@@ -447,23 +484,7 @@ def export_html(army_list, army_name, army_limit):
                                     rules.add(rule)
 
         # 3. Règles spéciales des armes
-        weapons = []
-        base_weapons = unit.get("weapon", [])
-        if not isinstance(base_weapons, list):
-            base_weapons = [base_weapons]
-        weapons.extend(base_weapons)
-
-        if "options" in unit:
-            for group_name, opts in unit["options"].items():
-                if isinstance(opts, list):
-                    for opt in opts:
-                        if "weapon" in opt:
-                            weapon = opt.get("weapon", {})
-                            if isinstance(weapon, list):
-                                weapons.extend(weapon)
-                            elif weapon:
-                                weapons.append(weapon)
-
+        weapons = get_weapons(unit)
         for weapon in weapons:
             if isinstance(weapon, dict) and "special_rules" in weapon:
                 for rule in weapon["special_rules"]:
@@ -725,63 +746,15 @@ body {{
         # Calcul de la valeur de Coriace
         tough_value = unit.get("coriace", 0)
 
+        # Récupération des armes finales (après remplacements)
+        weapons = get_weapons(unit)
+
         # Récupération des règles spéciales
         special_rules = get_special_rules(unit)
 
         # Récupération des options et montures
         options = unit.get("options", {})
         mount = unit.get("mount", None)
-
-        # Gestion des armes - NOUVELLE VERSION CORRIGÉE
-        final_weapons = []
-
-        # 1. Commencer avec les armes de base
-        base_weapons = unit.get("weapon", [])
-        if not isinstance(base_weapons, list):
-            base_weapons = [base_weapons]
-        final_weapons.extend(base_weapons)
-
-        # 2. Traiter les remplacements d'armes
-        if "options" in unit:
-            for group_name, opts in unit["options"].items():
-                if isinstance(opts, list):
-                    for opt in opts:
-                        # Vérifier si c'est une option de remplacement d'arme
-                        if "replaces" in opt and "weapon" in opt:
-                            # Retirer les armes remplacées
-                            replaces = opt.get("replaces", [])
-                            if isinstance(replaces, list):
-                                final_weapons = [w for w in final_weapons if w.get('name') not in replaces]
-                            elif isinstance(replaces, str):
-                                final_weapons = [w for w in final_weapons if w.get('name') != replaces]
-
-                            # Ajouter les nouvelles armes
-                            weapon = opt.get("weapon", {})
-                            if isinstance(weapon, list):
-                                final_weapons.extend(weapon)
-                            else:
-                                final_weapons.append(weapon)
-
-        # 3. Ajouter les améliorations d'arme (arc, javelot, etc.)
-        weapon_upgrades = unit.get("weapon_upgrades", [])
-        if isinstance(weapon_upgrades, list):
-            for upgrade in weapon_upgrades:
-                if isinstance(upgrade, dict):
-                    final_weapons.append(upgrade)
-                elif isinstance(upgrade, list):
-                    final_weapons.extend(upgrade)
-
-        # Supprimer les doublons (au cas où)
-        unique_weapons = []
-        seen_names = set()
-        for weapon in final_weapons:
-            if isinstance(weapon, dict) and 'name' in weapon:
-                name = weapon['name']
-                if name not in seen_names:
-                    seen_names.add(name)
-                    unique_weapons.append(weapon)
-            elif weapon not in unique_weapons:
-                unique_weapons.append(weapon)
 
         html += f'''
 <div class="unit-card">
@@ -830,10 +803,10 @@ body {{
   </div>
 '''
 
-        # Armes (version corrigée)
-        if unique_weapons:
+        # Armes (version définitivement corrigée)
+        if weapons:
             html += '<div class="section-title">Armes:</div>'
-            for weapon in unique_weapons:
+            for weapon in weapons:
                 if weapon and isinstance(weapon, dict):
                     html += f'''
     <div class="weapon-item">
