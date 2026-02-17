@@ -1696,7 +1696,24 @@ if st.session_state.page == "army":
             opt_map = {}
             for o in group.get("options", []):
                 weapon = o.get("weapon", {})
-                label = format_weapon_option(weapon, o['cost'])
+                option_name = o.get("name", "")
+        
+                # Cas spécial pour les options qui remplacent seulement une partie des armes
+                if isinstance(weapon, list) and len(base_weapons) > 1:
+                    # On garde les armes non remplacées
+                    kept_weapons = []
+                    for base_weapon in base_weapons:
+                        if base_weapon.get('name') not in o.get("replaces", []):
+                            kept_weapons.append(format_weapon_option(base_weapon))
+        
+                    # On ajoute les nouvelles armes
+                    for new_weapon in weapon:
+                        kept_weapons.append(format_weapon_option(new_weapon))
+        
+                    label = " | ".join(kept_weapons) + f" (+{o['cost']} pts)"
+                else:
+                    label = format_weapon_option(weapon, o['cost'])
+        
                 choices.append(label)
                 opt_map[label] = o
         
@@ -1715,7 +1732,14 @@ if st.session_state.page == "army":
                     if opt_label == choice:
                         weapon_cost += opt["cost"]
                         if isinstance(opt["weapon"], list):
-                            weapons = opt["weapon"]
+                            # Conserver les armes non remplacées
+                            final_weapons = []
+                            for base_weapon in base_weapons:
+                                if base_weapon.get('name') not in opt.get("replaces", []):
+                                    final_weapons.append(base_weapon)
+                            # Ajouter les nouvelles armes
+                            final_weapons.extend(opt["weapon"])
+                            weapons = final_weapons
                         else:
                             weapons = [opt["weapon"]]
                         break
