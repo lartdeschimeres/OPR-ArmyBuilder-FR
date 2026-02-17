@@ -1821,12 +1821,18 @@ if st.session_state.page == "army":
         elif group.get("type") == "weapon_upgrades":
             choices = ["Aucune amélioration d'arme"]
             opt_map = {}
-
+        
             for o in group.get("options", []):
-                label = f"{o['name']} (+{o['cost']} pts)"
+                # Formatage complet des armes d'amélioration
+                weapon = o.get("weapon", {})
+                if isinstance(weapon, dict):
+                    label = format_weapon_option(weapon, o['cost'])
+                else:
+                    label = f"{o['name']} (+{o['cost']} pts)"
+        
                 choices.append(label)
                 opt_map[label] = o
-
+        
             current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
             choice = st.radio(
                 "Amélioration d'arme",
@@ -1834,13 +1840,16 @@ if st.session_state.page == "army":
                 index=choices.index(current) if current in choices else 0,
                 key=f"{unit_key}_{g_key}_weapon_upgrade",
             )
-
+        
             st.session_state.unit_selections[unit_key][g_key] = choice
-
+        
             if choice != "Aucune amélioration d'arme":
                 opt = opt_map[choice]
                 upgrades_cost += opt["cost"]
-                weapon_upgrades.append(opt["weapon"])
+
+        # Ajouter l'arme d'amélioration à la liste des armes
+        if "weapon" in opt:
+            weapon_upgrades.append(opt["weapon"]))
 
         # MONTURE
         elif group.get("type") == "mount":
