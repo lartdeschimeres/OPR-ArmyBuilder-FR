@@ -451,9 +451,37 @@ def export_html(army_list, army_name, army_limit):
                                     rules.add(rule)
 
         # 3. Règles spéciales des armes
-        weapons = unit.get("weapon", [])
-        if not isinstance(weapons, list):
-            weapons = [weapons]
+        # Récupération de toutes les armes (base + améliorées)
+        weapons = []
+        
+        # 1. Armes de base
+        base_weapons = unit.get("weapon", [])
+        if not isinstance(base_weapons, list):
+            base_weapons = [base_weapons]
+        weapons.extend(base_weapons)
+        
+        # 2. Vérifier si des armes ont été remplacées
+        if "options" in unit:
+            for group_name, opts in unit["options"].items():
+                if isinstance(opts, list):
+                    for opt in opts:
+                        if "weapon" in opt:
+                            weapon = opt.get("weapon", {})
+                            if isinstance(weapon, list):
+                                weapons.extend(weapon)
+                            elif weapon:
+                                weapons.append(weapon)
+                        if "replaces" in opt:
+                            # Retirer les armes remplacées
+                            replaces = opt.get("replaces", [])
+                            weapons = [w for w in weapons if w.get('name') not in replaces]
+                            # Ajouter les nouvelles armes
+                            if "weapon" in opt:
+                                new_weapon = opt.get("weapon", {})
+                                if isinstance(new_weapon, list):
+                                    weapons.extend(new_weapon)
+                                elif new_weapon:
+                                    weapons.append(new_weapon)
 
         for weapon in weapons:
             if isinstance(weapon, dict) and "special_rules" in weapon:
