@@ -6,111 +6,111 @@
     "description": "Les armées de Sauriens sont issues d’une improbable coalition de reptiles humanoïdes, dirigées par des Grenouilles-Mages. Ils combattent aux côtés d'une variété de puissantes créatures ressemblant à des dinosaures provenant des jungles de leur plan astral d’origine. Les Sauriens exécutaient aveuglément les prophéties des Grenouilles-Mages, qui croyaient qu'ils affronteraient les Dieux du Ravage afin de sauver leur monde. Cependant, avec l'ouverture de la Faille, il semblerait qu'ils soient arrivés trop tard. Désormais, ils doivent faire face à l’échec apparent des pouvoirs des Grenouilles-Mages et de leur prophétie",
     "faction_special_rules": [
 	{        
-	  "name": "Primal [Primal]"
+	  "name": "Primal [Primal]",
 	  "description": "Pour chaque jet non modifié de 6 pour toucher lors d'une attaque, cette figurine peut lancer +1 attaque avec cette arme. Cette règle ne s'applique pas aux nouvelles attaques générées.",
 	},
 	{
-          "name": "Bounding [Bond]"
+          "name": "Bounding [Bond]",
 	  "description": "Lorsque cette unité est activée, vous pouvez placer toutes les figurines possédant cette règle spéciale n'importe où dans un rayon de D3+1\" autour de leur position.",
 	},
 	{
-	  "name": "Counter-Attack [Contre-attaque]"
+	  "name": "Counter-Attack [Contre-attaque]",
 	  "description": "Frappe en premier lorsqu’elle est Chargée.",
 	},
 	{
-	  "name": "Crossing Barrage (X) [Bombardement croisé (X)]"
+	  "name": "Crossing Barrage (X) [Bombardement croisé (X)]",
 	  "description": "Une fois par activation, lorsque cette figurine traverse des unités ennemies, choisissez-en une et lancez X dés. Pour chaque résultat de 4+, elle subit trois touches avec PA (1).",
 	},
 	{
-	  "name": "Crossing Strike (X) [Frappe croisée (X)]"
+	  "name": "Crossing Strike (X) [Frappe croisée (X)]",
 	  "description": "Une fois par partie, lors de son activation, lorsque cette figurine traverse des unités ennemies, choisissez-en une et lancez X dés. Pour chaque résultat de 4+, elle inflige trois blessures avec PA (1).",
 	},
 	{
-	  "name": "Disentegrate [Désintégration]"
+	  "name": "Disentegrate [Désintégration]",
 	  "description": "Ignore la règle spéciale Régénération, et contre les unités dont la plupart des figurines possèdent une Défense comprise entre 2+ et 3+, cette arme gagne PA (+2).",
 	},
 	{
-	  "name": "Evasive [Esquive]"
+	  "name": "Evasive [Esquive]",
 	  "description": "Les ennemis subissent un malus de -1 au jets pour toucher lorsqu'ils attaquent des unités dont toutes les figurines possèdent cette règle.",
 	},
 	{
-	  "name": "Fortified [Blinfé]"
+	  "name": "Fortified [Blinfé]",
 	  "description": "Lorsque des unités dont toutes les figurines possèdent cette règle spéciale subissent des dégâts, ces dégâts comptent comme ayant une PA (-1), avec un minimum de PA (0).",
 	},
 	{
-	  "name": "Good shot [Bon tireur]"
+	  "name": "Good shot [Bon tireur]",
 	  "description": "Cette figurine gagne +1 pour toucher lorsqu’elle tire.",
 	},
 	{
-	  "name": "Heavy Impact [Impact lourd]"
+	  "name": "Heavy Impact [Impact lourd]",
 	  "description": "Les touches d’Impact de cette figurine gagne PA (1).",
 	},
 	{
-	  "name": "Hit & Run [Frappe en mouvement]"
+	  "name": "Hit & Run [Frappe en mouvement]",
 	  "description": "Une fois par round, les unités dont toutes les figurines possèdent cette règle peuvent se déplacer jusqu'à 3” après avoir tiré ou avoir été en mêlée.",
 	},       
   	{
-	  "name": "Hit & Run Shooter [Tir en mouvement]"
+	  "name": "Hit & Run Shooter [Tir en mouvement]",
 	  "description": "Une fois par round, les unités dont toutes les figurines possèdent cette règle peuvent se déplacer jusqu'à 3” après avoir tiré.",
 	},        
   	{
-	  "name": "Mend [Guérison]"
+	  "name": "Mend [Guérison]",
 	  "description": "Une fois par activation, choisissez une figurine amie à 3” ou moins doté de la caractéristique Coriace et retirez 1D3 blessures de celle-ci.",
 	},        
   	{
-	  "name": "Precision Target (X) [Cible désignée (X)]"
+	  "name": "Precision Target (X) [Cible désignée (X)]",
 	  "description": "Une fois par partie, lors de l'activation de cette figurine, choisissez une unité ennemie à 36” ou moins et dans sa ligne de vue, et placez X marqueurs dessus. Les unités amies obtiennent +X aux jets pour toucher lorsqu'elles l'attaquent.",
 	},  
   	{
-	  "name": "Primal Boost [Boost de Primal]"
+	  "name": "Primal Boost [Boost de Primal]",
 	  "description": "Si cette figurine possède la règle spéciale Primal, elle obtient des attaques supplémentaires sur les résultats pour toucher réussis non modifiés de 5-6 grâce à Primal (au lieu de seulement sur 6).",
 	}, 
   	{
-	  "name": "Primal Boost Buff [Bonus de Boost de Primal]"
+	  "name": "Primal Boost Buff [Bonus de Boost de Primal]",
 	  "description": "Une fois par activation, avant d'attaquer, choisissez une unité amie à 12” ou moins qui bénéficie une fois de Boost de Primal (la prochaine fois que l'effet s'appliquerait).",
 	},
   	{
-	  "name": "Protection Feat [Protection extraordinaire]"
+	  "name": "Protection Feat [Protection extraordinaire]",
 	  "description": "Une fois par partie, lorsque cette unité subit des blessures et que toutes ses figurines possèdent cette règle spéciale, vous pouvez l’utiliser et lancer un dé par blessure. Sur un résultat de 4+, la blessure est ignorée.",
 	},
   	{
-	  "name": "Ravage (X) [Ravage (X)]"
+	  "name": "Ravage (X) [Ravage (X)]",
 	  "description": "Lorsque cette figurine attaque au corps à corps, lancez X dés. Pour chaque résultat de 6+, la cible subit une blessure.",
 	},
   	{
-	  "name": "Shred [Lacération]"
+	  "name": "Shred [Lacération]",
 	  "description": "Sur les résultats non modifiés de 1 pour bloquer les touches, cette arme inflige une blessure supplémentaire.",
 	},
   	{
-	  "name": "Shred Mark [Marque de Lacération]"
+	  "name": "Shred Mark [Marque de Lacération]",
 	  "description": "Une fois par activation, avant d'attaquer, choisissez une unité ennemie à 18” ou moins. Les unités amies obtiennent Marque de Lacération une seule fois lorsqu'elles l'attaquent (la prochaine fois que l'effet s'appliquerait).",
 	},
   	{
-	  "name": "Spawn (X) [Génération (X)]"
+	  "name": "Spawn (X) [Génération (X)]",
 	  "description": "Une fois par partie, lorsque cette figurine est activée, vous pouvez placer une nouvelle unité de X entièrement à 6” ou moins d’elle.",
 	},
   	{
-	  "name": "Steadfast [Inébranlable]"
+	  "name": "Steadfast [Inébranlable]",
 	  "description": "Si une unité dont toutes les figurines possèdent cette règle est Ébranlée au début du round, lancez un dé. Sur un résultat de 4+, elle cesse d'être Ébranlée.",
 	},
   	{
-	  "name": "Unpredictable Fighter [Combattant imprévisible]"
+	  "name": "Unpredictable Fighter [Combattant imprévisible]",
 	  "description": "En mêlée, lancez un dé et appliquez un effet à toutes les figurines dotées de cette règle : sur un résultat de 1 à 3, elles obtiennent PA (+1), et sur un résultat de 4 à 6, elles obtiennent +1 aux jets d'attaque.",
 	},
   	{
-	  "name": "Counter-Attack Aura [Aura de Contre-attaque]"
+	  "name": "Counter-Attack Aura [Aura de Contre-attaque]",
 	  "description": "Cette figurine et son unité obtiennent la règle spéciale Contre-attaque.",
 	},
   	{
-	  "name": "Hit & Run Shooter Aura [Aura de Tir en mouvement]"
+	  "name": "Hit & Run Shooter Aura [Aura de Tir en mouvement]",
 	  "description": "Cette figurine et son unité obtiennent la règle spéciale Tir en Mouvement.",
 	},
   	{
-	  "name": "Rapid Charge Aura [Aura de Charge véloce]"
+	  "name": "Rapid Charge Aura [Aura de Charge véloce]",
 	  "description": "Cette figurine et son unité se déplace de +4” lorsqu’elles Chargent.",
 	},
   	{
-	  "name": "Rending in Melee Aura [Aura de Perforation en mêlée]"
+	  "name": "Rending in Melee Aura [Aura de Perforation en mêlée]",
 	  "description": "Cette figurine et son unité obtiennent la règle spéciale Perforant en mêlée.",
 	}
       ],
