@@ -120,7 +120,7 @@ st.markdown(
         border-radius: 10px;
         margin-bottom: 2rem;
         position: relative;
-        min-height: 200px;
+        min-height: 400px;
         display: flex;
         align-items: center;
         justify-content: center;
