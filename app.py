@@ -716,14 +716,33 @@ body {{
         # Calcul de la valeur de Coriace
         tough_value = unit.get("coriace", 0)
 
-        # Récupération des armes
+        # Récupération des armes de base et des améliorations
         weapons = unit.get("weapon", [])
         if not isinstance(weapons, list):
             weapons = [weapons]
 
-        # Récupération des armes améliorées
+        # Récupération des améliorations d'arme
         weapon_upgrades = unit.get("weapon_upgrades", [])
+        if not isinstance(weapon_upgrades, list):
+            weapon_upgrades = [weapon_upgrades]
 
+        # Combiner les armes de base et les améliorations
+        all_weapons = weapons.copy()
+        for upgrade in weapon_upgrades:
+            if isinstance(upgrade, dict):
+                all_weapons.append(upgrade)
+
+        # Armes (section modifiée)
+        if all_weapons:
+            html += '<div class="section-title">Armes:</div>'
+            for weapon in all_weapons:
+                if weapon and isinstance(weapon, dict):
+                    html += f'''
+    <div class="weapon-item">
+      <div class="weapon-name">{esc(weapon.get('name', 'Arme'))}</div>
+      <div class="weapon-stats">{format_weapon(weapon)}</div>
+    </div>
+'''
         # Récupération des règles spéciales
         special_rules = get_special_rules(unit)
 
@@ -1754,7 +1773,7 @@ if st.session_state.page == "army":
                         selected_options[group.get("group", "Rôle")] = [opt]
                         break
 
-        # AMÉLIORATIONS D'ARME - SECTION MODIFIÉE
+        # AMÉLIORATIONS D'ARME - SECTION CORRIGÉE
         elif group.get("type") == "weapon_upgrades":
             choices = ["Aucune amélioration d'arme"]
             opt_map = {}
@@ -1798,8 +1817,15 @@ if st.session_state.page == "army":
             if choice != "Aucune amélioration d'arme":
                 opt = opt_map[choice]
                 upgrades_cost += opt["cost"]
-                
-                weapon_upgrades.append(opt["weapon"])
+        
+                # Ajouter l'arme d'amélioration à la liste des armes principales
+                if "weapon" in opt:
+                    weapon_upgrades.append(opt["weapon"])
+                    # Ajouter aussi à la liste des armes principales pour l'affichage
+                    if isinstance(opt["weapon"], dict):
+                        weapons.append(opt["weapon"])
+                    elif isinstance(opt["weapon"], list):
+                        weapons.extend(opt["weapon"])
 
         # MONTURE
         elif group.get("type") == "mount":
