@@ -99,19 +99,19 @@
 	},
   	{
 	  "name": "Counter-Attack Aura [Aura de Contre-attaque]",
-	  "description": "Cette figurine et son unité obtiennent la règle spéciale Contre-attaque.",
+	  "description": "Cette figurine et son unité obtiennent la règle spéciale Contre-attaque."
 	},
   	{
 	  "name": "Hit & Run Shooter Aura [Aura de Tir en mouvement]",
-	  "description": "Cette figurine et son unité obtiennent la règle spéciale Tir en Mouvement.",
+	  "description": "Cette figurine et son unité obtiennent la règle spéciale Tir en Mouvement."
 	},
   	{
 	  "name": "Rapid Charge Aura [Aura de Charge véloce]",
-	  "description": "Cette figurine et son unité se déplace de +4” lorsqu’elles Chargent.",
+	  "description": "Cette figurine et son unité se déplace de +4” lorsqu’elles Chargent."
 	},
   	{
 	  "name": "Rending in Melee Aura [Aura de Perforation en mêlée]",
-	  "description": "Cette figurine et son unité obtiennent la règle spéciale Perforant en mêlée.",
+	  "description": "Cette figurine et son unité obtiennent la règle spéciale Perforant en mêlée."
 	}
       ],
       "spells": {
