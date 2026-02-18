@@ -1754,16 +1754,37 @@ if st.session_state.page == "army":
                         selected_options[group.get("group", "Rôle")] = [opt]
                         break
 
-        # AMÉLIORATIONS D'ARME
+        # AMÉLIORATIONS D'ARME - SECTION MODIFIÉE
         elif group.get("type") == "weapon_upgrades":
             choices = ["Aucune amélioration d'arme"]
             opt_map = {}
-
+        
             for o in group.get("options", []):
-                label = f"{o['name']} (+{o['cost']} pts)"
+                weapon = o.get("weapon", {})
+                if isinstance(weapon, dict):
+                    # Formatage complet avec toutes les caractéristiques
+                    name = weapon.get('name', 'Arme')
+                    attacks = weapon.get('attacks', '?')
+                    ap = weapon.get('armor_piercing', '?')
+                    range_text = weapon.get('range', 'Mêlée')
+                    special_rules = weapon.get('special_rules', [])
+        
+                    # Construction du label avec toutes les infos
+                    profile = f"{name} ({range_text}, A{attacks}"
+                    if ap not in ("-", 0, "0", None):
+                        profile += f"/PA{ap}"
+                    profile += ")"
+        
+                    if special_rules:
+                        profile += f" [{', '.join(special_rules)}]"
+        
+                    label = f"{profile} (+{o['cost']} pts)"
+                else:
+                    label = f"{o['name']} (+{o['cost']} pts)"
+        
                 choices.append(label)
                 opt_map[label] = o
-
+        
             current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
             choice = st.radio(
                 "Amélioration d'arme",
@@ -1771,12 +1792,27 @@ if st.session_state.page == "army":
                 index=choices.index(current) if current in choices else 0,
                 key=f"{unit_key}_{g_key}_weapon_upgrade",
             )
-
+        
             st.session_state.unit_selections[unit_key][g_key] = choice
-
+        
             if choice != "Aucune amélioration d'arme":
                 opt = opt_map[choice]
                 upgrades_cost += opt["cost"]
+        
+                # Afficher les caractéristiques de l'arme sélectionnée
+                if "weapon" in opt:
+                    weapon = opt["weapon"]
+                    if isinstance(weapon, dict):
+                        st.markdown(f"""
+                        <div style='background: #f0f2f6; padding: 10px; border-radius: 5px; margin: 10px 0;'>
+                            <strong>Caractéristiques de {weapon.get('name', 'Arme')}:</strong><br>
+                            • Portée: {weapon.get('range', 'Mêlée')}<br>
+                            • Attaques: {weapon.get('attacks', '?')}<br>
+                            • PA: {weapon.get('armor_piercing', '-')}<br>
+                            {"• " + ", ".join(weapon.get('special_rules', [])) if weapon.get('special_rules') else ''}
+                        </div>
+                        """, unsafe_allow_html=True)
+        
                 weapon_upgrades.append(opt["weapon"])
 
         # MONTURE
