@@ -258,1468 +258,1308 @@
       		  ]
     		},
 
+    },
+    {
+      "name": "Vétéran Gator",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 115,
+      "quality": "4+",
+      "defense": "3+",
+      "coriace": 6,
+      "special_rules": ["Coriace(6)", "Effrayant(1)", "Héros", "Primal", "Sans peur"],
+      "weapons": [
         {
-            "name": "Vétéran Gator",
-            "type": "hero",
-            "size": 1,
-            "base_cost": 115,
-            "quality": "4+",
-            "defense": "3+",
-            "coriace": 6,
-            "special_rules": [
-                "Coriace (6)",
-                "Effrayant (1)",
-                "Héros",
-                "Primal",
-                "Sans peur"
-            ],
-            "weapons": [
-                {
-                    "name": "Grande arme d’obsidienne",
-                    "range": null,
-                    "attacks": "A6",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Désintégration"
-                    ]
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Améliorations",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Lignée sacrée (Aura de Charge véloce)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        },
-                        {
-                            "name": "Gardien du Temple (Aura de Contre-attaque)",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        },
-                        {
-                            "name": "Rugissement primal (Bonus de Boost de Primal)",
-                            "cost": 30,
-                            "description": "+30 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Remplacer la Grande arme d’obsidienne par",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Grande arme (A6, PA (2))",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Destin sacré (Protection extraordinaire)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Vétéran Saurien",
-            "type": "hero",
-            "size": 1,
-            "base_cost": 60,
-            "quality": "3+",
-            "defense": "3+",
-            "coriace": 3,
-            "special_rules": [
-                "Coriace (3)",
-                "Héros",
-                "Primal",
-                "Sans peur"
-            ],
-            "weapons": [
-                {
-                    "name": "Arme à une main lourde",
-                    "range": null,
-                    "attacks": "A3",
-                    "armor_piercing": 1,
-                    "special_rules": []
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Améliorations",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Lignée sacrée (Aura de Charge véloce)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        },
-                        {
-                            "name": "Gardien du Temple (Aura de Contre-attaque)",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        },
-                        {
-                            "name": "Porteur de la bannière de l’armée (Effrayant (3))",
-                            "cost": 30,
-                            "description": "+30 pts"
-                        },
-                        {
-                            "name": "Chef (Aura de Perforation en mêlée)",
-                            "cost": 30,
-                            "description": "+30 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Remplacer l’Arme à une main lourde par",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Grande arme d’obsidienne (A3, Désintégration)",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Hallebarde lourde (A3, PA (1), Perforant)",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Pique lourde (A3, PA (1), Contre-charge)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        },
-                        {
-                            "name": "Grande arme (A3, PA (2))",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        },
-                        {
-                            "name": "Paire d’armes à une main Lourdes (A4, PA (1))",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        },
-                        {
-                            "name": "Lance lourde (A3, PA (1), Percée)",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Raptor (Impact (1), Raide, Ravage (1))",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        },
-                        {
-                            "name": "Tyrannosaure (Mâchoires puissantes (A6, PA (2)), Piétinement (A4, PA (1)), Coriace (+12), Effrayant (2), Bonus de Boost de Primal)",
-                            "cost": 305,
-                            "description": "+305 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Destin sacré (Protection extraordinaire)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Champion Gecko",
-            "type": "hero",
-            "size": 1,
-            "base_cost": 30,
-            "quality": "5+",
-            "defense": "5+",
-            "coriace": 3,
-            "special_rules": [
-                "Arpenteur",
-                "Coriace (3)",
-                "Héros",
-                "Primal"
-            ],
-            "weapons": [
-                {
-                    "name": "Arme à une main",
-                    "range": null,
-                    "attacks": "A3",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Fléau"
-                    ]
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Améliorations",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Tirailleur (Aura de Tir en mouvement)",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        },
-                        {
-                            "name": "Gardien du Temple (Aura de Contre-attaque)",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        },
-                        {
-                            "name": "Chasseur primal (Bonus de Boost de Primal)",
-                            "cost": 30,
-                            "description": "+30 pts"
-                        },
-                        {
-                            "name": "Chef (Aura de Perforation en mêlée)",
-                            "cost": 30,
-                            "description": "+30 pts"
-                        },
-                        {
-                            "name": "Prêtre (Lanceur de sorts (2))",
-                            "cost": 35,
-                            "description": "+35 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Remplacer l’Arme à une main par",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Paire d’armes à une main (A4, Fléau)",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Lance (A3, Fléau, Contre-charge)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Bolas enflammés de champion (12”, A3)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        },
-                        {
-                            "name": "Javelot de champion (12”, A2, PA (1), Fléau)",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        },
-                        {
-                            "name": "Sarbacane de champion (18”, A2, Fléau)",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Lignée des Caméléons (Bon tireur, Éclaireur, Esquive)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        },
-                        {
-                            "name": "Deinonychus (Bond, Impact (1))",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        },
-                        {
-                            "name": "Palanquin d’astrologue (Coriace (+3), Impulsion magique (A3))",
-                            "cost": 25,
-                            "description": "+25 pts"
-                        },
-                        {
-                            "name": "Ptérodactyle (Griffes (A2), Coriace (+3), Embuscade, Frappe croisée (1), Impact (1), Rapide, Volant)",
-                            "cost": 55,
-                            "description": "+55 pts"
-                        },
-                        {
-                            "name": "Dimorphodon (Coriace (+3), Embuscade, Impact lourd (3), Cible désignée (1), Rapide, Volant)",
-                            "cost": 90,
-                            "description": "+90 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Destin sacré (Protection extraordinaire)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Guerriers Sauriens",
-            "type": "unit",
-            "size": 10,
-            "base_cost": 115,
-            "quality": "4+",
-            "defense": "4+",
-            "coriace": null,
-            "special_rules": [
-                "Primal",
-                "Sans peur"
-            ],
-            "weapons": [
-                {
-                    "name": "Armes à une main",
-                    "range": null,
-                    "attacks": "A1",
-                    "armor_piercing": null,
-                    "special_rules": []
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Remplacer toutes les Armes à une main par",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Hallebarde (A1, Perforant)",
-                            "cost": 25,
-                            "description": "+25 pts"
-                        },
-                        {
-                            "name": "Pique (A1, Contre-charge)",
-                            "cost": 30,
-                            "description": "+30 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Destin sacré (Protection extraordinaire)",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
-                        {
-                            "name": "Bannière",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Sergent",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Musicien",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Geckos",
-            "type": "unit",
-            "size": 5,
-            "base_cost": 45,
-            "quality": "5+",
-            "defense": "5+",
-            "coriace": null,
-            "special_rules": [
-                "Arpenteur",
-                "Primal"
-            ],
-            "weapons": [
-                {
-                    "name": "Armes à une main",
-                    "range": null,
-                    "attacks": "A1",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Fléau"
-                    ]
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Javelot (12”, A1, PA (1), Fléau)",
-                            "cost": 30,
-                            "description": "+30 pts"
-                        },
-                        {
-                            "name": "Sarbacane (18”, A1, Fléau)",
-                            "cost": 35,
-                            "description": "+35 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Destin sacré (Protection extraordinaire)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
-                        {
-                            "name": "Bannière",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Sergent",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Musicien",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Gardiens Sauriens",
-            "type": "unit",
-            "size": 5,
-            "base_cost": 90,
-            "quality": "3+",
-            "defense": "3+",
-            "coriace": null,
-            "special_rules": [
-                "Primal",
-                "Sans peur"
-            ],
-            "weapons": [
-                {
-                    "name": "Grandes armes d’obsidienne",
-                    "range": null,
-                    "attacks": "A1",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Désintégration"
-                    ]
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Remplacer toutes les Grandes armes d’obsidiennes par",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Hallebarde lourde (A1, PA (1), Perforant)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        },
-                        {
-                            "name": "Grande arme (A1, PA (2))",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Destin sacré (Protection extraordinaire)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
-                        {
-                            "name": "Bannière",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Sergent",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Musicien",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Caméléons",
-            "type": "unit",
-            "size": 5,
-            "base_cost": 100,
-            "quality": "5+",
-            "defense": "5+",
-            "coriace": null,
-            "special_rules": [
-                "Arpenteur",
-                "Bon tireur",
-                "Éclaireur",
-                "Primal",
-                "Esquive"
-            ],
-            "weapons": [
-                {
-                    "name": "Bolas enflammés",
-                    "range": "12”",
-                    "attacks": "A2",
-                    "armor_piercing": null,
-                    "special_rules": []
-                },
-                {
-                    "name": "Armes à une main",
-                    "range": null,
-                    "attacks": "A1",
-                    "armor_piercing": null,
-                    "special_rules": []
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Remplacer tous les Bolas enflammés par",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Sarbacane (18”, A1, Fléau)",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Vision prophétique (Marque de Lacération)",
-                            "cost": 25,
-                            "description": "+25 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Chevaucheurs de Deinonychus",
-            "type": "unit",
-            "size": 5,
-            "base_cost": 100,
-            "quality": "5+",
-            "defense": "5+",
-            "coriace": null,
-            "special_rules": [
-                "Arpenteur",
-                "Bond",
-                "Impact (1)",
-                "Primal"
-            ],
-            "weapons": [
-                {
-                    "name": "Lances",
-                    "range": null,
-                    "attacks": "A1",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Fléau",
-                        "Percée"
-                    ]
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Remplacer toutes les Lances par",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Javelot (12”, A1, PA (1), Fléau), Arme à une main (A1)",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
-                        {
-                            "name": "Bannière",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Sergent",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Musicien",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Chevaucheurs de Raptors",
-            "type": "unit",
-            "size": 5,
-            "base_cost": 110,
-            "quality": "4+",
-            "defense": "4+",
-            "coriace": null,
-            "special_rules": [
-                "Impact (1)",
-                "Primal",
-                "Ravage (1)",
-                "Rapide",
-                "Sans peur"
-            ],
-            "weapons": [
-                {
-                    "name": "Armes à une main",
-                    "range": null,
-                    "attacks": "A1",
-                    "armor_piercing": null,
-                    "special_rules": []
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Remplacer toutes les Armes à une main par",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Lances (A1, Percée)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
-                        {
-                            "name": "Bannière",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Sergent",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Musicien",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Chevaucheurs de Ptérodactyle",
-            "type": "unit",
-            "size": 3,
-            "base_cost": 125,
-            "quality": "5+",
-            "defense": "5+",
-            "coriace": 3,
-            "special_rules": [
-                "Coriace (3)",
-                "Embuscade",
-                "Impact (1)",
-                "Primal",
-                "Rapide",
-                "Volant"
-            ],
-            "weapons": [
-                {
-                    "name": "Griffes",
-                    "range": null,
-                    "attacks": "A2",
-                    "armor_piercing": null,
-                    "special_rules": []
-                },
-                {
-                    "name": "Armes à une main",
-                    "range": null,
-                    "attacks": "A1",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Fléau"
-                    ]
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Bolas enflammés (12”, A4)",
-                            "cost": 35,
-                            "description": "+35 pts"
-                        },
-                        {
-                            "name": "Javelot (12”, A1, PA (1), Fléau)",
-                            "cost": 40,
-                            "description": "+40 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Lâcher des pierres (Frappe croisée (1))",
-                            "cost": 20,
-                            "description": "+20 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
-                        {
-                            "name": "Bannière",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Sergent",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Musicien",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Chevaucheurs de Dimorphodon",
-            "type": "unit",
-            "size": 3,
-            "base_cost": 165,
-            "quality": "5+",
-            "defense": "5+",
-            "coriace": 3,
-            "special_rules": [
-                "Coriace (3)",
-                "Embuscade",
-                "Impact lourd (3)",
-                "Primal",
-                "Rapide",
-                "Volant"
-            ],
-            "weapons": [
-                {
-                    "name": "Armes à une main",
-                    "range": null,
-                    "attacks": "A1",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Fléau"
-                    ]
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Bolas enflammés (12”, A4)",
-                            "cost": 35,
-                            "description": "+35 pts"
-                        },
-                        {
-                            "name": "Javelot (12”, A1, PA (1), Fléau)",
-                            "cost": 40,
-                            "description": "+40 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Appât (Cible désignée (1))",
-                            "cost": 25,
-                            "description": "+25 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
-                        {
-                            "name": "Bannière",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Sergent",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Musicien",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Gators",
-            "type": "unit",
-            "size": 3,
-            "base_cost": 155,
-            "quality": "4+",
-            "defense": "3+",
-            "coriace": 3,
-            "special_rules": [
-                "Coriace (3)",
-                "Primal",
-                "Sans peur"
-            ],
-            "weapons": [
-                {
-                    "name": "Grandes armes d’obsidienne",
-                    "range": null,
-                    "attacks": "A3",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Désintégration"
-                    ]
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Destin sacré (Protection extraordinaire)",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Remplacer toutes les Grandes armes d’obsidienne par",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Grande arme (A3, PA (2))",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Vision prophétique (Marque de Lacération)",
-                            "cost": 25,
-                            "description": "+25 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Nuées de serpents",
-            "type": "unit",
-            "size": 3,
-            "base_cost": 75,
-            "quality": "5+",
-            "defense": "6+",
-            "coriace": 3,
-            "special_rules": [
-                "Arpenteur",
-                "Coriace (3)",
-                "Primal"
-            ],
-            "weapons": [
-                {
-                    "name": "Attaques de nuée",
-                    "range": null,
-                    "attacks": "A3",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Fléau"
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Ptéranodons",
-            "type": "unit",
-            "size": 3,
-            "base_cost": 115,
-            "quality": "5+",
-            "defense": "6+",
-            "coriace": 3,
-            "special_rules": [
-                "Coriace (3)",
-                "Embuscade",
-                "Esquive",
-                "Primal",
-                "Rapide",
-                "Volant"
-            ],
-            "weapons": [
-                {
-                    "name": "Griffes",
-                    "range": null,
-                    "attacks": "A3",
-                    "armor_piercing": null,
-                    "special_rules": []
-                }
-            ]
-        },
-        {
-            "name": "Lézard Épineux",
-            "type": "hero",
-            "size": 1,
-            "base_cost": 140,
-            "quality": "4+",
-            "defense": "3+",
-            "coriace": 6,
-            "special_rules": [
-                "Arpenteur",
-                "Blindé",
-                "Coriace (6)",
-                "Primal",
-                "Sans peur"
-            ],
-            "weapons": [
-                {
-                    "name": "Jet de piques",
-                    "range": "18”",
-                    "attacks": "A2",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Explosion (3)"
-                    ]
-                },
-                {
-                    "name": "Griffes lourdes",
-                    "range": null,
-                    "attacks": "A3",
-                    "armor_piercing": 1,
-                    "special_rules": []
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Maître-lézard d’avant-garde (Éclaireur)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        },
-                        {
-                            "name": "Maître-lézard de combat (Implacable)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Lézard Dragon",
-            "type": "hero",
-            "size": 1,
-            "base_cost": 145,
-            "quality": "4+",
-            "defense": "4+",
-            "coriace": 6,
-            "special_rules": [
-                "Arpenteur",
-                "Coriace (6)",
-                "Primal",
-                "Régénération",
-                "Sans peur"
-            ],
-            "weapons": [
-                {
-                    "name": "Crachat enflammé",
-                    "range": "12”",
-                    "attacks": "A2",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Explosion (3)",
-                        "Fiable"
-                    ]
-                },
-                {
-                    "name": "Griffes Lourdes",
-                    "range": null,
-                    "attacks": "A3",
-                    "armor_piercing": 1,
-                    "special_rules": []
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Maître-lézard d’avant-garde (Éclaireur)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        },
-                        {
-                            "name": "Maître-lézard de combat (Implacable)",
-                            "cost": 10,
-                            "description": "+10 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Tricératops",
-            "type": "hero",
-            "size": 1,
-            "base_cost": 275,
-            "quality": "4+",
-            "defense": "3+",
-            "coriace": 12,
-            "special_rules": [
-                "Coriace (12)",
-                "Effrayant (2)",
-                "Primal",
-                "Sans peur"
-            ],
-            "weapons": [
-                {
-                    "name": "Javelots de l’équipage",
-                    "range": "12”",
-                    "attacks": "A6",
-                    "armor_piercing": 1,
-                    "special_rules": [
-                        "Fléau"
-                    ]
-                },
-                {
-                    "name": "Cornes",
-                    "range": null,
-                    "attacks": "A6",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Perforant"
-                    ]
-                },
-                {
-                    "name": "Piétinement",
-                    "range": null,
-                    "attacks": "A4",
-                    "armor_piercing": 1,
-                    "special_rules": []
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Remplacer les Javelots de l’équipage par",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Sarbacane géante (18”, A6, Fléau)",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Baliste (24”, A2, PA (2), Mortel (6))",
-                            "cost": 35,
-                            "description": "+35 pts"
-                        },
-                        {
-                            "name": "Javelots de l’équipage (12”, A6, Fléau), Autel des Dieux (Lanceur de sorts (2))",
-                            "cost": 35,
-                            "description": "+35 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Écrasement (Impact (3))",
-                            "cost": 15,
-                            "description": "+15 pts"
-                        },
-                        {
-                            "name": "Destin sacré (Protection extraordinaire)",
-                            "cost": 25,
-                            "description": "+25 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Spinosaurus",
-            "type": "hero",
-            "size": 1,
-            "base_cost": 275,
-            "quality": "4+",
-            "defense": "3+",
-            "coriace": 12,
-            "special_rules": [
-                "Coriace (12)",
-                "Effrayant (2)",
-                "Primal",
-                "Sans peur"
-            ],
-            "weapons": [
-                {
-                    "name": "Crachat venimeux",
-                    "range": "18”",
-                    "attacks": "A2",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Explosion (3)",
-                        "Fléau"
-                    ]
-                },
-                {
-                    "name": "Piétinement",
-                    "range": null,
-                    "attacks": "A4",
-                    "armor_piercing": 1,
-                    "special_rules": []
-                },
-                {
-                    "name": "Morsure toxique",
-                    "range": null,
-                    "attacks": "A6",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Fléau"
-                    ]
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Rugissement primal (Bonus de Boost de Primal)",
-                            "cost": 30,
-                            "description": "+30 pts"
-                        },
-                        {
-                            "name": "Prêtre chevaucheur (Lanceur de sorts (2))",
-                            "cost": 35,
-                            "description": "+35 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Ankylosaurus",
-            "type": "hero",
-            "size": 1,
-            "base_cost": 305,
-            "quality": "4+",
-            "defense": "2+",
-            "coriace": 12,
-            "special_rules": [
-                "Coriace (12)",
-                "Effrayant (2)",
-                "Primal",
-                "Sans peur"
-            ],
-            "weapons": [
-                {
-                    "name": "Javelots de l’équipage",
-                    "range": "12”",
-                    "attacks": "A6",
-                    "armor_piercing": 1,
-                    "special_rules": [
-                        "Fléau"
-                    ]
-                },
-                {
-                    "name": "Queue d’obsidienne",
-                    "range": null,
-                    "attacks": "A4",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Désintégration",
-                        "Mortel (3)"
-                    ]
-                },
-                {
-                    "name": "Piétinement",
-                    "range": null,
-                    "attacks": "A4",
-                    "armor_piercing": 1,
-                    "special_rules": []
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Remplacer les Javelots de l’équipage par",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Arche des serpents (Génération (Nuées de serpents [3]))",
-                            "cost": 25,
-                            "description": "+25 pts"
-                        },
-                        {
-                            "name": "Rayon solaire (24”, A2, PA (2), Explosion (3))",
-                            "cost": 40,
-                            "description": "+40 pts"
-                        }
-                    ]
-                },
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Vision prophétique (Marque de Lacération)",
-                            "cost": 25,
-                            "description": "+25 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Titan redoutable",
-            "type": "hero",
-            "size": 1,
-            "base_cost": 665,
-            "quality": "3+",
-            "defense": "2+",
-            "coriace": 18,
-            "special_rules": [
-                "Coriace (18)",
-                "Effrayant (3)",
-                "Primal",
-                "Sans peur"
-            ],
-            "weapons": [
-                {
-                    "name": "Piétinement",
-                    "range": null,
-                    "attacks": "A6",
-                    "armor_piercing": 2,
-                    "special_rules": []
-                },
-                {
-                    "name": "Mâchoires vicieuses",
-                    "range": null,
-                    "attacks": "A4",
-                    "armor_piercing": 4,
-                    "special_rules": [
-                        "Mortel (3)"
-                    ]
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Gator redoutable (Bonus de Boost de Primal, Combattant imprévisible, Impact (6))",
-                            "cost": 0,
-                            "description": "Inclus"
-                        }
-                    ]
-                },
-                {
-                    "name": "Remplacer le Gator redoutable par",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Ptérodactyle redoutable (Lanceur de sorts (2), Bombardement croisé (2), Volant)",
-                            "cost": 5,
-                            "description": "+5 pts"
-                        },
-                        {
-                            "name": "Combattant redoutable (Coup de queue (A2, PA (1), Explosion (3)), Coriace (+6))",
-                            "cost": 45,
-                            "description": "+45 pts"
-                        },
-                        {
-                            "name": "Transport redoutable (Coriace (+6), Transport (21))",
-                            "cost": 65,
-                            "description": "+65 pts"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "★ Hakatlo",
-            "type": "hero",
-            "size": 1,
-            "base_cost": 180,
-            "quality": "3+",
-            "defense": "3+",
-            "coriace": 6,
-            "special_rules": [
-                "Blindé",
-                "Coriace (6)",
-                "Effrayant (1)",
-                "Héros",
-                "Primal",
-                "Sans peur",
-                "Unique"
-            ],
-            "weapons": [
-                {
-                    "name": "Masses solaires",
-                    "range": null,
-                    "attacks": "A8",
-                    "armor_piercing": 2,
-                    "special_rules": []
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Vétéran balafré (Blindé)",
-                            "cost": 0,
-                            "description": "Inclus"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "★ Teqi",
-            "type": "hero",
-            "size": 1,
-            "base_cost": 105,
-            "quality": "5+",
-            "defense": "6+",
-            "coriace": 3,
-            "special_rules": [
-                "Arpenteur",
-                "Coriace (3)",
-                "Guérison",
-                "Héros",
-                "Lanceur de sorts (2)",
-                "Primal",
-                "Unique"
-            ],
-            "weapons": [
-                {
-                    "name": "Sceptre céleste",
-                    "range": null,
-                    "attacks": "A3",
-                    "armor_piercing": null,
-                    "special_rules": [
-                        "Fléau"
-                    ]
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
-                        {
-                            "name": "Don de guérison (Guérison)",
-                            "cost": 0,
-                            "description": "Inclus"
-                        }
-                    ]
-                }
-            ]
+          "name": "Grande arme d’obsidienne",
+          "range": null,
+          "attacks": 6,
+          "armor_piercing": 0,
+          "special_rules": ["Désintégration"]
         }
-    ]
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Améliorations",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Lignée sacrée",
+              "cost": 10,
+              "description": "Aura de Charge véloce"
+            },
+            {
+              "name": "Gardien du Temple",
+              "cost": 15,
+              "description": "Aura de Contre-attaque"
+            },
+            {
+              "name": "Rugissement primal",
+              "cost": 30,
+              "description": "Bonus de Boost de Primal"
+            }
+          ]
+        },
+        {
+          "name": "Remplacer la Grande arme d’obsidienne par",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Grande arme",
+              "cost": 10,
+              "description": "A6, PA(2)"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Destin sacré",
+              "cost": 10,
+              "description": "Protection extraordinaire"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Vétéran Saurien",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 60,
+      "quality": "3+",
+      "defense": "3+",
+      "coriace": 3,
+      "special_rules": ["Coriace(3)", "Héros", "Primal", "Sans peur"],
+      "weapons": [
+        {
+          "name": "Arme à une main lourde",
+          "range": null,
+          "attacks": 3,
+          "armor_piercing": 1,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Améliorations",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Lignée sacrée",
+              "cost": 10,
+              "description": "Aura de Charge véloce"
+            },
+            {
+              "name": "Gardien du Temple",
+              "cost": 15,
+              "description": "Aura de Contre-attaque"
+            },
+            {
+              "name": "Porteur de la bannière de l’armée",
+              "cost": 30,
+              "description": "Effrayant(3)"
+            },
+            {
+              "name": "Chef",
+              "cost": 30,
+              "description": "Aura de Perforation en mêlée"
+            }
+          ]
+        },
+        {
+          "name": "Remplacer l’Arme à une main lourde par",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Grande arme d’obsidienne",
+              "cost": 5,
+              "description": "A3, Désintégration"
+            },
+            {
+              "name": "Hallebarde lourde",
+              "cost": 5,
+              "description": "A3, PA(1), Perforant"
+            },
+            {
+              "name": "Pique lourde",
+              "cost": 10,
+              "description": "A3, PA(1), Contre-charge"
+            },
+            {
+              "name": "Grande arme",
+              "cost": 10,
+              "description": "A3, PA(2)"
+            },
+            {
+              "name": "Paire d’armes à une main Lourdes",
+              "cost": 10,
+              "description": "A4, PA(1)"
+            },
+            {
+              "name": "Lance lourde",
+              "cost": 15,
+              "description": "A3, PA(1), Percée"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec une des options suivantes",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Raptor",
+              "cost": 15,
+              "description": "Impact(1), Raide, Ravage(1)"
+            },
+            {
+              "name": "Tyrannosaure",
+              "cost": 305,
+              "description": "Mâchoires puissantes (A6, PA(2)), Piétinement (A4, PA(1)), Coriace(+12), Effrayant(2), Bonus de Boost de Primal"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec une des options suivantes",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Destin sacré",
+              "cost": 10,
+              "description": "Protection extraordinaire"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Champion Gecko",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 30,
+      "quality": "5+",
+      "defense": "5+",
+      "coriace": 3,
+      "special_rules": ["Arpenteur", "Coriace(3)", "Héros", "Primal"],
+      "weapons": [
+        {
+          "name": "Arme à une main",
+          "range": null,
+          "attacks": 3,
+          "armor_piercing": 0,
+          "special_rules": ["Fléau"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Améliorations",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Tirailleur",
+              "cost": 15,
+              "description": "Aura de Tir en mouvement"
+            },
+            {
+              "name": "Gardien du Temple",
+              "cost": 15,
+              "description": "Aura de Contre-attaque"
+            },
+            {
+              "name": "Chasseur primal",
+              "cost": 30,
+              "description": "Bonus de Boost de Primal"
+            },
+            {
+              "name": "Chef",
+              "cost": 30,
+              "description": "Aura de Perforation en mêlée"
+            },
+            {
+              "name": "Prêtre",
+              "cost": 35,
+              "description": "Lanceur de sorts(2)"
+            }
+          ]
+        },
+        {
+          "name": "Remplacer l’Arme à une main par",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Paire d’armes à une main",
+              "cost": 5,
+              "description": "A4, Fléau"
+            },
+            {
+              "name": "Lance",
+              "cost": 10,
+              "description": "A3, Fléau, Contre-charge"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec une des options suivantes",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Bolas enflammés de champion",
+              "cost": 10,
+              "description": "12\", A3"
+            },
+            {
+              "name": "Javelot de champion",
+              "cost": 15,
+              "description": "12\", A2, PA(1), Fléau"
+            },
+            {
+              "name": "Sarbacane de champion",
+              "cost": 15,
+              "description": "18\", A2, Fléau"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec une des options suivantes",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Lignée des Caméléons",
+              "cost": 10,
+              "description": "Bon tireur, Éclaireur, Esquive"
+            },
+            {
+              "name": "Deinonychus",
+              "cost": 10,
+              "description": "Bond, Impact(1)"
+            },
+            {
+              "name": "Palanquin d’astrologue",
+              "cost": 25,
+              "description": "Coriace(+3), Impulsion magique (A3)"
+            },
+            {
+              "name": "Ptérodactyle",
+              "cost": 55,
+              "description": "Griffes(A2), Coriace(+3), Embuscade, Frappe croisée(1), Impact(1), Rapide, Volant"
+            },
+            {
+              "name": "Dimorphodon",
+              "cost": 90,
+              "description": "Coriace(+3), Embuscade, Impact lourd(3), Cible désignée(1), Rapide, Volant"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec une des options suivantes",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Destin sacré",
+              "cost": 10,
+              "description": "Protection extraordinaire"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Guerriers Sauriens",
+      "type": "unit",
+      "size": 10,
+      "base_cost": 115,
+      "quality": "4+",
+      "defense": "4+",
+      "coriace": null,
+      "special_rules": ["Primal", "Sans peur"],
+      "weapons": [
+        {
+          "name": "Armes à une main",
+          "range": null,
+          "attacks": 1,
+          "armor_piercing": 0,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Remplacer toutes les Armes à une main par",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Hallebarde",
+              "cost": 25,
+              "description": "A1, Perforant"
+            },
+            {
+              "name": "Pique",
+              "cost": 30,
+              "description": "A1, Contre-charge"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Destin sacré",
+              "cost": 15,
+              "description": "Protection extraordinaire"
+            }
+          ]
+        },
+        {
+          "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
+          "type": "multiple",
+          "upgrades": [
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Geckos",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 45,
+      "quality": "5+",
+      "defense": "5+",
+      "coriace": null,
+      "special_rules": ["Arpenteur", "Primal"],
+      "weapons": [
+        {
+          "name": "Armes à une main",
+          "range": null,
+          "attacks": 1,
+          "armor_piercing": 0,
+          "special_rules": ["Fléau"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Javelot",
+              "cost": 30,
+              "description": "12\", A1, PA(1), Fléau"
+            },
+            {
+              "name": "Sarbacane",
+              "cost": 35,
+              "description": "18\", A1, Fléau"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Destin sacré",
+              "cost": 10,
+              "description": "Protection extraordinaire"
+            }
+          ]
+        },
+        {
+          "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
+          "type": "multiple",
+          "upgrades": [
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Gardiens Sauriens",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 90,
+      "quality": "3+",
+      "defense": "3+",
+      "coriace": null,
+      "special_rules": ["Primal", "Sans peur"],
+      "weapons": [
+        {
+          "name": "Grandes armes d’obsidienne",
+          "range": null,
+          "attacks": 1,
+          "armor_piercing": 0,
+          "special_rules": ["Désintégration"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Remplacer toutes les Grandes armes d’obsidiennes par",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Hallebarde lourde",
+              "cost": 10,
+              "description": "A1, PA(1), Perforant"
+            },
+            {
+              "name": "Grande arme",
+              "cost": 15,
+              "description": "A1, PA(2)"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Destin sacré",
+              "cost": 10,
+              "description": "Protection extraordinaire"
+            }
+          ]
+        },
+        {
+          "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
+          "type": "multiple",
+          "upgrades": [
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Caméléons",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 100,
+      "quality": "5+",
+      "defense": "5+",
+      "coriace": null,
+      "special_rules": ["Arpenteur", "Bon tireur", "Éclaireur", "Primal", "Esquive"],
+      "weapons": [
+        {
+          "name": "Bolas enflammés",
+          "range": "12\"",
+          "attacks": 2,
+          "armor_piercing": 0,
+          "special_rules": []
+        },
+        {
+          "name": "Armes à une main",
+          "range": null,
+          "attacks": 1,
+          "armor_piercing": 0,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Remplacer tous les Bolas enflammés par",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Sarbacane",
+              "cost": 5,
+              "description": "18\", A1, Fléau"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Vision prophétique",
+              "cost": 25,
+              "description": "Marque de Lacération"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chevaucheurs de Deinonychus",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 100,
+      "quality": "5+",
+      "defense": "5+",
+      "coriace": null,
+      "special_rules": ["Arpenteur", "Bond", "Impact(1)", "Primal"],
+      "weapons": [
+        {
+          "name": "Lances",
+          "range": null,
+          "attacks": 1,
+          "armor_piercing": 0,
+          "special_rules": ["Fléau", "Percée"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Remplacer toutes les Lances par",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Javelot",
+              "cost": 15,
+              "description": "12\", A1, PA(1), Fléau, Arme à une main (A1)"
+            }
+          ]
+        },
+        {
+          "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
+          "type": "multiple",
+          "upgrades": [
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chevaucheurs de Raptors",
+      "type": "unit",
+      "size": 5,
+      "base_cost": 110,
+      "quality": "4+",
+      "defense": "4+",
+      "coriace": null,
+      "special_rules": ["Impact(1)", "Primal", "Ravage(1)", "Rapide", "Sans peur"],
+      "weapons": [
+        {
+          "name": "Armes à une main",
+          "range": null,
+          "attacks": 1,
+          "armor_piercing": 0,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Remplacer toutes les Armes à une main par",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Lances",
+              "cost": 10,
+              "description": "A1, Percée"
+            }
+          ]
+        },
+        {
+          "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
+          "type": "multiple",
+          "upgrades": [
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chevaucheurs de Ptérodactyle",
+      "type": "unit",
+      "size": 3,
+      "base_cost": 125,
+      "quality": "5+",
+      "defense": "5+",
+      "coriace": 3,
+      "special_rules": ["Coriace(3)", "Embuscade", "Impact(1)", "Primal", "Rapide", "Volant"],
+      "weapons": [
+        {
+          "name": "Griffes",
+          "range": null,
+          "attacks": 2,
+          "armor_piercing": 0,
+          "special_rules": []
+        },
+        {
+          "name": "Armes à une main",
+          "range": null,
+          "attacks": 1,
+          "armor_piercing": 0,
+          "special_rules": ["Fléau"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Bolas enflammés",
+              "cost": 35,
+              "description": "12\", A4"
+            },
+            {
+              "name": "Javelot",
+              "cost": 40,
+              "description": "12\", A1, PA(1), Fléau"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Lâcher des pierres",
+              "cost": 20,
+              "description": "Frappe croisée(1)"
+            }
+          ]
+        },
+        {
+          "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
+          "type": "multiple",
+          "upgrades": [
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chevaucheurs de Dimorphodon",
+      "type": "unit",
+      "size": 3,
+      "base_cost": 165,
+      "quality": "5+",
+      "defense": "5+",
+      "coriace": 3,
+      "special_rules": ["Coriace(3)", "Embuscade", "Impact lourd(3)", "Primal", "Rapide", "Volant"],
+      "weapons": [
+        {
+          "name": "Armes à une main",
+          "range": null,
+          "attacks": 1,
+          "armor_piercing": 0,
+          "special_rules": ["Fléau"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Bolas enflammés",
+              "cost": 35,
+              "description": "12\", A4"
+            },
+            {
+              "name": "Javelot",
+              "cost": 40,
+              "description": "12\", A1, PA(1), Fléau"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Appât",
+              "cost": 25,
+              "description": "Cible désignée(1)"
+            }
+          ]
+        },
+        {
+          "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
+          "type": "multiple",
+          "upgrades": [
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "description": ""
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Gators",
+      "type": "unit",
+      "size": 3,
+      "base_cost": 155,
+      "quality": "4+",
+      "defense": "3+",
+      "coriace": 3,
+      "special_rules": ["Coriace(3)", "Primal", "Sans peur"],
+      "weapons": [
+        {
+          "name": "Grandes armes d’obsidienne",
+          "range": null,
+          "attacks": 3,
+          "armor_piercing": 0,
+          "special_rules": ["Désintégration"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Destin sacré",
+              "cost": 15,
+              "description": "Protection extraordinaire"
+            }
+          ]
+        },
+        {
+          "name": "Remplacer toutes les Grandes armes d’obsidienne par",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Grande arme",
+              "cost": 15,
+              "description": "A3, PA(2)"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Vision prophétique",
+              "cost": 25,
+              "description": "Marque de Lacération"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Nuées de serpents",
+      "type": "unit",
+      "size": 3,
+      "base_cost": 75,
+      "quality": "5+",
+      "defense": "6+",
+      "coriace": 3,
+      "special_rules": ["Arpenteur", "Coriace(3)", "Primal"],
+      "weapons": [
+        {
+          "name": "Attaques de nuée",
+          "range": null,
+          "attacks": 3,
+          "armor_piercing": 0,
+          "special_rules": ["Fléau"]
+        }
+      ]
+    },
+    {
+      "name": "Ptéranodons",
+      "type": "unit",
+      "size": 3,
+      "base_cost": 115,
+      "quality": "5+",
+      "defense": "6+",
+      "coriace": 3,
+      "special_rules": ["Coriace(3)", "Embuscade", "Esquive", "Primal", "Rapide", "Volant"],
+      "weapons": [
+        {
+          "name": "Griffes",
+          "range": null,
+          "attacks": 3,
+          "armor_piercing": 0,
+          "special_rules": []
+        }
+      ]
+    },
+    {
+      "name": "Lézard Épineux",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 140,
+      "quality": "4+",
+      "defense": "3+",
+      "coriace": 6,
+      "special_rules": ["Arpenteur", "Blindé", "Coriace(6)", "Primal", "Sans peur"],
+      "weapons": [
+        {
+          "name": "Jet de piques",
+          "range": "18\"",
+          "attacks": 2,
+          "armor_piercing": 0,
+          "special_rules": ["Explosion(3)"]
+        },
+        {
+          "name": "Griffes lourdes",
+          "range": null,
+          "attacks": 3,
+          "armor_piercing": 1,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Amélioration avec une des options suivantes",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Maître-lézard d’avant-garde",
+              "cost": 10,
+              "description": "Éclaireur"
+            },
+            {
+              "name": "Maître-lézard de combat",
+              "cost": 10,
+              "description": "Implacable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Lézard Dragon",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 145,
+      "quality": "4+",
+      "defense": "4+",
+      "coriace": 6,
+      "special_rules": ["Arpenteur", "Coriace(6)", "Primal", "Régénération", "Sans peur"],
+      "weapons": [
+        {
+          "name": "Crachat enflammé",
+          "range": "12\"",
+          "attacks": 2,
+          "armor_piercing": 0,
+          "special_rules": ["Explosion(3)", "Fiable"]
+        },
+        {
+          "name": "Griffes Lourdes",
+          "range": null,
+          "attacks": 3,
+          "armor_piercing": 1,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Amélioration avec une des options suivantes",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Maître-lézard d’avant-garde",
+              "cost": 10,
+              "description": "Éclaireur"
+            },
+            {
+              "name": "Maître-lézard de combat",
+              "cost": 10,
+              "description": "Implacable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tricératops",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 275,
+      "quality": "4+",
+      "defense": "3+",
+      "coriace": 12,
+      "special_rules": ["Coriace(12)", "Effrayant(2)", "Primal", "Sans peur"],
+      "weapons": [
+        {
+          "name": "Javelots de l’équipage",
+          "range": "12\"",
+          "attacks": 6,
+          "armor_piercing": 1,
+          "special_rules": ["Fléau"]
+        },
+        {
+          "name": "Cornes",
+          "range": null,
+          "attacks": 6,
+          "armor_piercing": 0,
+          "special_rules": ["Perforant"]
+        },
+        {
+          "name": "Piétinement",
+          "range": null,
+          "attacks": 4,
+          "armor_piercing": 1,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Remplacer les Javelots de l’équipage par",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Sarbacane géante",
+              "cost": 5,
+              "description": "18\", A6, Fléau"
+            },
+            {
+              "name": "Baliste",
+              "cost": 35,
+              "description": "24\", A2, PA(2), Mortel(6)"
+            },
+            {
+              "name": "Javelots de l’équipage, Autel des Dieux",
+              "cost": 35,
+              "description": "12\", A6, Fléau, Lanceur de sorts(2)"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Écrasement",
+              "cost": 15,
+              "description": "Impact(3)"
+            },
+            {
+              "name": "Destin sacré",
+              "cost": 25,
+              "description": "Protection extraordinaire"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Spinosaurus",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 275,
+      "quality": "4+",
+      "defense": "3+",
+      "coriace": 12,
+      "special_rules": ["Coriace(12)", "Effrayant(2)", "Primal", "Sans peur"],
+      "weapons": [
+        {
+          "name": "Crachat venimeux",
+          "range": "18\"",
+          "attacks": 2,
+          "armor_piercing": 0,
+          "special_rules": ["Explosion(3)", "Fléau"]
+        },
+        {
+          "name": "Piétinement",
+          "range": null,
+          "attacks": 4,
+          "armor_piercing": 1,
+          "special_rules": []
+        },
+        {
+          "name": "Morsure toxique",
+          "range": null,
+          "attacks": 6,
+          "armor_piercing": 0,
+          "special_rules": ["Fléau"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Rugissement primal",
+              "cost": 30,
+              "description": "Bonus de Boost de Primal"
+            },
+            {
+              "name": "Prêtre chevaucheur",
+              "cost": 35,
+              "description": "Lanceur de sorts(2)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ankylosaurus",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 305,
+      "quality": "4+",
+      "defense": "2+",
+      "coriace": 12,
+      "special_rules": ["Coriace(12)", "Effrayant(2)", "Primal", "Sans peur"],
+      "weapons": [
+        {
+          "name": "Javelots de l’équipage",
+          "range": "12\"",
+          "attacks": 6,
+          "armor_piercing": 1,
+          "special_rules": ["Fléau"]
+        },
+        {
+          "name": "Queue d’obsidienne",
+          "range": null,
+          "attacks": 4,
+          "armor_piercing": 0,
+          "special_rules": ["Désintégration", "Mortel(3)"]
+        },
+        {
+          "name": "Piétinement",
+          "range": null,
+          "attacks": 4,
+          "armor_piercing": 1,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Remplacer les Javelots de l’équipage par",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Arche des serpents",
+              "cost": 25,
+              "description": "Génération(Nuées de serpents[3])"
+            },
+            {
+              "name": "Rayon solaire",
+              "cost": 40,
+              "description": "24\", A2, PA(2), Explosion(3)"
+            }
+          ]
+        },
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Vision prophétique",
+              "cost": 25,
+              "description": "Marque de Lacération"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Titan redoutable",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 665,
+      "quality": "3+",
+      "defense": "2+",
+      "coriace": 18,
+      "special_rules": ["Coriace(18)", "Effrayant(3)", "Primal", "Sans peur"],
+      "weapons": [
+        {
+          "name": "Piétinement",
+          "range": null,
+          "attacks": 6,
+          "armor_piercing": 2,
+          "special_rules": []
+        },
+        {
+          "name": "Mâchoires vicieuses",
+          "range": null,
+          "attacks": 4,
+          "armor_piercing": 4,
+          "special_rules": ["Mortel(3)"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Gator redoutable",
+              "cost": 0,
+              "description": "Bonus de Boost de Primal, Combattant imprévisible, Impact(6)"
+            }
+          ]
+        },
+        {
+          "name": "Remplacer le Gator redoutable par",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Ptérodactyle redoutable",
+              "cost": 5,
+              "description": "Lanceur de sorts(2), Bombardement croisé(2), Volant"
+            },
+            {
+              "name": "Combattant redoutable",
+              "cost": 45,
+              "description": "Coup de queue(A2, PA(1), Explosion(3)), Coriace(+6)"
+            },
+            {
+              "name": "Transport redoutable",
+              "cost": 65,
+              "description": "Coriace(+6), Transport(21)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "★ Hakatlo",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 180,
+      "quality": "3+",
+      "defense": "3+",
+      "coriace": 6,
+      "special_rules": ["Blindé", "Coriace(6)", "Effrayant(1)", "Héros", "Primal", "Sans peur", "Unique"],
+      "weapons": [
+        {
+          "name": "Masses solaires",
+          "range": null,
+          "attacks": 8,
+          "armor_piercing": 2,
+          "special_rules": []
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Vétéran balafré",
+              "cost": 0,
+              "description": "Blindé"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "★ Teqi",
+      "type": "hero",
+      "size": 1,
+      "base_cost": 105,
+      "quality": "5+",
+      "defense": "6+",
+      "coriace": 3,
+      "special_rules": ["Arpenteur", "Coriace(3)", "Guérison", "Héros", "Lanceur de sorts(2)", "Primal", "Unique"],
+      "weapons": [
+        {
+          "name": "Sceptre céleste",
+          "range": null,
+          "attacks": 3,
+          "armor_piercing": 0,
+          "special_rules": ["Fléau"]
+        }
+      ],
+      "upgrade_groups": [
+        {
+          "name": "Amélioration avec",
+          "type": "single",
+          "upgrades": [
+            {
+              "name": "Don de guérison",
+              "cost": 0,
+              "description": "Guérison"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
