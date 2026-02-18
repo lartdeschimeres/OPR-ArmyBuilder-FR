@@ -143,8 +143,8 @@
       "unit_detail": "hero",
       "size": 1,
       "base_cost": 65,
-      "quality": 3,
-      "defense": 3,
+      "quality": "3+",
+      "defense": "3+",
       "coriace": 3,
       "special_rules": ["Attaque versatile", "Héros", "Guerrier-né"],
       "weapon": [
@@ -353,8 +353,8 @@
       "unit_detail": "hero",
       "size": 1,
       "base_cost": 55,
-      "quality": 3,
-      "defense": 3,
+      "quality": "3+",
+      "defense": "3+",
       "coriace": 3,
       "special_rules": ["Héros", "Guerrier-né"],
       "weapon": [
@@ -567,8 +567,8 @@
       "unit_detail": "hero",
       "size": 1,
       "base_cost": 30,
-      "quality": 5,
-      "defense": 5,
+      "quality": "5+",
+      "defense": "5+",
       "coriace": 3,
       "special_rules": ["Eclaireur", "Furieux", "Guerrier-né", "Héros"],
       "weapon": [
@@ -692,8 +692,8 @@
       "unit_detail": "unit",
       "size": 10,
       "base_cost": 95,
-      "quality": 5,
-      "defense": 5,
+      "quality": "5+",
+      "defense": "5+",
       "special_rules": ["Eclaireur", "Furieux", "Guerrier-né"],
       "weapon": [
         {
@@ -768,8 +768,8 @@
       "unit_detail": "unit",
       "size": 5,
       "base_cost": 100,
-      "quality": 5,
-      "defense": 5,
+      "quality": "5+",
+      "defense": "5+",
       "special_rules": ["Combattant sanguinaire", "Guerrier-né"],
       "weapon": [
         {
@@ -828,8 +828,8 @@
       "unit_detail": "unit",
       "size": 5,
       "base_cost": 80,
-      "quality": 3,
-      "defense": 3,
+      "quality": "3+",
+      "defense": "3+",
       "special_rules": ["Guerrier-né"],
       "weapon": [
         {
@@ -915,8 +915,8 @@
       "unit_detail": "unit",
       "size": 5,
       "base_cost": 100,
-      "quality": 3,
-      "defense": 3,
+      "quality": "3+",
+      "defense": "3+",
       "special_rules": ["Attaque versatile", "Guerrier-né"],
       "weapon": [
         {
@@ -1002,8 +1002,8 @@
       "unit_detail": "unit",
       "size": 5,
       "base_cost": 105,
-      "quality": 4,
-      "defense": 4,
+      "quality": "4+",
+      "defense": "4+",
       "special_rules": ["Combattant imprévisible", "Guerrier-né", "Sans peur"],
       "weapon": [
         {
@@ -1020,8 +1020,8 @@
       "unit_detail": "unit",
       "size": 5,
       "base_cost": 90,
-      "quality": 3,
-      "defense": 4,
+      "quality": "3+",
+      "defense": "4+",
       "coriace": 3,
       "special_rules": ["Assaut tranchant", "Combattant sanguinaire", "Guerrier-né"],
       "weapon": [
@@ -1098,8 +1098,8 @@
       "unit_detail": "unit",
       "size": 3,
       "base_cost": 170,
-      "quality": 3,
-      "defense": 4,
+      "quality": "3+",
+      "defense": "4+",
       "coriace": 3,
       "special_rules": ["Guerrier-né", "Impact (2)"],
       "weapon": [
@@ -1117,8 +1117,8 @@
       "unit_detail": "unit",
       "size": 3,
       "base_cost": 200,
-      "quality": 3,
-      "defense": 4,
+      "quality": "3+",
+      "defense": "4+",
       "coriace": 3,
       "special_rules": ["Assaut tranchant", "Guerrier-né"],
       "weapon": [
@@ -1179,8 +1179,8 @@
       "unit_detail": "unit",
       "size": 5,
       "base_cost": 65,
-      "quality": 5,
-      "defense": 5,
+      "quality": "5+",
+      "defense": "5+",
       "special_rules": ["Eclaireur", "Guerrier-né"],
       "weapon": [
         {
@@ -1235,8 +1235,8 @@
       "unit_detail": "unit",
       "size": 5,
       "base_cost": 70,
-      "quality": 4,
-      "defense": 5,
+      "quality": "4+",
+      "defense": "5+",
       "special_rules": ["Arpenteur", "Guerrier-né", "Rapide"],
       "weapon": [
         {
@@ -1273,8 +1273,8 @@
       "unit_detail": "unit",
       "size": 5,
       "base_cost": 80,
-      "quality": 3,
-      "defense": 5,
+      "quality": "5+",
+      "defense": "5+",
       "special_rules": ["Eclaireur", "Furieux", "Guerrier-né", "Impact (1)", "Rapide"],
       "weapon": [
         {
@@ -1353,8 +1353,8 @@
       "unit_detail": "unit",
       "size": 5,
       "base_cost": 125,
-      "quality": 3,
-      "defense": 3,
+      "quality": "3+",
+      "defense": "3+",
       "coriace": 3,
       "special_rules": ["Guerrier-né", "Impact (1)", "Rapide"],
       "weapon": [
@@ -1420,8 +1420,8 @@
       "unit_detail": "unit",
       "size": 3,
       "base_cost": 190,
-      "quality": 3,
-      "defense": 3,
+      "quality": "3+",
+      "defense": "3+",
       "coriace": 3,
       "special_rules": ["Guerrier-né", "Impact (2)", "Rapide"],
       "weapon": [
@@ -1490,8 +1490,8 @@
       "unit_detail": "light_vehicle",
       "size": 1,
       "base_cost": 135,
-      "quality": 3,
-      "defense": 4,
+      "quality": "3+",
+      "defense": "4+",
       "coriace": 6,
       "special_rules": ["Effrayant (1)", "Furieux", "Guerrier-né"],
       "weapon": [
@@ -1524,8 +1524,8 @@
       "unit_detail": "light_vehicle",
       "size": 1,
       "base_cost": 130,
-      "quality": 3,
-      "defense": 3,
+      "quality": "3+",
+      "defense": "3+",
       "coriace": 6,
       "special_rules": ["Guerrier-né", "Impact (4)", "Rapide"],
       "weapon": [
@@ -1584,8 +1584,8 @@
       "unit_detail": "light_vehicle",
       "size": 1,
       "base_cost": 145,
-      "quality": 3,
-      "defense": 3,
+      "quality": "3+",
+      "defense": "3+",
       "coriace": 6,
       "special_rules": ["Effrayant (1)", "Guerrier-né", "Impact (4)", "Rapide"],
       "weapon": [
@@ -1625,8 +1625,8 @@
       "unit_detail": "vehicle",
       "size": 1,
       "base_cost": 225,
-      "quality": 3,
-      "defense": 3,
+      "quality": "3+",
+      "defense": "3+",
       "coriace": 12,
       "special_rules": ["Effrayant (2)", "Guerrier-né"],
       "weapon": [
