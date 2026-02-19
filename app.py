@@ -413,7 +413,6 @@ GAME_CONFIG = {
         "unit_per_points": 100
     }
 }
-"""
 
 # ======================================================
 # FONCTIONS DE VALIDATION
@@ -496,7 +495,7 @@ def format_unit_option(u):
     rules_text = ", ".join(rules_text) if rules_text else "Aucune"
 
     # Construction du texte final avec Qua X+ avant Déf X+
-    qua_def = f"Qua {u.get('quality', '?')}+ | Déf {u.get('defense', '?')}+"  # Modification ici
+    qua_def = f"Qua {u.get('quality', '?')}+ | Déf {u.get('defense', '?')}+"
     cost = f"{u.get('base_cost', 0)}pts"
 
     return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
@@ -840,40 +839,39 @@ body {{
         defense = esc(unit.get("defense", "-"))
         unit_type_french = get_french_type(unit)
         unit_size = unit.get("size", 10)
-    
+
         if unit.get("type") == "hero":
             unit_size = 1
-    
+
         # Calcul de la valeur de Coriace
         tough_value = unit.get("coriace", 0)
-    
+
         # Récupération des armes
         weapons = unit.get("weapon", [])
         if not isinstance(weapons, list):
             weapons = [weapons]
-    
+
         # Récupération des règles spéciales
         special_rules = get_special_rules(unit)
-    
+
         # Récupération des options et montures
         options = unit.get("options", {})
         mount = unit.get("mount", None)
-    
+
         html += f'''
-    <div class="unit-card">
-      <div class="unit-header">
-        <div>
-          <h3 class="unit-name">
-            {name}
-            <span style="font-size: 12px; color: var(--text-muted); margin-left: 8px;">[{unit_size}]</span>
-          </h3>
-          <div class="unit-type">
-            {"★" if unit.get("type") == "hero" else "🛡️"} {unit_type_french}
-          </div>
-        </div>
-        <div class="unit-cost">{cost} pts</div>
+<div class="unit-card">
+  <div class="unit-header">
+    <div>
+      <h3 class="unit-name">
+        {name}
+        <span style="font-size: 12px; color: var(--text-muted); margin-left: 8px;">[{unit_size}]</span>
+      </h3>
+      <div class="unit-type">
+        {"★" if unit.get("type") == "hero" else "🛡️"} {unit_type_french}
       </div>
-    '''
+    </div>
+    <div class="unit-cost">{cost} pts</div>
+  </div>
 
   <div class="stats-grid">
     <div class="stat-item">
@@ -1395,7 +1393,7 @@ def format_mount_option(mount):
         weapon_profiles.append(profile)
 
     if weapon_profiles:
-        stats.extend(weapon_profiles)  # On utilise extend pour ajouter chaque arme séparément
+        stats.extend(weapon_profiles)
 
     # 2. Coriace si présent
     if coriace > 0:
@@ -1413,52 +1411,6 @@ def format_mount_option(mount):
     label += f" (+{cost} pts)"
 
     return label
-
-def format_unit_option(u):
-    """Formate l'option d'unité avec tous les détails"""
-    name_part = f"{u['name']}"
-    if u.get('type') == "hero":
-        name_part += " [1]"
-    else:
-        name_part += f" [{u.get('size', 10)}]"
-
-    # Ajout de la Qualité avant la Défense
-    quality = u.get('quality', '?')
-    defense = u.get('defense', '?')
-    qua_def = f"Qua {quality}+ | Déf {defense}+"  # Format corrigé
-
-    # Récupération des armes de base
-    weapons = u.get('weapon', [])
-    weapon_profiles = []
-    if isinstance(weapons, list):
-        for weapon in weapons:
-            if isinstance(weapon, dict):
-                attacks = weapon.get('attacks', '?')
-                ap = weapon.get('armor_piercing', '?')
-                weapon_profiles.append(f"A{attacks}/PA{ap}")
-    elif isinstance(weapons, dict):
-        attacks = weapons.get('attacks', '?')
-        ap = weapons.get('armor_piercing', '?')
-        weapon_profiles.append(f"A{attacks}/PA{ap}")
-
-    weapon_text = ", ".join(weapon_profiles) if weapon_profiles else "Aucune"
-
-    # Récupération des règles spéciales
-    special_rules = u.get('special_rules', [])
-    rules_text = []
-    if isinstance(special_rules, list):
-        for rule in special_rules:
-            if isinstance(rule, str):
-                if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
-                    rules_text.append(rule)
-            elif isinstance(rule, dict):
-                rules_text.append(rule.get('name', ''))
-
-    rules_text = ", ".join(rules_text) if rules_text else "Aucune"
-    cost = f"{u.get('base_cost', 0)}pts"
-
-    # Retour simple et efficace
-    return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
 
 # ======================================================
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE (version complète avec filtres)
@@ -1609,13 +1561,13 @@ if st.session_state.page == "army":
 
     # Liste de l'Armée
     st.subheader("Liste de l'Armée")
-    
+
     # Fonction pour formater l'affichage des unités dans la liste
     def format_army_unit(unit_data):
         """Formate l'unité pour l'affichage dans la liste de l'armée"""
         # 1. Nom de l'unité
         name = unit_data['name']
-    
+
         # 2. Armes
         weapons = unit_data.get('weapon', [])
         weapon_texts = []
@@ -1631,9 +1583,9 @@ if st.session_state.page == "army":
             attacks = weapons.get('attacks', '?')
             ap = weapons.get('armor_piercing', '?')
             weapon_texts.append(f"{weapon_name} (A{attacks}/PA{ap})")
-    
+
         weapons_text = ", ".join(weapon_texts) if weapon_texts else "Aucune arme"
-    
+
         # 3. Options/Améliorations
         options_texts = []
         options = unit_data.get('options', {})
@@ -1642,29 +1594,28 @@ if st.session_state.page == "army":
                 if isinstance(opts, list):
                     for opt in opts:
                         options_texts.append(f"{opt.get('name', 'Option')} (+{opt.get('cost', 0)} pts)")
-    
+
         options_text = ", ".join(options_texts) if options_texts else "Aucune amélioration"
-    
+
         # 4. Taille
         size = unit_data.get('size', 10)
-    
+
         # Format final: Nom - Coût pts | Armes: ... | Options: ... | Taille: ...
         return f"{name} - {unit_data['cost']} pts | Armes: {weapons_text} | {options_text} | Taille: {size}"
-    
+
     if not st.session_state.army_list:
         st.markdown("Aucune unité ajoutée pour le moment.")
     else:
         for i, unit_data in enumerate(st.session_state.army_list):
             # Utilisation de la fonction de formatage pour le titre
             unit_display = format_army_unit(unit_data)
-    
+
             with st.expander(unit_display, expanded=False):
                 # On ne garde que le bouton de suppression
                 if st.button(f"Supprimer {unit_data['name']}", key=f"delete_{i}"):
                     st.session_state.army_cost -= unit_data['cost']
                     st.session_state.army_list.pop(i)
                     st.rerun()
-
 
     st.divider()
 
@@ -1812,39 +1763,33 @@ if st.session_state.page == "army":
         st.subheader(group.get("group", "Améliorations"))
 
         # ARMES
-        # Dans la section "Remplacement d'armes" du constructeur d'armée
         if group.get("type") == "weapon":
             choices = []
             base_weapons = unit.get("weapon", [])
-        
-            # Ajouter les armes de base comme première option
+
             if isinstance(base_weapons, list) and base_weapons:
-                # Créer un label pour les armes de base
                 base_weapons_labels = []
                 for weapon in base_weapons:
                     base_weapons_labels.append(weapon.get('name', 'Arme'))
-        
+
                 if len(base_weapons_labels) == 1:
                     choices.append(format_weapon_option(base_weapons[0]))
                 else:
                     choices.append(" et ".join(base_weapons_labels))
             elif isinstance(base_weapons, dict):
                 choices.append(format_weapon_option(base_weapons))
-        
-            # Ajouter les options de remplacement
+
             opt_map = {}
             for o in group.get("options", []):
                 weapon = o.get("weapon", {})
                 if isinstance(weapon, list):
-                    # Cas spécial pour les armes combinées
                     weapon_names = [w.get('name', 'Arme') for w in weapon]
                     label = " et ".join(weapon_names) + f" (+{o['cost']} pts)"
                 else:
                     label = format_weapon_option(weapon, o['cost'])
                 choices.append(label)
                 opt_map[label] = o
-        
-            # Si on a des choix à afficher
+
             if choices:
                 current = st.session_state.unit_selections[unit_key].get(g_key, choices[0] if choices else "Aucune arme")
                 choice = st.radio(
@@ -1853,25 +1798,19 @@ if st.session_state.page == "army":
                     index=choices.index(current) if current in choices else 0,
                     key=f"{unit_key}_{g_key}_weapon",
                 )
-        
+
                 st.session_state.unit_selections[unit_key][g_key] = choice
-        
-                # Gérer le choix de l'utilisateur
+
                 if choice != choices[0]:
                     for opt_label, opt in opt_map.items():
                         if opt_label == choice:
                             weapon_cost += opt["cost"]
-        
-                            # Si c'est une arme simple
                             if not isinstance(opt["weapon"], list):
                                 weapons = [opt["weapon"]]
-                            # Si c'est une arme combinée
                             else:
                                 weapons = opt["weapon"]
-        
-                            # Vérifier si on doit remplacer une arme spécifique
+
                             if "replaces" in opt:
-                                # Filtrer les armes de base pour enlever celles à remplacer
                                 weapons = [
                                     w for w in base_weapons
                                     if w.get('name') not in opt["replaces"]
@@ -1914,37 +1853,35 @@ if st.session_state.page == "army":
                         selected_options[group.get("group", "Rôle")] = [opt]
                         break
 
-        # AMÉLIORATIONS D'ARME - SECTION CORRIGÉE
+        # AMÉLIORATIONS D'ARME
         elif group.get("type") == "weapon_upgrades":
             choices = ["Aucune amélioration d'arme"]
             opt_map = {}
-        
+
             for o in group.get("options", []):
                 weapon = o.get("weapon", {})
                 if isinstance(weapon, dict):
-                    # Formatage complet avec toutes les caractéristiques
                     name = weapon.get('name', 'Arme')
                     attacks = weapon.get('attacks', '?')
                     ap = weapon.get('armor_piercing', '?')
                     range_text = weapon.get('range', 'Mêlée')
                     special_rules = weapon.get('special_rules', [])
-        
-                    # Construction du label avec toutes les infos
+
                     profile = f"{name} ({range_text}, A{attacks}"
                     if ap not in ("-", 0, "0", None):
                         profile += f"/PA{ap}"
                     profile += ")"
-        
+
                     if special_rules:
                         profile += f" [{', '.join(special_rules)}]"
-        
+
                     label = f"{profile} (+{o['cost']} pts)"
                 else:
                     label = f"{o['name']} (+{o['cost']} pts)"
-        
+
                 choices.append(label)
                 opt_map[label] = o
-        
+
             current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
             choice = st.radio(
                 "Amélioration d'arme",
@@ -1952,17 +1889,15 @@ if st.session_state.page == "army":
                 index=choices.index(current) if current in choices else 0,
                 key=f"{unit_key}_{g_key}_weapon_upgrade",
             )
-        
+
             st.session_state.unit_selections[unit_key][g_key] = choice
-        
+
             if choice != "Aucune amélioration d'arme":
                 opt = opt_map[choice]
                 upgrades_cost += opt["cost"]
-        
-                # Ajouter l'arme d'amélioration à la liste des armes principales
+
                 if "weapon" in opt:
                     weapon_upgrades.append(opt["weapon"])
-                    # Ajouter aussi à la liste des armes principales pour l'affichage
                     if isinstance(opt["weapon"], dict):
                         weapons.append(opt["weapon"])
                     elif isinstance(opt["weapon"], list):
