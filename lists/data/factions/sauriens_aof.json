@@ -144,7 +144,7 @@
         {
             "name": "Grenouille-Mage",
             "type": "hero",
-	    "unit_detail": "hero",
+            "unit_detail": "hero",
             "size": 1,
             "base_cost": 200,
             "quality": 3,
@@ -203,15 +203,13 @@
                                 "range": "12\"",
                                 "attacks": 1,
                                 "armor_piercing": 2,
-                                "special_rules": [
-                                    "Mortel(3)"
-                                ]
+                                "special_rules": ["Mortel(3)"]
                             }
                         }
                     ]
                 },
                 {
-                    "name": "Montures",
+                    "group": "Montures",
                     "type": "mount",
                     "description": "Ajoutez une monture",
                     "options": [
@@ -256,7 +254,7 @@
             "name": "Vétéran Gator",
             "type": "hero",
             "unit_detail": "hero",
-	    "size": 1,
+            "size": 1,
             "base_cost": 115,
             "quality": 4,
             "defense": 3,
@@ -290,12 +288,18 @@
                         {
                             "name": "Grande arme",
                             "cost": 10,
-                            "description": "A6, PA(2)"
+                            "weapon": {
+                                "name": "Grande arme",
+                                "range": "Mêlée",
+                                "attacks": 6,
+                                "armor_piercing": 2,
+                                "special_rules": []
+                            }
                         }
                     ]
                 },
                 {
-                    "name": "Améliorations d'unité",
+                    "group": "Améliorations d'unité",
                     "type": "upgrades",
                     "description": "Améliorations disponibles pour l'unité",
                     "options": [
@@ -307,8 +311,8 @@
         {
             "name": "Vétéran Saurien",
             "type": "hero",
-	    "unit_detail": "hero",            
-	    "size": 1,
+            "unit_detail": "hero",
+            "size": 1,
             "base_cost": 60,
             "quality": 3,
             "defense": 3,
@@ -326,134 +330,142 @@
             "upgrade_groups": [
                 {
                     "group": "Améliorations de rôle",
-          	    "type": "role",
-          	    "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
+                    "type": "role",
+                    "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
                     "options": [
                         {"name": "Lignée sacrée", "cost": 10, "special_rules": ["Aura de Charge véloce"]},
                         {"name": "Gardien du Temple", "cost": 15, "special_rules": ["Aura de Contre-attaque"]},
-                        {"name": "Porteur de la bannière de l’armée", "cost": 30, "description": ["Effrayant (3)"]},
-                        {"name": "Chef", "cost": 30, "description": ["Aura de Perforation en mêlée"]}
+                        {"name": "Porteur de la bannière de l’armée", "cost": 30, "special_rules": ["Effrayant (3)"]},
+                        {"name": "Chef", "cost": 30, "special_rules": ["Aura de Perforation en mêlée"]}
                     ]
                 },
                 {
                     "group": "Remplacement d'arme",
-          	    "type": "weapon",
+                    "type": "weapon",
                     "description": "Remplacez l'Arme à une main lourde par :",
                     "options": [
                         {
                             "name": "Grande arme d’obsidienne",
                             "cost": 5,
-			    "weapon": {
-                              "name": "Grande arme d’obsidienne",
-	                      "range": "Mêlée",
-                	      "attacks": 3,
-           	              "armor_piercing": 0,
-			      "special_rules": ["Désintégration"]
-
+                            "weapon": {
+                                "name": "Grande arme d’obsidienne",
+                                "range": "Mêlée",
+                                "attacks": 3,
+                                "armor_piercing": 0,
+                                "special_rules": ["Désintégration"]
+                            }
                         },
                         {
                             "name": "Hallebarde lourde",
                             "cost": 5,
- 			    "weapon": {
-                              "name": "Hallebarde lourde",
-	                      "range": "Mêlée",
-                	      "attacks": 3,
-           	              "armor_piercing": 1,
-			      "special_rules": ["Perforant"]
+                            "weapon": {
+                                "name": "Hallebarde lourde",
+                                "range": "Mêlée",
+                                "attacks": 3,
+                                "armor_piercing": 1,
+                                "special_rules": ["Perforant"]
+                            }
                         },
                         {
                             "name": "Pique lourde",
                             "cost": 10,
-                              "name": "Pique lourde",
-	                      "range": "Mêlée",
-                	      "attacks": 3,
-           	              "armor_piercing": 1,
-			      "special_rules": ["Contre-charge"]
+                            "weapon": {
+                                "name": "Pique lourde",
+                                "range": "Mêlée",
+                                "attacks": 3,
+                                "armor_piercing": 1,
+                                "special_rules": ["Contre-charge"]
+                            }
                         },
                         {
                             "name": "Grande arme",
                             "cost": 10,
-                              "name": "Grande arme",
-	                      "range": "Mêlée",
-                	      "attacks": 3,
-           	              "armor_piercing": 2,
-			      "special_rules": []
+                            "weapon": {
+                                "name": "Grande arme",
+                                "range": "Mêlée",
+                                "attacks": 3,
+                                "armor_piercing": 2,
+                                "special_rules": []
+                            }
                         },
                         {
                             "name": "Paire d’Armes à une main lourdes",
                             "cost": 10,
-                              "name": "Paire d’Armes à une main lourdes",
-	                      "range": "Mêlée",
-                	      "attacks": 4,
-           	              "armor_piercing": 1,
-			      "special_rules": []
+                            "weapon": {
+                                "name": "Paire d’Armes à une main lourdes",
+                                "range": "Mêlée",
+                                "attacks": 4,
+                                "armor_piercing": 1,
+                                "special_rules": []
+                            }
                         },
                         {
                             "name": "Lance lourde",
                             "cost": 15,
-                               "name": "Lance lourde",
-	                      "range": "Mêlée",
-                	      "attacks": 3,
-           	              "armor_piercing": 1,
-			      "special_rules": ["Percée"]
+                            "weapon": {
+                                "name": "Lance lourde",
+                                "range": "Mêlée",
+                                "attacks": 3,
+                                "armor_piercing": 1,
+                                "special_rules": ["Percée"]
+                            }
                         }
                     ]
                 },
                 {
-   	           "group": "Montures",
-          	    "type": "mount",
+                    "group": "Montures",
+                    "type": "mount",
                     "description": "Ajoutez une monture",
                     "options": [
                         {
                             "name": "Raptor",
                             "cost": 15,
-			    "mount": {
-                              "name": "Raptor",
-                	      "special_rules": ["Impact (1)", "Rapide", "Ravage (1)"]
+                            "mount": {
+                                "name": "Raptor",
+                                "special_rules": ["Impact (1)", "Raide", "Ravage (1)"]
+                            }
                         },
                         {
                             "name": "Tyrannosaure",
                             "cost": 305,
-			    "mount": {
-                              "name": "Tyrannosaure",
-                	      "coriace_bonus": 12,
-			      "weapon": [
-                  	        {
-                    		  "name": "Mâchoires puissantes",
-                    		  "range": "Mêlée",
-                    		  "attacks": 6,
-                    		  "armor_piercing": 2,
-                    		  "special_rules":  []
-                    		  },
-                  	        {
-                    		  "name": "Piétinement",
-                    		  "range": "Mêlée",
-                    		  "attacks": 4,
-                    		  "armor_piercing": 1,
-                    		  "special_rules":  []
-                    		}
-                  	    ],
-                	  "special_rules": ["Bonus de Boost de Primal", "Effrayant (2)"]
+                            "mount": {
+                                "name": "Tyrannosaure",
+                                "coriace_bonus": 12,
+                                "weapons": [
+                                    {
+                                        "name": "Mâchoires puissantes",
+                                        "range": "Mêlée",
+                                        "attacks": 6,
+                                        "armor_piercing": 2,
+                                        "special_rules": []
+                                    },
+                                    {
+                                        "name": "Piétinement",
+                                        "range": "Mêlée",
+                                        "attacks": 4,
+                                        "armor_piercing": 1,
+                                        "special_rules": []
+                                    }
+                                ],
+                                "special_rules": ["Bonus de Boost de Primal", "Effrayant (2)"]
+                            }
                         }
-                       ]
-                     },
-                        }
-                    ]
-                },
-                {
-                    "name": "Améliorations d'unité",
-                    "type": "upgrades",
-                    "description": "Améliorations disponibles pour l'unité",
-                    "options": [
-                        {"name": "Destin sacré", "cost": 10, "special_rules": ["Protection extraordinaire"]}
-                    ]
-                }
-            ]
-        },
+                    ]
+                },
+                {
+                    "group": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
+                        {"name": "Destin sacré", "cost": 10, "special_rules": ["Protection extraordinaire"]}
+                    ]
+                }
+            ]
+        },
         {
             "name": "Champion Gecko",
             "type": "hero",
-	    "unit_detail": "hero",
+            "unit_detail": "hero",
             "size": 1,
             "base_cost": 30,
             "quality": 5,
@@ -473,7 +485,8 @@
                 {
                     "group": "Améliorations de rôle",
                     "type": "role",
-                    "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",                    			    "options": [
+                    "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
+                    "options": [
                         {"name": "Tirailleur", "cost": 15, "special_rules": ["Aura de Tir en mouvement"]},
                         {"name": "Gardien du Temple", "cost": 15, "special_rules": ["Aura de Contre-attaque"]},
                         {"name": "Chasseur primal", "cost": 30, "special_rules": ["Bonus de Boost de Primal"]},
@@ -490,22 +503,23 @@
                             "name": "Paire d’armes à une main",
                             "cost": 5,
                             "weapon": {
-               		      "name": "Paire d'armes à une main",
-                	      "range": "Mêlée",
-                	      "attacks": 4,
-                              "armor_piercing": 0,
-		 	      "special_rules": ["Fléau"]
+                                "name": "Paire d’armes à une main",
+                                "range": "Mêlée",
+                                "attacks": 4,
+                                "armor_piercing": 0,
+                                "special_rules": ["Fléau"]
+                            }
                         },
                         {
                             "name": "Lance",
                             "cost": 10,
-                             "weapon": {
-               		      "name": "Lance",
-                	      "range": "Mêlée",
-                	      "attacks": 3,
-                              "armor_piercing": 0,
- 		 	      "special_rules": ["Contre-charge", "Fléau"]
-                        },
+                            "weapon": {
+                                "name": "Lance",
+                                "range": "Mêlée",
+                                "attacks": 3,
+                                "armor_piercing": 0,
+                                "special_rules": ["Fléau", "Contre-charge"]
+                            }
                         }
                     ]
                 },
@@ -515,102 +529,110 @@
                     "description": "Améliorer avec une des options suivantes (un seul choix possible)",
                     "options": [
                         {
-              		  "name": "Bolas enflammés de champion",
-              		  "cost": 10,
-              	   	  "weapon": {
-               		    "name": "Bolas enflammés de champion",
-                	    "range": "12\",
-               	 	    "attacks": 3,
-               		    "armor_piercing": "-",
-			    "special_rules": []
+                            "name": "Bolas enflammés de champion",
+                            "cost": 10,
+                            "weapon": {
+                                "name": "Bolas enflammés de champion",
+                                "range": "12\"",
+                                "attacks": 3,
+                                "armor_piercing": 0,
+                                "special_rules": []
+                            }
                         },
                         {
                             "name": "Javelots de champion",
                             "cost": 15,
-              	   	    "weapon": {
-               		      "name": "Javelots de champion",
-                	      "range": "12\",
-               	 	      "attacks": 2,
-               		      "armor_piercing": 1,
- 			      "special_rules": ["Fléau"]
+                            "weapon": {
+                                "name": "Javelots de champion",
+                                "range": "12\"",
+                                "attacks": 2,
+                                "armor_piercing": 1,
+                                "special_rules": ["Fléau"]
+                            }
                         },
                         {
                             "name": "Sarbacane de champion",
                             "cost": 15,
-              	   	    "weapon": {
-               		      "name": "Sarbacane de champion",
-                	      "range": "18\",
-               	 	      "attacks": 2,
-               		      "armor_piercing": 0,
- 			      "special_rules": ["Fléau"]
+                            "weapon": {
+                                "name": "Sarbacane de champion",
+                                "range": "18\"",
+                                "attacks": 2,
+                                "armor_piercing": 0,
+                                "special_rules": ["Fléau"]
+                            }
                         }
                     ]
                 },
                 {
                     "group": "Montures",
                     "type": "mount",
-                    "description": "Ajoutez une lignée ou une monture",
+                    "description": "Ajoutez une monture",
                     "options": [
                         {
-                          "name": "Lignée des Caméléons",
-                          "cost": 10,
                             "name": "Lignée des Caméléons",
-			    "special_rules": ["Bon tireur", "Eclaireur", "Esquive"]
-			    }
+                            "cost": 10,
+                            "special_rules": ["Bon tireur", "Éclaireur", "Esquive"]
                         },
                         {
-                          "name": "Deinonychus",
-                          "cost": 10,
-                            "name": "Lignée des Caméléons",
- 			    "special_rules": ["Bond", "Impact(1)"]
+                            "name": "Deinonychus",
+                            "cost": 10,
+                            "mount": {
+                                "name": "Deinonychus",
+                                "special_rules": ["Bond", "Impact (1)"]
+                            }
                         },
                         {
-                          "name": "Palanquin d’astrologue",
-                          "cost": 25,
-			    "name": "Palanquin d’astrologue",
-			    "coriace_bonus": 3,
-			    "weapon": [
-			      {
-                    		"name": "Impulsion magique",
-                    		"range": "Mêlée",
-                    		"attacks": 2,
-                    		"armor_piercing": 0
-                   		 }
-              		  ],
+                            "name": "Palanquin d’astrologue",
+                            "cost": 25,
+                            "mount": {
+                                "name": "Palanquin d’astrologue",
+                                "coriace_bonus": 3,
+                                "weapons": [
+                                    {
+                                        "name": "Impulsion magique",
+                                        "range": "Mêlée",
+                                        "attacks": 3,
+                                        "armor_piercing": 0,
+                                        "special_rules": []
+                                    }
+                                ]
+                            }
                         },
                         {
-                           "name": "Ptérodactyle",
-                           "cost": 55,
-                           "mount": {
-                	     "name": "Ptérodactyle",
-                             "coriace_bonus": 3,
-               	             "weapon": [
-               		        {
-                    		"name": "Griffes",
-                 		  "range": "Mêlée",
-                  		  "attacks": 2,
-                  		  "armor_piercing": 0
-                   		  }
-               		 ],
-                	 "special_rules": ["Embuscade", "Frappe croisée (1)", "Impact (1)", "Rapide", "Volant"]
-              	       }
-             	     },
-                     {
-                        "name": "Dimorphodon",
+                            "name": "Ptérodactyle",
+                            "cost": 55,
+                            "mount": {
+                                "name": "Ptérodactyle",
+                                "coriace_bonus": 3,
+                                "weapons": [
+                                    {
+                                        "name": "Griffes",
+                                        "range": "Mêlée",
+                                        "attacks": 2,
+                                        "armor_piercing": 0,
+                                        "special_rules": []
+                                    }
+                                ],
+                                "special_rules": ["Embuscade", "Frappe croisée (1)", "Impact (1)", "Rapide", "Volant"]
+                            }
+                        },
+                        {
+                            "name": "Dimorphodon",
                             "cost": 90,
                             "mount": {
-                	     "name": "Dimorphodon",
-                             "coriace_bonus": 3,
-               	             special_rules": ["Embuscade", "Impact lourd (3)", "Cible désignée (1)", "Rapide", "Volant"]
+                                "name": "Dimorphodon",
+                                "coriace_bonus": 3,
+                                "special_rules": ["Embuscade", "Impact lourd (3)", "Cible désignée (1)", "Rapide", "Volant"]
+                            }
                         }
                     ]
                 },
-                {
-                    "name": "Améliorations d'unité",
-                    "type": "upgrades",
-                    "description": "Améliorations disponibles pour l'unité",
-                    "options": [
-                        {"name": "Destin sacré", "cost": 10, "special_rules": ["Protection extraordinaire"]}
+                {
+                    "group": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
+                        {"name": "Destin sacré", "cost": 10, "special_rules": ["Protection extraordinaire"]}
                     ]
                 }
             ]
@@ -618,13 +640,14 @@
         {
             "name": "Guerriers Sauriens",
             "type": "unit",
-	    "unit_detail": "unit",
+            "unit_detail": "unit",
             "size": 10,
             "base_cost": 115,
             "quality": 4,
             "defense": 4,
+            "coriace": null,
             "special_rules": ["Primal", "Sans peur"],
-            "weapon": [
+            "weapons": [
                 {
                     "name": "Armes à une main",
                     "range": "Mêlée",
@@ -642,34 +665,36 @@
                         {
                             "name": "Hallebarde",
                             "cost": 25,
-			    "weapon": {
-                		"name": "Hallebarde",
-                		"range": "Mêlée",
-                		"attacks": 1,
-                		"armor_piercing": 0,
-               			"special_rules": ["Perdorant"]
+                            "weapon": {
+                                "name": "Hallebarde",
+                                "range": "Mêlée",
+                                "attacks": 1,
+                                "armor_piercing": 0,
+                                "special_rules": ["Perforant"]
+                            }
                         },
                         {
                             "name": "Pique",
                             "cost": 30,
                             "weapon": {
-                		"name": "Pique",
-                		"range": "Mêlée",
-                		"attacks": 1,
-                		"armor_piercing": 0,
-               			"special_rules": ["Contre-charge"]
-              		}
+                                "name": "Pique",
+                                "range": "Mêlée",
+                                "attacks": 1,
+                                "armor_piercing": 0,
+                                "special_rules": ["Contre-charge"]
+                            }
+                        }
                     ]
                 },
                 {
-                    "name": "Améliorations d'unité",
+                    "group": "Améliorations d'unité",
                     "type": "upgrades",
                     "description": "Améliorations disponibles pour l'unité",
                     "options": [
                         {"name": "Destin sacré", "cost": 15, "special_rules": ["Protection extraordinaire"]},
-                        {"name": "Bannière", "cost": 5, "special_rules": ""},
-                        {"name": "Sergent", "cost": 5, "special_rules": ""},
-                        {"name": "Musicien", "cost": 10, "special_rules": }
+                        {"name": "Bannière", "cost": 5, "special_rules": []},
+                        {"name": "Sergent", "cost": 5, "special_rules": []},
+                        {"name": "Musicien", "cost": 10, "special_rules": []}
                     ]
                 }
             ]
@@ -678,7 +703,7 @@
             "name": "Geckos",
             "type": "unit",
             "unit_detail": "unit",
-	    "size": 5,
+            "size": 5,
             "base_cost": 45,
             "quality": 5,
             "defense": 5,
@@ -703,32 +728,35 @@
                             "name": "Javelots",
                             "cost": 30,
                             "weapon": {
-             			"name": "Javelots",
-                		"range": "12\",
-                		"attacks": 1,
-                		"armor_piercing": 1,
-				"special_rules": ["Fléau"]
+                                "name": "Javelots",
+                                "range": "12\"",
+                                "attacks": 1,
+                                "armor_piercing": 1,
+                                "special_rules": ["Fléau"]
+                            }
                         },
                         {
                             "name": "Sarbacane",
                             "cost": 35,
-                             "weapon": {
-             			"name": "Sarbacane",
-                		"range": "18\",
-                		"attacks": 1,
-                		"armor_piercing": 0,
-				"special_rules": ["Fléau"]
+                            "weapon": {
+                                "name": "Sarbacane",
+                                "range": "18\"",
+                                "attacks": 1,
+                                "armor_piercing": 0,
+                                "special_rules": ["Fléau"]
+                            }
                         }
                     ]
                 },
                 {
-                    "name": "Améliorations d'unité",
+                    "group": "Améliorations d'unité",
                     "type": "upgrades",
                     "description": "Améliorations disponibles pour l'unité",
                     "options": [
-                        {"name": "Destin sacré", "cost": 10, "special_rules": ["Protection extraordinaire"]}		                        			{"name": "Bannière", "cost": 5, "special_rules": ""},
-                        {"name": "Sergent", "cost": 5, "special_rules": ""},
-                        {"name": "Musicien", "cost": 10, "special_rules": ""}
+                        {"name": "Destin sacré", "cost": 10, "special_rules": ["Protection extraordinaire"]},
+                        {"name": "Bannière", "cost": 5, "special_rules": []},
+                        {"name": "Sergent", "cost": 5, "special_rules": []},
+                        {"name": "Musicien", "cost": 10, "special_rules": []}
                     ]
                 }
             ]
