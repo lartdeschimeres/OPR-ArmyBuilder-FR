@@ -344,7 +344,7 @@
                             "name": "Grande arme d’obsidienne",
                             "cost": 5,
 			    "weapon": {
-                              "name": "Grande arme d’obsidienne"
+                              "name": "Grande arme d’obsidienne",
 	                      "range": "Mêlée",
                 	      "attacks": 3,
            	              "armor_piercing": 0,
@@ -355,7 +355,7 @@
                             "name": "Hallebarde lourde",
                             "cost": 5,
  			    "weapon": {
-                              "name": "Hallebarde lourde"
+                              "name": "Hallebarde lourde",
 	                      "range": "Mêlée",
                 	      "attacks": 3,
            	              "armor_piercing": 1,
@@ -364,7 +364,7 @@
                         {
                             "name": "Pique lourde",
                             "cost": 10,
-                              "name": "Pique lourde"
+                              "name": "Pique lourde",
 	                      "range": "Mêlée",
                 	      "attacks": 3,
            	              "armor_piercing": 1,
@@ -373,7 +373,7 @@
                         {
                             "name": "Grande arme",
                             "cost": 10,
-                              "name": "Grande arme"
+                              "name": "Grande arme",
 	                      "range": "Mêlée",
                 	      "attacks": 3,
            	              "armor_piercing": 2,
@@ -382,7 +382,7 @@
                         {
                             "name": "Paire d’Armes à une main lourdes",
                             "cost": 10,
-                              "name": "Paire d’Armes à une main lourdes"
+                              "name": "Paire d’Armes à une main lourdes",
 	                      "range": "Mêlée",
                 	      "attacks": 4,
            	              "armor_piercing": 1,
@@ -391,7 +391,7 @@
                         {
                             "name": "Lance lourde",
                             "cost": 15,
-                               "name": "Lance lourde"
+                               "name": "Lance lourde",
 	                      "range": "Mêlée",
                 	      "attacks": 3,
            	              "armor_piercing": 1,
