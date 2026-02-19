@@ -176,7 +176,7 @@
                         {"name": "Génération sacrée", "cost": 10, "special_rules": ["Aura de Charge véloce"]},
                         {"name": "Gardien du Temple", "cost": 15, "special_rules": ["Aura de Contre-attaque"]},
                         {"name": "Magicien clairvoyant", "cost": 20, "special_rules": ["Lanceur de sorts (+1)"]},
-                        {"name": "Guide primal, "cost": 30, "special_rules": ["Bonus de Boost de Primal"]}
+                        {"name": "Guide primal", "cost": 30, "special_rules": ["Bonus de Boost de Primal"]}
                     ]
                 },
                 {
