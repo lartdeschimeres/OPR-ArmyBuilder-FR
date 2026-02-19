@@ -294,53 +294,95 @@ st.markdown(
     </style>
     """,
     unsafe_allow_html=True
+    )
+    """
+    /* Style spécifique pour améliorer l'affichage des options dans les selectbox */
+    .stSelectbox div[role="listbox"] div[role="option"] {
+        white-space: normal !important;
+        line-height: 1.4 !important;
+        padding: 6px 10px !important;
+        min-height: auto !important;
+    }
+    
+    .stSelectbox div[role="option"] {
+        display: block !important;
+        word-break: normal !important;
+    }
+    
+    /* Style pour les options de la selectbox des unités */
+    .selectbox-unit-option {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        line-height: 1.4;
+        white-space: normal;
+        padding: 4px 0;
+    }
+    .selectbox-unit-name {
+        font-weight: bold;
+        color: #2c3e50;
+        display: block;
+    }
+    .selectbox-unit-weapons {
+        color: #3498db;
+        font-size: 13px;
+        display: block;
+        margin-left: 10px;
+    }
+    .selectbox-unit-options {
+        color: #666;
+        font-size: 12px;
+        display: block;
+        margin-left: 10px;
+    }
+    .selectbox-unit-size {
+        color: #e74c3c;
+        font-weight: bold;
+        display: block;
+        margin-left: 10px;
+    }
+    """
+    st.markdown(
+    """
+    <style>
+    /* Style spécifique pour améliorer l'affichage des options dans les selectbox */
+    .stSelectbox div[role="listbox"] {
+        max-height: 400px !important;
+        overflow-y: auto !important;
+    }
+
+    .stSelectbox div[role="option"] {
+        white-space: normal !important;
+        line-height: 1.4 !important;
+        padding: 8px 12px !important;
+        min-height: auto !important;
+        word-break: break-word !important;
+    }
+
+    /* Style pour les options personnalisées */
+    .unit-option-name {
+        font-weight: bold;
+        color: #2c3e50;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .unit-option-weapons {
+        color: #3498db;
+        font-size: 13px;
+        display: block;
+        margin: 2px 0;
+    }
+
+    .unit-option-extras {
+        color: #666;
+        font-size: 12px;
+        display: block;
+        margin-top: 2px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
-"""
-/* Style spécifique pour améliorer l'affichage des options dans les selectbox */
-.stSelectbox div[role="listbox"] div[role="option"] {
-    white-space: normal !important;
-    line-height: 1.4 !important;
-    padding: 6px 10px !important;
-    min-height: auto !important;
-}
-
-.stSelectbox div[role="option"] {
-    display: block !important;
-    word-break: normal !important;
-}
-
-/* Style pour les options de la selectbox des unités */
-.selectbox-unit-option {
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    line-height: 1.4;
-    white-space: normal;
-    padding: 4px 0;
-}
-.selectbox-unit-name {
-    font-weight: bold;
-    color: #2c3e50;
-    display: block;
-}
-.selectbox-unit-weapons {
-    color: #3498db;
-    font-size: 13px;
-    display: block;
-    margin-left: 10px;
-}
-.selectbox-unit-options {
-    color: #666;
-    font-size: 12px;
-    display: block;
-    margin-left: 10px;
-}
-.selectbox-unit-size {
-    color: #e74c3c;
-    font-weight: bold;
-    display: block;
-    margin-left: 10px;
-}
-"""
 
 # ======================================================
 # INITIALISATION
@@ -1459,56 +1501,52 @@ def format_mount_option(mount):
     return label
 
 def format_unit_option(u):
-    """Formate l'option d'unité avec les détails demandés"""
-    # 1. Nom de l'unité
-    name = f"<span class='selectbox-unit-name'>{u['name']}</span>"
+    """Formate l'option d'unité pour la selectbox"""
+    # Nom de l'unité
+    name = u['name']
 
-    # 2. Récupération des armes
+    # Récupération des armes
     weapons = u.get('weapon', [])
-    weapon_profiles = []
+    weapon_texts = []
     if isinstance(weapons, list):
         for weapon in weapons:
             if isinstance(weapon, dict):
                 weapon_name = weapon.get('name', 'Arme')
                 attacks = weapon.get('attacks', '?')
                 ap = weapon.get('armor_piercing', '?')
-                weapon_profiles.append(f"{weapon_name} (A{attacks}/PA{ap})")
+                weapon_texts.append(f"{weapon_name} (A{attacks}/PA{ap})")
     elif isinstance(weapons, dict):
         weapon_name = weapons.get('name', 'Arme')
         attacks = weapons.get('attacks', '?')
         ap = weapons.get('armor_piercing', '?')
-        weapon_profiles.append(f"{weapon_name} (A{attacks}/PA{ap})")
+        weapon_texts.append(f"{weapon_name} (A{attacks}/PA{ap})")
 
-    weapons_text = f"<span class='selectbox-unit-weapons'>{', '.join(weapon_profiles) if weapon_profiles else 'Aucune arme'}</span>"
+    weapons_text = ", ".join(weapon_texts) if weapon_texts else "Aucune arme"
 
-    # 3. Récupération des améliorations sélectionnées
+    # Récupération des options/améliorations
     options_texts = []
-    if "options" in u:
-        for group_name, opts in u["options"].items():
-            if isinstance(opts, list):
-                for opt in opts:
+    if "upgrade_groups" in u:
+        for group in u["upgrade_groups"]:
+            if group.get("type") == "role" and u.get("type") == "hero":
+                for opt in group.get("options", []):
+                    options_texts.append(f"{opt.get('name', 'Rôle')} (+{opt.get('cost', 0)} pts)")
+            elif group.get("type") == "weapon_upgrades":
+                for opt in group.get("options", []):
+                    if "weapon" in opt and isinstance(opt["weapon"], dict):
+                        options_texts.append(f"{opt['weapon'].get('name', 'Arme')} (+{opt.get('cost', 0)} pts)")
+            elif group.get("type") != "weapon":
+                for opt in group.get("options", []):
                     options_texts.append(f"{opt.get('name', 'Option')} (+{opt.get('cost', 0)} pts)")
 
-    options_text = f"<span class='selectbox-unit-options'>{', '.join(options_texts) if options_texts else 'Aucune amélioration'}</span>"
+    options_text = ", ".join(options_texts) if options_texts else "Aucune amélioration"
 
-    # 4. Taille
+    # Taille
     size = u.get('size', 10)
     if u.get('type') == "hero":
         size = 1
-    size_text = f"<span class='selectbox-unit-size'>Taille: {size}</span>"
 
-    # Retour HTML pour un meilleur affichage
-    return f"""
-    <div class='selectbox-unit-option'>
-        {name}
-        {weapons_text}
-        {options_text}
-        {size_text}
-    </div>
-    """
-
-    # Construction du texte final dans l'ordre demandé
-    return f"{name_part} | {weapons_text} | {options_text} | {size_text}"
+    # Format simple et efficace pour Streamlit
+    return f"{name} | Armes: {weapons_text} | {options_text} | Taille: {size}"
 
 # ======================================================
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE (version complète avec filtres)
@@ -1793,12 +1831,13 @@ if st.session_state.page == "army":
     </div>
     """, unsafe_allow_html=True)
 
+# Sélection de l'unité
 if filtered_units:
     st.markdown(
         """
         <style>
-        .stSelectbox div[data-baseweb="select"] {
-            min-height: 200px !important;
+        .stSelectbox {
+            min-height: 50px !important;
         }
         </style>
         """,
@@ -1809,7 +1848,7 @@ if filtered_units:
         "Unité disponible",
         filtered_units,
         format_func=lambda u: format_unit_option(u),
-        key=f"unit_select_{len(filtered_units)}",  # Clé dynamique
+        key=f"unit_select_{len(filtered_units)}",
         index=0
     )
 
