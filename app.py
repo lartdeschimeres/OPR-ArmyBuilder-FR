@@ -1413,50 +1413,53 @@ def format_mount_option(mount):
     return label
 
 def format_unit_option(u):
-    """Formate l'option d'unité avec tous les détails"""
+    """Formate l'option d'unité avec les détails demandés"""
+    # 1. Nom de l'unité (sans la taille)
     name_part = f"{u['name']}"
-    if u.get('type') == "hero":
-        name_part += " [1]"
-    else:
-        name_part += f" [{u.get('size', 10)}]"
 
-    # Ajout de la Qualité avant la Défense
-    quality = u.get('quality', '?')
-    defense = u.get('defense', '?')
-    qua_def = f"Qua {quality}+ | Déf {defense}+"  # Format corrigé
-
-    # Récupération des armes de base
+    # 2. Récupération des armes
     weapons = u.get('weapon', [])
     weapon_profiles = []
     if isinstance(weapons, list):
         for weapon in weapons:
             if isinstance(weapon, dict):
+                weapon_name = weapon.get('name', 'Arme')
                 attacks = weapon.get('attacks', '?')
                 ap = weapon.get('armor_piercing', '?')
-                weapon_profiles.append(f"A{attacks}/PA{ap}")
+                weapon_profiles.append(f"{weapon_name} (A{attacks}/PA{ap})")
     elif isinstance(weapons, dict):
+        weapon_name = weapons.get('name', 'Arme')
         attacks = weapons.get('attacks', '?')
         ap = weapons.get('armor_piercing', '?')
-        weapon_profiles.append(f"A{attacks}/PA{ap}")
+        weapon_profiles.append(f"{weapon_name} (A{attacks}/PA{ap})")
 
-    weapon_text = ", ".join(weapon_profiles) if weapon_profiles else "Aucune"
+    weapons_text = ", ".join(weapon_profiles) if weapon_profiles else "Aucune arme"
 
-    # Récupération des règles spéciales
-    special_rules = u.get('special_rules', [])
-    rules_text = []
-    if isinstance(special_rules, list):
-        for rule in special_rules:
-            if isinstance(rule, str):
-                if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
-                    rules_text.append(rule)
-            elif isinstance(rule, dict):
-                rules_text.append(rule.get('name', ''))
+    # 3. Récupération des options/améliorations
+    options_texts = []
+    if "upgrade_groups" in u:
+        for group in u.get("upgrade_groups", []):
+            if group.get("type") == "role" and u.get("type") == "hero":
+                for opt in group.get("options", []):
+                    options_texts.append(f"{opt.get('name', 'Rôle')} (+{opt.get('cost', 0)} pts)")
+            elif group.get("type") == "weapon_upgrades":
+                for opt in group.get("options", []):
+                    if "weapon" in opt and isinstance(opt["weapon"], dict):
+                        options_texts.append(f"{opt['weapon'].get('name', 'Arme')} (+{opt.get('cost', 0)} pts)")
+            elif group.get("type") != "weapon":  # On exclut les remplacements d'armes
+                for opt in group.get("options", []):
+                    options_texts.append(f"{opt.get('name', 'Option')} (+{opt.get('cost', 0)} pts)")
 
-    rules_text = ", ".join(rules_text) if rules_text else "Aucune"
-    cost = f"{u.get('base_cost', 0)}pts"
+    options_text = ", ".join(options_texts) if options_texts else "Aucune amélioration"
 
-    # Retour simple et efficace
-    return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
+    # 4. Taille
+    size = u.get('size', 10)
+    if u.get('type') == "hero":
+        size = 1
+    size_text = f"Taille: {size}"
+
+    # Construction du texte final dans l'ordre demandé
+    return f"{name_part} | {weapons_text} | {options_text} | {size_text}"
 
 # ======================================================
 # PAGE 2 – CONSTRUCTEUR D'ARMÉE (version complète avec filtres)
