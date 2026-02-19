@@ -801,17 +801,6 @@ body {{
   font-weight: bold;
 }}
 
-.combined-badge {{
-  background-color: #28a745;
-  color: white;
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-size: 0.7em;
-  margin-left: 8px;
-  vertical-align: middle;
-  display: inline-block;
-}}
-
 @media print {{
   body {{
     background: white;
@@ -851,42 +840,40 @@ body {{
         defense = esc(unit.get("defense", "-"))
         unit_type_french = get_french_type(unit)
         unit_size = unit.get("size", 10)
-
+    
         if unit.get("type") == "hero":
             unit_size = 1
-
+    
         # Calcul de la valeur de Coriace
         tough_value = unit.get("coriace", 0)
-
+    
         # Récupération des armes
         weapons = unit.get("weapon", [])
         if not isinstance(weapons, list):
             weapons = [weapons]
-
+    
         # Récupération des règles spéciales
         special_rules = get_special_rules(unit)
-
+    
         # Récupération des options et montures
         options = unit.get("options", {})
         mount = unit.get("mount", None)
-
-        # Déterminer si c'est une unité combinée
-        is_combined = unit.get('type') != 'hero' and unit_size == 20
-
+    
         html += f'''
-<div class="unit-card">
-  <div class="unit-header">
-    <div>
-      <h3 class="unit-name">
-        {name}
-        <span style="font-size: 12px; color: var(--text-muted); margin-left: 8px;">[{unit_size}]</span>
-     </h3>
-      <div class="unit-type">
-        {"★" if unit.get("type") == "hero" else "🛡️"} {unit_type_french}
+    <div class="unit-card">
+      <div class="unit-header">
+        <div>
+          <h3 class="unit-name">
+            {name}
+            <span style="font-size: 12px; color: var(--text-muted); margin-left: 8px;">[{unit_size}]</span>
+          </h3>
+          <div class="unit-type">
+            {"★" if unit.get("type") == "hero" else "🛡️"} {unit_type_french}
+          </div>
+        </div>
+        <div class="unit-cost">{cost} pts</div>
       </div>
-    </div>
-    <div class="unit-cost">{cost} pts</div>
-  </div>
+    '''
 
   <div class="stats-grid">
     <div class="stat-item">
@@ -1658,17 +1645,11 @@ if st.session_state.page == "army":
     
         options_text = ", ".join(options_texts) if options_texts else "Aucune amélioration"
     
-        # 4. Taille et statut combiné
+        # 4. Taille
         size = unit_data.get('size', 10)
-        combined_status = ""
     
-        # Vérification si l'unité est combinée
-        base_size = 10  # Taille de base standard
-        if unit_data.get('type') != "hero" and size == base_size * 2:
-            combined_status = " | Unité combinée"
-    
-        # Format final: Nom - Coût pts | Armes: ... | Options: ... | Taille: ... [| Unité combinée]
-        return f"{name} - {unit_data['cost']} pts | Armes: {weapons_text} | {options_text} | Taille: {size}{combined_status}"
+        # Format final: Nom - Coût pts | Armes: ... | Options: ... | Taille: ...
+        return f"{name} - {unit_data['cost']} pts | Armes: {weapons_text} | {options_text} | Taille: {size}"
     
     if not st.session_state.army_list:
         st.markdown("Aucune unité ajoutée pour le moment.")
