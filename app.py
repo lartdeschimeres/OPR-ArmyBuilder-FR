@@ -1764,7 +1764,7 @@ if st.session_state.page == "army":
     st.markdown("</div>", unsafe_allow_html=True)
 
     # Filtrer les unités selon le filtre sélectionné
-    filtered_units = []
+    filtered_units = []  # Initialisation par défaut
     if st.session_state.unit_filter == "Tous":
         filtered_units = st.session_state.units
     else:
@@ -1780,27 +1780,30 @@ if st.session_state.page == "army":
         {len(filtered_units)} unités disponibles (filtre: {st.session_state.unit_filter})
     </div>
     """, unsafe_allow_html=True)
-
-# Sélection de l'unité
-if filtered_units:
-    st.markdown(
-        """
-        <style>
-        .stSelectbox {
-            min-height: 50px !important;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-    unit = st.selectbox(
-        "Unité disponible",
-        filtered_units,
-        format_func=lambda u: format_unit_option(u),
-        key=f"unit_select_{len(filtered_units)}",
-        index=0
-    )
+    
+    # Sélection de l'unité - seulement si filtered_units n'est pas vide
+    if filtered_units:  # Maintenant cette vérification est sûre
+        st.markdown(
+            """
+            <style>
+            .stSelectbox div[data-baseweb="select"] {
+                min-height: 200px !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+    
+        unit = st.selectbox(
+            "Unité disponible",
+            filtered_units,
+            format_func=lambda u: format_unit_option(u),
+            key=f"unit_select_{len(filtered_units)}",
+            index=0
+        )
+    else:
+        st.warning(f"Aucune unité disponible pour le filtre '{st.session_state.unit_filter}'.")
+        st.stop()
 
     # Suite du code existant pour les améliorations
     unit_key = f"unit_{unit['name']}"
