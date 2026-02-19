@@ -414,16 +414,6 @@ GAME_CONFIG = {
     }
 }
 """
-.combined-badge {
-    background-color: #28a745;
-    color: white;
-    padding: 2px 6px;
-    border-radius: 10px;
-    font-size: 0.7em;
-    margin-left: 8px;
-    vertical-align: middle;
-}
-"""
 
 # ======================================================
 # FONCTIONS DE VALIDATION
@@ -890,8 +880,7 @@ body {{
       <h3 class="unit-name">
         {name}
         <span style="font-size: 12px; color: var(--text-muted); margin-left: 8px;">[{unit_size}]</span>
-        {'<span class="combined-badge">Unité combinée</span>' if is_combined else ''}
-      </h3>
+     </h3>
       <div class="unit-type">
         {"★" if unit.get("type") == "hero" else "🛡️"} {unit_type_french}
       </div>
