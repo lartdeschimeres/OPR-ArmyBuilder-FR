@@ -181,7 +181,7 @@
                     "name": "Améliorations de rôle",
                     "type": "role",
                     "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
-                    "upgrades": [
+                    "options": [
                         {
                             "name": "Génération sacrée",
                             "cost": 10,
@@ -205,7 +205,7 @@
                     ]
                 },
                 {
-                    "name": "Remplacement d'arme",
+                    "name": "Amélioration d'arme",
                     "type": "weapon",
                     "description": "Remplacer l’Explosion magique par :",
                     "upgrades": [
@@ -239,7 +239,7 @@
                     "name": "Montures",
                     "type": "mount",
                     "description": "Ajoutez une monture",
-                    "upgrades": [
+                    "options": [
                         {
                             "name": "Quetzalcoatl",
                             "cost": 545,
@@ -271,10 +271,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration d'unité",
+                    "name": "Améliorations d'unité",
                     "type": "upgrades",
                     "description": "Améliorations disponibles pour l'unité",
-                    "upgrades": [
+                    "options": [
                         {
                             "name": "Destinée sacrée",
                             "cost": 10,
@@ -312,9 +312,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Améliorations",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Lignée sacrée",
                             "cost": 10,
@@ -333,9 +334,10 @@
                     ]
                 },
                 {
-                    "name": "Remplacer la Grande arme d’obsidienne par",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Grande arme",
                             "cost": 10,
@@ -344,9 +346,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Destin sacré",
                             "cost": 10,
@@ -381,9 +384,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Améliorations",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Lignée sacrée",
                             "cost": 10,
@@ -407,9 +411,10 @@
                     ]
                 },
                 {
-                    "name": "Remplacer l’Arme à une main lourde par",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Grande arme d’obsidienne",
                             "cost": 5,
@@ -443,9 +448,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Raptor",
                             "cost": 15,
@@ -459,9 +465,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Destin sacré",
                             "cost": 10,
@@ -498,9 +505,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Améliorations",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Tirailleur",
                             "cost": 15,
@@ -529,9 +537,10 @@
                     ]
                 },
                 {
-                    "name": "Remplacer l’Arme à une main par",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Paire d’armes à une main",
                             "cost": 5,
@@ -545,9 +554,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Bolas enflammés de champion",
                             "cost": 10,
@@ -566,9 +576,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Lignée des Caméléons",
                             "cost": 10,
@@ -597,9 +608,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Destin sacré",
                             "cost": 10,
@@ -632,9 +644,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Remplacer toutes les Armes à une main par",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Hallebarde",
                             "cost": 25,
@@ -648,9 +661,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Destin sacré",
                             "cost": 15,
@@ -659,9 +673,10 @@
                     ]
                 },
                 {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Bannière",
                             "cost": 5,
@@ -706,9 +721,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Javelot",
                             "cost": 30,
@@ -722,9 +738,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Destin sacré",
                             "cost": 10,
@@ -733,9 +750,10 @@
                     ]
                 },
                 {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Bannière",
                             "cost": 5,
@@ -780,9 +798,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Remplacer toutes les Grandes armes d’obsidiennes par",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Hallebarde lourde",
                             "cost": 10,
@@ -796,9 +815,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Destin sacré",
                             "cost": 10,
@@ -807,9 +827,10 @@
                     ]
                 },
                 {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Bannière",
                             "cost": 5,
@@ -862,9 +883,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Remplacer tous les Bolas enflammés par",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Sarbacane",
                             "cost": 5,
@@ -873,9 +895,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Vision prophétique",
                             "cost": 25,
@@ -913,9 +936,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Remplacer toutes les Lances par",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Javelot",
                             "cost": 15,
@@ -924,9 +948,10 @@
                     ]
                 },
                 {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Bannière",
                             "cost": 5,
@@ -972,9 +997,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Remplacer toutes les Armes à une main par",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Lances",
                             "cost": 10,
@@ -983,9 +1009,10 @@
                     ]
                 },
                 {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Bannière",
                             "cost": 5,
@@ -1041,9 +1068,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Bolas enflammés",
                             "cost": 35,
@@ -1057,9 +1085,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Lâcher des pierres",
                             "cost": 20,
@@ -1068,9 +1097,10 @@
                     ]
                 },
                 {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Bannière",
                             "cost": 5,
@@ -1119,9 +1149,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Bolas enflammés",
                             "cost": 35,
@@ -1135,9 +1166,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Appât",
                             "cost": 25,
@@ -1146,9 +1178,10 @@
                     ]
                 },
                 {
-                    "name": "Améliorer jusqu’à trois figurines avec une des options suivantes",
-                    "type": "multiple",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Bannière",
                             "cost": 5,
@@ -1194,9 +1227,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Destin sacré",
                             "cost": 15,
@@ -1205,9 +1239,10 @@
                     ]
                 },
                 {
-                    "name": "Remplacer toutes les Grandes armes d’obsidienne par",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Grande arme",
                             "cost": 15,
@@ -1216,9 +1251,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Vision prophétique",
                             "cost": 25,
@@ -1316,9 +1352,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Maître-lézard d’avant-garde",
                             "cost": 10,
@@ -1369,9 +1406,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Amélioration avec une des options suivantes",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Maître-lézard d’avant-garde",
                             "cost": 10,
@@ -1429,9 +1467,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Remplacer les Javelots de l’équipage par",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Sarbacane géante",
                             "cost": 5,
@@ -1450,9 +1489,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Écrasement",
                             "cost": 15,
@@ -1511,9 +1551,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Rugissement primal",
                             "cost": 30,
@@ -1572,9 +1613,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Remplacer les Javelots de l’équipage par",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Arche des serpents",
                             "cost": 25,
@@ -1588,9 +1630,10 @@
                     ]
                 },
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Vision prophétique",
                             "cost": 25,
@@ -1634,9 +1677,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Gator redoutable",
                             "cost": 0,
@@ -1645,9 +1689,10 @@
                     ]
                 },
                 {
-                    "name": "Remplacer le Gator redoutable par",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Ptérodactyle redoutable",
                             "cost": 5,
@@ -1695,9 +1740,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Vétéran balafré",
                             "cost": 0,
@@ -1737,9 +1783,10 @@
             ],
             "upgrade_groups": [
                 {
-                    "name": "Amélioration avec",
-                    "type": "single",
-                    "upgrades": [
+                    "name": "Améliorations d'unité",
+                    "type": "upgrades",
+                    "description": "Améliorations disponibles pour l'unité",
+                    "options": [
                         {
                             "name": "Don de guérison",
                             "cost": 0,
