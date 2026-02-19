@@ -1605,21 +1605,66 @@ if st.session_state.page == "army":
                 if isinstance(spell_details, dict):
                     st.markdown(f"**{spell_name}** ({spell_details.get('cost', '?')} pts): {spell_details.get('description', '')}")
 
-    # Liste de l'armée
+    # Liste de l'Armée
     st.subheader("Liste de l'Armée")
+    
+    # Fonction pour formater l'affichage des unités dans la liste
+    def format_army_unit(unit_data):
+        """Formate l'unité pour l'affichage dans la liste de l'armée"""
+        # 1. Nom de l'unité
+        name = unit_data['name']
+    
+        # 2. Armes
+        weapons = unit_data.get('weapon', [])
+        weapon_texts = []
+        if isinstance(weapons, list):
+            for weapon in weapons:
+                if isinstance(weapon, dict):
+                    weapon_name = weapon.get('name', 'Arme')
+                    attacks = weapon.get('attacks', '?')
+                    ap = weapon.get('armor_piercing', '?')
+                    weapon_texts.append(f"{weapon_name} (A{attacks}/PA{ap})")
+        elif isinstance(weapons, dict):
+            weapon_name = weapons.get('name', 'Arme')
+            attacks = weapons.get('attacks', '?')
+            ap = weapons.get('armor_piercing', '?')
+            weapon_texts.append(f"{weapon_name} (A{attacks}/PA{ap})")
+    
+        weapons_text = ", ".join(weapon_texts) if weapon_texts else "Aucune arme"
+    
+        # 3. Options/Améliorations
+        options_texts = []
+        options = unit_data.get('options', {})
+        if options:
+            for group_name, opts in options.items():
+                if isinstance(opts, list):
+                    for opt in opts:
+                        options_texts.append(f"{opt.get('name', 'Option')} (+{opt.get('cost', 0)} pts)")
+    
+        options_text = ", ".join(options_texts) if options_texts else "Aucune amélioration"
+    
+        # 4. Taille
+        size = unit_data.get('size', 10)
+    
+        # Format final: Nom | Armes: ... | Options: ... | Taille: ...
+        return f"{name} - {unit_data['cost']} pts | Armes: {weapons_text} | {options_text} | Taille: {size}"
+    
     if not st.session_state.army_list:
         st.markdown("Aucune unité ajoutée pour le moment.")
     else:
         for i, unit_data in enumerate(st.session_state.army_list):
-            with st.expander(f"{unit_data['name']} - {unit_data['cost']} pts", expanded=False):
+            # Utilisation de la nouvelle fonction de formatage
+            unit_display = format_army_unit(unit_data)
+    
+            with st.expander(unit_display, expanded=False):
                 st.markdown(f"**Type :** {unit_data['type']}")
                 st.markdown(f"**Taille :** {unit_data.get('size', '?')}")
                 st.markdown(f"**Qualité :** {unit_data.get('quality', '?')}+")
                 st.markdown(f"**Défense :** {unit_data.get('defense', '?')}+")
-
+    
                 if "coriace" in unit_data:
                     st.markdown(f"**Coriace :** {unit_data.get('coriace', '?')}")
-
+    
                 if st.button(f"Supprimer {unit_data['name']}", key=f"delete_{i}"):
                     st.session_state.army_cost -= unit_data['cost']
                     st.session_state.army_list.pop(i)
