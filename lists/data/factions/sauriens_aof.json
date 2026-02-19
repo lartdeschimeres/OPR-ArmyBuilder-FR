@@ -337,7 +337,7 @@
                 },
                 {
                     "group": "Remplacement d'arme",
-          	    "type": "weapon"
+          	    "type": "weapon",
                     "description": "Remplacez l'Arme à une main lourde par :",
                     "options": [
                         {
