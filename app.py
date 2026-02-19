@@ -1793,7 +1793,7 @@ if st.session_state.page == "army":
     </div>
     """, unsafe_allow_html=True)
 
-f filtered_units:
+if filtered_units:
     st.markdown(
         """
         <style>
