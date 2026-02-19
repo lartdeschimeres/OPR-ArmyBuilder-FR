@@ -413,6 +413,17 @@ GAME_CONFIG = {
         "unit_per_points": 100
     }
 }
+"""
+.combined-badge {
+    background-color: #28a745;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.7em;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+"""
 
 # ======================================================
 # FONCTIONS DE VALIDATION
@@ -865,13 +876,15 @@ body {{
       <h3 class="unit-name">
         {name}
         <span style="font-size: 12px; color: var(--text-muted); margin-left: 8px;">[{unit_size}]</span>
+        {'<span class="combined-badge">Unité combinée</span>' if unit_data.get('combined', False) or (unit_data.get('type') != 'hero' and unit_size == 20) else ''}
       </h3>
       <div class="unit-type">
         {"★" if unit.get("type") == "hero" else "🛡️"} {unit_type_french}
       </div>
     </div>
     <div class="unit-cost">{cost} pts</div>
-  </div>
+</div>
+"""
 
   <div class="stats-grid">
     <div class="stat-item">
