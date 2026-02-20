@@ -1,4 +1,101 @@
-import json
+# ARMES - Version corrigée et minimale
+if group.get("type") == "weapon":
+    choices = []
+    base_weapons = unit.get("weapon", [])
+
+    # Ajouter les armes de base comme première option
+    if isinstance(base_weapons, list) and base_weapons:
+        base_weapons_labels = []
+        for weapon in base_weapons:
+            if isinstance(weapon, dict):
+                weapon_name = weapon.get('name', 'Arme')
+                attacks = weapon.get('attacks', '?')
+                ap = weapon.get('armor_piercing', '?')
+                special_rules = weapon.get('special_rules', [])
+
+                profile = f"{weapon_name} (A{attacks}"
+                if ap not in ("-", 0, "0", None):
+                    profile += f"/PA{ap}"
+                if special_rules:
+                    profile += f" | {', '.join(special_rules)}"
+                profile += ")"
+
+                base_weapons_labels.append(profile)
+        choices.append(" et ".join(base_weapons_labels))
+    elif isinstance(base_weapons, dict):
+        weapon_name = base_weapons.get('name', 'Arme')
+        attacks = base_weapons.get('attacks', '?')
+        ap = base_weapons.get('armor_piercing', '?')
+        special_rules = base_weapons.get('special_rules', [])
+
+        profile = f"{weapon_name} (A{attacks}"
+        if ap not in ("-", 0, "0", None):
+            profile += f"/PA{ap}"
+        if special_rules:
+            profile += f" | {', '.join(special_rules)}"
+        profile += ")"
+
+        choices.append(profile)
+
+    # Ajouter les options de remplacement
+    opt_map = {}
+    for o in group.get("options", []):
+        weapon = o.get("weapon", {})
+        if isinstance(weapon, list):
+            weapon_names = [w.get('name', 'Arme') for w in weapon]
+            label = " et ".join(weapon_names)
+
+            # Utiliser le premier élément pour les stats
+            if weapon:
+                first_weapon = weapon[0]
+                attacks = first_weapon.get('attacks', '?')
+                ap = first_weapon.get('armor_piercing', '?')
+                special_rules = first_weapon.get('special_rules', [])
+
+                label += f" (A{attacks}"
+                if ap not in ("-", 0, "0", None):
+                    label += f"/PA{ap}"
+                if special_rules:
+                    label += f" | {', '.join(special_rules)}"
+                label += f") (+{o['cost']} pts)"
+
+        else:
+            weapon_name = weapon.get('name', 'Arme')
+            attacks = weapon.get('attacks', '?')
+            ap = weapon.get('armor_piercing', '?')
+            special_rules = weapon.get('special_rules', [])
+
+            label = f"{weapon_name} (A{attacks}"
+            if ap not in ("-", 0, "0", None):
+                label += f"/PA{ap}"
+            if special_rules:
+                label += f" | {', '.join(special_rules)}"
+            label += f") (+{o['cost']} pts)"
+
+        choices.append(label)
+        opt_map[label] = o
+
+    # Affichage des choix
+    current = st.session_state.unit_selections[unit_key].get(g_key, choices[0] if choices else "Aucune arme")
+    choice = st.radio(
+        "Sélection de l'arme",
+        choices,
+        index=choices.index(current) if current in choices else 0,
+        key=f"{unit_key}_{g_key}_weapon",
+    )
+
+    st.session_state.unit_selections[unit_key][g_key] = choice
+
+    # Gérer le choix de l'utilisateur (logique existante)
+    if choice != choices[0]:
+        for opt_label, opt in opt_map.items():
+            if opt_label == choice:
+                weapon_cost += opt["cost"]
+                if not isinstance(opt["weapon"], list):
+                    weapons = [opt["weapon"]]
+                else:
+                    weapons = opt["weapon"]
+                breakimport json
 import streamlit as st
 from pathlib import Path
 from datetime import datetime
@@ -1799,6 +1896,7 @@ if st.session_state.page == "army":
         
             # Ajouter les armes de base comme première option
             if isinstance(base_weapons, list) and base_weapons:
+                base_weapons_labels = []
                 for weapon in base_weapons:
                     if isinstance(weapon, dict):
                         weapon_name = weapon.get('name', 'Arme')
@@ -1808,13 +1906,13 @@ if st.session_state.page == "army":
         
                         profile = f"{weapon_name} (A{attacks}"
                         if ap not in ("-", 0, "0", None):
-                            profile += f" | PA{ap}"
-        
+                            profile += f"/PA{ap}"
                         if special_rules:
                             profile += f" | {', '.join(special_rules)}"
-        
                         profile += ")"
-                        choices.append(profile)
+        
+                        base_weapons_labels.append(profile)
+                choices.append(" et ".join(base_weapons_labels))
             elif isinstance(base_weapons, dict):
                 weapon_name = base_weapons.get('name', 'Arme')
                 attacks = base_weapons.get('attacks', '?')
@@ -1823,12 +1921,11 @@ if st.session_state.page == "army":
         
                 profile = f"{weapon_name} (A{attacks}"
                 if ap not in ("-", 0, "0", None):
-                    profile += f" | PA{ap}"
-        
+                    profile += f"/PA{ap}"
                 if special_rules:
                     profile += f" | {', '.join(special_rules)}"
-        
                 profile += ")"
+        
                 choices.append(profile)
         
             # Ajouter les options de remplacement
@@ -1836,11 +1933,10 @@ if st.session_state.page == "army":
             for o in group.get("options", []):
                 weapon = o.get("weapon", {})
                 if isinstance(weapon, list):
-                    # Cas spécial pour les armes combinées
                     weapon_names = [w.get('name', 'Arme') for w in weapon]
                     label = " et ".join(weapon_names)
         
-                    # Prendre les stats du premier élément pour l'affichage
+                    # Utiliser le premier élément pour les stats
                     if weapon:
                         first_weapon = weapon[0]
                         attacks = first_weapon.get('attacks', '?')
@@ -1849,12 +1945,11 @@ if st.session_state.page == "army":
         
                         label += f" (A{attacks}"
                         if ap not in ("-", 0, "0", None):
-                            label += f" | PA{ap}"
-        
+                            label += f"/PA{ap}"
                         if special_rules:
                             label += f" | {', '.join(special_rules)}"
-        
                         label += f") (+{o['cost']} pts)"
+        
                 else:
                     weapon_name = weapon.get('name', 'Arme')
                     attacks = weapon.get('attacks', '?')
@@ -1863,15 +1958,35 @@ if st.session_state.page == "army":
         
                     label = f"{weapon_name} (A{attacks}"
                     if ap not in ("-", 0, "0", None):
-                        label += f" | PA{ap}"
-        
+                        label += f"/PA{ap}"
                     if special_rules:
                         label += f" | {', '.join(special_rules)}"
-        
                     label += f") (+{o['cost']} pts)"
         
                 choices.append(label)
                 opt_map[label] = o
+        
+            # Affichage des choix
+            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0] if choices else "Aucune arme")
+            choice = st.radio(
+                "Sélection de l'arme",
+                choices,
+                index=choices.index(current) if current in choices else 0,
+                key=f"{unit_key}_{g_key}_weapon",
+            )
+        
+            st.session_state.unit_selections[unit_key][g_key] = choice
+        
+            # Gérer le choix de l'utilisateur (logique existante)
+            if choice != choices[0]:
+                for opt_label, opt in opt_map.items():
+                    if opt_label == choice:
+                        weapon_cost += opt["cost"]
+                        if not isinstance(opt["weapon"], list):
+                            weapons = [opt["weapon"]]
+                        else:
+                            weapons = opt["weapon"]
+                        break
 
 
         # RÔLES
