@@ -1807,7 +1807,7 @@ if st.session_state.page == "army":
                         ap = weapon.get('armor_piercing', '?')
                         special_rules = weapon.get('special_rules', [])
         
-                        profile = f"{weapon_name} (A{attacks}"
+                        profile = f"{weapon_name} | (A{attacks}"
                         if ap not in ("-", 0, "0", None):
                             profile += f"/PA{ap}"
                         if special_rules:
@@ -1822,7 +1822,7 @@ if st.session_state.page == "army":
                 ap = base_weapons.get('armor_piercing', '?')
                 special_rules = base_weapons.get('special_rules', [])
         
-                profile = f"{weapon_name} (A{attacks}"
+                profile = f"{weapon_name} | (A{attacks}"
                 if ap not in ("-", 0, "0", None):
                     profile += f"/PA{ap}"
                 if special_rules:
@@ -1846,7 +1846,7 @@ if st.session_state.page == "army":
                         ap = first_weapon.get('armor_piercing', '?')
                         special_rules = first_weapon.get('special_rules', [])
         
-                        label += f" (A{attacks}"
+                        label += f" | (A{attacks}"
                         if ap not in ("-", 0, "0", None):
                             label += f"/PA{ap}"
                         if special_rules:
@@ -1859,7 +1859,7 @@ if st.session_state.page == "army":
                     ap = weapon.get('armor_piercing', '?')
                     special_rules = weapon.get('special_rules', [])
         
-                    label = f"{weapon_name} (A{attacks}"
+                    label = f"{weapon_name} | (A{attacks}"
                     if ap not in ("-", 0, "0", None):
                         label += f"/PA{ap}"
                     if special_rules:
