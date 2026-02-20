@@ -151,7 +151,7 @@
             "defense": 3,
             "coriace": 6,
             "special_rules": ["Arpenteur", "Effrayant (1)", "Héros", "Lanceurs de sorts (3)", "Primal", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Explosion magique",
                     "range": "12\"",
@@ -219,7 +219,7 @@
                             "mount": {
                                 "name": "Quetzalcoatl",
                                 "coriace_bonus": 18,
-                                "weapons": [
+                                "weapon": [
                                     {
                                         "name": "Frappe mystique",
                                         "range": "Mêlée",
@@ -260,7 +260,7 @@
             "defense": 3,
             "coriace": 6,
             "special_rules": ["Effrayant (1)", "Héros", "Primal", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Grande arme d’obsidienne",
                     "range": "Mêlée",
@@ -318,7 +318,7 @@
             "defense": 3,
             "coriace": 3,
             "special_rules": ["Héros", "Primal", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Arme à une main lourde",
                     "range": "Mêlée",
@@ -431,7 +431,7 @@
                             "mount": {
                                 "name": "Tyrannosaure",
                                 "coriace_bonus": 12,
-                                "weapons": [
+                                "weapon": [
                                     {
                                         "name": "Mâchoires puissantes",
                                         "range": "Mêlée",
@@ -472,7 +472,7 @@
             "defense": 5,
             "coriace": 3,
             "special_rules": ["Arpenteur", "Héros", "Primal"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Arme à une main",
                     "range": "Mêlée",
@@ -587,7 +587,7 @@
                             "mount": {
                                 "name": "Palanquin d’astrologue",
                                 "coriace_bonus": 3,
-                                "weapons": [
+                                "weapon": [
                                     {
                                         "name": "Impulsion magique",
                                         "range": "Mêlée",
@@ -604,7 +604,7 @@
                             "mount": {
                                 "name": "Ptérodactyle",
                                 "coriace_bonus": 3,
-                                "weapons": [
+                                "weapon": [
                                     {
                                         "name": "Griffes",
                                         "range": "Mêlée",
@@ -646,7 +646,7 @@
             "quality": 4,
             "defense": 4,
             "special_rules": ["Primal", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Armes à une main",
                     "range": "Mêlée",
@@ -707,7 +707,7 @@
             "quality": 5,
             "defense": 5,
             "special_rules": ["Arpenteur", "Primal"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Armes à une main",
                     "range": "Mêlée",
@@ -768,7 +768,7 @@
             "quality": 3,
             "defense": 3,
             "special_rules": ["Primal", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Grandes armes d’obsidienne",
                     "range": "Mêlée",
@@ -829,7 +829,7 @@
             "quality": 5,
             "defense": 5,
             "special_rules": ["Arpenteur", "Bon tireur", "Éclaireur", "Esquive", "Primal"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Bolas enflammés",
                     "range": "12\"",
@@ -883,7 +883,7 @@
             "quality": 5,
             "defense": 5,
             "special_rules": ["Arpenteur", "Bond", "Impact (1)", "Primal"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Lances",
                     "range": "Mêlée",
@@ -932,7 +932,7 @@
             "quality": 4,
             "defense": 4,
             "special_rules": ["Impact (1)", "Primal", "Rapide", "Ravage (1)", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Armes à une main",
                     "range": "Mêlée",
@@ -982,7 +982,7 @@
             "defense": 5,
             "coriace": 3,
             "special_rules": ["Coriace(3)", "Embuscade", "Impact(1)", "Primal", "Rapide", "Volant"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Griffes",
                     "range": "Mêlée",
@@ -1051,7 +1051,7 @@
             "defense": 5,
             "coriace": 3,
             "special_rules": ["Coriace(3)", "Embuscade", "Impact lourd(3)", "Primal", "Rapide", "Volant"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Armes à une main",
                     "range": "Mêlée",
@@ -1113,7 +1113,7 @@
             "defense": 3,
             "coriace": 3,
             "special_rules": ["Coriace(3)", "Primal", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Grandes armes d’obsidienne",
                     "range": "Mêlée",
@@ -1169,7 +1169,7 @@
             "defense": 6,
             "coriace": 3,
             "special_rules": ["Arpenteur", "Primal"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Attaques de nuée",
                     "range": "Mêlée",
@@ -1190,7 +1190,7 @@
             "defense": 6,
             "coriace": 3,
             "special_rules": ["Embuscade", "Esquive", "Primal", "Rapide", "Volant"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Griffes",
                     "range": "Mêlée",
@@ -1211,7 +1211,7 @@
             "defense": 3,
             "coriace": 6,
             "special_rules": ["Arpenteur", "Blindé", "Primal", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Jet de piques",
                     "range": "18\"",
@@ -1249,7 +1249,7 @@
             "defense": 4,
             "coriace": 6,
             "special_rules": ["Arpenteur", "Primal", "Régénération", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Crachat enflammé",
                     "range": "12\"",
@@ -1287,7 +1287,7 @@
             "defense": 3,
             "coriace": 12,
             "special_rules": ["Coriace(12)", "Effrayant (2)", "Primal", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Javelots de l’équipage",
                     "range": "12\"",
@@ -1372,7 +1372,7 @@
             "defense": 3,
             "coriace": 12,
             "special_rules": ["Effrayant (2)", "Primal", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Crachat venimeux",
                     "range": "18\"",
@@ -1417,7 +1417,7 @@
             "defense": 2,
             "coriace": 12,
             "special_rules": ["Effrayant (2)", "Primal", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Javelots de l’équipage",
                     "range": "12\"",
@@ -1480,7 +1480,7 @@
             "defense": 2,
             "coriace": 18,
             "special_rules": ["Effrayant (3)", "Primal", "Sans peur"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Piétinement",
                     "range": "Mêlée",
@@ -1531,7 +1531,7 @@
             "defense": 3,
             "coriace": 6,
             "special_rules": ["Blindé", "Coriace (6)", "Effrayant (1)", "Héros", "Primal", "Sans peur", "Unique"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Masses solaires",
                     "range": "Mêlée",
@@ -1561,7 +1561,7 @@
             "defense": 6,
             "coriace": 3,
             "special_rules": ["Arpenteur", "Coriace (3)", "Guérison", "Héros", "Lanceur de sorts (2)", "Primal", "Unique"],
-            "weapons": [
+            "weapon": [
                 {
                     "name": "Sceptre céleste",
                     "range": "Mêlée",
