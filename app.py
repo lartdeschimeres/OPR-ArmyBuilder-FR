@@ -1796,56 +1796,83 @@ if st.session_state.page == "army":
         if group.get("type") == "weapon":
             choices = []
             base_weapons = unit.get("weapon", [])
-
+        
+            # Ajouter les armes de base comme première option
             if isinstance(base_weapons, list) and base_weapons:
-                base_weapons_labels = []
                 for weapon in base_weapons:
-                    base_weapons_labels.append(weapon.get('name', 'Arme'))
-
-                if len(base_weapons_labels) == 1:
-                    choices.append(format_weapon_option(base_weapons[0]))
-                else:
-                    choices.append(" et ".join(base_weapons_labels))
+                    if isinstance(weapon, dict):
+                        weapon_name = weapon.get('name', 'Arme')
+                        attacks = weapon.get('attacks', '?')
+                        ap = weapon.get('armor_piercing', '?')
+                        special_rules = weapon.get('special_rules', [])
+        
+                        profile = f"{weapon_name} (A{attacks}"
+                        if ap not in ("-", 0, "0", None):
+                            profile += f" | PA{ap}"
+        
+                        if special_rules:
+                            profile += f" | {', '.join(special_rules)}"
+        
+                        profile += ")"
+                        choices.append(profile)
             elif isinstance(base_weapons, dict):
-                choices.append(format_weapon_option(base_weapons))
-
+                weapon_name = base_weapons.get('name', 'Arme')
+                attacks = base_weapons.get('attacks', '?')
+                ap = base_weapons.get('armor_piercing', '?')
+                special_rules = base_weapons.get('special_rules', [])
+        
+                profile = f"{weapon_name} (A{attacks}"
+                if ap not in ("-", 0, "0", None):
+                    profile += f" | PA{ap}"
+        
+                if special_rules:
+                    profile += f" | {', '.join(special_rules)}"
+        
+                profile += ")"
+                choices.append(profile)
+        
+            # Ajouter les options de remplacement
             opt_map = {}
             for o in group.get("options", []):
                 weapon = o.get("weapon", {})
                 if isinstance(weapon, list):
+                    # Cas spécial pour les armes combinées
                     weapon_names = [w.get('name', 'Arme') for w in weapon]
-                    label = " et ".join(weapon_names) + f" (+{o['cost']} pts)"
+                    label = " et ".join(weapon_names)
+        
+                    # Prendre les stats du premier élément pour l'affichage
+                    if weapon:
+                        first_weapon = weapon[0]
+                        attacks = first_weapon.get('attacks', '?')
+                        ap = first_weapon.get('armor_piercing', '?')
+                        special_rules = first_weapon.get('special_rules', [])
+        
+                        label += f" (A{attacks}"
+                        if ap not in ("-", 0, "0", None):
+                            label += f" | PA{ap}"
+        
+                        if special_rules:
+                            label += f" | {', '.join(special_rules)}"
+        
+                        label += f") (+{o['cost']} pts)"
                 else:
-                    label = format_weapon_option(weapon, o['cost'])
+                    weapon_name = weapon.get('name', 'Arme')
+                    attacks = weapon.get('attacks', '?')
+                    ap = weapon.get('armor_piercing', '?')
+                    special_rules = weapon.get('special_rules', [])
+        
+                    label = f"{weapon_name} (A{attacks}"
+                    if ap not in ("-", 0, "0", None):
+                        label += f" | PA{ap}"
+        
+                    if special_rules:
+                        label += f" | {', '.join(special_rules)}"
+        
+                    label += f") (+{o['cost']} pts)"
+        
                 choices.append(label)
                 opt_map[label] = o
 
-            if choices:
-                current = st.session_state.unit_selections[unit_key].get(g_key, choices[0] if choices else "Aucune arme")
-                choice = st.radio(
-                    "Sélection de l'arme",
-                    choices,
-                    index=choices.index(current) if current in choices else 0,
-                    key=f"{unit_key}_{g_key}_weapon",
-                )
-
-                st.session_state.unit_selections[unit_key][g_key] = choice
-
-                if choice != choices[0]:
-                    for opt_label, opt in opt_map.items():
-                        if opt_label == choice:
-                            weapon_cost += opt["cost"]
-                            if not isinstance(opt["weapon"], list):
-                                weapons = [opt["weapon"]]
-                            else:
-                                weapons = opt["weapon"]
-
-                            if "replaces" in opt:
-                                weapons = [
-                                    w for w in base_weapons
-                                    if w.get('name') not in opt["replaces"]
-                                ] + weapons
-                            break
 
         # RÔLES
         elif group.get("type") == "role" and unit.get("type") == "hero":
@@ -1961,8 +1988,18 @@ if st.session_state.page == "army":
         else:
             for o in group.get("options", []):
                 opt_key = f"{unit_key}_{g_key}_{o['name']}"
+                option_name = o['name']
+                option_cost = o['cost']
+        
+                # Ajouter les règles spéciales entre parenthèses si elles existent
+                if 'special_rules' in o and o['special_rules']:
+                    special_rules_text = ", ".join(o['special_rules'])
+                    option_name += f" ({special_rules_text})"
+        
+                option_name += f" (+{option_cost} pts)"
+        
                 checked = st.checkbox(
-                    f"{o['name']} (+{o['cost']} pts)",
+                    option_name,
                     value=st.session_state.unit_selections[unit_key].get(opt_key, False),
                     key=opt_key,
                 )
