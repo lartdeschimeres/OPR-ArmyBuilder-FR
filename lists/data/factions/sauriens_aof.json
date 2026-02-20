@@ -1072,7 +1072,7 @@
             "weapons": [
                 {
                     "name": "Armes à une main",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 1,
                     "armor_piercing": 0,
                     "special_rules": [
@@ -1150,7 +1150,7 @@
             "weapons": [
                 {
                     "name": "Grandes armes d’obsidienne",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 3,
                     "armor_piercing": 0,
                     "special_rules": [
@@ -1213,7 +1213,7 @@
             "weapons": [
                 {
                     "name": "Attaques de nuée",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 3,
                     "armor_piercing": 0,
                     "special_rules": [
@@ -1242,7 +1242,7 @@
             "weapons": [
                 {
                     "name": "Griffes",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 3,
                     "armor_piercing": 0,
                     "special_rules": []
@@ -1277,7 +1277,7 @@
                 },
                 {
                     "name": "Griffes lourdes",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 3,
                     "armor_piercing": 1,
                     "special_rules": []
@@ -1331,7 +1331,7 @@
                 },
                 {
                     "name": "Griffes Lourdes",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 3,
                     "armor_piercing": 1,
                     "special_rules": []
@@ -1383,7 +1383,7 @@
                 },
                 {
                     "name": "Cornes",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 6,
                     "armor_piercing": 0,
                     "special_rules": [
@@ -1392,7 +1392,7 @@
                 },
                 {
                     "name": "Piétinement",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 4,
                     "armor_piercing": 1,
                     "special_rules": []
@@ -1467,14 +1467,14 @@
                 },
                 {
                     "name": "Piétinement",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 4,
                     "armor_piercing": 1,
                     "special_rules": []
                 },
                 {
                     "name": "Morsure toxique",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 6,
                     "armor_piercing": 0,
                     "special_rules": [
@@ -1528,7 +1528,7 @@
                 },
                 {
                     "name": "Queue d’obsidienne",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 4,
                     "armor_piercing": 0,
                     "special_rules": [
@@ -1538,7 +1538,7 @@
                 },
                 {
                     "name": "Piétinement",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 4,
                     "armor_piercing": 1,
                     "special_rules": []
@@ -1593,14 +1593,14 @@
             "weapons": [
                 {
                     "name": "Piétinement",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 6,
                     "armor_piercing": 2,
                     "special_rules": []
                 },
                 {
                     "name": "Mâchoires vicieuses",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 4,
                     "armor_piercing": 4,
                     "special_rules": [
@@ -1665,7 +1665,7 @@
             "weapons": [
                 {
                     "name": "Masses solaires",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 8,
                     "armor_piercing": 2,
                     "special_rules": []
@@ -1706,7 +1706,7 @@
             "weapons": [
                 {
                     "name": "Sceptre céleste",
-                    "range": "Mêlée",
+                    "range": null,
                     "attacks": 3,
                     "armor_piercing": 0,
                     "special_rules": [
