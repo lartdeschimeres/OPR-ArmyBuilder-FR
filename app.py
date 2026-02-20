@@ -459,43 +459,69 @@ def validate_army_rules(army_list, army_points, game):
 # FONCTIONS UTILITAIRES
 # ======================================================
 def format_unit_option(u):
-    """Formate l'option d'unité avec plus de détails"""
+    """Formate l'option d'unité avec les règles spéciales des armes dans le menu déroulant"""
     name_part = f"{u['name']}"
     if u.get('type') == "hero":
         name_part += " [1]"
     else:
         name_part += f" [{u.get('size', 10)}]"
 
-    # Récupération des armes de base
+    # Qualité et Défense
+    quality = u.get('quality', '?')
+    defense = u.get('defense', '?')
+    qua_def = f"Qua {quality}+ | Déf {defense}+"
+
+    # Récupération des armes de base avec leurs règles spéciales
     weapons = u.get('weapon', [])
     weapon_profiles = []
+
     if isinstance(weapons, list):
         for weapon in weapons:
             if isinstance(weapon, dict):
+                weapon_name = weapon.get('name', 'Arme')
                 attacks = weapon.get('attacks', '?')
                 ap = weapon.get('armor_piercing', '?')
-                weapon_profiles.append(f"A{attacks}/PA{ap}")
+                special_rules = weapon.get('special_rules', [])
+
+                profile = f"{weapon_name} (A{attacks}"
+                if ap not in ("-", 0, "0", None):
+                    profile += f"/PA{ap}"
+
+                if special_rules:
+                    profile += f" | {', '.join(special_rules)}"
+
+                profile += ")"
+                weapon_profiles.append(profile)
     elif isinstance(weapons, dict):
+        weapon_name = weapons.get('name', 'Arme')
         attacks = weapons.get('attacks', '?')
         ap = weapons.get('armor_piercing', '?')
-        weapon_profiles.append(f"A{attacks}/PA{ap}")
+        special_rules = weapons.get('special_rules', [])
 
-    weapon_text = ", ".join(weapon_profiles) if weapon_profiles else "Aucune"
+        profile = f"{weapon_name} (A{attacks}"
+        if ap not in ("-", 0, "0", None):
+            profile += f"/PA{ap}"
 
-    # Récupération des règles spéciales
+        if special_rules:
+            profile += f" | {', '.join(special_rules)}"
+
+        profile += ")"
+        weapon_profiles.append(profile)
+
+    weapon_text = ", ".join(weapon_profiles) if weapon_profiles else "Aucune arme"
+
+    # Règles spéciales de l'unité (hors armes)
     special_rules = u.get('special_rules', [])
     rules_text = []
     if isinstance(special_rules, list):
         for rule in special_rules:
             if isinstance(rule, str):
-                rules_text.append(rule)
+                if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
+                    rules_text.append(rule)
             elif isinstance(rule, dict):
                 rules_text.append(rule.get('name', ''))
 
     rules_text = ", ".join(rules_text) if rules_text else "Aucune"
-
-    # Construction du texte final avec Qua X+ avant Déf X+
-    qua_def = f"Qua {u.get('quality', '?')}+ | Déf {u.get('defense', '?')}+"
     cost = f"{u.get('base_cost', 0)}pts"
 
     return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
