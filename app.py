@@ -1755,10 +1755,10 @@ if st.session_state.page == "army":
                                 ] + weapons
                             break
 
-        # RÔLES - VERSION SPÉCIFIQUE POUR LES TITANS
+        # RÔLES - MODIFICATION MINIMALE POUR L'AFFICHAGE EN COLONNE DES TITANS
         elif group.get("type") == "role":
-            opt_map = {}
             choices = []
+            opt_map = {}
         
             # Pour les titans, on n'affiche pas "Aucun rôle" et on prend le premier rôle par défaut
             if unit.get("unit_detail") == "titan":
@@ -1781,30 +1781,14 @@ if st.session_state.page == "army":
                 default_choice = choices[0] if choices else ""
                 current = st.session_state.unit_selections[unit_key].get(g_key, default_choice)
         
+                # Affichage en colonne (sans horizontal=True)
                 choice = st.radio(
                     group.get("group", "Rôle"),
                     choices,
                     index=choices.index(current) if current in choices else 0,
-                    key=f"{unit_key}_{g_key}_role",
-                    horizontal=True if len(choices) <= 4 else False
+                    key=f"{unit_key}_{g_key}_role"
+                    # Pas de horizontal=True pour afficher en colonne
                 )
-        
-                st.session_state.unit_selections[unit_key][g_key] = choice
-        
-                # Toujours appliquer le rôle sélectionné (même si coût = 0)
-                for opt_label, opt in opt_map.items():
-                    if opt_label == choice:
-                        upgrades_cost += opt.get("cost", 0)  # Coût peut être 0
-                        selected_options[group.get("group", "Rôle")] = [opt]
-        
-                        # Ajouter les armes du rôle à la liste des armes principales
-                        if "weapon" in opt:
-                            role_weapons = opt.get("weapon", [])
-                            if isinstance(role_weapons, list):
-                                weapons.extend(role_weapons)
-                            elif isinstance(role_weapons, dict):
-                                weapons.append(role_weapons)
-                        break
         
             # Pour les héros normaux, on garde le comportement classique
             else:
@@ -1834,22 +1818,22 @@ if st.session_state.page == "army":
                     horizontal=True if len(choices) <= 4 else False
                 )
         
-                st.session_state.unit_selections[unit_key][g_key] = choice
+            st.session_state.unit_selections[unit_key][g_key] = choice
         
-                if choice != "Aucun rôle":
-                    for opt_label, opt in opt_map.items():
-                        if opt_label == choice:
-                            upgrades_cost += opt["cost"]
-                            selected_options[group.get("group", "Rôle")] = [opt]
+            # Le reste de la logique reste identique pour les deux cas
+            for opt_label, opt in opt_map.items():
+                if opt_label == choice:
+                    upgrades_cost += opt.get("cost", 0)
+                    selected_options[group.get("group", "Rôle")] = [opt]
         
-                            # Ajouter les armes du rôle à la liste des armes principales
-                            if "weapon" in opt:
-                                role_weapons = opt.get("weapon", [])
-                                if isinstance(role_weapons, list):
-                                    weapons.extend(role_weapons)
-                                elif isinstance(role_weapons, dict):
-                                    weapons.append(role_weapons)
-                            break      
+                    # Ajouter les armes du rôle à la liste des armes principales
+                    if "weapon" in opt:
+                        role_weapons = opt.get("weapon", [])
+                        if isinstance(role_weapons, list):
+                            weapons.extend(role_weapons)
+                        elif isinstance(role_weapons, dict):
+                            weapons.append(role_weapons)
+                    break      
         
         # AMÉLIORATIONS D'ARME - SECTION CORRIGÉE
         elif group.get("type") == "weapon_upgrades":
