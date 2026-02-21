@@ -1231,9 +1231,9 @@
             ],
             "upgrade_groups": [
                 {
-                    "group": "Améliorations d'unité",
-                    "type": "upgrades",
-                    "description": "Améliorations disponibles pour l'unité",
+                    "group": "Amélioration",
+                    "type": "role",
+                    "description": "Choisissez un rôle spécial pour cette unité (un seul choix possible)",
                     "options": [
                         {"name": "Maître-lézard d’avant-garde", "cost": 10, "special_rules": ["Éclaireur"]},
                         {"name": "Maître-lézard de combat", "cost": 10, "special_rules": ["Implacable"]}
@@ -1269,9 +1269,9 @@
             ],
             "upgrade_groups": [
                 {
-                    "group": "Améliorations d'unité",
-                    "type": "upgrades",
-                    "description": "Améliorations disponibles pour l'unité",
+                    "group": "Amélioration",
+                    "type": "role",
+                    "description": "Choisissez un rôle spécial pour cette unité (un seul choix possible)",
                     "options": [
                         {"name": "Maître-lézard d’avant-garde", "cost": 10, "special_rules": ["Éclaireur"]},
                         {"name": "Maître-lézard de combat", "cost": 10, "special_rules": ["Implacable"]}
