@@ -1756,7 +1756,7 @@ if st.session_state.page == "army":
                             break
 
         # RÔLES
-        elif group.get("type") == "role" and unit.get("type") == "hero":
+        elif group.get("type") == "role" and (unit.get("type") == "hero" or unit.get("unit_detail") == "titan"):
             choices = ["Aucun rôle"]
             opt_map = {}
         
@@ -1777,10 +1777,11 @@ if st.session_state.page == "army":
             # Utilisation de radio buttons pour les rôles (choix unique)
             current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
             choice = st.radio(
-                "Rôle du héros",
+                group.get("group", "Rôle"),
                 choices,
                 index=choices.index(current) if current in choices else 0,
                 key=f"{unit_key}_{g_key}_role",
+                horizontal=True if len(choices) <= 4 else False  # Affichage horizontal si peu d'options
             )
         
             st.session_state.unit_selections[unit_key][g_key] = choice
@@ -1798,11 +1799,8 @@ if st.session_state.page == "army":
                                 weapons.extend(role_weapons)
                             elif isinstance(role_weapons, dict):
                                 weapons.append(role_weapons)
-                        break
-
+                        break      
         
-        
-
         # AMÉLIORATIONS D'ARME - SECTION CORRIGÉE
         elif group.get("type") == "weapon_upgrades":
             choices = ["Aucune amélioration d'arme"]
