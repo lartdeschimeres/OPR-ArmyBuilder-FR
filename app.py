@@ -21,157 +21,151 @@ st.markdown(
     footer {visibility: hidden;}
     header {background: transparent;}
 
+    /* Fond général plus contrasté */
     .stApp {
-        background: #f5f5f5;
-        color: #333333;
-    }
-
-    section[data-testid="stSidebar"] {
         background: #e9ecef;
-        border-right: 1px solid #dee2e6;
+        color: #212529;
     }
 
+    /* Sidebar plus visible */
+    section[data-testid="stSidebar"] {
+        background: #dee2e6;
+        border-right: 1px solid #adb5bd;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+
+    /* Titres plus visibles */
     h1, h2, h3 {
-        color: #2c3e50;
+        color: #202c45;
         letter-spacing: 0.04em;
+        font-weight: 600;
     }
 
-    .card {
-        background: #ffffff;
-        border: 2px solid #3498db;
-        border-radius: 8px;
-        padding: 1.2rem;
+    /* Style amélioré pour les selectbox */
+    .stSelectbox, .stNumberInput, .stTextInput {
+        background-color: white;
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         transition: all 0.2s ease;
-        cursor: pointer;
-        box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
     }
 
-    .card:hover {
-        border-color: #2980b9;
-        box-shadow: 0 0 20px rgba(52, 152, 219, 0.4);
-        transform: translateY(-2px);
+    .stSelectbox:hover, .stNumberInput:hover, .stTextInput:hover {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
     }
 
-    .badge {
-        display: inline-block;
-        padding: 0.25rem 0.6rem;
-        border-radius: 4px;
-        background: #3498db;
-        color: white;
-        font-size: 0.75rem;
-        margin-bottom: 0.5rem;
-        font-weight: bold;
+    .stSelectbox > div, .stNumberInput > div, .stTextInput > div {
+        border-radius: 6px !important;
     }
 
+    /* Style pour les labels des selectbox */
+    .stSelectbox label, .stNumberInput label, .stTextInput label {
+        color: #2c3e50;
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+    }
+
+    /* Boutons plus visibles */
     button[kind="primary"] {
-        background: linear-gradient(135deg, #3498db, #2980b9) !important;
+        background: linear-gradient(135deg, #2980b9, #1e5aa8) !important;
         color: white !important;
         font-weight: bold;
         border-radius: 6px;
         padding: 0.6rem 1rem;
         border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
     }
 
-    .rule-item, .spell-item {
-        font-size: 14px;
-        margin-bottom: 5px;
-        display: flex;
-        align-items: center;
-    }
-    .rule-name, .spell-name {
-        font-weight: bold;
-        color: #bb86fc;
-        margin-right: 10px;
-    }
-    .rule-description, .spell-description {
-        color: #ccc;
+    button[kind="primary"]:hover {
+        background: linear-gradient(135deg, #1e5aa8, #194b8d) !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        transform: translateY(-1px);
     }
 
-    /* NOUVEAUX STYLES POUR L'EXPORT HTML */
-    .stat-badge {
-        background: #6e7f6a;
-        color: #000;
-        padding: 5px 10px;
+    /* Style pour les badges */
+    .badge {
+        display: inline-block;
+        padding: 0.35rem 0.75rem;
         border-radius: 4px;
-        font-weight: bold;
-        font-size: 12px;
-        margin-right: 8px;
-        margin-bottom: 8px;
-        display: inline-block;
+        background: #2980b9;
+        color: white;
+        font-size: 0.8rem;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
 
-    .tough-badge {
-        background: #f87171;
-        color: #000;
-        padding: 5px 10px;
-        border-radius: 4px;
-        font-weight: bold;
-        font-size: 12px;
-        margin-right: 8px;
-        margin-bottom: 8px;
-        display: inline-block;
+    /* Style pour les cartes */
+    .card {
+        background: #ffffff;
+        border: 2px solid #2980b9;
+        border-radius: 8px;
+        padding: 1.2rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(41, 128, 185, 0.2);
     }
 
-    .rule-tag {
-        background: #4b4d46;
-        color: #e5e7eb;
-        padding: 3px 6px;
-        border-radius: 3px;
-        font-size: 11px;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        display: inline-block;
+    .card:hover {
+        border-color: #1e5aa8;
+        box-shadow: 0 4px 16px rgba(41, 128, 185, 0.3);
+        transform: translateY(-2px);
     }
 
-    .weapon-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 10px 0;
-        font-size: 12px;
-    }
-
-    .weapon-table th, .weapon-table td {
-        border: 1px solid #4b4d46;
-        padding: 6px;
-        text-align: left;
-    }
-
-    .weapon-table th {
-        background: #1f201d;
-        color: #e5e7eb;
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 8px;
-        background: #2e2f2b;
-        padding: 12px;
+    /* Style pour les éléments de formulaire */
+    .stButton>button {
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
         border-radius: 6px;
-        text-align: center;
-        font-size: 12px;
-        margin-bottom: 15px;
+        padding: 0.5rem 1rem;
+        color: #212529;
+        font-weight: 500;
+        transition: all 0.2s ease;
     }
 
-    .stat-item {
-        padding: 5px;
+    .stButton>button:hover {
+        background-color: #e9ecef;
+        border-color: #3498db;
+        color: #2980b9;
     }
 
-    .stat-label {
-        color: #9ca3af;
-        font-size: 10px;
-        text-transform: uppercase;
-        margin-bottom: 3px;
+    /* Style pour les colonnes */
+    .stColumn {
+        padding: 0.5rem;
     }
 
-    .stat-value {
-        font-weight: bold;
-        font-size: 16px;
-        color: #e5e7eb;
+    /* Style pour les diviseurs */
+    .stDivider {
+        margin: 1.5rem 0;
+        border-top: 1px solid #adb5bd;
     }
 
-    .tough-value {
-        color: #f87171 !important;
+    /* Style pour les messages d'erreur */
+    .stAlert {
+        border-radius: 6px;
+        padding: 0.75rem 1.25rem;
+    }
+
+    /* Style pour la progression */
+    .stProgress > div > div > div {
+        background-color: #2980b9 !important;
+    }
+
+    /* Style pour les éléments de sélection */
+    .stSelectbox div[role="button"] {
+        background-color: white !important;
+        border: 1px solid #ced4da !important;
+        border-radius: 6px !important;
+    }
+
+    /* Style pour les éléments focus */
+    .stSelectbox div[role="button"]:focus,
+    .stNumberInput input:focus,
+    .stTextInput input:focus {
+        border-color: #3498db !important;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2) !important;
     }
     </style>
     """,
