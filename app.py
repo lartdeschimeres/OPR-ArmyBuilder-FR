@@ -363,6 +363,47 @@ if "faction_spells" not in st.session_state:
     st.session_state.faction_spells = {}
 
 # ======================================================
+# SIDEBAR – CONTEXTE & NAVIGATION
+# ======================================================
+with st.sidebar:
+    st.markdown("<div style='height:1px;'></div>", unsafe_allow_html=True)
+
+with st.sidebar:
+    st.title("🛡️ OPR ArmyBuilder FR")
+
+    st.subheader("📋 Armée")
+
+    game = st.session_state.get("game", "—")
+    faction = st.session_state.get("faction", "—")
+    points = st.session_state.get("points", 0)
+    army_cost = st.session_state.get("army_cost", 0)
+
+    st.markdown(f"**Jeu :** {game}")
+    st.markdown(f"**Faction :** {faction}")
+    st.markdown(f"**Format :** {points} pts")
+
+    if points > 0:
+        st.progress(min(army_cost / points, 1.0))
+        st.markdown(f"**Coût :** {army_cost} / {points} pts")
+
+        if army_cost > points:
+            st.error("⚠️ Dépassement de points")
+
+        # NOUVELLES INFORMATIONS AJOUTÉES (version corrigée)
+        if st.session_state.page == "army" and hasattr(st.session_state, 'army_list') and 'game' in st.session_state:
+            # Utilisation des valeurs par défaut de GAME_CONFIG
+            units_cap = math.floor(points / 150)  # Valeur par défaut de unit_per_points
+            heroes_cap = math.floor(points / 375)  # Valeur par défaut de hero_limit
+
+            units_now = len([u for u in st.session_state.army_list if u.get("type") != "hero"])
+            heroes_now = len([u for u in st.session_state.army_list if u.get("type") == "hero"])
+
+            st.markdown(f"**Unités :** {units_now} / {units_cap}")
+            st.markdown(f"**Héros :** {heroes_now} / {heroes_cap}")
+
+    st.divider()
+
+# ======================================================
 # CONFIGURATION DES JEUX OPR
 # ======================================================
 GAME_CONFIG = {
@@ -634,6 +675,9 @@ def extract_coriace_value(rule):
             return 0
     return 0
 
+# ======================================================
+#  EXPORT HTML
+# ======================================================
 def export_html(army_list, army_name, army_limit):
     def esc(txt):
         return str(txt).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
