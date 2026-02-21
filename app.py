@@ -2036,3 +2036,40 @@ if st.session_state.page == "army":
                 if selected_option not in [format_weapon_option(unit.get("weapon", [{}])[0])] and selected_option != "Aucune monture" and selected_option != "Aucun rôle":
                     for opt in group.get("options", []):
                         if "special_rules" in opt:
+                            all_special_rules.extend(opt["special_rules"])
+
+        # Règles spéciales de la monture
+        if mount:
+            mount_data = mount.get("mount", {})
+            if "special_rules" in mount_data:
+                for rule in mount_data["special_rules"]:
+                    if not rule.startswith(("Griffes", "Sabots")) and "Coriace" not in rule:
+                        all_special_rules.append(rule)
+
+        # Création de l'unité
+        unit_data = {
+            "name": unit["name"],
+            "type": unit.get("type", "unit"),
+            "cost": final_cost,
+            "size": unit.get("size", 10) * multiplier if unit.get("type") != "hero" else 1,
+            "quality": unit.get("quality"),
+            "defense": unit.get("defense"),
+            "weapon": weapons,
+            "weapon_upgrades": weapon_upgrades,
+            "options": selected_options,
+            "mount": mount,
+            "special_rules": all_special_rules,
+            "coriace": coriace_total
+        }
+
+        # Ajout d'une mention pour la monture si elle apporte de la Coriace
+        if mount and "coriace_bonus" in mount.get("mount", {}):
+            mount_name = mount.get("name", "Monture")
+            mount_bonus = mount.get("mount", {}).get("coriace_bonus", 0)
+            if mount_bonus > 0:
+                unit_data["special_rules"].append(f"{mount_name} (Coriace +{mount_bonus})")
+
+        if validate_army_rules(st.session_state.army_list + [unit_data], st.session_state.points, st.session_state.game):
+            st.session_state.army_list.append(unit_data)
+            st.session_state.army_cost += final_cost
+            st.rerun()
