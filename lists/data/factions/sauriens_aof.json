@@ -187,6 +187,7 @@
                         {
                             "name": "Choc magique",
                             "cost": 5,
+                            "replaces": ["Explosion magique"],
                             "weapon": {
                                 "name": "Choc magique",
                                 "range": "18\"",
@@ -194,11 +195,11 @@
                                 "armor_piercing": 0,
                                 "special_rules": []
                             }
-                        "replaces": ["Explosion magique"]
                         },
                         {
                             "name": "Rayon magique",
                             "cost": 5,
+                            "replaces": ["Explosion magique"],
                             "weapon": {
                                 "name": "Rayon magique",
                                 "range": "12\"",
@@ -206,7 +207,6 @@
                                 "armor_piercing": 2,
                                 "special_rules": ["Mortel(3)"]
                             }
-                        "replaces": ["Explosion magique"]
                         }
                     ]
                 },
