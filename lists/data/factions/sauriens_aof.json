@@ -1518,7 +1518,8 @@
                                 "armor_piercing": 1,
                                 "special_rules": ["Explosion (3)"]
                             },
-                            "Special_rules": [Coriace (6)"]
+                            "coriace_bonus": 6,
+                            "special_rules": ["Coriace (+6)"]
                         },
                         {"name": "Transport redoutable", "cost": 65, "special_rules": ["Coriace (6)", "Transport (21)"]}
                     ]
