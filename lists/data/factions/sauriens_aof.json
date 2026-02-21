@@ -1506,22 +1506,35 @@
                     "type": "role",
                     "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
                     "options": [
-                        {"name": "Gator redoutable", "cost": 0, "special_rules": ["Bonus de Boost de Primal", "Combattant imprévisible", "Impact (6)"]},
-                        {"name": "Ptérodactyle redoutable", "cost": 5, "special_rules": ["Lanceur de sorts (2)", "Bombardement croisé (2)", "Volant"]},
+                        {
+                            "name": "Gator redoutable", 
+                            "cost": 0, 
+                            "special_rules": ["Bonus de Boost de Primal", "Combattant imprévisible", "Impact (6)"]
+                        },
+                        {
+                            "name": "Ptérodactyle redoutable", 
+                            "cost": 5, 
+                            "special_rules": ["Lanceur de sorts (2)", "Bombardement croisé (2)", "Volant"]
+                        },
                         {
                             "name": "Combattant redoutable",
                             "cost": 45,
+                            "coriace_bonus": 6,
+                            "special_rules": ["Coriace (+6)"],                            
                             "weapon": {
                                 "name": "Coup de queue",
                                 "range": "Mêlée",
                                 "attacks": 2,
                                 "armor_piercing": 1,
                                 "special_rules": ["Explosion (3)"]
-                            },
-                            "coriace_bonus": 6,
-                            "special_rules": ["Coriace (+6)"]
+                            }
                         },
-                        {"name": "Transport redoutable", "cost": 65, "coriace_bonus": 6, "special_rules": ["Coriace (+6)", "Transport (21)"]}
+                        {
+                            "name": "Transport redoutable", 
+                            "cost": 65, 
+                            "coriace_bonus": 6, 
+                            "special_rules": ["Coriace (+6)", "Transport (21)"]
+                        }
                     ]
                 }
             ]
