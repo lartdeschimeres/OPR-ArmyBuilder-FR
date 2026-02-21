@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # ======================================================
-# CSS - MODIFIÉ POUR CORRESPONDRE AU STYLE QUE VOUS AIMEZ
+# CSS
 # ======================================================
 st.markdown(
     """
@@ -413,8 +413,6 @@ def export_html(army_list, army_name, army_limit):
 
         if range_text == "-" or range_text is None or range_text.lower() == "mêlée":
             range_text = "Mêlée"
-        else:
-            range_text = range_text.replace('"', '').replace("'", "")
 
         result = f"{range_text} | A{attacks}"
 
@@ -426,45 +424,10 @@ def export_html(army_list, army_name, army_limit):
 
         return result
 
-    def get_special_rules(unit):
-        """Extraire toutes les règles spéciales de l'unité"""
-        rules = set()
-
-        if "special_rules" in unit:
-            for rule in unit["special_rules"]:
-                if isinstance(rule, str):
-                    rules.add(rule)
-
-        if "options" in unit:
-            for group_name, opts in unit["options"].items():
-                if isinstance(opts, list):
-                    for opt in opts:
-                        if "special_rules" in opt:
-                            for rule in opt["special_rules"]:
-                                if isinstance(rule, str):
-                                    rules.add(rule)
-
-        weapons = unit.get("weapon", [])
-        if not isinstance(weapons, list):
-            weapons = [weapons]
-
-        for weapon in weapons:
-            if isinstance(weapon, dict) and "special_rules" in weapon:
-                for rule in weapon["special_rules"]:
-                    if isinstance(rule, str):
-                        rules.add(rule)
-
-        if "mount" in unit and unit.get("mount"):
-            mount_data = unit["mount"].get("mount", {})
-            if "special_rules" in mount_data:
-                for rule in mount_data["special_rules"]:
-                    if isinstance(rule, str):
-                        rules.add(rule)
-
-        return sorted(rules, key=lambda x: x.lower().replace('é', 'e').replace('è', 'e'))
-
     def get_french_type(unit):
         """Retourne le type français basé sur unit_detail"""
+        if unit.get('type') == 'hero':
+            return 'Héros'
         unit_detail = unit.get('unit_detail', 'unit')
         type_mapping = {
             'hero': 'Héros',
@@ -608,6 +571,12 @@ body {{
   color: var(--text-main);
 }}
 
+.tough-value {{
+  color: var(--tough-color) !important;
+  font-weight: bold;
+  font-size: 18px;
+}}
+
 .section-title {{
   font-weight: 600;
   margin: 15px 0 8px 0;
@@ -668,18 +637,19 @@ body {{
   color: var(--cost-color);
 }}
 
-.faction-rules h3, .spells-section h3 {{
-  color: #3498db !important;
+.role-section {{
+  background: rgba(240, 248, 255, 0.3);
+  padding: 10px;
+  border-radius: 6px;
+  margin: 10px 0;
+  border-left: 3px solid #3498db;
 }}
 
-.rule-name {{
+.role-title {{
+  font-weight: 600;
   color: #3498db;
-  font-weight: bold;
-}}
-
-.spell-name {{
-  color: #3498db;
-  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 14px;
 }}
 
 @media print {{
@@ -734,7 +704,11 @@ body {{
             weapons = [weapons]
 
         # Récupération des règles spéciales
-        special_rules = get_special_rules(unit)
+        special_rules = []
+        if "special_rules" in unit:
+            for rule in unit["special_rules"]:
+                if isinstance(rule, str):
+                    special_rules.append(rule)
 
         # Récupération des options et montures
         options = unit.get("options", {})
@@ -789,6 +763,59 @@ body {{
     </div>
 '''
 
+        # Rôles (pour les héros et titans) - MODIFICATION MINIMALE POUR AFFICHER LES ARMES DES RÔLES
+        if options:
+            for group_name, opts in options.items():
+                if isinstance(opts, list) and opts:
+                    for opt in opts:
+                        if "weapon" in opt:  # C'est un rôle avec des armes
+                            role_name = opt.get("name", "Rôle")
+                            role_weapons = opt.get("weapon", [])
+
+                            html += f'''
+    <div class="role-section">
+      <div class="role-title">Rôle: {esc(role_name)}</div>
+'''
+
+                            # Armes du rôle - AJOUT MINIMAL POUR AFFICHER LES ARMES DES RÔLES
+                            if role_weapons:
+                                if isinstance(role_weapons, list):
+                                    for weapon in role_weapons:
+                                        if isinstance(weapon, dict):
+                                            html += f'''
+        <div class="weapon-item" style="margin-left: 15px;">
+          <div class="weapon-name">{esc(weapon.get('name', 'Arme du rôle'))}</div>
+          <div class="weapon-stats">{format_weapon(weapon)}</div>
+        </div>
+'''
+                                else:
+                                    html += f'''
+        <div class="weapon-item" style="margin-left: 15px;">
+          <div class="weapon-name">{esc(role_weapons.get('name', 'Arme du rôle'))}</div>
+          <div class="weapon-stats">{format_weapon(role_weapons)}</div>
+        </div>
+'''
+
+                            # Règles spéciales du rôle
+                            if "special_rules" in opt:
+                                role_special_rules = opt["special_rules"]
+                                if role_special_rules:
+                                    html += '''
+      <div style="margin-left: 15px; margin-top: 5px;">
+        <div style="font-weight: 600; color: #3498db; font-size: 12px;">Règles spéciales:</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px;">
+'''
+                                    for rule in role_special_rules:
+                                        if isinstance(rule, str):
+                                            html += f'<span class="rule-tag">{esc(rule)}</span>'
+                                    html += '''
+        </div>
+      </div>
+'''
+                            html += '''
+    </div>
+'''
+
         # Règles spéciales
         if special_rules:
             html += '''
@@ -803,28 +830,6 @@ body {{
   </div>
 '''
 
-        # Améliorations sélectionnées
-        if options:
-            html += '''
-  <div class="upgrades-section">
-    <div class="rules-title">Améliorations sélectionnées:</div>
-'''
-            for group_name, opts in options.items():
-                if isinstance(opts, list) and opts:
-                    for opt in opts:
-                        html += f'''
-    <div class="upgrade-item">
-      <div class="upgrade-name">{esc(opt.get("name", ""))}</div>
-'''
-                        if 'special_rules' in opt and opt['special_rules']:
-                            html += f'<div style="font-size: 10px; color: var(--text-muted);">({", ".join(opt["special_rules"])})</div>'
-                        html += '''
-    </div>
-'''
-            html += '''
-  </div>
-'''
-
         # Monture
         if mount:
             mount_data = mount.get("mount", {})
@@ -832,8 +837,8 @@ body {{
             mount_weapons = mount_data.get("weapon", [])
 
             html += f'''
-    <div class="mount-section" style="background: rgba(150, 150, 150, 0.1); border: 1px solid rgba(150, 150, 150, 0.3);">
-        <div class="mount-title">
+    <div class="role-section" style="background: rgba(150, 150, 150, 0.1); border: 1px solid rgba(150, 150, 150, 0.3);">
+        <div class="role-title">
           <span>🐴</span>
           <span style="color: var(--text-main);">{mount_name}</span>
         </div>
@@ -894,67 +899,36 @@ body {{
             if len(all_rules) % 2 != 0:
                 half += 1
 
-            html += '<div class="rule-column" style="flex: 1; min-width: 300px; padding-right: 15px;">'
+            html += '<div style="flex: 1; min-width: 300px; padding-right: 15px;">'
             for rule in sorted(all_rules[:half], key=lambda x: x.get('name', '').lower().replace('é', 'e').replace('è', 'e')):
                 if isinstance(rule, dict):
                     html += f'''
-    <div class="rule-item">
-      <div class="rule-name" style="color: #3498db; font-weight: bold;">{esc(rule.get('name', ''))}:</div>
-      <div class="rule-description">{esc(rule.get('description', ''))}</div>
+    <div style="margin-bottom: 10px;">
+      <div style="color: #3498db; font-weight: bold;">{esc(rule.get('name', ''))}:</div>
+      <div style="font-size: 14px; color: var(--text-main);">{esc(rule.get('description', ''))}</div>
     </div>
 '''
             html += '</div>'
 
-            html += '<div class="rule-column" style="flex: 1; min-width: 300px; padding-left: 15px;">'
+            html += '<div style="flex: 1; min-width: 300px; padding-left: 15px;">'
             for rule in sorted(all_rules[half:], key=lambda x: x.get('name', '').lower().replace('é', 'e').replace('è', 'e')):
                 if isinstance(rule, dict):
                     html += f'''
-    <div class="rule-item">
-      <div class="rule-name" style="color: #3498db; font-weight: bold;">{esc(rule.get('name', ''))}:</div>
-      <div class="rule-description">{esc(rule.get('description', ''))}</div>
+    <div style="margin-bottom: 10px;">
+      <div style="color: #3498db; font-weight: bold;">{esc(rule.get('name', ''))}:</div>
+      <div style="font-size: 14px; color: var(--text-main);">{esc(rule.get('description', ''))}</div>
     </div>
 '''
             html += '</div>'
 
             html += '''
-  </div>
-</div>
-'''
-
-    # Légende des sorts de la faction
-    if sorted_army_list and hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
-        spells = st.session_state.faction_spells
-        all_spells = [{"name": name, "details": details} for name, details in spells.items() if isinstance(details, dict)]
-
-        if all_spells:
-            html += '''
-<div class="spells-section">
-  <h3 style="text-align: center; color: #3498db; border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 15px;">
-    Légende des sorts de la faction
-  </h3>
-  <div style="display: flex; flex-wrap: wrap;">
-    <div style="flex: 1; min-width: 100%;">
-'''
-            for spell in sorted(all_spells, key=lambda x: x['name'].lower().replace('é', 'e').replace('è', 'e')):
-                if isinstance(spell, dict):
-                    html += f'''
-      <div class="spell-item" style="margin-bottom: 12px;">
-        <div>
-          <span class="spell-name" style="color: #3498db; font-weight: bold;">{esc(spell.get('name', ''))}</span>
-          <span class="spell-cost"> ({spell.get('details', {}).get('cost', '?')})</span>
-        </div>
-        <div class="rule-description">{esc(spell.get('details', {}).get('description', ''))}</div>
-      </div>
-'''
-            html += '''
-    </div>
   </div>
 </div>
 '''
 
     html += '''
-<div style="text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-muted);">
-  Généré par OPR ArmyBuilder FR
+<div style="text-align: center; margin-top: 30px; font-size: 12px; color: var(--text-muted);">
+  Généré par OPR ArmyBuilder FR - {datetime.now().strftime('%d/%m/%Y %H:%M')}
 </div>
 </div>
 </body>
