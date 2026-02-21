@@ -1755,41 +1755,46 @@ if st.session_state.page == "army":
                                 ] + weapons
                             break
 
-        # RÔLES
-        elif group.get("type") == "role" and (unit.get("type") == "hero" or unit.get("unit_detail") == "titan"):
-            choices = ["Aucun rôle"]
+        # RÔLES - VERSION SPÉCIFIQUE POUR LES TITANS
+        elif group.get("type") == "role":
             opt_map = {}
+            choices = []
         
-            for o in group.get("options", []):
-                role_name = o.get('name', 'Rôle')
-                cost = o.get('cost', 0)
-                special_rules = o.get('special_rules', [])
+            # Pour les titans, on n'affiche pas "Aucun rôle" et on prend le premier rôle par défaut
+            if unit.get("unit_detail") == "titan":
+                # On commence directement avec les options disponibles
+                for o in group.get("options", []):
+                    role_name = o.get('name', 'Rôle')
+                    cost = o.get('cost', 0)
+                    special_rules = o.get('special_rules', [])
         
-                label = f"{role_name}"
-                if special_rules:
-                    rules_text = ", ".join(special_rules)
-                    label += f" | {rules_text}"
-                label += f" (+{cost} pts)"
+                    label = f"{role_name}"
+                    if special_rules:
+                        rules_text = ", ".join(special_rules)
+                        label += f" | {rules_text}"
+                    label += f" (+{cost} pts)"
         
-                choices.append(label)
-                opt_map[label] = o
+                    choices.append(label)
+                    opt_map[label] = o
         
-            # Utilisation de radio buttons pour les rôles (choix unique)
-            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
-            choice = st.radio(
-                group.get("group", "Rôle"),
-                choices,
-                index=choices.index(current) if current in choices else 0,
-                key=f"{unit_key}_{g_key}_role",
-                horizontal=True if len(choices) <= 4 else False  # Affichage horizontal si peu d'options
-            )
+                # Sélection par défaut : premier rôle (index 0)
+                default_choice = choices[0] if choices else ""
+                current = st.session_state.unit_selections[unit_key].get(g_key, default_choice)
         
-            st.session_state.unit_selections[unit_key][g_key] = choice
+                choice = st.radio(
+                    group.get("group", "Rôle"),
+                    choices,
+                    index=choices.index(current) if current in choices else 0,
+                    key=f"{unit_key}_{g_key}_role",
+                    horizontal=True if len(choices) <= 4 else False
+                )
         
-            if choice != "Aucun rôle":
+                st.session_state.unit_selections[unit_key][g_key] = choice
+        
+                # Toujours appliquer le rôle sélectionné (même si coût = 0)
                 for opt_label, opt in opt_map.items():
                     if opt_label == choice:
-                        upgrades_cost += opt["cost"]
+                        upgrades_cost += opt.get("cost", 0)  # Coût peut être 0
                         selected_options[group.get("group", "Rôle")] = [opt]
         
                         # Ajouter les armes du rôle à la liste des armes principales
@@ -1799,7 +1804,52 @@ if st.session_state.page == "army":
                                 weapons.extend(role_weapons)
                             elif isinstance(role_weapons, dict):
                                 weapons.append(role_weapons)
-                        break      
+                        break
+        
+            # Pour les héros normaux, on garde le comportement classique
+            else:
+                choices = ["Aucun rôle"]
+                opt_map = {}
+        
+                for o in group.get("options", []):
+                    role_name = o.get('name', 'Rôle')
+                    cost = o.get('cost', 0)
+                    special_rules = o.get('special_rules', [])
+        
+                    label = f"{role_name}"
+                    if special_rules:
+                        rules_text = ", ".join(special_rules)
+                        label += f" | {rules_text}"
+                    label += f" (+{cost} pts)"
+        
+                    choices.append(label)
+                    opt_map[label] = o
+        
+                current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
+                choice = st.radio(
+                    group.get("group", "Rôle"),
+                    choices,
+                    index=choices.index(current) if current in choices else 0,
+                    key=f"{unit_key}_{g_key}_role",
+                    horizontal=True if len(choices) <= 4 else False
+                )
+        
+                st.session_state.unit_selections[unit_key][g_key] = choice
+        
+                if choice != "Aucun rôle":
+                    for opt_label, opt in opt_map.items():
+                        if opt_label == choice:
+                            upgrades_cost += opt["cost"]
+                            selected_options[group.get("group", "Rôle")] = [opt]
+        
+                            # Ajouter les armes du rôle à la liste des armes principales
+                            if "weapon" in opt:
+                                role_weapons = opt.get("weapon", [])
+                                if isinstance(role_weapons, list):
+                                    weapons.extend(role_weapons)
+                                elif isinstance(role_weapons, dict):
+                                    weapons.append(role_weapons)
+                            break      
         
         # AMÉLIORATIONS D'ARME - SECTION CORRIGÉE
         elif group.get("type") == "weapon_upgrades":
