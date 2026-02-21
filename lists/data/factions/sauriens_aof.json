@@ -1514,7 +1514,7 @@
                                 "armor_piercing": 1,
                                 "special_rules": ["Explosion (3)"]
                             },
-                            "special_rules": ["Coriace (6)"]
+                            "coriace_bonus": 6
                         },
                         {"name": "Transport redoutable", "cost": 65, "special_rules": ["Coriace (6)", "Transport (21)"]}
                     ]
@@ -1530,7 +1530,7 @@
             "quality": 3,
             "defense": 3,
             "coriace": 6,
-            "special_rules": ["Blindé", "Coriace (6)", "Effrayant (1)", "Héros", "Primal", "Sans peur", "Unique"],
+            "special_rules": ["Vétéran balafré (Blindé)", "Effrayant (1)", "Héros", "Primal", "Sans peur", "Unique"],
             "weapon": [
                 {
                     "name": "Masses solaires",
@@ -1538,16 +1538,6 @@
                     "attacks": 8,
                     "armor_piercing": 2,
                     "special_rules": []
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "group": "Améliorations d'unité",
-                    "type": "upgrades",
-                    "description": "Améliorations disponibles pour l'unité",
-                    "options": [
-                        {"name": "Vétéran balafré", "cost": 0, "special_rules": ["Blindé"]}
-                    ]
                 }
             ]
         },
@@ -1560,7 +1550,7 @@
             "quality": 5,
             "defense": 6,
             "coriace": 3,
-            "special_rules": ["Arpenteur", "Coriace (3)", "Guérison", "Héros", "Lanceur de sorts (2)", "Primal", "Unique"],
+            "special_rules": ["Arpenteur", "Coriace (3)", "Don de guérison (Guérison)", "Héros", "Lanceur de sorts (2)", "Primal", "Unique"],
             "weapon": [
                 {
                     "name": "Sceptre céleste",
@@ -1568,16 +1558,6 @@
                     "attacks": 3,
                     "armor_piercing": 0,
                     "special_rules": ["Fléau"]
-                }
-            ],
-            "upgrade_groups": [
-                {
-                    "group": "Améliorations d'unité",
-                    "type": "upgrades",
-                    "description": "Améliorations disponibles pour l'unité",
-                    "options": [
-                        {"name": "Don de guérison", "cost": 0, "special_rules": ["Guérison"]}
-                    ]
                 }
             ]
         }
