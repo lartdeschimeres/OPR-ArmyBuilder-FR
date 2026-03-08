@@ -912,6 +912,45 @@ body {{
 
         html += '</div>'
 
+    # Dans la section des améliorations sélectionnées
+    if options:
+        html += '''
+      <div class="upgrades-section">
+        <div class="rules-title">Améliorations sélectionnées:</div>
+    '''
+        for group_name, opts in options.items():
+            if isinstance(opts, list) and opts:
+                for opt in opts:
+                    # Cas spécial pour les améliorations par figurine
+                    if "total_cost" in opt:
+                        html += f'''
+        <div class="upgrade-item">
+          <div class="upgrade-name">
+            {esc(opt.get("name", ""))} × {opt.get("count", 1)}
+            <span style="color: var(--cost-color); font-weight: bold; margin-left: 10px;">
+              {opt.get("total_cost", 0)} pts
+            </span>
+          </div>
+    '''
+                        if 'special_rules' in opt and opt['special_rules']:
+                            html += f'<div style="font-size: 10px; color: var(--text-muted);">({", ".join(opt["special_rules"])})</div>'
+                        html += '''
+        </div>
+    '''
+                    else:
+                        html += f'''
+        <div class="upgrade-item">
+          <div class="upgrade-name">{esc(opt.get("name", ""))}</div>
+    '''
+                        if 'special_rules' in opt and opt['special_rules']:
+                            html += f'<div style="font-size: 10px; color: var(--text-muted);">({", ".join(opt["special_rules"])})</div>'
+                        html += '''
+        </div>
+    '''
+        html += '''
+      </div>
+    '''
+    
     # Légende des règles spéciales de la faction
     if sorted_army_list and hasattr(st.session_state, 'faction_special_rules') and st.session_state.faction_special_rules:
         faction_rules = st.session_state.faction_special_rules
@@ -1882,6 +1921,72 @@ if st.session_state.page == "army":
                         weapons.append(opt["weapon"])
                     elif isinstance(opt["weapon"], list):
                         weapons.extend(opt["weapon"])
+
+        # NOUVEAU TYPE : AMÉLIORATIONS PAR FIGURINE (weapon_count)
+        elif group.get("type") == "weapon_count":
+            st.subheader(group.get("group", "Améliorations par figurine"))
+        
+            # Récupérer la taille de l'unité
+            unit_size = unit.get("size", 10)
+            if unit.get("type") == "hero":
+                unit_size = 1
+        
+            # Préparer les options
+            choices = ["Aucune amélioration"]
+            opt_map = {}
+        
+            for o in group.get("options", []):
+                weapon = o.get("weapon", {})
+                label = f"{o['name']} (+{o['cost']} pts/figurine, total: {o['cost'] * unit_size} pts)"
+                choices.append(label)
+                opt_map[label] = o
+        
+            # Sélection de l'amélioration
+            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
+            choice = st.radio(
+                "Amélioration par figurine",
+                choices,
+                index=choices.index(current) if current in choices else 0,
+                key=f"{unit_key}_{g_key}_weapon_count"
+            )
+        
+            st.session_state.unit_selections[unit_key][g_key] = choice
+        
+            # Si une amélioration est sélectionnée
+            if choice != choices[0]:
+                for opt_label, opt in opt_map.items():
+                    if opt_label == choice:
+                        # Calcul du coût total (coût par figurine × nombre de figurines)
+                        total_cost = opt["cost"] * unit_size
+                        upgrades_cost += total_cost
+        
+                        # Ajouter un compteur visible
+                        st.markdown(f"""
+                        <div style='margin: 10px 0; padding: 8px; background: #f8f9fa; border-radius: 4px;'>
+                            <strong>{opt['name']}</strong> × {unit_size} figurines =
+                            <strong style='color: #e74c3c;'>{total_cost} pts</strong>
+                        </div>
+                        """, unsafe_allow_html=True)
+        
+                        # Ajouter l'arme à la liste des armes
+                        if "weapon" in opt:
+                            # On ajoute l'arme une seule fois (ou on pourrait la dupliquer)
+                            if isinstance(opt["weapon"], dict):
+                                weapons.append(opt["weapon"])
+                            elif isinstance(opt["weapon"], list):
+                                weapons.extend(opt["weapon"])
+        
+                        # Stocker l'information pour l'export
+                        selected_options[group.get("group", "Améliorations")] = [
+                            {
+                                "name": opt["name"],
+                                "cost": opt["cost"],
+                                "total_cost": total_cost,
+                                "count": unit_size,
+                                "weapon": opt.get("weapon")
+                            }
+                        ]
+                        break
 
         # MONTURE
         elif group.get("type") == "mount":
