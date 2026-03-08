@@ -870,10 +870,19 @@
       "upgrade_groups": [
         {
           "group": "Remplacement d’arme par figurine",
-          "type": "weapon_count",
+          "type": "variable_weapon_count",
           "description": "Remplacer n'importe quel Epée et sceptre par :",
           "options": [
-            {"name": "Grand sceptre", "cost": 5, "weapon": {"name": "Grand sceptre", "attacks": 2, "armor_piercing": 1, "special_rules": ["Fléau"]}}
+            {
+              "name": "Grand sceptre", 
+              "cost_per_unit": 5,
+              "special_rules": ["Fléau"],
+              "max_count": {
+                "type": "size_based",
+                "value": 1  # 1 par figurine (max = taille de l'unité)
+               },
+               "min_count": 1
+            }
           ]
         },
         {
