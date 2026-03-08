@@ -8,7 +8,7 @@ import math
 st.set_page_config(
     page_title="OPR ArmyBuilder FR",
     layout="wide",
-    initial_sidebar_state="expanded"f
+    initial_sidebar_state="expanded"
 )
 
 # ======================================================
