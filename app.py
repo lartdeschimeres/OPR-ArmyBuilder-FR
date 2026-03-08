@@ -1092,9 +1092,15 @@ body {{
 
     # Légende des règles spéciales de la faction
     if sorted_army_list and hasattr(st.session_state, 'faction_special_rules') and st.session_state.faction_special_rules:
-        faction_rules = st.session_state.faction_special_rules
+        faction_rules = []
+        if isinstance(st.session_state.faction_special_rules, list):
+            faction_rules = [rule for rule in st.session_state.faction_special_rules if isinstance(rule, dict)]
+        elif isinstance(st.session_state.faction_special_rules, dict):
+            faction_rules = [{"name": name, "description": desc}
+                            for name, desc in st.session_state.faction_special_rules.items()]
+    
         all_rules = [rule for rule in faction_rules if isinstance(rule, dict)]
-
+    
         if all_rules:
             html += '''
 <div class="faction-rules">
