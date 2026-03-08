@@ -78,38 +78,44 @@
       "description": "Cette figurine et son unité obtiennent la règle spéciale Boost de Gardien."
     }
   ],
-  "spells": [
-    {
-      "name": "Shock Attack (1) [Attaque choc (1)]",
+  "spells": {
+    "Shock Attack (1) [Attaque choc (1)]": {
+      "cost": 1, 
       "description": "Choisissez une unité ennemie à 18” ou moins. Les unités amies obtiennent la règle spéciale Imparable une seule fois lorsqu'elles tirent contre cette unité (la prochaine fois que l'effet s'appliquerait).",
-      "level": 1
+      "range": "18\"",
+      "target": "1 unité ennemie"
     },
-    {
-      "name": "Thunder Clap (1) [Coup de tonnerre (1)]",
+    "Thunder Clap (1) [Coup de tonnerre (1)]": {
+      "cost": 1, 
       "description": "Choisissez une unité ennemie à 18” ou moins, qui subit 1 touche avec Fracas.",
-      "level": 1
+      "range": "18\"",
+      "target": "1 unité ennemie"
     },
-    {
-      "name": "Star Strike (2) [Frappe stellaire (2)]",
+    "Star Strike (2) [Frappe stellaire (2)]": {
+      "cost": 2,
       "description": "Choisissez jusqu'à deux unités amies à 12” ou moins, qui obtiennent une seule fois la règle spéciale Combattant imprévisible (la prochaine fois que l'effet s'appliquerait).",
-      "level": 2
+      "range": "12\"",
+      "target": "2 unités amies"
     },
-    {
-      "name": "Heavy Storm (2) [Violente tempête (2)]",
+    "Heavy Storm (2) [Violente tempête (2)]": {
+      "cost": 2,
       "description": "Choisissez jusqu'à deux unités ennemies à 9” ou moins, qui subissent quatre blessures chacune.",
-      "level": 2
+      "range": "9\"",
+      "target": "2 unités ennemies"
     },
-    {
-      "name": "Warding Cloud (3) [Nuage protecteur (3)]",
+    "Warding Cloud (3) [Nuage protecteur (3)]": {
+      "cost": 3,
       "description": "Choisissez jusqu'à trois unités amies à 12” ou moins, qui bénéficient une seule fois de la règle spéciale Boost de Gardien (la prochaine fois que l'effet s'appliquerait).",
-      "level": 3
+      "range": "12\"",
+      "target": "3 unités amies"
     },
-    {
-      "name": "Lightning Bolt (3) [Éclair (3)]",
+    "Lightning Bolt (3) [Éclair (3)]": {
+      "cost": 3,
       "description": "Choisissez une unité ennemie à 12” ou moins, qui subit six blessures avec PA (1) et Lacération.",
-      "level": 3
+      "range": "12\"",
+      "target": "1 unité ennemie"
     }
-  ],
+  },
   "units": [
     {
       "name": "Seigneur Éternel",
@@ -952,7 +958,7 @@
     },
     {
       "name": "Drake Éternel",
-      "type": "unit",
+      "type": "light_vehicle",
       "size": 1,
       "base_cost": 140,
       "quality": 3,
@@ -989,7 +995,7 @@
     },
     {
       "name": "Dragon Éternel",
-      "type": "unit",
+      "type": "light_vehicle",
       "size": 1,
       "base_cost": 175,
       "quality": 3,
@@ -1032,7 +1038,7 @@
     },
     {
       "name": "Char des Tempêtes",
-      "type": "unit",
+      "type": "vehicle",
       "size": 1,
       "base_cost": 200,
       "quality": 4,
@@ -1066,7 +1072,7 @@
     },
     {
       "name": "Artillerie des Éternels",
-      "type": "unit",
+      "type": "artillery",
       "size": 1,
       "base_cost": 115,
       "quality": 4,
