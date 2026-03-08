@@ -549,6 +549,7 @@ def export_html(army_list, army_name, army_limit):
             'unit': 'Unité de base',
             'light_vehicle': 'Véhicule léger',
             'vehicle': 'Véhicule/Monstre',
+            'artillery': 'artillerie',
             'titan': 'Titan'
         }
         return type_mapping.get(unit_detail, 'Unité')
@@ -1784,6 +1785,7 @@ if st.session_state.page == "army":
         "Unités de base": ["unit"],
         "Véhicules légers / Petits monstres": ["light_vehicle"],
         "Véhicules / Monstres": ["vehicle"],
+        "Artillerie": ["artillery"],
         "Titans": ["titan"]
     }
 
