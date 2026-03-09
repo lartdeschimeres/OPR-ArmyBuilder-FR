@@ -561,15 +561,15 @@
           "options": [
             {
               "name": "Javelot", 
-              "cost": 5, 
+              "cost": 5,
+              "tags": ["has_javelot"]
               "weapon": {
                 "name": "Javelot", 
                 "range": 12, 
                 "attacks": 2, 
                 "armor_piercing": 1, 
                 "special_rules": []
-              },
-              "tags": ["has_javelot"]
+              }
             },
             {
               "name": "Paire d’arme à une main Lourdes", 
