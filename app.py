@@ -2108,7 +2108,7 @@ if st.session_state.page == "army":
                     elif isinstance(opt["weapon"], list):
                         weapons.extend(opt["weapon"])
 
-        # AMÉLIORATIONS PAR FIGURINE (weapon_count - version améliorée)
+        # AMÉLIORATIONS PAR FIGURINE (weapon_count)
         elif group.get("type") == "weapon_count":
             st.subheader(group.get("group", "Améliorations par figurine"))
 
@@ -2256,31 +2256,35 @@ if st.session_state.page == "army":
         # AMÉLIORATIONS VARIABLES (variable_weapon_count - nouveau)
         elif group.get("type") == "variable_weapon_count":
             st.subheader(group.get("group", "Améliorations variables"))
-
+        
             # Récupérer les améliorations sélectionnées précédemment
             current_selection = st.session_state.unit_selections[unit_key].get(g_key, {})
-
+        
             # Pour chaque option d'amélioration
             for opt_idx, option in enumerate(group.get("options", [])):
-                st.subheader(f"Option: {option['name']}")
-                st.divider() 
-
+                # st.subheader(f"Option: {option['name']}", divider="gray50")  # À remplacer
+                st.markdown(f"""
+                <div style='margin-top: 15px; margin-bottom: 10px;'>
+                  <h4 style='color: #3498db;'>{option['name']}</h4>
+                </div>
+                """, unsafe_allow_html=True)
+        
                 # Calculer les options de compteur disponibles
                 choices, max_count = format_count_options(option, unit,
-                                                          current_selection.get(str(opt_idx), 0))
-
+                                                        current_selection.get(str(opt_idx), 0))
+        
                 # Créer un slider pour sélectionner le nombre
                 if choices:
                     labels = [c["label"] for c in choices]
                     current_value = current_selection.get(str(opt_idx), 0)
-
+        
                     # Trouver l'index du choix actuel
                     try:
                         current_index = next(i for i, c in enumerate(choices)
                                            if c["count"] == current_value)
                     except StopIteration:
                         current_index = 0
-
+        
                     # Sélecteur du nombre d'améliorations
                     selected = st.select_slider(
                         f"Nombre de {option['name']} (max: {max_count})",
@@ -2288,19 +2292,19 @@ if st.session_state.page == "army":
                         value=labels[current_index],
                         key=f"{unit_key}_{g_key}_{opt_idx}"
                     )
-
+        
                     # Mettre à jour la sélection
                     selected_choice = next(c for c in choices if c["label"] == selected)
                     current_selection[str(opt_idx)] = selected_choice["count"]
-
+        
                     # Mettre à jour le coût total
                     upgrades_cost += selected_choice["cost"]
-
+        
                     # Stocker les informations pour l'export
                     if selected_choice["count"] > 0:
                         if group.get("group", "Améliorations") not in selected_options:
                             selected_options[group.get("group", "Améliorations")] = []
-
+        
                         selected_options[group.get("group", "Améliorations")].append({
                             "name": option["name"],
                             "count": selected_choice["count"],
@@ -2309,20 +2313,20 @@ if st.session_state.page == "army":
                             "weapon": option.get("weapon"),
                             "special_rules": option.get("special_rules", [])
                         })
-
+        
             # Mettre à jour les sélections
             st.session_state.unit_selections[unit_key][g_key] = current_selection
-
-            # Afficher un résumé des améliorations sélectionnées
-            if current_selection:
+        
+            # Version modifiée : on n'affiche plus le rectangle de total
+            # ou on l'affiche de manière plus discrète
+            if current_selection and sum(current_selection.values()) > 0:
                 total_items = sum(current_selection.values())
-                total_cost = sum(c["cost"] for c in choices
-                                if c["count"] == current_selection.get(str(choices.index(c)), 0))
-
+                total_cost = sum(choices[i]["cost"] for i, c in enumerate(choices)
+                                if c["count"] == current_selection.get(str(i), 0))
+        
                 st.markdown(f"""
-                <div style='margin: 10px 0; padding: 8px; background: #f0f8ff; border-radius: 4px;'>
-                    <strong>Total:</strong> {total_items} amélioration(s) pour
-                    <strong style='color: #e74c3c;'>{total_cost} pts</strong>
+                <div style='margin: 5px 0; font-size: 0.8em; color: #6c757d;'>
+                    {total_items} amélioration(s) sélectionnée(s)
                 </div>
                 """, unsafe_allow_html=True)
         
