@@ -120,15 +120,17 @@
     {
       "name": "Seigneur Éternel",
       "type": "hero",
+      "unit_detail": "hero",
       "size": 1,
       "base_cost": 120,
       "quality": 3,
       "defense": 3,
-      "coriace_bonus": 6,
+      "coriace": 6,
       "special_rules": ["Gardien", "Héros", "Sans peur"],
       "weapons": [
         {
           "name": "Arme à une main lourde",
+          "range": "Mêlée",
           "attacks": 4,
           "armor_piercing": 2,
           "special_rules": []
@@ -154,11 +156,11 @@
           "type": "weapon",
           "description": "Remplacez l'arme à une main lourde par :",
           "options": [
-            {"name": "Grande Masse-tonnerre", "cost": 5, "weapon": {"name": "Grande Masse-tonnerre", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Grand Marteau-météore", "cost": 10, "weapon": {"name": "Grand Marteau-météore", "attacks": 2, "armor_piercing": 2, "special_rules": ["Mortel (3)"]}},
-            {"name": "Grande arme lourde", "cost": 15, "weapon": {"name": "Grande arme lourde", "attacks": 4, "armor_piercing": 4, "special_rules": []}},
-            {"name": "Lance lourde", "cost": 20, "weapon": {"name": "Lance lourde", "attacks": 4, "armor_piercing": 2, "special_rules": ["Percée"]}},
-            {"name": "Paire d’armes à une main lourdes", "cost": 40, "weapon": {"name": "Paire d’armes à une main lourde", "attacks": 8, "armor_piercing": 2, "special_rules": []}}
+            {"name": "Grande Masse-tonnerre", "cost": 5, "weapon": {"name": "Grande Masse-tonnerre", "range": "Mêlée", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}},
+            {"name": "Grand Marteau-météore", "cost": 10, "weapon": {"name": "Grand Marteau-météore", "range": "Mêlée", "attacks": 2, "armor_piercing": 2, "special_rules": ["Mortel (3)"]}},
+            {"name": "Grande arme lourde", "cost": 15, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 4, "armor_piercing": 4, "special_rules": []}},
+            {"name": "Lance lourde", "cost": 20, "weapon": {"name": "Lance lourde", "range": "Mêlée", "attacks": 4, "armor_piercing": 2, "special_rules": ["Percée"]}},
+            {"name": "Paire d’armes à une main lourdes", "cost": 40, "weapon": {"name": "Paire d’armes à une main lourde", "range": "Mêlée", "attacks": 8, "armor_piercing": 2, "special_rules": []}}
           ]
         },
         {
@@ -249,6 +251,7 @@
     {
       "name": "Chevalier Gardien",
       "type": "hero",
+      "unit_detail": "hero",
       "size": 1,
       "base_cost": 90,
       "quality": 4,
@@ -258,6 +261,7 @@
       "weapons": [
         {
           "name": "Épée et sceptre",
+          "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 1,
           "special_rules": ["Fléau"]
@@ -282,11 +286,11 @@
           "type": "weapon",
           "description": "Remplacez l'Epée et le sceptre par :",
           "options": [
-            {"name": "Arme à une main lourde", "cost": 0, "weapon": {"name": "Arme à une main lourde", "attacks": 4, "armor_piercing": 1, "special_rules": []}},
-            {"name": "Grand sceptre", "cost": 10, "weapon": {"name": "Grand sceptre", "attacks": 4, "armor_piercing": 1, "special_rules": ["Fléau"]}},
-            {"name": "Grande Masse-tonnerre", "cost": 15, "weapon": {"name": "Grande Masse-tonnerre", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Grande arme lourde", "cost": 15, "weapon": {"name": "Grande arme lourde", "attacks": 4, "armor_piercing": 3, "special_rules": []}},
-            {"name": "Paire d’armes à une main lourde", "cost": 30, "weapon": {"name": "Paire d’armes à une main lourde", "attacks": 8, "armor_piercing": 1, "special_rules": []}}
+            {"name": "Arme à une main lourde", "cost": 0, "weapon": {"name": "Arme à une main lourde", "range": "Mêlée", "attacks": 4, "armor_piercing": 1, "special_rules": []}},
+            {"name": "Grand sceptre", "cost": 10, "weapon": {"name": "Grand sceptre", "range": "Mêlée", "attacks": 4, "armor_piercing": 1, "special_rules": ["Fléau"]}},
+            {"name": "Grande Masse-tonnerre", "cost": 15, "weapon": {"name": "Grande Masse-tonnerre", "range": "Mêlée", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}},
+            {"name": "Grande arme lourde", "cost": 15, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 4, "armor_piercing": 3, "special_rules": []}},
+            {"name": "Paire d’armes à une main lourde", "cost": 30, "weapon": {"name": "Paire d’armes à une main lourde", "range": "Mêlée", "attacks": 8, "armor_piercing": 1, "special_rules": []}}
           ]
         },
         {
@@ -333,6 +337,7 @@
     {
       "name": "Gardien d’Élite",
       "type": "hero",
+      "unit_detail": "hero",
       "size": 1,
       "base_cost": 45,
       "quality": 4,
@@ -342,6 +347,7 @@
       "weapons": [
         {
           "name": "Arme à une main lourde",
+          "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 1,
           "special_rules": []
@@ -365,13 +371,13 @@
           "type": "weapon",
           "description": "Remplacez l'arme à une main lourde par :",
           "options": [
-            {"name": "Paire d’armes à une main lourde", "cost": 5, "weapon": {"name": "Paire d’armes à une main lourde", "attacks": 4, "armor_piercing": 1, "special_rules": []}},
-            {"name": "Hallebarde lourde", "cost": 5, "weapon": {"name": "Hallebarde lourde", "attacks": 3, "armor_piercing": 1, "special_rules": ["Perforant"]}},
-            {"name": "Grande arme lourde", "cost": 10, "weapon": {"name": "Grande arme lourde", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
+            {"name": "Paire d’armes à une main lourde", "cost": 5, "weapon": {"name": "Paire d’armes à une main lourde", "range": "Mêlée", "attacks": 4, "armor_piercing": 1, "special_rules": []}},
+            {"name": "Hallebarde lourde", "cost": 5, "weapon": {"name": "Hallebarde lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 1, "special_rules": ["Perforant"]}},
+            {"name": "Grande arme lourde", "cost": 10, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
           ]
         },
         {
-          "group": "Améliorations d’arme à distance",
+          "group": "Ajout d’une arme de tir",
           "type": "weapon",
           "description": "Améliorer le héros avec une arme à distance :",
           "options": [
@@ -392,15 +398,16 @@
     {
       "name": "Gardes",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 5,
       "base_cost": 75,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 0,
       "special_rules": ["Gardien", "Sans peur"],
       "weapons": [
         {
           "name": "Hallebarde lourde",
+          "range": "Mêlée",
           "attacks": 1,
           "armor_piercing": 1,
           "special_rules": ["Perforant"]
@@ -432,15 +439,17 @@
     {
       "name": "Gardiens",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 3,
       "base_cost": 130,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Gardien", "Furieux", "Sans peur"],
       "weapons": [
         {
           "name": "Arme à une main lourde",
+          "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 1,
           "special_rules": []
@@ -452,7 +461,7 @@
           "type": "weapon",
           "description": "Remplacez toutes les Armes à une main lourdes par :",
           "options": [
-            {"name": "Paire d’armes à une main lourdes", "cost": 45, "weapon": {"name": "Paire d’armes à une main lourdes", "attacks": 4, "armor_piercing": 1, "special_rules": []}}
+            {"name": "Paire d’armes à une main lourdes", "cost": 45, "weapon": {"name": "Paire d’armes à une main lourdes", "range": "Mêlée", "attacks": 4, "armor_piercing": 1, "special_rules": []}}
           ]
         },
         {
@@ -460,8 +469,8 @@
           "type": "weapon_upgrades",
           "description": "Remplacer une seule Arme à une main lourde par :",
           "options": [
-            {"name": "Masse-tonnerre", "cost": 5, "weapon": {"name": "Masse-tonnerre", "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Grande arme lourde", "cost": 20, "weapon": {"name": "Grande arme lourde", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
+            {"name": "Masse-tonnerre", "cost": 5, "weapon": {"name": "Masse-tonnerre", "range": "Mêlée", "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
+            {"name": "Grande arme lourde", "cost": 20, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
           ]
         },        
         {
@@ -480,15 +489,17 @@
     {
       "name": "Paladins",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 3,
       "base_cost": 130,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Gardien", "Combattant imprévisible", "Sans peur"],
       "weapons": [
         {
           "name": "Épée et sceptre",
+          "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 0,
           "special_rules": ["Fléau"]
@@ -500,8 +511,8 @@
           "type": "weapon",
           "description": "Remplacer toutes les Épées et sceptres par : ",
           "options": [
-            {"name": "Arme à une main", "cost": 5, "weapon": {"name": "Arme à une main", "attacks": 3, "armor_piercing": 0, "special_rules": []}},
-            {"name": "Grand sceptre", "cost": 10, "weapon": {"name": "Grand sceptre", "attacks": 2, "armor_piercing": 1, "special_rules": ["Fléau"]}}
+            {"name": "Arme à une main", "cost": 5, "weapon": {"name": "Arme à une main", "range": "Mêlée", "attacks": 3, "armor_piercing": 0, "special_rules": []}},
+            {"name": "Grand sceptre", "cost": 10, "weapon": {"name": "Grand sceptre", "range": "Mêlée", "attacks": 2, "armor_piercing": 1, "special_rules": ["Fléau"]}}
           ]
         },            
         {
@@ -509,8 +520,8 @@
           "type": "weapon_upgrades",
           "description": "Remplacer une seule Arme à une main lourde par :",
           "options": [
-            {"name": "Masse-tonnerre", "cost": 5, "weapon": {"name": "Masse-tonnerre", "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Grande arme lourde", "cost": 20, "weapon": {"name": "Grande arme lourde", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
+            {"name": "Masse-tonnerre", "cost": 5, "weapon": {"name": "Masse-tonnerre", "range": "Mêlée", "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
+            {"name": "Grande arme lourde", "cost": 20, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
           ]
         },
         {
@@ -526,15 +537,17 @@
     {
       "name": "Gardiens Ailés",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 3,
       "base_cost": 150,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Gardien", "Furieux", "Sans peur", "Volant"],
       "weapons": [
         {
           "name": "Arme à une main lourde",
+          "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 1,
           "special_rules": []
@@ -547,7 +560,7 @@
           "description": "Remplacer toutes les Armes à une main lourdes par :",
           "options": [
             {"name": "Javelot", "cost": 5, "weapon": {"name": "Javelot", "range": 12, "attacks": 2, "armor_piercing": 1, "special_rules": []}},
-            {"name": "Paire d’arme à une main Lourdes", "cost": 45, "weapon": {"name": "Paire d’arme à une main Lourdes", "attacks": 4, "armor_piercing": 1, "special_rules": []}}
+            {"name": "Paire d’arme à une main Lourdes", "cost": 45, "weapon": {"name": "Paire d’arme à une main Lourdes", "range": "Mêlée", "attacks": 4, "armor_piercing": 1, "special_rules": []}}
           ]
         },            
         {
@@ -555,8 +568,8 @@
           "type": "weapon_upgrades",
           "description": "Remplacer une seule arme à une main lourde par :",
           "options": [
-            {"name": "Masse-tonnerre", "cost": 5, "weapon": {"name": "Masse-tonnerre", "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Grande arme lourde", "cost": 10, "weapon": {"name": "Grande arme lourde", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
+            {"name": "Masse-tonnerre", "cost": 5, "weapon": {"name": "Masse-tonnerre", "range": "Mêlée", "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
+            {"name": "Grande arme lourde", "cost": 10, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
           ]
         },
         {
@@ -580,15 +593,17 @@
     {
       "name": "Prétoriens",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 3,
       "base_cost": 235,
       "quality": 3,
       "defense": 3,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Gardien", "Sans peur", "Tueur en mêlée"],
       "weapons": [
         {
           "name": "Hache-hallebarde",
+          "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 0,
           "special_rules": ["Fiable", "Perforant"]
@@ -598,6 +613,7 @@
     {
       "name": "Éternels",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 3,
       "base_cost": 195,
       "quality": 3,
@@ -607,6 +623,7 @@
       "weapons": [
         {
           "name": "Grande vouge",
+          "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 1,
           "special_rules": ["Perforant"]
@@ -618,8 +635,8 @@
           "type": "weapon",
           "description": "Remplacer toutes les Grandes vouges par :",
           "options": [
-            {"name": "Grade hache", "cost": 15, "weapon": {"name": "Grade hache", "attacks": 3, "armor_piercing": 1, "special_rules": ["Fiable"]}},
-            {"name": "Grand marteau", "cost": 25, "weapon": {"name": "Grand marteau", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
+            {"name": "Grade hache", "cost": 15, "weapon": {"name": "Grade hache", "range": "Mêlée", "attacks": 3, "armor_piercing": 1, "special_rules": ["Fiable"]}},
+            {"name": "Grand marteau", "cost": 25, "weapon": {"name": "Grand marteau", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
           ]
         },            
         {
@@ -627,8 +644,8 @@
           "type": "weapon_upgrades",
           "description": "Remplacer une seule Grande vouge par :",
           "options": [
-            {"name": "Paire de haches", "cost": 5, "weapon": {"name": "Paire de haches", "attacks": 4, "armor_piercing": 0, "special_rules": ["Fiable"]}},
-            {"name": "Grande masse-tonnerre", "cost": 15, "weapon": {"name": "Grande masse-tonnerre", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}}
+            {"name": "Paire de haches", "cost": 5, "weapon": {"name": "Paire de haches", "range": "Mêlée", "attacks": 4, "armor_piercing": 0, "special_rules": ["Fiable"]}},
+            {"name": "Grande masse-tonnerre", "cost": 15, "weapon": {"name": "Grande masse-tonnerre", "range": "Mêlée", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}}
           ]
         }
       ]
@@ -636,15 +653,17 @@
     {
       "name": "Fossoyeurs",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 3,
       "base_cost": 265,
       "quality": 3,
       "defense": 2,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Gardien", "Infiltration", "Lent", "Sans peur"],
       "weapons": [
         {
           "name": "Marteau-météore",
+          "range": "Mêlée",
           "attacks": 4,
           "armor_piercing": 2,
           "special_rules": []
@@ -656,8 +675,8 @@
           "type": "weapon_upgrades",
           "description": "Remplacer un seul Marteau-météore par :",
           "options": [
-            {"name": "Grande masse-tonnerre", "cost": 5, "weapon": {"name": "Grande masse-tonnerre", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Grand marteau-météore", "cost": 10, "weapon": {"name": "Grand marteau-météore", "attacks": 2, "armor_piercing": 2, "special_rules": ["Mortel (3)"]}}
+            {"name": "Grande masse-tonnerre", "cost": 5, "weapon": {"name": "Grande masse-tonnerre", "range": "Mêlée", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}},
+            {"name": "Grand marteau-météore", "cost": 10, "weapon": {"name": "Grand marteau-météore", "range": "Mêlée", "attacks": 2, "armor_piercing": 2, "special_rules": ["Mortel (3)"]}}
           ]
         }
       ]
@@ -665,11 +684,11 @@
     {
       "name": "Gardes Archers",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 5,
       "base_cost": 95,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 0,
       "special_rules": ["Gardien", "Sans peur"],
       "weapons": [
         {
@@ -681,6 +700,7 @@
         },
         {
           "name": "Arme à une main",
+          "range": "Mêlée",
           "attacks": 1,
           "armor_piercing": 0,
           "special_rules": []
@@ -700,6 +720,7 @@
     {
       "name": "Gardiens Tireurs",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 3,
       "base_cost": 175,
       "quality": 4,
@@ -716,6 +737,7 @@
         },
         {
           "name": "Arme à une main",
+          "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 0,
           "special_rules": []
@@ -746,11 +768,12 @@
     {
       "name": "Gardiens Chasseurs",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 3,
       "base_cost": 165,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Arpenteur", "Éclaireur", "Gardien", "Sans peur"],
       "weapons": [
         {
@@ -762,6 +785,7 @@
         },
         {
           "name": "Arme à une main",
+          "unit_detail": "unit",
           "attacks": 2,
           "armor_piercing": 0,
           "special_rules": []
@@ -771,11 +795,12 @@
     {
       "name": "Gardiens Tireurs d’élite",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 3,
       "base_cost": 205,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Gardien", "Sans peur"],
       "weapons": [
         {
@@ -787,6 +812,7 @@
         },
         {
           "name": "Arme à une main",
+          "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 0,
           "special_rules": []
@@ -798,7 +824,7 @@
           "type": "weapon",
           "description": "Remplacer toutes les Arbalète Cyclone par :",
           "options": [
-            {"name": "Arbalète-de précision", "cost": 105, "weapon": {"name": "Arbalète-de précision", "range": 24, "attacks": 2, "armor_piercing": 1, "special_rules": ["Élimination", "Fiable", "Perforant"]}}
+            {"name": "Arbalète-de précision", "cost": 105, "weapon": {"name": "Arbalète de précision", "range": 24, "attacks": 2, "armor_piercing": 1, "special_rules": ["Élimination", "Fiable", "Perforant"]}}
           ]
         },
         {
@@ -814,15 +840,17 @@
     {
       "name": "Faucons de Chasse",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 3,
       "base_cost": 115,
       "quality": 5,
       "defense": 5,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Embuscade", "Gardien", "Rapide", "Volant"],
       "weapons": [
         {
           "name": "Griffes perforantes",
+          "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 0,
           "special_rules": ["Perforant"]
@@ -832,15 +860,17 @@
     {
       "name": "Limiers Bestiaux",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 3,
       "base_cost": 140,
       "quality": 4,
       "defense": 5,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Arpenteur", "Chasse à l’Embuscade", "Gardien", "Rapide"],
       "weapons": [
         {
           "name": "Morsures vicieuses",
+          "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 1,
           "special_rules": []
@@ -860,11 +890,12 @@
     {
       "name": "Chasseurs sur Gryph",
       "type": "unit",
+      "unit_detail": "unit",
       "size": 3,
       "base_cost": 175,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Éclaireur", "Gardien", "Impact (2)", "Rapide", "Sans peur"],
       "weapons": [
         {
@@ -876,6 +907,7 @@
         },
         {
           "name": "Arme à une main",
+          "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 0,
           "special_rules": []
@@ -897,7 +929,7 @@
           "type": "weapon",
           "description": "Remplacer toutes les Armes à une main par :",
           "options": [
-            {"name": "Lance", "cost": 10, "weapon": {"name": "Lance", "attacks": 2, "armor_piercing": 0, "special_rules": ["Percée"]}},
+            {"name": "Lance", "cost": 10, "weapon": {"name": "Lance", "range": "Mêlée", "attacks": 2, "armor_piercing": 0, "special_rules": ["Percée"]}},
             {"name": "Pistolet arbalète", "cost": 20, "weapon": {"name": "Pistolet arbalète", "range": 12, "attacks": 2, "armor_piercing": 0, "special_rules": ["Perforant"]}},
             {"name": "Javelot", "cost": 20, "weapon": {"name": "Javelot", "range": 12, "attacks": 2, "armor_piercing": 1, "special_rules": []}}
           ]
@@ -911,17 +943,19 @@
       "base_cost": 200,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Arpenteur", "Combattant imprévisible", "Gardien", "Rapide", "Sans peur"],
       "weapons": [
         {
           "name": "Griffes lourdes",
+          "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 1,
           "special_rules": []
         },
         {
           "name": "Épée et sceptre",
+          "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 0,
           "special_rules": ["Fléau"]
@@ -936,7 +970,7 @@
             {
               "name": "Grand sceptre", 
               "cost_per_unit": 5,
-              "special_rules": ["Fléau"],
+              "special_rules": ["A2, PA (1), Fléau"],
               "max_count": {
                 "type": "size_based",
                 "value": 1
@@ -958,22 +992,25 @@
     },
     {
       "name": "Drake Éternel",
-      "type": "light_vehicle",
+      "type": "unit",
+      "unit_detail": "light_vehicle",
       "size": 1,
       "base_cost": 140,
       "quality": 3,
       "defense": 3,
-      "coriace_bonus": 6,
+      "coriace": 6,
       "special_rules": ["Attaque de souffle", "Gardien", "Rapide", "Sans peur"],
       "weapons": [
         {
           "name": "Griffes perforantes",
+          "range": "Mêlée",
           "attacks": 1,
           "armor_piercing": 0,
           "special_rules": ["Perforant"]
         },
         {
           "name": "Masse-tonnerre",
+          "range": "Mêlée",
           "attacks": 1,
           "armor_piercing": 4,
           "special_rules": ["Fracas"]
@@ -985,9 +1022,9 @@
           "type": "weapon",
           "description": "Remplacer la Masse-tonnerre par :",
           "options": [
-            {"name": "Grande vouge", "cost": 5, "weapon": {"name": "Grande vouge", "attacks": 3, "armor_piercing": 1, "special_rules": ["Perforant"]}},
-            {"name": "Grade hache", "cost": 15, "weapon": {"name": "Grade hache", "attacks": 3, "armor_piercing": 1, "special_rules": ["Fiable"]}},
-            {"name": "Grand marteau", "cost": 15, "weapon": {"name": "Grand marteau", "attacks": 3, "armor_piercing": 3, "special_rules": []}},
+            {"name": "Grande vouge", "cost": 5, "weapon": {"name": "Grande vouge", "range": "Mêlée", "attacks": 3, "armor_piercing": 1, "special_rules": ["Perforant"]}},
+            {"name": "Grade hache", "cost": 15, "weapon": {"name": "Grade hache", "range": "Mêlée", "attacks": 3, "armor_piercing": 1, "special_rules": ["Fiable"]}},
+            {"name": "Grand marteau", "cost": 15, "weapon": {"name": "Grand marteau", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}},
             {"name": "Arbalète à répétition", "cost": 20, "weapon": {"name": "Arbalète à répétition", "range": 12, "attacks": 4, "armor_piercing": 1, "special_rules": ["Perforant"]}}
           ]
         }
@@ -995,22 +1032,25 @@
     },
     {
       "name": "Dragon Éternel",
-      "type": "light_vehicle",
+      "type": "unit",
+      "unit_detail": "light_vehicle",
       "size": 1,
       "base_cost": 175,
       "quality": 3,
       "defense": 3,
-      "coriace_bonus": 6,
+      "coriace": 6,
       "special_rules": ["Attaque de souffle", "Effrayant (1)", "Gardien", "Sans peur", "Volant"],
       "weapons": [
         {
           "name": "Griffes lourdes",
+          "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 1,
           "special_rules": []
         },
         {
           "name": "Lance lourde",
+          "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 1,
           "special_rules": ["Percée"]
@@ -1022,8 +1062,8 @@
           "type": "weapon",
           "description": "Remplacer la Lance lourde par :",
           "options": [
-            {"name": "Grande arme lourde", "cost": 5, "weapon": {"name": "Grande arme lourde", "attacks": 3, "armor_piercing": 3, "special_rules": []}},
-            {"name": "Grande Masse-tonnerre", "cost": 5, "weapon": {"name": "Grande Masse-tonnerre", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}}
+            {"name": "Grande arme lourde", "cost": 5, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}},
+            {"name": "Grande Masse-tonnerre", "cost": 5, "weapon": {"name": "Grande Masse-tonnerre", "range": "Mêlée", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}}
           ]
         },
         {
@@ -1038,22 +1078,25 @@
     },
     {
       "name": "Char des Tempêtes",
-      "type": "vehicle",
+      "type": "unit",
+      "unit_detail": "vehicle",
       "size": 1,
       "base_cost": 200,
       "quality": 4,
       "defense": 3,
-      "coriace_bonus": 9,
+      "coriace": 9,
       "special_rules": ["Gardien", "Impact (6)", "Rapide", "Sans peur"],
       "weapons": [
         {
           "name": "Griffes lourdes",
+          "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 1,
           "special_rules": []
         },
         {
           "name": "Lance de l’équipage",
+          "range": "Mêlée",
           "attacks": 4,
           "armor_piercing": 0,
           "special_rules": ["Percée"]
@@ -1072,12 +1115,13 @@
     },
     {
       "name": "Artillerie des Éternels",
-      "type": "artillery",
+      "type": "unit",
+      "unit_detail": "artillery",
       "size": 1,
       "base_cost": 115,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Artillerie", "Gardien", "Sans peur"],
       "weapons": [
         {
@@ -1089,6 +1133,7 @@
         },
         {
           "name": "Attaque de l’équipage",
+          "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 0,
           "special_rules": []
