@@ -521,6 +521,8 @@ def check_weapon_conditions(unit_key, requirements):
 
     return False
 
+    return False
+
 # ======================================================
 # EXPORT HTML - VERSION CORRIGÉE
 # ======================================================
@@ -613,22 +615,6 @@ def export_html(army_list, army_name, army_limit):
 
     # Trier la liste pour afficher les héros en premier
     sorted_army_list = sorted(army_list, key=lambda x: 0 if x.get("type") == "hero" else 1)
-
-    # Conditional_weapon
-    elif "replaces" in opt and "requires" in opt:
-        html += f'''
-    <div class="upgrade-item">
-      <div class="upgrade-name">
-        {esc(opt.get("name", ""))}
-        <span style="color: var(--cost-color); font-weight: bold; margin-left: 10px;">
-          +{opt.get("cost", 0)} pts
-        </span>
-      </div>
-      <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">
-        Remplace: {", ".join(opt.get("replaces", []))}<br>
-        Requiert: {", ".join(opt.get("requires", []))}
-      </div>
-    '''
 
     html = f"""
 <!DOCTYPE html>
@@ -2065,14 +2051,14 @@ if st.session_state.page == "army":
         # NOUVEAU TYPE : REMPLACEMENT D'ARME CONDITIONNEL
         elif group.get("type") == "conditional_weapon":
             st.subheader(group.get("group", "Améliorations conditionnelles"))
-        
+    
             # Vérifier les conditions pour chaque option
             available_options = []
             for option in group.get("options", []):
                 requires = option.get("requires", [])
                 if not requires or check_weapon_conditions(unit_key, requires):
                     available_options.append(option)
-        
+    
             if not available_options:
                 st.markdown(f"""
                 <div style='color: #999; font-size: 0.9em; margin-bottom: 15px;'>
@@ -2080,18 +2066,18 @@ if st.session_state.page == "army":
                 </div>
                 """, unsafe_allow_html=True)
                 continue
-        
+    
             # Si des options sont disponibles, les afficher
             choices = ["Aucune amélioration"]
             opt_map = {}
-        
+    
             for o in available_options:
                 weapon = o.get("weapon", {})
                 if isinstance(weapon, dict):
                     label = format_weapon_option(weapon, o.get("cost", 0))
                     choices.append(label)
                     opt_map[label] = o
-        
+    
             current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
             choice = st.radio(
                 group.get("group", "Amélioration conditionnelle"),
@@ -2099,13 +2085,13 @@ if st.session_state.page == "army":
                 index=choices.index(current) if current in choices else 0,
                 key=f"{unit_key}_{g_key}_conditional"
             )
-        
+    
             st.session_state.unit_selections[unit_key][g_key] = choice
-        
+    
             if choice != choices[0]:
                 opt = opt_map[choice]
                 upgrades_cost += opt.get("cost", 0)
-        
+    
                 # Ajouter l'arme d'amélioration
                 if "weapon" in opt:
                     weapon_upgrades.append(opt["weapon"])
