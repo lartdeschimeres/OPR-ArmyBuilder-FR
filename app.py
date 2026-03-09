@@ -2262,7 +2262,8 @@ if st.session_state.page == "army":
 
             # Pour chaque option d'amélioration
             for opt_idx, option in enumerate(group.get("options", [])):
-                st.subheader(f"Option: {option['name']}", divider="gray50")
+                st.subheader(f"Option: {option['name']}")
+                st.divider() 
 
                 # Calculer les options de compteur disponibles
                 choices, max_count = format_count_options(option, unit,
