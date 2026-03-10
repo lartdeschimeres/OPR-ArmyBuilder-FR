@@ -2071,42 +2071,32 @@ if st.session_state.page == "army":
             # Séparer les options disponibles et non disponibles
             available_options = []
             unavailable_options = []
-        
+    
             for option in group.get("options", []):
                 requires = option.get("requires", [])
                 if not requires or check_dependencies(unit_key, requires):
                     available_options.append(option)
                 else:
                     unavailable_options.append(option)
-        
+    
             # Afficher les options disponibles
             if available_options:
-                choices = ["Aucune amélioration"]
-                opt_map = {}
-        
-                for o in available_options:
-                    weapon = o.get("weapon", {})
-                    label = format_weapon_option(weapon, o.get("cost", 0))
-                    choices.append(label)
-                    opt_map[label] = o
-        
-                current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
-                choice = st.radio(
-                    group.get("group", "Amélioration conditionnelle"),
-                    choices,
-                    index=choices.index(current) if current in choices else 0,
-                    key=f"{unit_key}_{g_key}_conditional"
-                )
-        
-                if choice != choices[0]:
-                    opt = opt_map[choice]
-                    upgrades_cost += opt.get("cost", 0)
-                    if "weapon" in opt:
-                        weapon_upgrades.append(opt["weapon"])
-                        if isinstance(opt["weapon"], dict):
-                            weapons.append(opt["weapon"])
-                        elif isinstance(opt["weapon"], list):
-                            weapons.extend(opt["weapon"])
+                # ... [votre code pour afficher les options disponibles] ...
+    
+            # Afficher les options non disponibles
+            if unavailable_options:
+                st.markdown("""
+                <div style='margin-top: 10px;'>
+                    <strong>Options non disponibles (dépendances non satisfaites) :</strong>
+                </div>
+                """, unsafe_allow_html=True)
+                for opt in unavailable_options:
+                    requires = ", ".join(opt.get("requires", []))
+                    st.markdown(f"""
+                    <div style='color: #999; font-size: 0.9em; margin-left: 20px;'>
+                        • {opt['name']} (nécessite : {requires})
+                    </div>
+                """, unsafe_allow_html=True)
 
     # Afficher les options non disponibles (avec explication)
     if unavailable_options:
@@ -2203,7 +2193,7 @@ if st.session_state.page == "army":
                             weapons.append(role_weapons)
                     break      
         
-        # AMÉLIORATIONS D'ARME - SECTION CORRIGÉE
+        # AMÉLIORATIONS D'ARME
         elif group.get("type") == "weapon_upgrades":
             choices = ["Aucune amélioration d'arme"]
             opt_map = {}
