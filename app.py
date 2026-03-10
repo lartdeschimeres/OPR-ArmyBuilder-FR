@@ -1846,6 +1846,97 @@ if st.session_state.page == "army":
                             weapons.append(role_weapons)
                     break
 
+        # AMÉLIORATIONS PAR FIGURINE (variable_weapon_count)
+        elif group.get("type") == "variable_weapon_count":
+            st.subheader(group.get("group", "Améliorations par figurine"))
+        
+            # Récupérer la taille de l'unité
+            unit_size = unit.get("size", 10)
+            if unit.get("type") == "hero":
+                unit_size = 1
+        
+            # Préparer les options
+            choices = ["Aucun remplacement"]
+            opt_map = {}
+        
+            for o in group.get("options", []):
+                weapon = o.get("weapon", {})
+                cost = o.get("cost_per_unit", 0)
+                label = f"{o['name']} (+{cost} pts/figurine)"
+        
+                # Ajouter information sur ce qui est remplacé
+                if "replaces" in o:
+                    label += f" (remplace: {', '.join(o['replaces'])})"
+        
+                choices.append(label)
+                opt_map[label] = o
+        
+            # Sélection de l'amélioration
+            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
+            choice = st.radio(
+                group.get("group", "Remplacement par figurine"),
+                choices,
+                index=choices.index(current) if current in choices else 0,
+                key=f"{unit_key}_{g_key}_weapon_count"
+            )
+        
+            st.session_state.unit_selections[unit_key][g_key] = choice
+        
+            # Si une amélioration est sélectionnée
+            if choice != choices[0]:
+                opt = opt_map[choice]
+                max_count = calculate_max_count(unit, opt.get("max_count", {"type": "fixed", "value": 1}))
+                min_count = opt.get("min_count", 0)
+        
+                # Créer un slider pour sélectionner le nombre
+                count = st.slider(
+                    f"Nombre de {opt['name']} (max: {max_count})",
+                    min_value=min_count,
+                    max_value=max_count,
+                    value=min_count,
+                    key=f"{unit_key}_{g_key}_count"
+                )
+        
+                # Calcul du coût total
+                total_cost = count * opt["cost_per_unit"]
+                upgrades_cost += total_cost
+        
+                # Afficher le coût total
+                st.markdown(f"""
+                <div style='margin: 10px 0; padding: 8px; background: #f8f9fa; border-radius: 4px;'>
+                    <strong>{opt['name']}</strong> × {count} figurines =
+                    <strong style='color: #e74c3c;'>{total_cost} pts</strong>
+                </div>
+                """, unsafe_allow_html=True)
+        
+                # Remplacer les armes concernées
+                if "replaces" in opt and count > 0:
+                    # Trouver les armes à remplacer
+                    weapons_to_replace = []
+                    for weapon in weapons:
+                        if weapon.get("name") in opt["replaces"]:
+                            weapons_to_replace.append(weapon)
+        
+                    # Limiter le nombre de remplacements
+                    weapons_to_replace = weapons_to_replace[:count]
+        
+                    # Remplacer les armes
+                    for weapon in weapons_to_replace:
+                        weapons.remove(weapon)
+                        weapons.append(opt["weapon"])
+        
+                # Stocker l'information pour l'export
+                selected_options[group.get("group", "Améliorations")] = [
+                    {
+                        "name": opt["name"],
+                        "count": count,
+                        "cost_per_unit": opt["cost_per_unit"],
+                        "total_cost": total_cost,
+                        "weapon": opt.get("weapon"),
+                        "replaces": opt.get("replaces", [])
+                    }
+                ]
+        
         # AMÉLIORATIONS D'ARME
         elif group.get("type") == "weapon_upgrades":
             choices = ["Aucune amélioration d'arme"]
