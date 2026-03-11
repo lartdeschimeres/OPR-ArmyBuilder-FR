@@ -706,7 +706,7 @@ body {{
       {sum(unit['cost'] for unit in sorted_army_list)}/{army_limit} pts
     </div>
   </div>
-"""
+""",
 
     for unit in sorted_army_list:
         name = esc(unit.get("name", "Unité"))
@@ -1039,7 +1039,7 @@ def load_factions():
     return factions, sorted(games) if games else list(GAME_CONFIG.keys())
 
 # ======================================================
-# PAGE 1 – CONFIGURATION AVEC IMAGES DE FOND LOCALES (version finale)
+# PAGE 1 – CONFIGURATION AVEC IMAGES DE FOND LOCALES
 # ======================================================
 if st.session_state.page == "setup":
     # Définition des images pour chaque jeu + image par défaut
@@ -1243,7 +1243,7 @@ if st.session_state.page == "setup":
             st.rerun()
 
 # ======================================================
-# FONCTIONS UTILITAIRES POUR LA PAGE 2 (corrigées)
+# FONCTIONS UTILITAIRES POUR LA PAGE 2
 # ======================================================
 def format_weapon_profile(weapon):
     """Formate le profil complet d'une arme avec portée avant Aa"""
@@ -1683,24 +1683,23 @@ if st.session_state.page == "army":
         st.subheader(group.get("group", "Améliorations"))
 
         # ARMES
-        # Dans la section "Remplacement d'armes" du constructeur d'armée
         if group.get("type") == "weapon":
             choices = []
             base_weapons = unit.get("weapon", [])
-        
+
             # Ajouter les armes de base comme première option
             if isinstance(base_weapons, list) and base_weapons:
                 base_weapons_labels = []
                 for weapon in base_weapons:
                     base_weapons_labels.append(weapon.get('name', 'Arme'))
-        
+
                 if len(base_weapons_labels) == 1:
                     choices.append(format_weapon_option(base_weapons[0]))
                 else:
                     choices.append(" et ".join(base_weapons_labels))
             elif isinstance(base_weapons, dict):
                 choices.append(format_weapon_option(base_weapons))
-        
+
             # Ajouter les options de remplacement
             opt_map = {}
             for o in group.get("options", []):
@@ -1712,7 +1711,7 @@ if st.session_state.page == "army":
                     label = format_weapon_option(weapon, o['cost'])
                 choices.append(label)
                 opt_map[label] = o
-        
+
             # Si on a des choix à afficher
             if choices:
                 current = st.session_state.unit_selections[unit_key].get(g_key, choices[0] if choices else "Aucune arme")
@@ -1722,31 +1721,22 @@ if st.session_state.page == "army":
                     index=choices.index(current) if current in choices else 0,
                     key=f"{unit_key}_{g_key}_weapon",
                 )
-        
+
                 st.session_state.unit_selections[unit_key][g_key] = choice
-        
-                # Ajout d'un slider pour choisir le nombre d'armes
+
+                # Gérer le choix de l'utilisateur
                 if choice != choices[0]:
-                    num_weapons = st.slider(
-                        "Nombre d'armes",
-                        min_value=1,
-                        max_value=unit.get("size", 1),
-                        value=1,
-                        key=f"{unit_key}_{g_key}_weapon_count"
-                    )
-        
-                    # Gérer le choix de l'utilisateur
                     for opt_label, opt in opt_map.items():
                         if opt_label == choice:
-                            weapon_cost += opt["cost"] * num_weapons
-        
+                            weapon_cost += opt["cost"]
+
                             # Si c'est une arme simple
                             if not isinstance(opt["weapon"], list):
-                                weapons = [opt["weapon"]] * num_weapons
+                                weapons = [opt["weapon"]]
                             # Si c'est une arme combinée
                             else:
-                                weapons = opt["weapon"] * num_weapons
-        
+                                weapons = opt["weapon"]
+
                             # Vérifier si on doit remplacer une arme spécifique
                             if "replaces" in opt:
                                 # Filtrer les armes de base pour enlever celles à remplacer
@@ -1756,11 +1746,11 @@ if st.session_state.page == "army":
                                 ] + weapons
                             break
 
-        # RÔLES - MODIFICATION MINIMALE POUR L'AFFICHAGE EN COLONNE DES TITANS
+        # RÔLES
         elif group.get("type") == "role":
             choices = []
             opt_map = {}
-        
+
             # Pour les titans, on n'affiche pas "Aucun rôle" et on prend le premier rôle par défaut
             if unit.get("unit_detail") == "titan":
                 # On commence directement avec les options disponibles
@@ -1768,48 +1758,47 @@ if st.session_state.page == "army":
                     role_name = o.get('name', 'Rôle')
                     cost = o.get('cost', 0)
                     special_rules = o.get('special_rules', [])
-        
+
                     label = f"{role_name}"
                     if special_rules:
                         rules_text = ", ".join(special_rules)
                         label += f" | {rules_text}"
                     label += f" (+{cost} pts)"
-        
+
                     choices.append(label)
                     opt_map[label] = o
-        
+
                 # Sélection par défaut : premier rôle (index 0)
                 default_choice = choices[0] if choices else ""
                 current = st.session_state.unit_selections[unit_key].get(g_key, default_choice)
-        
+
                 # Affichage en colonne (sans horizontal=True)
                 choice = st.radio(
                     group.get("group", "Rôle"),
                     choices,
                     index=choices.index(current) if current in choices else 0,
                     key=f"{unit_key}_{g_key}_role"
-                    # Pas de horizontal=True pour afficher en colonne
                 )
-        
+
             # Pour les héros normaux, on garde le comportement classique
             else:
                 choices = ["Aucun rôle"]
                 opt_map = {}
-        
+
                 for o in group.get("options", []):
                     role_name = o.get('name', 'Rôle')
                     cost = o.get('cost', 0)
                     special_rules = o.get('special_rules', [])
-        
+
                     label = f"{role_name}"
                     if special_rules:
                         rules_text = ", ".join(special_rules)
                         label += f" | {rules_text}"
                     label += f" (+{cost} pts)"
-        
+
                     choices.append(label)
                     opt_map[label] = o
-        
+
                 current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
                 choice = st.radio(
                     group.get("group", "Rôle"),
@@ -1818,15 +1807,15 @@ if st.session_state.page == "army":
                     key=f"{unit_key}_{g_key}_role",
                     horizontal=True if len(choices) <= 4 else False
                 )
-        
+
             st.session_state.unit_selections[unit_key][g_key] = choice
-        
+
             # Le reste de la logique reste identique pour les deux cas
             for opt_label, opt in opt_map.items():
                 if opt_label == choice:
                     upgrades_cost += opt.get("cost", 0)
                     selected_options[group.get("group", "Rôle")] = [opt]
-        
+
                     # Ajouter les armes du rôle à la liste des armes principales
                     if "weapon" in opt:
                         role_weapons = opt.get("weapon", [])
@@ -1834,142 +1823,21 @@ if st.session_state.page == "army":
                             weapons.extend(role_weapons)
                         elif isinstance(role_weapons, dict):
                             weapons.append(role_weapons)
-                    break      
-        
-    # ARMES A NOMBRE VARIABLE
-        elif group.get("type") == "variable_weapon_count":
-            st.subheader(group.get("group", "Améliorations variables"))
-        
-            # Récupérer les améliorations sélectionnées précédemment
-            current_selection = st.session_state.unit_selections[unit_key].get(g_key, {})
-        
-            # Pour chaque option d'amélioration
-            for opt_idx, option in enumerate(group.get("options", [])):
-                st.markdown(f"""
-                <div style='margin-top: 15px; margin-bottom: 10px;'>
-                  <h4 style='color: #3498db;'>{option['name']}</h4>
-                </div>
-                """, unsafe_allow_html=True)
-        
-                # Vérifier si l'option a des conditions
-                requires = option.get("requires", [])
-                if requires and not check_weapon_conditions(unit_key, requires):
-                    st.markdown(f"""
-                    <div style='color: #999; font-size: 0.9em; margin-bottom: 15px;'>
-                        {option['name']} <em>(Non disponible - nécessite {', '.join(requires)})</em>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    continue
-        
-                # Calculer les options de compteur disponibles
-                max_count = unit.get("size", 1)
-                if "max_count" in option:
-                    max_count = option["max_count"].get("value", max_count)
-        
-                min_count = option.get("min_count", 0)
-        
-                # Créer un slider pour sélectionner le nombre
-                count = st.slider(
-                    f"Nombre de {option['name']} (max: {max_count})",
-                    min_value=min_count,
-                    max_value=max_count,
-                    value=min_count,
-                    key=f"{unit_key}_{g_key}_count_{opt_idx}"
-                )
-        
-                # Calcul du coût total
-                total_cost = count * option["cost"]
-                upgrades_cost += total_cost
-        
-                # Afficher le coût total
-                st.markdown(f"""
-                <div style='margin: 10px 0; padding: 8px; background: #f8f9fa; border-radius: 4px;'>
-                    <strong>{option['name']}</strong> × {count} figurines =
-                    <strong style='color: #e74c3c;'>{total_cost} pts</strong>
-                </div>
-                """, unsafe_allow_html=True)
-        
-                # Remplacer les armes concernées
-                if "replaces" in option and count > 0:
-                    # Trouver les armes à remplacer
-                    weapons_to_replace = []
-                    for weapon in weapons:
-                        if weapon.get("name") in option["replaces"]:
-                            weapons_to_replace.append(weapon)
-        
-                    # Limiter le nombre de remplacements
-                    weapons_to_replace = weapons_to_replace[:count]
-        
-                    # Remplacer les armes
-                    for weapon in weapons_to_replace:
-                        weapons.remove(weapon)
-                        weapons.append(option["weapon"])
-        
-                # Stocker l'information pour l'export
-                selected_options[group.get("group", "Améliorations")] = [
-                    {
-                        "name": option["name"],
-                        "count": count,
-                        "cost_per_unit": option["cost"],
-                        "total_cost": total_cost,
-                        "weapon": option.get("weapon"),
-                        "replaces": option.get("replaces", [])
-                    }
-                ]    
-        
-    # AMÉLIORATIONS D'ARME - SECTION CORRIGÉE
-        elif group.get("type") == "weapon_upgrades":
-            choices = ["Aucune amélioration d'arme"]
-            opt_map = {}
-        
+                    break
+
+        # AMÉLIORATIONS D'UNITÉ
+        elif group.get("type") == "upgrades":
             for o in group.get("options", []):
-                weapon = o.get("weapon", {})
-                if isinstance(weapon, dict):
-                    # Formatage complet avec toutes les caractéristiques
-                    name = weapon.get('name', 'Arme')
-                    attacks = weapon.get('attacks', '?')
-                    ap = weapon.get('armor_piercing', '?')
-                    range_text = weapon.get('range', 'Mêlée')
-                    special_rules = weapon.get('special_rules', [])
-        
-                    # Construction du label avec toutes les infos
-                    profile = f"{name} ({range_text}, A{attacks}"
-                    if ap not in ("-", 0, "0", None):
-                        profile += f"/PA{ap}"
-                    profile += ")"
-        
-                    if special_rules:
-                        profile += f" [{', '.join(special_rules)}]"
-        
-                    label = f"{profile} (+{o['cost']} pts)"
-                else:
-                    label = f"{o['name']} (+{o['cost']} pts)"
-        
-                choices.append(label)
-                opt_map[label] = o
-        
-            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
-            choice = st.radio(
-                "Amélioration d'arme",
-                choices,
-                index=choices.index(current) if current in choices else 0,
-                key=f"{unit_key}_{g_key}_weapon_upgrade",
-            )
-        
-            st.session_state.unit_selections[unit_key][g_key] = choice
-        
-            if choice != "Aucune amélioration d'arme":
-                opt = opt_map[choice]
-                upgrades_cost += opt["cost"]
-        
-                # Ajouter l'arme d'amélioration à la liste des armes principales
-                if "weapon" in opt:
-                    weapon_upgrades.append(opt["weapon"])
-                    # Ajouter aussi à la liste des armes principales pour l'affichage
-                    if isinstance(opt["weapon"], dict):
-                        weapons.append(opt["weapon"])
-                    elif isinstance(opt["weapon"], list):
-                        weapons.extend(opt["weapon"])
+                opt_key = f"{unit_key}_{g_key}_{o['name']}"
+                checked = st.checkbox(
+                    f"{o['name']} (+{o['cost']} pts)",
+                    value=st.session_state.unit_selections[unit_key].get(opt_key, False),
+                    key=opt_key,
+                )
+                st.session_state.unit_selections[unit_key][opt_key] = checked
+                if checked:
+                    upgrades_cost += o["cost"]
+                    selected_options.setdefault(group.get("group", "Options"), []).append(o)
 
         # MONTURE
         elif group.get("type") == "mount":
@@ -1995,28 +1863,15 @@ if st.session_state.page == "army":
                 mount = opt_map[choice]
                 mount_cost = mount["cost"]
 
-        # OPTIONS NORMALES
-        else:
-            for o in group.get("options", []):
-                opt_key = f"{unit_key}_{g_key}_{o['name']}"
-                checked = st.checkbox(
-                    f"{o['name']} (+{o['cost']} pts)",
-                    value=st.session_state.unit_selections[unit_key].get(opt_key, False),
-                    key=opt_key,
-                )
-                st.session_state.unit_selections[unit_key][opt_key] = checked
-                if checked:
-                    upgrades_cost += o["cost"]
-                    selected_options.setdefault(group.get("group", "Options"), []).append(o)
-
     # Option unité combinée
     multiplier = 1
     if unit.get("type") != "hero" and unit.get("size", 1) > 1:
         if st.checkbox("Unité combinée"):
             multiplier = 2
 
+    # Calcul du coût total
     base_cost = unit.get("base_cost", 0)
-    final_cost = (base_cost + weapon_cost + upgrades_cost) * multiplier + mount_cost
+    final_cost = (base_cost + weapon_cost) * multiplier + upgrades_cost + mount_cost
 
     st.subheader("Coût de l'unité sélectionnée")
     st.markdown(f"**Coût total :** {final_cost} pts")
