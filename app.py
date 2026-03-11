@@ -336,8 +336,19 @@ def check_weapon_conditions(unit_key, requires):
     if not requires:
         return True
 
-    # Récupérer les armes actuelles de l'unité
-    current_weapons = st.session_state.unit_selections.get(unit_key, {}).get("weapon", [])
+    # Récupérer les armes actuellement sélectionnées
+    current_weapons = []
+    for selection in st.session_state.unit_selections.get(unit_key, {}).values():
+        if isinstance(selection, dict) and "weapon" in selection:
+            weapon = selection["weapon"]
+            if isinstance(weapon, dict):
+                current_weapons.append(weapon)
+            elif isinstance(weapon, list):
+                current_weapons.extend(weapon)
+        elif isinstance(selection, str) and selection != "Aucune amélioration" and selection != "Aucune arme":
+            # Extraire le nom de l'arme depuis la sélection
+            weapon_name = selection.split(" (")[0]
+            current_weapons.append({"name": weapon_name})
 
     # Vérifier si les armes requises sont présentes
     for req in requires:
@@ -494,23 +505,26 @@ def export_html(army_list, army_name, army_limit):
         """Formate une arme pour l'affichage avec ses règles spéciales"""
         if not weapon:
             return "Aucune arme"
-
+    
         range_text = weapon.get('range', '-')
         attacks = weapon.get('attacks', '-')
         ap = weapon.get('armor_piercing', '-')
         special_rules = weapon.get('special_rules', [])
-
-        if range_text == "-" or range_text is None or range_text.lower() == "mêlée":
+    
+        # Gérer le cas où range_text est un entier
+        if isinstance(range_text, (int, float)):
+            range_text = str(range_text) + "''"
+        elif range_text == "-" or range_text is None or str(range_text).lower() == "mêlée":
             range_text = "Mêlée"
-
+    
         result = f"{range_text} | A{attacks}"
-
+    
         if ap not in ("-", 0, "0", None):
             result += f" | PA{ap}"
-
+    
         if special_rules:
             result += f" | {', '.join(special_rules)}"
-
+    
         return result
 
     def get_special_rules(unit):
@@ -866,11 +880,11 @@ body {{
             for weapon in weapons:
                 if weapon and isinstance(weapon, dict):
                     html += f'''
-    <div class="weapon-item">
-      <div class="weapon-name">{esc(weapon.get('name', 'Arme'))}</div>
-      <div class="weapon-stats">{format_weapon(weapon)}</div>
-    </div>
-'''
+            <div class="weapon-item">
+              <div class="weapon-name">{esc(weapon.get('name', 'Arme'))}</div>
+              <div class="weapon-stats">{format_weapon(weapon)}</div>
+            </div>
+        '''
 
         # Rôles (pour les héros et titans)
         if options:
@@ -1888,15 +1902,15 @@ if st.session_state.page == "army":
     
         # AMÉLIORATIONS D'ARME CONDITIONNELLES
         elif group.get("type") == "conditional_weapon":
-            st.subheader(group.get("group", "Amélioration d'arme"))  # Un seul titre
-    
+            st.subheader(group.get("group", "Amélioration d'arme"))
+        
             # Vérifier les conditions pour chaque option
             available_options = []
             for opt_idx, option in enumerate(group.get("options", [])):
                 requires = option.get("requires", [])
                 if not requires or check_weapon_conditions(unit_key, requires):
                     available_options.append(option)
-    
+        
             if not available_options:
                 st.markdown(f"""
                 <div style='color: #999; font-size: 0.9em; margin-bottom: 15px;'>
@@ -1907,13 +1921,13 @@ if st.session_state.page == "army":
                 # Si des options sont disponibles, les afficher
                 choices = ["Aucune amélioration"]
                 opt_map = {}
-    
+        
                 for o in available_options:
                     weapon = o.get("weapon", {})
                     label = format_weapon_option(weapon, o.get("cost", 0))
                     choices.append(label)
                     opt_map[label] = o
-    
+        
                 current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
                 choice = st.radio(
                     group.get("description", "Sélectionnez une amélioration"),
@@ -1921,9 +1935,9 @@ if st.session_state.page == "army":
                     index=choices.index(current) if current in choices else 0,
                     key=f"{unit_key}_{g_key}_conditional_{opt_idx}"
                 )
-    
+        
                 st.session_state.unit_selections[unit_key][g_key] = choice
-    
+        
                 if choice != choices[0]:
                     opt = opt_map[choice]
                     upgrades_cost += opt.get("cost", 0)
