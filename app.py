@@ -877,17 +877,23 @@ body {{
         # Armes (y compris celles des rôles)
         if weapons:
             html += '<div class="section-title">Armes:</div>'
+            weapon_counts = {}
             for weapon in weapons:
                 if weapon and isinstance(weapon, dict):
-                    html += f'''
+                    weapon_name = weapon.get('name', 'Arme')
+                    weapon_counts[weapon_name] = weapon_counts.get(weapon_name, 0) + 1
+        
+            for weapon_name, count in weapon_counts.items():
+                weapon = next(w for w in weapons if w.get('name') == weapon_name)
+                html += f'''
             <div class="weapon-item">
-              <div class="weapon-name">{esc(weapon.get('name', 'Arme'))}</div>
+              <div class="weapon-name">{esc(weapon_name)}{" ×" + str(count) if count > 1 else ""}</div>
               <div class="weapon-stats">{format_weapon(weapon)}</div>
             </div>
         '''
 
-        # Rôles (pour les héros et titans)
-        if options:
+        # Rôles (pour les héros et titans uniquement)
+        if options and unit.get("type") in ["hero", "titan"]:
             for group_name, opts in options.items():
                 if isinstance(opts, list) and opts:
                     for opt in opts:
@@ -895,31 +901,31 @@ body {{
                             role_name = opt.get("name", "Rôle")
                             role_weapons = opt.get("weapon", [])
                             role_special_rules = opt.get("special_rules", [])
-
+        
                             html += f'''
-    <div class="role-section">
-      <div class="role-title">Rôle: {esc(role_name)}</div>
-'''
-
+            <div class="role-section">
+              <div class="role-title">Rôle: {esc(role_name)}</div>
+        '''
+        
                             # Armes du rôle
                             if role_weapons:
                                 if isinstance(role_weapons, list):
                                     for weapon in role_weapons:
                                         if isinstance(weapon, dict):
                                             html += f'''
-        <div class="weapon-item" style="margin-left: 15px;">
-          <div class="weapon-name">{esc(weapon.get('name', 'Arme du rôle'))}</div>
-          <div class="weapon-stats">{format_weapon(weapon)}</div>
-        </div>
-'''
+                <div class="weapon-item" style="margin-left: 15px;">
+                  <div class="weapon-name">{esc(weapon.get('name', 'Arme du rôle'))}</div>
+                  <div class="weapon-stats">{format_weapon(weapon)}</div>
+                </div>
+        '''
                                 else:
                                     html += f'''
-        <div class="weapon-item" style="margin-left: 15px;">
-          <div class="weapon-name">{esc(role_weapons.get('name', 'Arme du rôle'))}</div>
-          <div class="weapon-stats">{format_weapon(role_weapons)}</div>
-        </div>
-'''
-
+                <div class="weapon-item" style="margin-left: 15px;">
+                  <div class="weapon-name">{esc(role_weapons.get('name', 'Arme du rôle'))}</div>
+                  <div class="weapon-stats">{format_weapon(role_weapons)}</div>
+                </div>
+        '''
+        
                             # Règles spéciales du rôle (hors armes)
                             role_rules_to_show = []
                             for rule in role_special_rules:
@@ -936,25 +942,25 @@ body {{
                                         elif isinstance(role_weapons, dict) and "special_rules" in role_weapons:
                                             if rule in role_weapons["special_rules"]:
                                                 is_weapon_rule = True
-
+        
                                     if not is_weapon_rule:
                                         role_rules_to_show.append(rule)
-
+        
                             if role_rules_to_show:
                                 html += '''
-      <div style="margin-left: 15px; margin-top: 5px;">
-        <div style="font-weight: 600; color: #3498db; font-size: 12px;">Règles spéciales:</div>
-        <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px;">
-'''
+              <div style="margin-left: 15px; margin-top: 5px;">
+                <div style="font-weight: 600; color: #3498db; font-size: 12px;">Règles spéciales:</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px;">
+        '''
                                 for rule in role_rules_to_show:
                                     html += f'<span class="rule-tag">{esc(rule)}</span>'
                                 html += '''
-        </div>
-      </div>
-'''
+                </div>
+              </div>
+        '''
                             html += '''
-    </div>
-'''
+            </div>
+        '''
 
         # Règles spéciales (hors armes et hors règles des rôles déjà affichées)
         if special_rules:
@@ -1819,13 +1825,13 @@ if st.session_state.page == "army":
                             weapons.append(role_weapons)
                     break
     
-        # AMÉLIORATIONS D'ARME A NOMBRE VARIABLE
+       # AMÉLIORATIONS D'ARME A NOMBRE VARIABLE
         elif group.get("type") == "variable_weapon_count":
             st.subheader(group.get("group", "Améliorations variables"))
-    
+        
             # Récupérer les améliorations sélectionnées précédemment
             current_selection = st.session_state.unit_selections[unit_key].get(g_key, {})
-    
+        
             # Pour chaque option d'amélioration
             for opt_idx, option in enumerate(group.get("options", [])):
                 st.markdown(f"""
@@ -1833,7 +1839,7 @@ if st.session_state.page == "army":
                   <h4 style='color: #3498db;'>{option['name']}</h4>
                 </div>
                 """, unsafe_allow_html=True)
-    
+        
                 # Vérifier si l'option a des conditions
                 requires = option.get("requires", [])
                 if requires and not check_weapon_conditions(unit_key, requires):
@@ -1843,14 +1849,14 @@ if st.session_state.page == "army":
                     </div>
                     """, unsafe_allow_html=True)
                     continue
-    
+        
                 # Calculer les options de compteur disponibles
                 max_count = unit.get("size", 1)
                 if "max_count" in option:
                     max_count = option["max_count"].get("value", max_count)
-    
+        
                 min_count = option.get("min_count", 0)
-    
+        
                 # Créer un slider pour sélectionner le nombre
                 count = st.slider(
                     f"Nombre de {option['name']} (max: {max_count})",
@@ -1859,11 +1865,11 @@ if st.session_state.page == "army":
                     value=min_count,
                     key=f"{unit_key}_{g_key}_count_{opt_idx}_{option['name']}",
                 )
-    
+        
                 # Calcul du coût total
                 total_cost = count * option["cost"]
                 upgrades_cost += total_cost
-    
+        
                 # Afficher le coût total
                 st.markdown(f"""
                 <div style='margin: 10px 0; padding: 8px; background: #f8f9fa; border-radius: 4px;'>
@@ -1871,7 +1877,7 @@ if st.session_state.page == "army":
                     <strong style='color: #e74c3c;'>{total_cost} pts</strong>
                 </div>
                 """, unsafe_allow_html=True)
-    
+        
                 # Remplacer les armes concernées
                 if "replaces" in option and count > 0:
                     # Trouver les armes à remplacer
@@ -1879,15 +1885,15 @@ if st.session_state.page == "army":
                     for weapon in weapons:
                         if weapon.get("name") in option["replaces"]:
                             weapons_to_replace.append(weapon)
-    
+        
                     # Limiter le nombre de remplacements
                     weapons_to_replace = weapons_to_replace[:count]
-    
+        
                     # Remplacer les armes
                     for weapon in weapons_to_replace:
                         weapons.remove(weapon)
                         weapons.append(option["weapon"])
-    
+        
                 # Stocker l'information pour l'export
                 selected_options[group.get("group", "Améliorations")] = [
                     {
@@ -2043,11 +2049,11 @@ if st.session_state.page == "army":
             "defense": unit.get("defense"),
             "weapon": weapons,
             "weapon_upgrades": weapon_upgrades,
-            "options": selected_options,
+            "options": selected_options if unit.get("type") in ["hero", "titan"] else {},
             "mount": mount,
             "special_rules": all_special_rules,
             "coriace": coriace_total
-        }
+        }}
 
         # Ajout d'une mention pour la monture si elle apporte de la Coriace
         if mount and "coriace_bonus" in mount.get("mount", {}):
