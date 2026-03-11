@@ -922,7 +922,7 @@ body {{
                 weapon = next(w for w in weapons if w.get('name') == weapon_name)
                 html += f'''
             <div class="weapon-item">
-              <div class="weapon-name">{unit.get('size', 10)}x {esc(weapon_name)}</div>
+              <div class="weapon-name">{count}x {esc(weapon_name)}</div>
               <div class="weapon-stats">{format_weapon(weapon)}</div>
             </div>
         '''
@@ -1927,9 +1927,10 @@ if st.session_state.page == "army":
                     weapons_to_replace = weapons_to_replace[:count]
         
                     # Remplacer les armes
-                    for weapon in weapons_to_replace:
-                        base_weapons.remove(weapon)
-                        base_weapons.append(option["weapon"])
+                    for _ in range(count):
+                        if weapons_to_replace:
+                            base_weapons.remove(weapons_to_replace.pop(0))
+                            base_weapons.append(option["weapon"])
         
                 # Stocker l'information pour l'export
                 selected_options[group.get("group", "Améliorations")] = [
@@ -1988,7 +1989,11 @@ if st.session_state.page == "army":
                     opt = opt_map[choice]
                     upgrades_cost += opt.get("cost", 0)
                     if "weapon" in opt:
-                        weapon_upgrades.append(opt["weapon"])
+                        # Remplacer une seule arme
+                        for weapon in weapons:
+                            if weapon.get("name") in opt.get("replaces", []):
+                                weapons.remove(weapon)
+                                break
                         if isinstance(opt["weapon"], dict):
                             weapons.append(opt["weapon"])
                         elif isinstance(opt["weapon"], list):
