@@ -1001,7 +1001,7 @@
           "options": [
             {
               "name": "Grand sceptre",
-              "cost_per_unit": 5,
+              "cost": 5,
               "weapon": {
                 "name": "Grand sceptre",
                 "range": "Mêlée",
