@@ -1836,7 +1836,88 @@ if st.session_state.page == "army":
                             weapons.append(role_weapons)
                     break      
         
-        # AMÉLIORATIONS D'ARME - SECTION CORRIGÉE
+    # ARMES A NOMBRE VARIABLE
+    elif group.get("type") == "variable_weapon_count":
+        st.subheader(group.get("group", "Améliorations variables"))
+    
+        # Récupérer les améliorations sélectionnées précédemment
+        current_selection = st.session_state.unit_selections[unit_key].get(g_key, {})
+    
+        # Pour chaque option d'amélioration
+        for opt_idx, option in enumerate(group.get("options", [])):
+            st.markdown(f"""
+            <div style='margin-top: 15px; margin-bottom: 10px;'>
+              <h4 style='color: #3498db;'>{option['name']}</h4>
+            </div>
+            """, unsafe_allow_html=True)
+    
+            # Vérifier si l'option a des conditions
+            requires = option.get("requires", [])
+            if requires and not check_weapon_conditions(unit_key, requires):
+                st.markdown(f"""
+                <div style='color: #999; font-size: 0.9em; margin-bottom: 15px;'>
+                    {option['name']} <em>(Non disponible - nécessite {', '.join(requires)})</em>
+                </div>
+                """, unsafe_allow_html=True)
+                continue
+    
+            # Calculer les options de compteur disponibles
+            max_count = unit.get("size", 1)
+            if "max_count" in option:
+                max_count = option["max_count"].get("value", max_count)
+    
+            min_count = option.get("min_count", 0)
+    
+            # Créer un slider pour sélectionner le nombre
+            count = st.slider(
+                f"Nombre de {option['name']} (max: {max_count})",
+                min_value=min_count,
+                max_value=max_count,
+                value=min_count,
+                key=f"{unit_key}_{g_key}_count_{opt_idx}"
+            )
+    
+            # Calcul du coût total
+            total_cost = count * option["cost"]
+            upgrades_cost += total_cost
+    
+            # Afficher le coût total
+            st.markdown(f"""
+            <div style='margin: 10px 0; padding: 8px; background: #f8f9fa; border-radius: 4px;'>
+                <strong>{option['name']}</strong> × {count} figurines =
+                <strong style='color: #e74c3c;'>{total_cost} pts</strong>
+            </div>
+            """, unsafe_allow_html=True)
+    
+            # Remplacer les armes concernées
+            if "replaces" in option and count > 0:
+                # Trouver les armes à remplacer
+                weapons_to_replace = []
+                for weapon in weapons:
+                    if weapon.get("name") in option["replaces"]:
+                        weapons_to_replace.append(weapon)
+    
+                # Limiter le nombre de remplacements
+                weapons_to_replace = weapons_to_replace[:count]
+    
+                # Remplacer les armes
+                for weapon in weapons_to_replace:
+                    weapons.remove(weapon)
+                    weapons.append(option["weapon"])
+    
+            # Stocker l'information pour l'export
+            selected_options[group.get("group", "Améliorations")] = [
+                {
+                    "name": option["name"],
+                    "count": count,
+                    "cost_per_unit": option["cost"],
+                    "total_cost": total_cost,
+                    "weapon": option.get("weapon"),
+                    "replaces": option.get("replaces", [])
+                }
+            ]    
+        
+    # AMÉLIORATIONS D'ARME - SECTION CORRIGÉE
         elif group.get("type") == "weapon_upgrades":
             choices = ["Aucune amélioration d'arme"]
             opt_map = {}
