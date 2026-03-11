@@ -1690,7 +1690,6 @@ if st.session_state.page == "army":
         
             # Ajouter les armes de base comme première option
             if isinstance(base_weapons, list) and base_weapons:
-                # Créer un label pour les armes de base
                 base_weapons_labels = []
                 for weapon in base_weapons:
                     base_weapons_labels.append(weapon.get('name', 'Arme'))
@@ -1707,7 +1706,6 @@ if st.session_state.page == "army":
             for o in group.get("options", []):
                 weapon = o.get("weapon", {})
                 if isinstance(weapon, list):
-                    # Cas spécial pour les armes combinées
                     weapon_names = [w.get('name', 'Arme') for w in weapon]
                     label = " et ".join(weapon_names) + f" (+{o['cost']} pts)"
                 else:
@@ -1727,18 +1725,27 @@ if st.session_state.page == "army":
         
                 st.session_state.unit_selections[unit_key][g_key] = choice
         
-                # Gérer le choix de l'utilisateur
+                # Ajout d'un slider pour choisir le nombre d'armes
                 if choice != choices[0]:
+                    num_weapons = st.slider(
+                        "Nombre d'armes",
+                        min_value=1,
+                        max_value=unit.get("size", 1),
+                        value=1,
+                        key=f"{unit_key}_{g_key}_weapon_count"
+                    )
+        
+                    # Gérer le choix de l'utilisateur
                     for opt_label, opt in opt_map.items():
                         if opt_label == choice:
-                            weapon_cost += opt["cost"]
+                            weapon_cost += opt["cost"] * num_weapons
         
                             # Si c'est une arme simple
                             if not isinstance(opt["weapon"], list):
-                                weapons = [opt["weapon"]]
+                                weapons = [opt["weapon"]] * num_weapons
                             # Si c'est une arme combinée
                             else:
-                                weapons = opt["weapon"]
+                                weapons = opt["weapon"] * num_weapons
         
                             # Vérifier si on doit remplacer une arme spécifique
                             if "replaces" in opt:
