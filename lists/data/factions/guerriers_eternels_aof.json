@@ -1011,7 +1011,7 @@
               },
               "max_count": {
                 "type": "size_based",
-                "value": 1
+                "value": 3
               },
               "min_count": 0,
               "replaces": ["Épée et sceptre"]
