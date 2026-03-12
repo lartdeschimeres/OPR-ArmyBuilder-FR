@@ -570,7 +570,7 @@ body {{
       {sum(unit['cost'] for unit in sorted_army_list)}/{army_limit} pts
     </div>
   </div>
-""")
+"""
 
     for unit in sorted_army_list:
         name = esc(unit.get("name", "Unité"))
