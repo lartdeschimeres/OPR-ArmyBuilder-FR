@@ -1291,17 +1291,6 @@ if st.session_state.page == "army":
                     # Affichage SANS le coût après le nom
                     st.markdown(f"**{spell_name}**: {spell_details.get('description', '')}")
 
-    # Dans la section d'affichage des sorts de la faction (page 2)
-    if hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
-        with st.expander("✨ Sorts de la faction", expanded=False):
-            for spell_name, spell_details in st.session_state.faction_spells.items():
-                if isinstance(spell_details, dict):
-                    # Suppression du "(x pts)" après le nom du sort
-                    st.markdown(f"**{spell_name}**: {spell_details.get('description', '')}")
-                    # Affichage des points séparément si nécessaire
-                    if 'cost' in spell_details:
-                        st.markdown(f"*Coût: {spell_details.get('cost', '?')} pts*")
-
     # Liste de l'Armée
     st.subheader("Liste de l'Armée")
     if not st.session_state.army_list:
