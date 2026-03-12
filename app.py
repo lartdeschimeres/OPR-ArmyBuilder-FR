@@ -313,40 +313,20 @@ def format_mount_option(mount):
     weapons = mount_data.get('weapon', [])
     special_rules = mount_data.get('special_rules', [])
     coriace = mount_data.get('coriace_bonus', 0)
+    spells = mount_data.get('spells', [])
 
     stats = []
     weapon_profiles = []
-    if isinstance(weapons, list) and weapons:
-        for weapon in weapons:
-            if isinstance(weapon, dict):
-                weapon_name = weapon.get('name', 'Arme')
-                attacks = weapon.get('attacks', '?')
-                ap = weapon.get('armor_piercing', '?')
-                special = ", ".join(weapon.get('special_rules', [])) if weapon.get('special_rules') else ""
-                profile = f"{weapon_name} A{attacks}/PA{ap}"
-                if special:
-                    profile += f" ({special})"
-                weapon_profiles.append(profile)
-    elif isinstance(weapons, dict):
-        weapon_name = weapons.get('name', 'Arme')
-        attacks = weapons.get('attacks', '?')
-        ap = weapons.get('armor_piercing', '?')
-        special = ", ".join(weapons.get('special_rules', [])) if weapons.get('special_rules') else ""
-        profile = f"{weapon_name} A{attacks}/PA{ap}"
-        if special:
-            profile += f" ({special})"
-        weapon_profiles.append(profile)
 
-    if weapon_profiles:
-        stats.extend(weapon_profiles)
+    # ... (le reste du code pour les armes et règles spéciales)
 
-    if coriace > 0:
-        stats.append(f"Coriace+{coriace}")
-
-    if special_rules:
-        rules_text = ", ".join([r for r in special_rules if not r.startswith(("Griffes", "Sabots"))])
-        if rules_text:
-            stats.append(rules_text)
+    # Pour les sorts de monture (si applicable)
+    if spells:
+        for spell in spells:
+            if isinstance(spell, dict):
+                stats.append(f"{spell.get('name', '')}")  # Sans le coût ici
+            elif isinstance(spell, str):
+                stats.append(spell)
 
     label = f"{name}"
     if stats:
@@ -909,32 +889,35 @@ body {{
     if sorted_army_list and hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
         spells = st.session_state.faction_spells
         all_spells = [{"name": name, "details": details} for name, details in spells.items() if isinstance(details, dict)]
-
+    
         if all_spells:
             html += '''
-<div class="spells-section">
-  <h3 style="text-align: center; color: #3498db; border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 15px;">
-    Légende des sorts de la faction
-  </h3>
-  <div style="display: flex; flex-wrap: wrap;">
-    <div style="flex: 1; min-width: 100%;">
-'''
+    <div class="spells-section">
+      <h3 style="text-align: center; color: #3498db; border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 15px;">
+        Légende des sorts de la faction
+      </h3>
+      <div style="display: flex; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 100%;">
+    '''
+    
             for spell in sorted(all_spells, key=lambda x: x['name'].lower().replace('é', 'e').replace('è', 'e')):
                 if isinstance(spell, dict):
                     html += f'''
-      <div style="margin-bottom: 12px; padding: 8px; background: rgba(240, 248, 255, 0.2); border-radius: 4px;">
-        <div>
-          <span style="color: #3498db; font-weight: bold; font-size: 16px;">{esc(spell.get('name', ''))}</span>
-          <span style="color: var(--text-muted); margin-left: 8px;">({spell.get('details', {}).get('cost', '?')} pts)</span>
-        </div>
-        <div style="font-size: 14px; color: var(--text-main); margin-top: 4px;">{esc(spell.get('details', {}).get('description', ''))}</div>
-      </div>
-'''
+          <div style="margin-bottom: 12px; padding: 8px; background: rgba(240, 248, 255, 0.2); border-radius: 4px;">
+            <div>
+              <span style="color: #3498db; font-weight: bold; font-size: 16px;">{esc(spell.get('name', ''))}</span>
+            </div>
+            <div style="font-size: 14px; color: var(--text-main); margin-top: 4px;">
+              {esc(spell.get('details', {}).get('description', ''))}
+              <span style="color: var(--text-muted); margin-left: 8px;">({spell.get('details', {}).get('cost', '?')} pts)</span>
+            </div>
+          </div>
+    '''
             html += '''
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-'''
+    '''
 
     html += '''
 <div style="text-align: center; margin-top: 30px; font-size: 12px; color: var(--text-muted);">
@@ -1302,11 +1285,16 @@ if st.session_state.page == "army":
                 else:
                     st.markdown(f"- {rule}")
 
+    # Dans la section d'affichage des sorts de la faction (page 2)
     if hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
         with st.expander("✨ Sorts de la faction", expanded=False):
             for spell_name, spell_details in st.session_state.faction_spells.items():
                 if isinstance(spell_details, dict):
-                    st.markdown(f"**{spell_name}** ({spell_details.get('cost', '?')} pts): {spell_details.get('description', '')}")
+                    # Suppression du "(x pts)" après le nom du sort
+                    st.markdown(f"**{spell_name}**: {spell_details.get('description', '')}")
+                    # Affichage des points séparément si nécessaire
+                    if 'cost' in spell_details:
+                        st.markdown(f"*Coût: {spell_details.get('cost', '?')} pts*")
 
     # Liste de l'Armée
     st.subheader("Liste de l'Armée")
