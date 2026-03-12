@@ -403,23 +403,41 @@ def export_html(army_list, army_name, army_limit):
         return type_mapping.get(unit_detail, 'Unité')
 
     def format_weapon_html(weapon):
-        """Formate une arme pour l'affichage HTML"""
+        """Formate une arme pour l'affichage HTML avec mentions spéciales"""
         if not weapon:
             return ""
-
+    
+        weapon_name = esc(weapon.get('name', 'Arme'))
         range_text = weapon.get('range', '-')
         attacks = weapon.get('attacks', '-')
         ap = weapon.get('armor_piercing', '-')
         special_rules = weapon.get('special_rules', [])
-
+    
         if isinstance(range_text, (int, float)):
             range_text = f'{range_text}"'
         elif range_text == "-" or range_text is None or str(range_text).lower() == "mêlée":
             range_text = "Mêlée"
-
+    
         rules_text = ", ".join(special_rules) if special_rules else "-"
-
-        return f"{esc(weapon.get('name', 'Arme'))} | {range_text} | A{attacks} | PA{ap} | {esc(rules_text)}"
+    
+        # Ajouter les mentions spéciales
+        mention = ""
+        if weapon.get("_conditional", False):
+            mention = " (un seul exemplaire)"
+        elif "_count" in weapon:
+            count = weapon.get("_count", 1)
+            mention = f" ({count} exemplaires)"
+    
+        # Ajouter l'arme de base entre parenthèses si elle existe
+        base_weapon_mention = ""
+        if "_base_weapon" in weapon:
+            base_weapon_names = weapon.get("_base_weapon", [])
+            if isinstance(base_weapon_names, list) and base_weapon_names:
+                base_weapon_mention = f" (remplace {', '.join(base_weapon_names)})"
+            elif isinstance(base_weapon_names, str):
+                base_weapon_mention = f" (remplace {base_weapon_names})"
+    
+        return f"{weapon_name}{mention}{base_weapon_mention} | {range_text} | A{attacks} | PA{ap} | {esc(rules_text)}"
 
     # Trier la liste pour afficher les héros en premier
     sorted_army_list = sorted(army_list, key=lambda x: 0 if x.get("type") == "hero" else 1)
@@ -748,62 +766,41 @@ body {{
         # Deuxième ligne : Armes
         if weapons:
             html += '''
-  <div class="weapon-list">
-    <div style="font-weight: 600; margin-bottom: 5px; color: var(--accent);">Armes :</div>
-'''
+          <div class="weapon-list">
+            <div style="font-weight: 600; margin-bottom: 5px; color: var(--accent);">Armes :</div>
+        '''
+            # D'abord afficher les armes de base qui n'ont pas été remplacées
+            base_weapons_shown = set()
             for weapon in weapons:
                 if weapon and isinstance(weapon, dict):
+                    # Afficher l'arme de base si elle n'a pas été remplacée
+                    if "_base_weapon" in weapon:
+                        base_weapons = weapon.get("_base_weapon", [])
+                        if isinstance(base_weapons, list):
+                            for base_weapon_name in base_weapons:
+                                if base_weapon_name not in base_weapons_shown:
+                                    # Trouver l'arme de base dans les armes originales de l'unité
+                                    original_weapons = unit.get("weapon", [])
+                                    if isinstance(original_weapons, list):
+                                        for orig_weapon in original_weapons:
+                                            if orig_weapon.get("name") == base_weapon_name:
+                                                html += f'''
+            <div class="weapon-entry" style="opacity: 0.7; text-decoration: line-through;">
+              {format_weapon_html(orig_weapon)} (remplacée)
+            </div>
+        '''
+                                                base_weapons_shown.add(base_weapon_name)
+                                                break
+        
+                    # Afficher l'arme actuelle
                     html += f'''
-    <div class="weapon-entry">
-      {format_weapon_html(weapon)}
-    </div>
-'''
+            <div class="weapon-entry">
+              {format_weapon_html(weapon)}
+            </div>
+        '''
             html += '''
-  </div>
-'''
-
-        # Rôles (pour les héros et titans uniquement)
-        if options and unit.get("type") in ["hero", "titan"]:
-            for group_name, opts in options.items():
-                if isinstance(opts, list) and opts:
-                    for opt in opts:
-                        if "weapon" in opt:
-                            role_name = opt.get("name", "Rôle")
-                            role_weapons = opt.get("weapon", [])
-
-                            html += f'''
-  <div class="role-section">
-    <div class="role-title">Rôle: {esc(role_name)}</div>
-'''
-
-                            if role_weapons:
-                                html += '''
-    <div style="margin-top: 8px;">
-      <div style="font-weight: 600; margin-bottom: 4px; color: var(--text-main);">Armes du rôle:</div>
-      <div class="weapon-list" style="margin-left: 15px;">
-'''
-                                if isinstance(role_weapons, list):
-                                    for weapon in role_weapons:
-                                        if isinstance(weapon, dict):
-                                            html += f'''
-        <div class="weapon-entry">
-          {format_weapon_html(weapon)}
-        </div>
-'''
-                                else:
-                                    html += f'''
-        <div class="weapon-entry">
-          {format_weapon_html(role_weapons)}
-        </div>
-'''
-                                html += '''
-      </div>
-    </div>
-'''
-
-                            html += '''
-  </div>
-'''
+          </div>
+        '''
 
         # Règles spéciales (hors armes et hors règles des rôles déjà affichées)
         if special_rules:
@@ -1689,16 +1686,15 @@ if st.session_state.page == "army":
     
         # AMÉLIORATIONS D'ARME A NOMBRE VARIABLE
         elif group.get("type") == "variable_weapon_count":
-            # Récupérer les améliorations sélectionnées précédemment
-            current_selection = st.session_state.unit_selections[unit_key].get(g_key, {})
-    
+            st.subheader(group.get("group", "Améliorations variables"))
+        
             # Conserver les armes de base
             base_weapons = unit.get("weapon", [])
             if isinstance(base_weapons, list):
                 base_weapons = base_weapons.copy()
             elif isinstance(base_weapons, dict):
                 base_weapons = [base_weapons]
-    
+        
             # Pour chaque option d'amélioration
             for opt_idx, option in enumerate(group.get("options", [])):
                 st.markdown(f"""
@@ -1706,8 +1702,7 @@ if st.session_state.page == "army":
                   <h4 style='color: #3498db;'>{option['name']}</h4>
                 </div>
                 """, unsafe_allow_html=True)
-    
-                # Vérifier si l'option a des conditions
+        
                 requires = option.get("requires", [])
                 if requires and not check_weapon_conditions(unit_key, requires):
                     st.markdown(f"""
@@ -1716,15 +1711,13 @@ if st.session_state.page == "army":
                     </div>
                     """, unsafe_allow_html=True)
                     continue
-    
-                # Calculer les options de compteur disponibles
+        
                 max_count = unit.get("size", 1)
                 if "max_count" in option:
                     max_count = option["max_count"].get("value", max_count)
-    
+        
                 min_count = option.get("min_count", 0)
-    
-                # Créer un slider pour sélectionner le nombre
+        
                 count = st.slider(
                     f"Nombre de {option['name']} (max: {max_count})",
                     min_value=min_count,
@@ -1732,61 +1725,61 @@ if st.session_state.page == "army":
                     value=min_count,
                     key=f"{unit_key}_{g_key}_count_{opt_idx}_{option['name']}",
                 )
-    
-                # Calcul du coût total
+        
                 total_cost = count * option["cost"]
                 upgrades_cost += total_cost
-    
-                # Afficher le coût total
+        
                 st.markdown(f"""
                 <div style='margin: 10px 0; padding: 8px; background: #f8f9fa; border-radius: 4px;'>
                     <strong>{option['name']}</strong> × {count} figurines =
                     <strong style='color: #e74c3c;'>{total_cost} pts</strong>
                 </div>
                 """, unsafe_allow_html=True)
-    
-                # Remplacer les armes concernées
+        
                 if "replaces" in option and count > 0:
-                    # Trouver les armes à remplacer
-                    weapons_to_replace = []
+                    # Conserver les armes de base qui ne sont pas remplacées
+                    final_weapons = []
                     for weapon in base_weapons:
-                        if weapon.get("name") in option["replaces"]:
-                            weapons_to_replace.append(weapon)
-    
-                    # Limiter le nombre de remplacements
-                    weapons_to_replace = weapons_to_replace[:count]
-    
-                    # Remplacer les armes
-                    for _ in range(count):
-                        if weapons_to_replace:
-                            base_weapons.remove(weapons_to_replace.pop(0))
-    
-                    # Ajouter les nouvelles armes
+                        if weapon.get("name") not in option["replaces"]:
+                            final_weapons.append(weapon)
+        
+                    # Ajouter les nouvelles armes avec le nombre d'exemplaires
                     new_weapon = option["weapon"]
                     if isinstance(new_weapon, dict):
-                        # Vérifier si l'arme existe déjà
-                        weapon_exists = any(w.get('name') == new_weapon.get('name') for w in base_weapons)
-                        if not weapon_exists:
-                            base_weapons.append(new_weapon)
+                        new_weapon = new_weapon.copy()
+                        new_weapon["_count"] = count  # Stocker le nombre d'exemplaires
+                        new_weapon["_base_weapon"] = option.get("replaces", [])  # Stocker l'arme de base remplacée
+                        final_weapons.append(new_weapon)
                     elif isinstance(new_weapon, list):
                         for w in new_weapon:
-                            # Vérifier si l'arme existe déjà
-                            weapon_exists = any(weapon.get('name') == w.get('name') for weapon in base_weapons)
-                            if not weapon_exists:
-                                base_weapons.append(w)
-    
-            # Mettre à jour les armes de l'unité
-            weapons = base_weapons
-    
+                            w = w.copy()
+                            w["_count"] = count
+                            w["_base_weapon"] = option.get("replaces", [])
+                            final_weapons.append(w)
+        
+                    weapons = final_weapons
+        
+                selected_options[group.get("group", "Améliorations")] = [
+                    {
+                        "name": option["name"],
+                        "count": count,
+                        "cost_per_unit": option["cost"],
+                        "total_cost": total_cost,
+                        "weapon": option.get("weapon"),
+                        "replaces": option.get("replaces", [])
+                    }
+                ]
+            
         # AMÉLIORATIONS D'ARME CONDITIONNELLES
         elif group.get("type") == "conditional_weapon":
-            # Vérifier les conditions pour chaque option
+            st.subheader(group.get("group", "Amélioration d'arme"))
+        
             available_options = []
             for opt_idx, option in enumerate(group.get("options", [])):
                 requires = option.get("requires", [])
                 if not requires or check_weapon_conditions(unit_key, requires):
                     available_options.append(option)
-    
+        
             if not available_options:
                 st.markdown(f"""
                 <div style='color: #999; font-size: 0.9em; margin-bottom: 15px;'>
@@ -1794,16 +1787,15 @@ if st.session_state.page == "army":
                 </div>
                 """, unsafe_allow_html=True)
             else:
-                # Si des options sont disponibles, les afficher
                 choices = ["Aucune amélioration"]
                 opt_map = {}
-    
+        
                 for o in available_options:
                     weapon = o.get("weapon", {})
                     label = format_weapon_option(weapon, o.get("cost", 0))
                     choices.append(label)
                     opt_map[label] = o
-    
+        
                 current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
                 choice = st.radio(
                     group.get("description", "Sélectionnez une amélioration"),
@@ -1811,30 +1803,34 @@ if st.session_state.page == "army":
                     index=choices.index(current) if current in choices else 0,
                     key=f"{unit_key}_{g_key}_conditional_{opt_idx}"
                 )
-    
+        
                 st.session_state.unit_selections[unit_key][g_key] = choice
-    
+        
                 if choice != choices[0]:
                     opt = opt_map[choice]
                     upgrades_cost += opt.get("cost", 0)
                     if "weapon" in opt:
-                        # Remplacer une seule arme
+                        # Conserver les armes de base qui ne sont pas remplacées
+                        final_weapons = []
                         for weapon in weapons:
-                            if weapon.get("name") in opt.get("replaces", []):
-                                weapons.remove(weapon)
-                                break
+                            if weapon.get("name") not in opt.get("replaces", []):
+                                final_weapons.append(weapon)
+        
+                        # Ajouter la nouvelle arme avec la mention "un seul exemplaire"
                         new_weapon = opt["weapon"]
                         if isinstance(new_weapon, dict):
-                            # Vérifier si l'arme existe déjà
-                            weapon_exists = any(w.get('name') == new_weapon.get('name') for w in weapons)
-                            if not weapon_exists:
-                                weapons.append(new_weapon)
+                            new_weapon = new_weapon.copy()
+                            new_weapon["_conditional"] = True  # Marquer comme arme conditionnelle
+                            new_weapon["_base_weapon"] = opt.get("replaces", [])
+                            final_weapons.append(new_weapon)
                         elif isinstance(new_weapon, list):
                             for w in new_weapon:
-                                # Vérifier si l'arme existe déjà
-                                weapon_exists = any(weapon.get('name') == w.get('name') for weapon in weapons)
-                                if not weapon_exists:
-                                    weapons.append(w)
+                                w = w.copy()
+                                w["_conditional"] = True
+                                w["_base_weapon"] = opt.get("replaces", [])
+                                final_weapons.append(w)
+        
+                        weapons = final_weapons
     
         # AMÉLIORATIONS D'UNITÉ
         elif group.get("type") == "upgrades":
