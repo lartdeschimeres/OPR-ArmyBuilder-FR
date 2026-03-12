@@ -258,11 +258,11 @@ def format_unit_option(u):
 
     rules_text = ", ".join(rules_text) if rules_text else "Aucune"
 
-    # Construction du texte final
+    # Construction du texte final SANS le coût
     qua_def = f"Déf {u.get('defense', '?')}+"
-    cost = f"{u.get('base_cost', 0)}pts"
 
-    return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
+    return f"{name_part} | {qua_def} | {weapon_text} | {rules_text}"
+
 def format_weapon_option(weapon, cost=0):
     if not weapon or not isinstance(weapon, dict):
         return "Aucune arme"
@@ -909,7 +909,6 @@ body {{
             </div>
             <div style="font-size: 14px; color: var(--text-main); margin-top: 4px;">
               {esc(spell.get('details', {}).get('description', ''))}
-              <span style="color: var(--text-muted); margin-left: 8px;">({spell.get('details', {}).get('cost', '?')} pts)</span>
             </div>
           </div>
     '''
@@ -1284,6 +1283,13 @@ if st.session_state.page == "army":
                     st.markdown(f"**{rule.get('name', 'Règle sans nom')}**: {rule.get('description', '')}")
                 else:
                     st.markdown(f"- {rule}")
+    
+    if hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
+        with st.expander("✨ Sorts de la faction", expanded=False):
+            for spell_name, spell_details in st.session_state.faction_spells.items():
+                if isinstance(spell_details, dict):
+                    # Affichage SANS le coût après le nom
+                    st.markdown(f"**{spell_name}**: {spell_details.get('description', '')}")
 
     # Dans la section d'affichage des sorts de la faction (page 2)
     if hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
