@@ -256,7 +256,7 @@
       "base_cost": 90,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 6,
+      "coriace": 6,
       "special_rules": ["Furieux", "Gardien", "Héros", "Sans peur"],
       "weapon": [
         {
@@ -342,7 +342,7 @@
       "base_cost": 45,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 3,
+      "coriace": 3,
       "special_rules": ["Gardien", "Héros", "Sans peur"],
       "weapon": [
         {
