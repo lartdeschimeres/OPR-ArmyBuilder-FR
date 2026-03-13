@@ -295,8 +295,8 @@
         },
         {
           "group": "Ajout d’une arme de tir",
-          "type": "weapon",
-          "description": "Améliorer le héros avec une arme à distance (un seul choix possible) :",
+          "type": "conditional_weapon",
+          "description": "Améliorer le héros avec UNE SEULE arme à distance :",
           "options": [
             {"name": "Arc de chevalier", "cost": 45, "weapon": {"name": "Arc de chevalier", "range": 24, "attacks": 4, "armor_piercing": 1, "special_rules": []}},
             {"name": "Grand arc", "cost": 50, "weapon": {"name": "Grand arc", "range": 30, "attacks": 1, "armor_piercing": 3, "special_rules": ["Mortel (3)"]}}
