@@ -1669,90 +1669,97 @@ if st.session_state.page == "army":
         st.session_state.unit_selections[unit_key][f"displayed_{group_type}"] = False
 
     # Configuration des améliorations
-    for g_idx, group in enumerate(unit.get("upgrade_groups", [])):
-        g_key = f"group_{g_idx}"
+for g_idx, group in enumerate(unit.get("upgrade_groups", [])):
+    g_key = f"group_{g_idx}"
 
-        # Vérifier si le groupe a des options valides avant de l'afficher
-        has_valid_options = False
-        if group.get("type") == "weapon":
-            has_valid_options = len(group.get("options", [])) > 0
-        elif group.get("type") == "role":
-            has_valid_options = len(group.get("options", [])) > 0
-        elif group.get("type") == "variable_weapon_count":
-            has_valid_options = len(group.get("options", [])) > 0
-        elif group.get("type") == "conditional_weapon":
-            has_valid_options = len([o for o in group.get("options", [])
-                                    if not o.get("requires", []) or check_weapon_conditions(unit_key, o.get("requires", []))]) > 0
-        elif group.get("type") == "upgrades":
-            has_valid_options = len(group.get("options", [])) > 0
-        elif group.get("type") == "mount":
-            has_valid_options = len(group.get("options", [])) > 0
+    # Vérifier si le groupe a des options valides
+    has_valid_options = False
+    if group.get("type") in ["weapon", "conditional_weapon", "weapon_upgrades"]:
+        has_valid_options = len(group.get("options", [])) > 0
+    elif group.get("type") == "role":
+        has_valid_options = len(group.get("options", [])) > 0
+    elif group.get("type") == "upgrades":
+        has_valid_options = len(group.get("options", [])) > 0
+    elif group.get("type") == "mount":
+        has_valid_options = len(group.get("options", [])) > 0
 
-        # Ne pas afficher les groupes sans options valides
-        if not has_valid_options:
-            continue
+    if not has_valid_options:
+        continue
 
-        # Vérifier si ce type de groupe a déjà été affiché
-        group_type_displayed = st.session_state.unit_selections[unit_key].get(f"displayed_{group.get('type')}", False)
+    st.subheader(group.get("group", "Améliorations"))
 
-        # Si c'est un groupe "conditional_weapon" ou "variable_weapon_count" et qu'il y en a déjà eu un, on le saute
-        if (group.get("type") in ["conditional_weapon", "variable_weapon_count"]) and group_type_displayed:
-            continue
+    # =============================================
+    # GESTION UNIFIÉE DES AMÉLIORATIONS D'ARME
+    # =============================================
+    if group.get("type") in ["weapon", "conditional_weapon", "weapon_upgrades"]:
+        available_options = []
+        for opt in group.get("options", []):
+            requires = opt.get("requires", [])
+            if not requires or check_weapon_conditions(unit_key, requires):
+                available_options.append(opt)
 
-        st.subheader(group.get("group", "Améliorations"))
-
-        # Marquer ce type de groupe comme affiché
-        st.session_state.unit_selections[unit_key][f"displayed_{group.get('type')}"] = True
-
-        # ARMES
-        if group.get("type") == "weapon":
-            choices = []
-            base_weapons = unit.get("weapon", [])
-
-            if isinstance(base_weapons, list) and base_weapons:
-                base_weapons_labels = []
-                for weapon in base_weapons:
-                    base_weapons_labels.append(weapon.get('name', 'Arme'))
-
-                if len(base_weapons_labels) == 1:
-                    choices.append(format_weapon_option(base_weapons[0]))
-                else:
-                    choices.append(" et ".join(base_weapons_labels))
-            elif isinstance(base_weapons, dict):
-                choices.append(format_weapon_option(base_weapons))
-
+        if not available_options:
+            st.markdown(f"""
+            <div style='color: #999; font-size: 0.9em; margin-bottom: 15px;'>
+                {group.get("description", "Améliorations d'arme")} <em>(Non disponible)</em>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            # Préparer les choix
+            choices = ["Aucune amélioration d'arme"]
             opt_map = {}
-            for o in group.get("options", []):
-                weapon = o.get("weapon", {})
-                if isinstance(weapon, list):
-                    weapon_names = [w.get('name', 'Arme') for w in weapon]
-                    label = " et ".join(weapon_names) + f" (+{o['cost']} pts)"
-                else:
-                    label = format_weapon_option(weapon, o['cost'])
+
+            for opt in available_options:
+                weapon = opt.get("weapon", {})
+                label = f"{opt.get('name', 'Amélioration')} (+{opt.get('cost', 0)} pts)"
                 choices.append(label)
-                opt_map[label] = o
+                opt_map[label] = opt
 
-            if choices:
-                current = st.session_state.unit_selections[unit_key].get(g_key, choices[0] if choices else "Aucune arme")
-                choice = st.radio(
-                    "Sélection de l'arme",
-                    choices,
-                    index=choices.index(current) if current in choices else 0,
-                    key=f"{unit_key}_{g_key}_weapon",
-                )
+            # Affichage des options
+            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
+            choice = st.radio(
+                group.get("description", "Sélectionnez une amélioration d'arme"),
+                choices,
+                index=choices.index(current) if current in choices else 0,
+                key=f"{unit_key}_{g_key}_weapon_upgrade"
+            )
 
-                st.session_state.unit_selections[unit_key][g_key] = choice
+            st.session_state.unit_selections[unit_key][g_key] = choice
 
-                if choice != choices[0]:
-                    for opt_label, opt in opt_map.items():
-                        if opt_label == choice:
-                            weapon_cost += opt["cost"]
-                            if not isinstance(opt["weapon"], list):
-                                weapons = [opt["weapon"]]
-                            else:
-                                weapons = opt["weapon"]
-                            st.session_state.unit_selections[unit_key]["weapon"] = weapons
-                            break
+            # Traitement du choix
+            if choice != choices[0]:
+                opt = opt_map[choice]
+                upgrades_cost += opt.get("cost", 0)
+
+                # =============================================
+                # LOGIQUE DE REMPLACEMENT D'ARME
+                # =============================================
+                if group.get("type") in ["conditional_weapon", "weapon_upgrades"] and "replaces" in opt:
+                    # Trouver et remplacer l'arme spécifiée
+                    weapons_to_replace = []
+                    for weapon in weapons:
+                        if weapon.get("name") in opt.get("replaces", []):
+                            weapons_to_replace.append(weapon)
+
+                    if weapons_to_replace:
+                        weapons.remove(weapons_to_replace[0])
+
+                # Ajouter la nouvelle arme
+                if "weapon" in opt:
+                    new_weapon = opt.get("weapon", {})
+                    if isinstance(new_weapon, dict):
+                        new_weapon = new_weapon.copy()
+                        new_weapon["_upgraded"] = True
+                        weapons.append(new_weapon)
+                    elif isinstance(new_weapon, list):
+                        for w in new_weapon:
+                            w = w.copy()
+                            w["_upgraded"] = True
+                            weapons.append(w)
+
+    # =============================================
+    # AUTRES TYPES D'AMÉLIORATIONS (rôles, montures, etc.)
+    # =============================================
 
         # RÔLES
         elif group.get("type") == "role":
