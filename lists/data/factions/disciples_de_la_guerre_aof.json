@@ -1051,19 +1051,21 @@
             }
           ]
         },
-        {
-          "group": "Améliorations d'arme",
+         {
+          "group": "Amélioration d'arme",
           "type": "conditional_weapon",
-          "description": "Remplacer UNE SEULE arme à une main lourde par :",
+          "description": "Améliorer UNE SEULE arme à une main lourde par :",
           "options": [
             {
-              "name": "Grande arme lourde (une seule)",
+              "name": "Grande arme lourde", 
               "cost": 30,
+              "requires": ["Armes à une main lourdes"],
               "weapon": {
-                "name": "Grande arme lourde (une seule)",
+                "name": "Grande arme lourde", 
                 "range": "Mêlée",
-                "attacks": 2,
-                "armor_piercing": 3
+                "attacks": 2, 
+                "armor_piercing": 3, 
+                "special_rules": []
               }
             }
           ]
