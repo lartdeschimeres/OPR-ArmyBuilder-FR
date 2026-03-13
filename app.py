@@ -1984,44 +1984,55 @@ if st.session_state.page == "army":
         elif group.get("type") == "weapon_upgrades":
             st.subheader(group.get("group", "Améliorations d'arme"))
         
-            choices = []
-            opt_map = {}
+            # Vérifier s'il y a des options valides
+            available_options = []
+            for opt in group.get("options", []):
+                requires = opt.get("requires", [])
+                if not requires or check_weapon_conditions(unit_key, requires):
+                    available_options.append(opt)
         
-            # Ajouter une option "Aucune amélioration"
-            choices.append("Aucune amélioration d'arme")
+            if not available_options:
+                st.markdown(f"""
+                <div style='color: #999; font-size: 0.9em; margin-bottom: 15px;'>
+                    {group.get("description", "Améliorations d'arme")} <em>(Non disponible - conditions non remplies)</em>
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                choices = ["Aucune amélioration d'arme"]
+                opt_map = {}
         
-            for o in group.get("options", []):
-                weapon = o.get("weapon", {})
-                label = f"{o.get('name', 'Amélioration')} (+{o.get('cost', 0)} pts)"
-                choices.append(label)
-                opt_map[label] = o
+                for opt in available_options:
+                    weapon = opt.get("weapon", {})
+                    label = f"{opt.get('name', 'Amélioration')} (+{opt.get('cost', 0)} pts)"
+                    choices.append(label)
+                    opt_map[label] = opt
         
-            current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
-            choice = st.radio(
-                group.get("group", "Améliorations d'arme"),
-                choices,
-                index=choices.index(current) if current in choices else 0,
-                key=f"{unit_key}_{g_key}_weapon_upgrades",
-            )
+                current = st.session_state.unit_selections[unit_key].get(g_key, choices[0])
+                choice = st.radio(
+                    group.get("description", "Sélectionnez une amélioration d'arme"),
+                    choices,
+                    index=choices.index(current) if current in choices else 0,
+                    key=f"{unit_key}_{g_key}_weapon_upgrades"
+                )
         
-            st.session_state.unit_selections[unit_key][g_key] = choice
+                st.session_state.unit_selections[unit_key][g_key] = choice
         
-            if choice != choices[0]:
-                opt = opt_map[choice]
-                upgrades_cost += opt.get("cost", 0)
+                if choice != choices[0]:
+                    opt = opt_map[choice]
+                    upgrades_cost += opt.get("cost", 0)
         
-                # Ajouter l'amélioration d'arme à la liste
-                if "weapon" in opt:
-                    weapon_upgrade = opt["weapon"]
-                    if isinstance(weapon_upgrade, dict):
-                        weapon_upgrade = weapon_upgrade.copy()
-                        weapon_upgrade["_upgraded"] = True
-                        weapon_upgrades.append(weapon_upgrade)
-                    elif isinstance(weapon_upgrade, list):
-                        for w in weapon_upgrade:
-                            w = w.copy()
-                            w["_upgraded"] = True
-                            weapon_upgrades.append(w)
+                    # Ajouter l'amélioration d'arme
+                    if "weapon" in opt:
+                        weapon_upgrade = opt["weapon"]
+                        if isinstance(weapon_upgrade, dict):
+                            weapon_upgrade = weapon_upgrade.copy()
+                            weapon_upgrade["_upgraded"] = True
+                            weapon_upgrades.append(weapon_upgrade)
+                        elif isinstance(weapon_upgrade, list):
+                            for w in weapon_upgrade:
+                                w = w.copy()
+                                w["_upgraded"] = True
+                                weapon_upgrades.append(w)
         
         # AMÉLIORATIONS D'UNITÉ
         elif group.get("type") == "upgrades":
