@@ -466,8 +466,8 @@
         },
         {
           "group": "Améliorations d'arme",
-          "type": "weapon_upgrades",
-          "description": "Remplacer une seule Arme à une main lourde par :",
+          "type": "conditional_weapons",
+          "description": "Remplacer UNE SEULE Arme à une main lourde par :",
           "options": [
             {"name": "Masse-tonnerre", "cost": 5, "weapon": {"name": "Masse-tonnerre", "range": "Mêlée", "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
             {"name": "Grande arme lourde", "cost": 20, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
@@ -517,8 +517,8 @@
         },            
         {
           "group": "Améliorations d'arme",
-          "type": "weapon_upgrades",
-          "description": "Remplacer une seule Arme à une main lourde par :",
+          "type": "conditional_weapon",
+          "description": "Remplacer UNE SEULE Arme à une main lourde par :",
           "options": [
             {"name": "Masse-tonnerre", "cost": 5, "weapon": {"name": "Masse-tonnerre", "range": "Mêlée", "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
             {"name": "Grande arme lourde", "cost": 20, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
@@ -586,8 +586,8 @@
         },            
         {
           "group": "Améliorations d'arme",
-          "type": "weapon_upgrades",
-          "description": "Remplacer une seule arme à une main lourde par :",
+          "type": "conditional_weapon",
+          "description": "Remplacer UNE SEULE arme à une main lourde par :",
           "options": [
             {"name": "Masse-tonnerre", "cost": 5, "weapon": {"name": "Masse-tonnerre", "range": "Mêlée", "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
             {"name": "Grande arme lourde", "cost": 10, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
@@ -673,8 +673,8 @@
         },            
         {
           "group": "Améliorations d'arme",
-          "type": "weapon_upgrades",
-          "description": "Remplacer une seule Grande vouge par :",
+          "type": "conditional_weapon",
+          "description": "Remplacer UNE SEULE Grande vouge par :",
           "options": [
             {"name": "Paire de haches", "cost": 5, "weapon": {"name": "Paire de haches", "range": "Mêlée", "attacks": 4, "armor_piercing": 0, "special_rules": ["Fiable"]}},
             {"name": "Grande masse-tonnerre", "cost": 15, "weapon": {"name": "Grande masse-tonnerre", "range": "Mêlée", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}}
