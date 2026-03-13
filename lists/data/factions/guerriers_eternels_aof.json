@@ -707,8 +707,29 @@
           "type": "weapon_upgrades",
           "description": "Remplacer un seul Marteau-météore par :",
           "options": [
-            {"name": "Grande masse-tonnerre", "cost": 5, "weapon": {"name": "Grande masse-tonnerre", "range": "Mêlée", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Grand marteau-météore", "cost": 10, "weapon": {"name": "Grand marteau-météore", "range": "Mêlée", "attacks": 2, "armor_piercing": 2, "special_rules": ["Mortel (3)"]}}
+            {
+              "name": "Grande masse-tonnerre", 
+              "cost": 5, 
+              "weapon": {
+                "name": "Grande masse-tonnerre", 
+                "range": "Mêlée", *
+                "attacks": 2, 
+                "armor_piercing": 4, 
+                "special_rules": ["Fracas"]
+              }
+            },
+            {
+              "name": 
+              "Grand marteau-météore", 
+              "cost": 10, 
+              "weapon": {
+                "name": "Grand marteau-météore", 
+                "range": "Mêlée", 
+                "attacks": 2, 
+                "armor_piercing": 2, 
+                "special_rules": ["Mortel (3)"]
+              }
+            }
           ]
         }
       ]
