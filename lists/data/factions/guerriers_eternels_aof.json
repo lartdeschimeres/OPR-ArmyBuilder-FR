@@ -1085,8 +1085,7 @@
                 "range": 12,
                 "attacks": 2,
                 "armor_piercing": 1,
-                "special_rules": [],
-                "_count": 3
+                "special_rules": []
               }
             },
             {
@@ -1118,7 +1117,10 @@
                 "special_rules": [
                   "Fracas"
                 ]
-              }
+              },
+              "requires": [
+                "Arme à une main lourde"
+              ]
             },
             {
               "name": "Grande arme lourde",
@@ -1129,7 +1131,10 @@
                 "attacks": 3,
                 "armor_piercing": 3,
                 "special_rules": []
-              }
+              },
+              "requires": [
+                "Arme à une main lourde"
+              ]
             }
           ]
         },
