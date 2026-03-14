@@ -1291,7 +1291,7 @@
             {
               "name": "Grande arme lourde",
               "cost": 30,
-              "requires": [
+              "replaces": [
                 "Armes à une main lourdes"
               ],
               "weapon": {
