@@ -267,24 +267,43 @@ def export_html(army_list, army_name, army_limit):
                         if isinstance(r, str) and not r.startswith(("Griffes","Sabots")): rules.add(r)
         return sorted(rules)
 
-    def render_weapon_rows(final_weapons):
+    def render_weapon_rows(final_weapons, unit_size=1):
         rows = ""
         for w in final_weapons:
-            name    = esc(w.get("name","Arme"))
-            cnt     = w.get("_display_count", 1) or 1
+            name     = esc(w.get("name","Arme"))
+            cnt      = w.get("_display_count", 1) or 1
             upgraded = w.get("_upgraded", False)
             replaces = w.get("_replaces", [])
-            # Règle d'affichage du préfixe Nx :
-            #   - Arme de base (pas _upgraded) → jamais de Nx
-            #   - _upgraded + _replaces présent + cnt > 1 → "Nx" (slider partiel)
-            #   - _upgraded + pas de _replaces → "1x" (ajout conditionnel pur)
-            #   - _upgraded + _replaces présent + cnt = 1 → sans Nx (remplacement 1-pour-1)
-            if upgraded and replaces and cnt > 1:
-                nd = f"{cnt}x {name}"       # slider partiel : ex "2x Grand sceptre"
+
+            # --- Règle d'affichage du préfixe Nx ---
+            if not upgraded:
+                # Arme de base — trois sous-cas :
+                #   was_reduced : _count présent ET _display_count réduit par _replaces
+                #     → toujours afficher '{cnt}x' (même si cnt=1, ex: "1x Épée")
+                #   has_explicit_count (non réduit) : _count JSON intact
+                #     → afficher '{cnt}x' seulement si cnt > 1
+                #   ni l'un ni l'autre : arme simple sans _count
+                #     → utiliser unit_size comme quantité
+                has_explicit_count = "_count" in w
+                was_reduced = has_explicit_count and cnt < (w.get("_count", cnt))
+                if was_reduced:
+                    nd = f"{cnt}x {name}"
+                elif has_explicit_count:
+                    nd = f"{cnt}x {name}" if cnt > 1 else name
+                else:
+                    nd = f"{unit_size}x {name}" if unit_size > 1 else name
+            elif upgraded and replaces and cnt > 1:
+                # Slider partiel : ex "2x Grand sceptre"
+                nd = f"{cnt}x {name}"
+            elif upgraded and replaces and cnt == 1:
+                # Remplacement total (1-pour-1) : afficher avec la taille
+                nd = f"{unit_size}x {name}" if unit_size > 1 else name
             elif upgraded and not replaces:
-                nd = f"1x {name}"           # ajout conditionnel : ex "1x Javelot des Tempêtes"
+                # Ajout conditionnel pur (1 figurine) : ex "1x Javelot des Tempêtes"
+                nd = f"1x {name}"
             else:
-                nd = name                   # arme de base ou remplacement total
+                nd = name
+
             rng = fmt_range(w.get("range","Mêlée"))
             att = w.get("attacks","-"); ap = w.get("armor_piercing","-")
             spe = ", ".join(w.get("special_rules",[])) or "-"
@@ -382,7 +401,7 @@ body{{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;margi
 
         weapons = collect_weapons(unit)
         final_weapons = group_weapons(weapons)
-        weapon_rows = render_weapon_rows(final_weapons)
+        weapon_rows = render_weapon_rows(final_weapons, unit_size=size)
         upgrade_rows = render_upgrade_rows(unit)
         mount_section = render_mount_section(unit)
 
