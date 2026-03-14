@@ -406,6 +406,56 @@ def export_html(army_list, army_name, army_limit):
             return "🤖"
         return "🛡️"
 
+    def format_unit_option(u):
+        """Formate l'option d'unité avec les statistiques complètes"""
+        name_part = f"{u['name']}"
+
+        # Ajout des statistiques de base
+        qua_def = f"Qual {u.get('quality', '?')}+ | Déf {u.get('defense', '?')}+"
+        if 'coriace' in u and u['coriace'] > 0:
+            qua_def += f" | Coriace {u.get('coriace', '?')}"
+        qua_def += f" | Taille {u.get('size', '?')}"
+
+        # Récupération des armes principales
+        weapons = []
+        if "weapon" in u:
+            if isinstance(u["weapon"], list):
+                for weapon in u["weapon"]:
+                    if isinstance(weapon, dict):
+                        weapon_name = weapon.get('name', 'Arme')
+                        attacks = weapon.get('attacks', '?')
+                        ap = weapon.get('armor_piercing', '?')
+                        range_text = weapon.get('range', 'Mêlée')
+                        if range_text == "Mêlée" or range_text == "mêlée":
+                            range_text = "Mêlée"
+                        elif isinstance(range_text, (int, float)):
+                            range_text = f'{range_text}"'
+                        weapons.append(f"{weapon_name} (A{attacks}/PA{ap}/{range_text})")
+            elif isinstance(u["weapon"], dict):
+                weapon_name = u["weapon"].get('name', 'Arme')
+                attacks = u["weapon"].get('attacks', '?')
+                ap = u["weapon"].get('armor_piercing', '?')
+                range_text = u["weapon"].get('range', 'Mêlée')
+                if range_text == "Mêlée" or range_text == "mêlée":
+                    range_text = "Mêlée"
+                elif isinstance(range_text, (int, float)):
+                    range_text = f'{range_text}"'
+                weapons.append(f"{weapon_name} (A{attacks}/PA{ap}/{range_text})")
+
+        weapon_text = ", ".join(weapons) if weapons else "Aucune arme"
+
+        # Récupération des règles spéciales
+        special_rules = []
+        if "special_rules" in u and isinstance(u["special_rules"], list):
+            special_rules = [r for r in u["special_rules"] if isinstance(r, str)]
+
+        rules_text = ", ".join(special_rules) if special_rules else "Aucune"
+
+        # Construction du texte final
+        cost = f"{u.get('base_cost', 0)}pts"
+
+        return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
+
     def get_roles(unit):
         """Récupère les rôles sélectionnés pour les héros/titans"""
         roles = []
@@ -419,7 +469,7 @@ def export_html(army_list, army_name, army_limit):
                 elif isinstance(options, dict) and options.get("type") == "role":
                     roles.append(options)
 
-        if "upgrade_groups" in unit and isinstance(unit["upgrade_groups"], list):
+        if "upgrade_groups" in unit and isinstance(unit.get("upgrade_groups"), list):
             for group in unit["upgrade_groups"]:
                 if isinstance(group, dict) and group.get("type") == "role" and "options" in group:
                     for opt in group["options"]:
@@ -436,21 +486,35 @@ def export_html(army_list, army_name, army_limit):
             if "special_rules" in role and isinstance(role["special_rules"], list):
                 for rule in role["special_rules"]:
                     if isinstance(rule, str):
-                        # Ajout du nom du rôle dans la règle
                         role_name = role.get("name", "Rôle")
-                        role_rules.append({
-                            "name": f"{role_name}",
-                            "range": "-",
-                            "attacks": "-",
-                            "armor_piercing": "-",
-                            "special_rules": [rule],
-                            "_role_rule": True,
-                            "_role_name": role_name
-                        })
+                        # Format: "Lanceur de sorts (2) (Seigneur Éternel)"
+                        if "(" in rule and ")" in rule:
+                            # Extraire le nombre entre parenthèses
+                            rule_name_part = rule.split("(")[0].strip()
+                            rule_count = rule.split("(")[1].split(")")[0]
+                            role_rules.append({
+                                "name": f"{rule_name_part} ({rule_count}) ({role_name})",
+                                "range": "-",
+                                "attacks": "-",
+                                "armor_piercing": "-",
+                                "special_rules": [],
+                                "_role_rule": True,
+                                "_role_name": role_name
+                            })
+                        else:
+                            role_rules.append({
+                                "name": f"{rule} ({role_name})",
+                                "range": "-",
+                                "attacks": "-",
+                                "armor_piercing": "-",
+                                "special_rules": [],
+                                "_role_rule": True,
+                                "_role_name": role_name
+                            })
         return role_rules
 
     def collect_weapons(unit):
-        """Collecte toutes les armes de l'unité, y compris les règles de rôle"""
+        """Collecte toutes les armes de l'unité, y compris les règles de rôle et les améliorations"""
         weapons = []
 
         # Règles de rôle comme armes
@@ -459,43 +523,128 @@ def export_html(army_list, army_name, army_limit):
 
         # Armes de base
         if "weapon" in unit:
-            if isinstance(unit["weapon"], list):
-                weapons.extend(unit["weapon"])
-            else:
-                weapons.append(unit["weapon"])
+            base_weapons = unit["weapon"]
+            if isinstance(base_weapons, list):
+                for weapon in base_weapons:
+                    if isinstance(weapon, dict):
+                        # Ajouter la portée par défaut si manquante
+                        if "range" not in weapon:
+                            weapon = weapon.copy()
+                            weapon["range"] = "Mêlée"
+                        weapons.append(weapon)
+            elif isinstance(base_weapons, dict):
+                # Ajouter la portée par défaut si manquante
+                if "range" not in base_weapons:
+                    base_weapons = base_weapons.copy()
+                    base_weapons["range"] = "Mêlée"
+                weapons.append(base_weapons)
 
         # Armes des options (y compris améliorations)
         if "options" in unit and isinstance(unit["options"], dict):
             for group_name, group in unit["options"].items():
                 if isinstance(group, list):
                     for opt in group:
-                        if isinstance(opt, dict) and "weapon" in opt:
-                            weapon = opt["weapon"]
-                            if isinstance(weapon, list):
-                                for w in weapon:
-                                    w_copy = w.copy() if isinstance(w, dict) else w
-                                    if "_count" in opt:
+                        if isinstance(opt, dict):
+                            # Armes de remplacement
+                            if "weapon" in opt:
+                                weapon = opt["weapon"]
+                                if isinstance(weapon, list):
+                                    for w in weapon:
+                                        w_copy = w.copy() if isinstance(w, dict) else w
                                         if isinstance(w_copy, dict):
+                                            # Ajouter la portée si manquante
+                                            if "range" not in w_copy:
+                                                w_copy["range"] = "Mêlée"
+                                            # Ajouter le compteur si présent
+                                            if "_count" in opt:
+                                                w_copy["_count"] = opt["_count"]
+                                            if opt.get("type") == "variable_weapon_count":
+                                                w_copy["_count"] = opt.get("count", 1)
+                                            # Marquer comme amélioration si c'est un remplacement
+                                            if opt.get("replaces"):
+                                                w_copy["_replaces"] = opt["replaces"]
+                                                w_copy["_upgraded"] = True
+                                        weapons.append(w_copy)
+                                else:
+                                    w_copy = weapon.copy() if isinstance(weapon, dict) else weapon
+                                    if isinstance(w_copy, dict):
+                                        # Ajouter la portée si manquante
+                                        if "range" not in w_copy:
+                                            w_copy["range"] = "Mêlée"
+                                        # Ajouter le compteur si présent
+                                        if "_count" in opt:
                                             w_copy["_count"] = opt["_count"]
-                                    if opt.get("type") == "variable_weapon_count":
-                                        if isinstance(w_copy, dict):
+                                        if opt.get("type") == "variable_weapon_count":
                                             w_copy["_count"] = opt.get("count", 1)
+                                        # Marquer comme amélioration si c'est un remplacement
+                                        if opt.get("replaces"):
+                                            w_copy["_replaces"] = opt["replaces"]
+                                            w_copy["_upgraded"] = True
                                     weapons.append(w_copy)
-                            else:
-                                w_copy = weapon.copy() if isinstance(weapon, dict) else weapon
-                                if "_count" in opt:
+
+                            # Améliorations d'arme (ex: Javelot des Tempêtes)
+                            if opt.get("type") == "conditional_weapon" and "weapon" in opt:
+                                weapon = opt["weapon"]
+                                if isinstance(weapon, list):
+                                    for w in weapon:
+                                        w_copy = w.copy() if isinstance(w, dict) else w
+                                        if isinstance(w_copy, dict):
+                                            # Ajouter la portée si manquante
+                                            if "range" not in w_copy:
+                                                w_copy["range"] = "Mêlée"
+                                            # Ajouter le compteur si présent
+                                            if "count" in opt:
+                                                w_copy["_count"] = opt["count"]
+                                            w_copy["_upgraded"] = True
+                                        weapons.append(w_copy)
+                                else:
+                                    w_copy = weapon.copy() if isinstance(weapon, dict) else weapon
                                     if isinstance(w_copy, dict):
-                                        w_copy["_count"] = opt["_count"]
-                                if opt.get("type") == "variable_weapon_count":
-                                    if isinstance(w_copy, dict):
-                                        w_copy["_count"] = opt.get("count", 1)
-                                weapons.append(w_copy)
+                                        # Ajouter la portée si manquante
+                                        if "range" not in w_copy:
+                                            w_copy["range"] = "Mêlée"
+                                        # Ajouter le compteur si présent
+                                        if "count" in opt:
+                                            w_copy["_count"] = opt["count"]
+                                        w_copy["_upgraded"] = True
+                                    weapons.append(w_copy)
+
                 elif isinstance(group, dict) and "weapon" in group:
                     weapon = group["weapon"]
                     if isinstance(weapon, list):
-                        weapons.extend(weapon)
+                        for w in weapon:
+                            w_copy = w.copy() if isinstance(w, dict) else w
+                            if isinstance(w_copy, dict) and "range" not in w_copy:
+                                w_copy["range"] = "Mêlée"
+                            weapons.append(w_copy)
                     else:
-                        weapons.append(weapon)
+                        w_copy = weapon.copy() if isinstance(weapon, dict) else weapon
+                        if isinstance(w_copy, dict) and "range" not in w_copy:
+                            w_copy["range"] = "Mêlée"
+                        weapons.append(w_copy)
+
+        # Armes de monture (mais ne seront pas affichées dans la section monture)
+        if "mount" in unit and unit.get("mount"):
+            mount = unit["mount"]
+            if isinstance(mount, dict) and "mount" in mount:
+                mount_data = mount["mount"]
+                if isinstance(mount_data, dict) and "weapon" in mount_data:
+                    mount_weapons = mount_data["weapon"]
+                    if isinstance(mount_weapons, list):
+                        for w in mount_weapons:
+                            w_copy = w.copy() if isinstance(w, dict) else w
+                            if isinstance(w_copy, dict):
+                                if "range" not in w_copy:
+                                    w_copy["range"] = "Mêlée"
+                                w_copy["_mount_weapon"] = True
+                            weapons.append(w_copy)
+                    else:
+                        w_copy = mount_weapons.copy() if isinstance(mount_weapons, dict) else mount_weapons
+                        if isinstance(w_copy, dict):
+                            if "range" not in w_copy:
+                                w_copy["range"] = "Mêlée"
+                            w_copy["_mount_weapon"] = True
+                        weapons.append(w_copy)
 
         return weapons
 
@@ -507,8 +656,13 @@ def export_html(army_list, army_name, army_limit):
             if not isinstance(w, dict):
                 continue
 
+            # Ajouter la portée par défaut si manquante
+            if "range" not in w:
+                w = w.copy()
+                w["range"] = "Mêlée"
+
             name = w.get("name", "Arme")
-            rng = w.get("range", "-")
+            rng = w.get("range", "Mêlée")
             att = w.get("attacks", "-")
             ap = w.get("armor_piercing", "-")
             rules = tuple(sorted(w.get("special_rules", [])))
@@ -516,17 +670,12 @@ def export_html(army_list, army_name, army_limit):
             # Pour les règles de rôle, on veut les garder séparées
             is_role_rule = w.get("_role_rule", False)
             if is_role_rule:
-                role_name = w.get("_role_name", "Rôle")
-                # Utiliser le nom du rôle comme nom d'arme
-                display_name = f"{name} ({role_name})" if name != role_name else role_name
-                key = (display_name, rng, att, ap, rules, True)
+                key = (name, rng, att, ap, rules, True)
             else:
                 key = (name, rng, att, ap, rules, False)
 
             if key not in weapon_map:
                 weapon_map[key] = dict(w)
-                if is_role_rule:
-                    weapon_map[key]["name"] = display_name
                 weapon_map[key]["count"] = w.get("_count", 1)
             else:
                 weapon_map[key]["count"] += w.get("_count", 1)
@@ -793,7 +942,7 @@ body {{
 }}
 
 .role-rule {{
-  font-style: italic;
+  font-weight: 600;
   color: var(--accent);
 }}
 
@@ -918,10 +1067,6 @@ body {{
         size = unit.get("size", 10)
         coriace = unit.get("coriace", 0)
 
-        # Suppression du [x] après le nom
-        unit_icon = get_icon_for_unit(unit)
-        unit_type = get_french_type(unit)
-
         html += f'''
 <div class="unit-card">
   <div class="unit-header">
@@ -953,7 +1098,7 @@ body {{
     </div>
 
     <div class="section">
-        <!-- Tableau des armes seulement -->
+        <!-- Tableau des armes avec portées complètes -->
         <div class="section-title">⚔️ Armes</div>
         <table class="weapon-table">
           <thead>
@@ -985,14 +1130,16 @@ body {{
                 # Style différent pour les règles de rôle
                 is_role_rule = w.get("_role_rule", False)
                 if is_role_rule:
-                    # Le nom du rôle est déjà intégré dans le nom de l'arme
-                    name_display = f'<span style="font-weight: 600; color: var(--accent);">{name_display}</span>'
+                    name_display = f'<span class="role-rule">{name_display}</span>'
 
-                rng = w.get("range", "-")
-                if rng == "-" or str(rng).lower() == "mêlée":
+                # Portée complète (toujours affichée)
+                rng = w.get("range", "Mêlée")
+                if rng == "-" or rng == "mêlée" or str(rng).lower() == "mêlée":
                     rng = "Mêlée"
-                else:
+                elif isinstance(rng, (int, float)):
                     rng = f'{rng}"'
+                else:
+                    rng = f'{rng}"' if not rng.endswith('"') else rng
 
                 att = w.get("attacks", "-")
                 ap = w.get("armor_piercing", "-")
@@ -1156,50 +1303,6 @@ body {{
 </div>
 '''
 
-    # Légende des sorts de la faction
-    try:
-        if hasattr(st.session_state, 'faction_spells') and st.session_state.faction_spells:
-            spells = st.session_state.faction_spells
-            all_spells = [{"name": name, "details": details} for name, details in spells.items() if isinstance(details, dict)]
-
-            if all_spells:
-                html += '''
-<div class="faction-spells" style="margin-top: 20px;">
-  <h3 style="text-align: center; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px;">
-    ✨ Légende des sorts de la faction
-  </h3>
-  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
-'''
-                for spell in sorted(all_spells, key=lambda x: x['name'].lower().replace('é', 'e').replace('è', 'e')):
-                    if isinstance(spell, dict) and isinstance(spell.get('details'), dict):
-                        spell_cost = spell['details'].get('cost', '?')
-                        spell_range = spell['details'].get('range', '-')
-                        if isinstance(spell_range, (int, float)):
-                            spell_range = f"{spell_range}\""
-                        elif spell_range == "Mêlée" or spell_range == "mêlée":
-                            spell_range = "Mêlée"
-
-                        html += f'''
-    <div class="spell-item">
-      <div class="spell-name">
-        {esc(spell['name'])} ({spell_cost} pts{' - ' + spell_range if spell_range != '-' else ''})
-      </div>
-      <div style="font-size: 14px; color: var(--text-main); line-height: 1.4;">
-        {esc(spell['details'].get('description', ''))}
-      </div>
-    </div>
-'''
-                html += '''
-  </div>
-</div>
-'''
-    except Exception as e:
-        html += f'''
-<div style="margin-top: 20px; padding: 10px; color: red; border: 1px solid #ffcccc; background: #ffebee; border-radius: 4px;">
-  Erreur de chargement des sorts de faction: {str(e)}
-</div>
-'''
-
     html += '''
 <div style="text-align: center; margin-top: 30px; font-size: 12px; color: var(--text-muted);">
   Généré par OPR ArmyBuilder FR - {datetime.now().strftime('%d/%m/%Y %H:%M')}
@@ -1208,8 +1311,7 @@ body {{
 </body>
 </html>
 '''
-    return html
-
+    return html, format_unit_option
 
 # ======================================================
 # CHARGEMENT DES FACTIONS
