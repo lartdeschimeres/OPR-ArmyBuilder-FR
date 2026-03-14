@@ -451,8 +451,8 @@ def export_html(army_list, army_name, army_limit):
 
         rules_text = ", ".join(special_rules) if special_rules else "Aucune"
 
-        # Construction du texte final
-        cost = f"{u.get('base_cost', 0)}pts"
+        # Coût
+        cost = f"{u.get('cost', 0)}pts"
 
         return f"{name_part} | {qua_def} | {weapon_text} | {rules_text} | {cost}"
 
@@ -489,7 +489,6 @@ def export_html(army_list, army_name, army_limit):
                         role_name = role.get("name", "Rôle")
                         # Format: "Lanceur de sorts (2) (Seigneur Éternel)"
                         if "(" in rule and ")" in rule:
-                            # Extraire le nombre entre parenthèses
                             rule_name_part = rule.split("(")[0].strip()
                             rule_count = rule.split("(")[1].split(")")[0]
                             role_rules.append({
@@ -528,16 +527,16 @@ def export_html(army_list, army_name, army_limit):
                 for weapon in base_weapons:
                     if isinstance(weapon, dict):
                         # Ajouter la portée par défaut si manquante
-                        if "range" not in weapon:
-                            weapon = weapon.copy()
-                            weapon["range"] = "Mêlée"
-                        weapons.append(weapon)
+                        weapon_copy = weapon.copy()
+                        if "range" not in weapon_copy:
+                            weapon_copy["range"] = "Mêlée"
+                        weapons.append(weapon_copy)
             elif isinstance(base_weapons, dict):
                 # Ajouter la portée par défaut si manquante
-                if "range" not in base_weapons:
-                    base_weapons = base_weapons.copy()
-                    base_weapons["range"] = "Mêlée"
-                weapons.append(base_weapons)
+                weapon_copy = base_weapons.copy()
+                if "range" not in weapon_copy:
+                    weapon_copy["range"] = "Mêlée"
+                weapons.append(weapon_copy)
 
         # Armes des options (y compris améliorations)
         if "options" in unit and isinstance(unit["options"], dict):
@@ -550,8 +549,8 @@ def export_html(army_list, army_name, army_limit):
                                 weapon = opt["weapon"]
                                 if isinstance(weapon, list):
                                     for w in weapon:
-                                        w_copy = w.copy() if isinstance(w, dict) else w
-                                        if isinstance(w_copy, dict):
+                                        if isinstance(w, dict):
+                                            w_copy = w.copy()
                                             # Ajouter la portée si manquante
                                             if "range" not in w_copy:
                                                 w_copy["range"] = "Mêlée"
@@ -564,10 +563,10 @@ def export_html(army_list, army_name, army_limit):
                                             if opt.get("replaces"):
                                                 w_copy["_replaces"] = opt["replaces"]
                                                 w_copy["_upgraded"] = True
-                                        weapons.append(w_copy)
+                                            weapons.append(w_copy)
                                 else:
-                                    w_copy = weapon.copy() if isinstance(weapon, dict) else weapon
-                                    if isinstance(w_copy, dict):
+                                    if isinstance(weapon, dict):
+                                        w_copy = weapon.copy()
                                         # Ajouter la portée si manquante
                                         if "range" not in w_copy:
                                             w_copy["range"] = "Mêlée"
@@ -580,15 +579,15 @@ def export_html(army_list, army_name, army_limit):
                                         if opt.get("replaces"):
                                             w_copy["_replaces"] = opt["replaces"]
                                             w_copy["_upgraded"] = True
-                                    weapons.append(w_copy)
+                                        weapons.append(w_copy)
 
                             # Améliorations d'arme (ex: Javelot des Tempêtes)
                             if opt.get("type") == "conditional_weapon" and "weapon" in opt:
                                 weapon = opt["weapon"]
                                 if isinstance(weapon, list):
                                     for w in weapon:
-                                        w_copy = w.copy() if isinstance(w, dict) else w
-                                        if isinstance(w_copy, dict):
+                                        if isinstance(w, dict):
+                                            w_copy = w.copy()
                                             # Ajouter la portée si manquante
                                             if "range" not in w_copy:
                                                 w_copy["range"] = "Mêlée"
@@ -596,10 +595,10 @@ def export_html(army_list, army_name, army_limit):
                                             if "count" in opt:
                                                 w_copy["_count"] = opt["count"]
                                             w_copy["_upgraded"] = True
-                                        weapons.append(w_copy)
+                                            weapons.append(w_copy)
                                 else:
-                                    w_copy = weapon.copy() if isinstance(weapon, dict) else weapon
-                                    if isinstance(w_copy, dict):
+                                    if isinstance(weapon, dict):
+                                        w_copy = weapon.copy()
                                         # Ajouter la portée si manquante
                                         if "range" not in w_copy:
                                             w_copy["range"] = "Mêlée"
@@ -607,21 +606,23 @@ def export_html(army_list, army_name, army_limit):
                                         if "count" in opt:
                                             w_copy["_count"] = opt["count"]
                                         w_copy["_upgraded"] = True
-                                    weapons.append(w_copy)
+                                        weapons.append(w_copy)
 
                 elif isinstance(group, dict) and "weapon" in group:
                     weapon = group["weapon"]
                     if isinstance(weapon, list):
                         for w in weapon:
-                            w_copy = w.copy() if isinstance(w, dict) else w
-                            if isinstance(w_copy, dict) and "range" not in w_copy:
+                            if isinstance(w, dict):
+                                w_copy = w.copy()
+                                if "range" not in w_copy:
+                                    w_copy["range"] = "Mêlée"
+                                weapons.append(w_copy)
+                    else:
+                        if isinstance(weapon, dict):
+                            w_copy = weapon.copy()
+                            if "range" not in w_copy:
                                 w_copy["range"] = "Mêlée"
                             weapons.append(w_copy)
-                    else:
-                        w_copy = weapon.copy() if isinstance(weapon, dict) else weapon
-                        if isinstance(w_copy, dict) and "range" not in w_copy:
-                            w_copy["range"] = "Mêlée"
-                        weapons.append(w_copy)
 
         # Armes de monture (mais ne seront pas affichées dans la section monture)
         if "mount" in unit and unit.get("mount"):
@@ -632,19 +633,19 @@ def export_html(army_list, army_name, army_limit):
                     mount_weapons = mount_data["weapon"]
                     if isinstance(mount_weapons, list):
                         for w in mount_weapons:
-                            w_copy = w.copy() if isinstance(w, dict) else w
-                            if isinstance(w_copy, dict):
+                            if isinstance(w, dict):
+                                w_copy = w.copy()
                                 if "range" not in w_copy:
                                     w_copy["range"] = "Mêlée"
                                 w_copy["_mount_weapon"] = True
-                            weapons.append(w_copy)
+                                weapons.append(w_copy)
                     else:
-                        w_copy = mount_weapons.copy() if isinstance(mount_weapons, dict) else mount_weapons
-                        if isinstance(w_copy, dict):
+                        if isinstance(mount_weapons, dict):
+                            w_copy = mount_weapons.copy()
                             if "range" not in w_copy:
                                 w_copy["range"] = "Mêlée"
                             w_copy["_mount_weapon"] = True
-                        weapons.append(w_copy)
+                            weapons.append(w_copy)
 
         return weapons
 
@@ -732,9 +733,8 @@ def export_html(army_list, army_name, army_limit):
     # Trier les unités selon vos critères
     sorted_units = sorted(army_list, key=lambda u: get_unit_type_priority(u))
 
-    total = sum(u["cost"] for u in sorted_units)
-
-    html = f"""
+    # Génération du HTML
+    html_content = f"""
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1067,7 +1067,7 @@ body {{
         size = unit.get("size", 10)
         coriace = unit.get("coriace", 0)
 
-        html += f'''
+        html_content += f'''
 <div class="unit-card">
   <div class="unit-header">
     <div class="unit-name-container">
@@ -1146,7 +1146,7 @@ body {{
                 rules = ", ".join(w.get("special_rules", []))
                 rules_display = rules if rules else "-"
 
-                html += f"""
+                html_content += f"""
             <tr>
               <td class="weapon-name">{name_display}</td>
               <td class="weapon-stats">{rng}</td>
@@ -1156,13 +1156,13 @@ body {{
             </tr>
 """
         except Exception as e:
-            html += f"""
+            html_content += f"""
             <tr>
               <td colspan="5" style="color: red;">Erreur de chargement des armes: {str(e)}</td>
             </tr>
 """
 
-        html += '''
+        html_content += '''
           </tbody>
         </table>
 
@@ -1174,13 +1174,13 @@ body {{
         try:
             rules = get_rules(unit)
             if rules:
-                html += ' '.join(f'<span class="rule-tag">{esc(r)}</span>' for r in rules)
+                html_content += ' '.join(f'<span class="rule-tag">{esc(r)}</span>' for r in rules)
             else:
-                html += '<span class="rule-tag">Aucune</span>'
+                html_content += '<span class="rule-tag">Aucune</span>'
         except Exception as e:
-            html += f'<span class="rule-tag" style="color: red;">Erreur: {str(e)}</span>'
+            html_content += f'<span class="rule-tag" style="color: red;">Erreur: {str(e)}</span>'
 
-        html += '''
+        html_content += '''
           </div>
         </div>
 '''
@@ -1189,7 +1189,7 @@ body {{
         try:
             upgrades = get_upgrades(unit)
             if upgrades:
-                html += '''
+                html_content += '''
         <div class="upgrade-section">
           <div class="section-title">⬆️ Améliorations</div>
           <div style="margin-left: 8px;">
@@ -1199,23 +1199,23 @@ body {{
                     upgrade_cost = upgrade.get("cost", 0)
                     upgrade_rules = ", ".join(upgrade.get("special_rules", []))
 
-                    html += f'''
+                    html_content += f'''
             <div style="margin-bottom: 8px;">
               <strong>{upgrade_name}</strong>{' (+' + str(upgrade_cost) + ' pts)' if upgrade_cost > 0 else ''}
 '''
                     if upgrade_rules:
-                        html += f'''
+                        html_content += f'''
               <div style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">{upgrade_rules}</div>
 '''
-                    html += '''
+                    html_content += '''
             </div>
 '''
-                html += '''
+                html_content += '''
           </div>
         </div>
 '''
         except Exception as e:
-            html += f'''
+            html_content += f'''
         <div class="upgrade-section">
           <div style="color: red; padding: 8px;">Erreur de chargement des améliorations: {str(e)}</div>
         </div>
@@ -1230,7 +1230,7 @@ body {{
                     mount_name = esc(mount.get("name", "Monture"))
                     mount_cost = mount.get("cost", 0)
 
-                    html += f'''
+                    html_content += f'''
         <div class="mount-section">
           <div class="section-title">🐴 {mount_name}</div>
           <div style="margin: 0 8px 8px;">
@@ -1243,29 +1243,29 @@ body {{
                         mount_rules = [r for r in mount_data["special_rules"] if not r.startswith(("Griffes", "Sabots", "Coriace"))]
 
                     if mount_rules:
-                        html += '''
+                        html_content += '''
             <div style="margin-top: 12px;">
               <div style="font-weight: 600; color: var(--text-main); margin-bottom: 8px;">Règles spéciales:</div>
               <div>
 '''
-                        html += ' '.join(f'<span class="rule-tag">{esc(r)}</span>' for r in mount_rules)
-                        html += '''
+                        html_content += ' '.join(f'<span class="rule-tag">{esc(r)}</span>' for r in mount_rules)
+                        html_content += '''
               </div>
             </div>
 '''
 
-                    html += '''
+                    html_content += '''
           </div>
         </div>
 '''
         except Exception as e:
-            html += f'''
+            html_content += f'''
         <div class="mount-section">
           <div style="color: red; padding: 8px;">Erreur de chargement de la monture: {str(e)}</div>
         </div>
 '''
 
-        html += '''
+        html_content += '''
     </div>
 </div>
 '''
@@ -1277,33 +1277,33 @@ body {{
             all_rules = [rule for rule in faction_rules if isinstance(rule, dict)]
 
             if all_rules:
-                html += '''
+                html_content += '''
 <div class="faction-rules">
   <h3 style="text-align: center; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px;">
     📜 Légende des règles spéciales de la faction
   </h3>
-  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, fr)); gap: 20px;">
 '''
                 for rule in sorted(all_rules, key=lambda x: x.get('name', '').lower().replace('é', 'e').replace('è', 'e')):
                     if isinstance(rule, dict):
-                        html += f'''
+                        html_content += f'''
     <div class="rule-item">
       <div class="rule-name">{esc(rule.get('name', ''))}</div>
       <div style="font-size: 14px; color: var(--text-main); line-height: 1.4;">{esc(rule.get('description', ''))}</div>
     </div>
 '''
-                html += '''
+                html_content += '''
   </div>
 </div>
 '''
     except Exception as e:
-        html += f'''
+        html_content += f'''
 <div style="margin-top: 20px; padding: 10px; color: red; border: 1px solid #ffcccc; background: #ffebee; border-radius: 4px;">
   Erreur de chargement des règles de faction: {str(e)}
 </div>
 '''
 
-    html += '''
+    html_content += '''
 <div style="text-align: center; margin-top: 30px; font-size: 12px; color: var(--text-muted);">
   Généré par OPR ArmyBuilder FR - {datetime.now().strftime('%d/%m/%Y %H:%M')}
 </div>
@@ -1311,7 +1311,8 @@ body {{
 </body>
 </html>
 '''
-    return html, format_unit_option
+
+    return html_content
 
 # ======================================================
 # CHARGEMENT DES FACTIONS
