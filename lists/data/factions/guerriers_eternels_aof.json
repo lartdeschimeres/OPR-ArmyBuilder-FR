@@ -7,7 +7,7 @@
   "faction_special_rules": [
     {
       "name": "Warden [Gardien]",
-      "description": "Lorsque des unités dont toutes les figurines possèdent cette règle spéciale subissent des tirs ou sont Chargées d’une distance supérieure à 9” et subissent des blessures, ces blessures comptent comme ayant une PA (-1), jusqu'à un minimum de PA (0)."
+      "description": "Lorsque des unités dont toutes les figurines possèdent cette règle spéciale subissent des tirs ou sont Chargées d'une distance supérieure à 9\" et subissent des blessures, ces blessures comptent comme ayant une PA (-1), jusqu'à un minimum de PA (0)."
     },
     {
       "name": "Armor (X+) [Armure (X+)]",
@@ -15,11 +15,11 @@
     },
     {
       "name": "Breath Attack [Attaque de souffle]",
-      "description": "Une fois par activation de cette figurine, avant d'attaquer, lancez 1D6 : sur un résultat de 2+, une unité ennemie dans un rayon de 6” en ligne de mire subit une touche avec Explosion (3) et PA (1)."
+      "description": "Une fois par activation de cette figurine, avant d'attaquer, lancez 1D6 : sur un résultat de 2+, une unité ennemie dans un rayon de 6\" en ligne de mire subit une touche avec Explosion (3) et PA (1)."
     },
     {
       "name": "Infiltrate [Infiltration]",
-      "description": "Compte comme ayant la règle spéciale Embuscade, mais peut être déployé jusqu'à 1” des unités ennemies."
+      "description": "Compte comme ayant la règle spéciale Embuscade, mais peut être déployé jusqu'à 1\" des unités ennemies."
     },
     {
       "name": "Melee Slayer [Tueur en mêlée]",
@@ -27,19 +27,19 @@
     },
     {
       "name": "Piercing Target (X) [Perforation de la cible (X)]",
-      "description": "Une fois par partie, lors de l'activation de cette figurine, choisissez une unité ennemie à 36” ou moins dans sa ligne de vue, et placez X marqueurs dessus. Les unités amies obtiennent +PA (X) lorsqu'elles l'attaquent."
+      "description": "Une fois par partie, lors de l'activation de cette figurine, choisissez une unité ennemie à 36\" ou moins dans sa ligne de vue, et placez X marqueurs dessus. Les unités amies obtiennent +PA (X) lorsqu'elles l'attaquent."
     },
     {
-      "name" :"Re-Deployment [Redéploiement]",
-      "description": "Une fois toutes les autres unités déployées (à l'exception des unités mises de côté), vous pouvez retirer jusqu'à deux unités amies de la table et les redéployer. Les joueurs placent les unités de redéploiement à tour de rôle, en commençant par le joueur qui s’active ensuite."
+      "name": "Re-Deployment [Redéploiement]",
+      "description": "Une fois toutes les autres unités déployées (à l'exception des unités mises de côté), vous pouvez retirer jusqu'à deux unités amies de la table et les redéployer. Les joueurs placent les unités de redéploiement à tour de rôle, en commençant par le joueur qui s'active ensuite."
     },
     {
       "name": "Re-Position Artillery [Repositionnement de l'artillerie]",
-      "description": "Une fois par activation, choisissez une figurine amie à 6” ou moins avec la règle spéciale Artillerie, qui peut immédiatement se déplacer jusqu'à 9”."
+      "description": "Une fois par activation, choisissez une figurine amie à 6\" ou moins avec la règle spéciale Artillerie, qui peut immédiatement se déplacer jusqu'à 9\"."
     },
     {
-      "name": "Repel Ambushers [Chasse à l’Embuscade]",
-      "description": "Les unités ennemies utilisant la règle spéciale Embuscade doivent être placées à plus de 12” de l'unité de cette figurine."
+      "name": "Repel Ambushers [Chasse à l'Embuscade]",
+      "description": "Les unités ennemies utilisant la règle spéciale Embuscade doivent être placées à plus de 12\" de l'unité de cette figurine."
     },
     {
       "name": "Shred [Lacération]",
@@ -55,11 +55,11 @@
     },
     {
       "name": "Unstoppable Shooting Mark [Marque de tir Imparable]",
-      "description": "Une fois par activation, avant d'attaquer, choisissez une unité ennemie à 18” ou moins. Les unités amies obtiennent la règle spéciale Imparable une seule fois lorsqu'elles tirent sur cette unité (la prochaine fois que l'effet s'appliquerait)."
+      "description": "Une fois par activation, avant d'attaquer, choisissez une unité ennemie à 18\" ou moins. Les unités amies obtiennent la règle spéciale Imparable une seule fois lorsqu'elles tirent sur cette unité (la prochaine fois que l'effet s'appliquerait)."
     },
     {
       "name": "Warden Boost [Bosst de Gardien]",
-      "description": "Si toutes les figurines de cette unité possèdent la règle spéciale Gardien, les tirs ennemis comptent toujours comme ayant PA (-1) grâce à la règle spéciale Gardien (au lieu de seulement lorsqu'ils sont chargés ou qu’on leur tire dessus à plus de 9”)."
+      "description": "Si toutes les figurines de cette unité possèdent la règle spéciale Gardien, les tirs ennemis comptent toujours comme ayant PA (-1) grâce à la règle spéciale Gardien (au lieu de seulement lorsqu'ils sont chargés ou qu'on leur tire dessus à plus de 9\")."
     },
     {
       "name": "Bane when Shooting Aura [Aura de Fléau au tir]",
@@ -80,40 +80,25 @@
   ],
   "spells": {
     "Shock Attack (1) [Attaque choc (1)]": {
-      "cost": 1, 
-      "description": "Choisissez une unité ennemie à 18” ou moins. Les unités amies obtiennent la règle spéciale Imparable une seule fois lorsqu'elles tirent contre cette unité (la prochaine fois que l'effet s'appliquerait).",
-      "range": "18\"",
-      "target": "1 unité ennemie"
-    },
+      "description": "Choisissez une unité ennemie à 18\" ou moins. Les unités amies obtiennent la règle spéciale Imparable une seule fois lorsqu'elles tirent contre cette unité (la prochaine fois que l'effet s'appliquerait)."
+     },
     "Thunder Clap (1) [Coup de tonnerre (1)]": {
-      "cost": 1, 
-      "description": "Choisissez une unité ennemie à 18” ou moins, qui subit 1 touche avec Fracas.",
+      "cost": 1,
+      "description": "Choisissez une unité ennemie à 18\" ou moins, qui subit 1 touche avec Fracas.",
       "range": "18\"",
       "target": "1 unité ennemie"
     },
     "Star Strike (2) [Frappe stellaire (2)]": {
-      "cost": 2,
-      "description": "Choisissez jusqu'à deux unités amies à 12” ou moins, qui obtiennent une seule fois la règle spéciale Combattant imprévisible (la prochaine fois que l'effet s'appliquerait).",
-      "range": "12\"",
-      "target": "2 unités amies"
+      "description": "Choisissez jusqu'à deux unités amies à 12\" ou moins, qui obtiennent une seule fois la règle spéciale Combattant imprévisible (la prochaine fois que l'effet s'appliquerait)."
     },
     "Heavy Storm (2) [Violente tempête (2)]": {
-      "cost": 2,
-      "description": "Choisissez jusqu'à deux unités ennemies à 9” ou moins, qui subissent quatre blessures chacune.",
-      "range": "9\"",
-      "target": "2 unités ennemies"
+      "description": "Choisissez jusqu'à deux unités ennemies à 9\" ou moins, qui subissent quatre blessures chacune."
     },
     "Warding Cloud (3) [Nuage protecteur (3)]": {
-      "cost": 3,
-      "description": "Choisissez jusqu'à trois unités amies à 12” ou moins, qui bénéficient une seule fois de la règle spéciale Boost de Gardien (la prochaine fois que l'effet s'appliquerait).",
-      "range": "12\"",
-      "target": "3 unités amies"
+      "description": "Choisissez jusqu'à trois unités amies à 12\" ou moins, qui bénéficient une seule fois de la règle spéciale Boost de Gardien (la prochaine fois que l'effet s'appliquerait)."
     },
     "Lightning Bolt (3) [Éclair (3)]": {
-      "cost": 3,
-      "description": "Choisissez une unité ennemie à 12” ou moins, qui subit six blessures avec PA (1) et Lacération.",
-      "range": "12\"",
-      "target": "1 unité ennemie"
+      "description": "Choisissez une unité ennemie à 12\" ou moins, qui subit six blessures avec PA (1) et Lacération."
     }
   },
   "units": [
@@ -126,7 +111,11 @@
       "quality": 3,
       "defense": 3,
       "coriace": 6,
-      "special_rules": ["Gardien", "Héros", "Sans peur"],
+      "special_rules": [
+        "Gardien",
+        "Héros",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Arme à une main lourde",
@@ -142,25 +131,123 @@
           "type": "role",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
-            {"name": "Gardien des Reliques", "cost": 10, "special_rules": ["Aura de Boost de Gardien"]},
-            {"name": "Hérault", "cost": 10, "special_rules": ["Imparable en mêlée"]},
-            {"name": "Prêtre", "cost": 25, "special_rules": ["Aura de Furtivité"]},
-            {"name": "Porteur de la bannière de l’armée", "cost": 30, "special_rules": ["Effrayant (3)"]},
-            {"name": "Porteur de l’Héritage", "cost": 45, "special_rules": ["Redéploiement"]},
-            {"name": "Sorcier", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
-            {"name": "Maître Sorcier", "cost": 60, "special_rules": ["Lanceur de sorts (3)"]}
+            {
+              "name": "Gardien des Reliques",
+              "cost": 10,
+              "special_rules": [
+                "Aura de Boost de Gardien"
+              ]
+            },
+            {
+              "name": "Hérault",
+              "cost": 10,
+              "special_rules": [
+                "Imparable en mêlée"
+              ]
+            },
+            {
+              "name": "Prêtre",
+              "cost": 25,
+              "special_rules": [
+                "Aura de Furtivité"
+              ]
+            },
+            {
+              "name": "Porteur de la bannière de l'armée",
+              "cost": 30,
+              "special_rules": [
+                "Effrayant (3)"
+              ]
+            },
+            {
+              "name": "Porteur de l'Héritage",
+              "cost": 45,
+              "special_rules": [
+                "Redéploiement"
+              ]
+            },
+            {
+              "name": "Sorcier",
+              "cost": 40,
+              "special_rules": [
+                "Lanceur de sorts (2)"
+              ]
+            },
+            {
+              "name": "Maître Sorcier",
+              "cost": 60,
+              "special_rules": [
+                "Lanceur de sorts (3)"
+              ]
+            }
           ]
         },
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacez l'arme à une main lourde par :",
           "options": [
-            {"name": "Grande Masse-tonnerre", "cost": 5, "weapon": {"name": "Grande Masse-tonnerre", "range": "Mêlée", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Grand Marteau-météore", "cost": 10, "weapon": {"name": "Grand Marteau-météore", "range": "Mêlée", "attacks": 2, "armor_piercing": 2, "special_rules": ["Mortel (3)"]}},
-            {"name": "Grande arme lourde", "cost": 15, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 4, "armor_piercing": 4, "special_rules": []}},
-            {"name": "Lance lourde", "cost": 20, "weapon": {"name": "Lance lourde", "range": "Mêlée", "attacks": 4, "armor_piercing": 2, "special_rules": ["Percée"]}},
-            {"name": "Paire d’armes à une main lourdes", "cost": 40, "weapon": {"name": "Paire d’armes à une main lourde", "range": "Mêlée", "attacks": 8, "armor_piercing": 2, "special_rules": []}}
+            {
+              "name": "Grande Masse-tonnerre",
+              "cost": 5,
+              "weapon": {
+                "name": "Grande Masse-tonnerre",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 4,
+                "special_rules": [
+                  "Fracas"
+                ]
+              }
+            },
+            {
+              "name": "Grand Marteau-météore",
+              "cost": 10,
+              "weapon": {
+                "name": "Grand Marteau-météore",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 2,
+                "special_rules": [
+                  "Mortel (3)"
+                ]
+              }
+            },
+            {
+              "name": "Grande arme lourde",
+              "cost": 15,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "Mêlée",
+                "attacks": 4,
+                "armor_piercing": 4,
+                "special_rules": []
+              }
+            },
+            {
+              "name": "Lance lourde",
+              "cost": 20,
+              "weapon": {
+                "name": "Lance lourde",
+                "range": "Mêlée",
+                "attacks": 4,
+                "armor_piercing": 2,
+                "special_rules": [
+                  "Percée"
+                ]
+              }
+            },
+            {
+              "name": "Paire d'armes à une main lourdes",
+              "cost": 40,
+              "weapon": {
+                "name": "Paire d'armes à une main lourde",
+                "range": "Mêlée",
+                "attacks": 8,
+                "armor_piercing": 2,
+                "special_rules": []
+              }
+            }
           ]
         },
         {
@@ -169,81 +256,113 @@
           "description": "Ajoutez une monture",
           "options": [
             {
-              "name": "Armure Destroyer", 
-              "cost": 20, 
+              "name": "Armure Destroyer",
+              "cost": 20,
               "mount": {
                 "name": "Armure Destroyer",
-                "special_rules": ["Armure (2+)", "Infiltration", "Lent"]
+                "weapon": [],
+                "special_rules": [
+                  "Armure (2+)",
+                  "Infiltration",
+                  "Lent"
+                ]
               }
             },
             {
-              "name": "Drake", 
-              "cost": 90, 
-              "mount":{
+              "name": "Drake",
+              "cost": 90,
+              "mount": {
                 "name": "Drake",
                 "coriace_bonus": 3,
-                "weapon":[
+                "weapon": [
                   {
                     "name": "Griffes perforantes",
                     "range": "Mêlée",
                     "attacks": 1,
                     "armor_piercing": 0,
-                    "special_rules": ["Perforant"]
+                    "special_rules": [
+                      "Perforant"
+                    ]
                   }
                 ],
-                "special_rules": ["Attaque de souffle", "Rapide"]
+                "special_rules": [
+                  "Attaque de souffle",
+                  "Rapide"
+                ]
               }
             },
             {
-              "name": "Dragon", 
-              "cost": 110, 
-              "mount":{
+              "name": "Dragon",
+              "cost": 110,
+              "mount": {
                 "name": "Dragon",
                 "coriace_bonus": 3,
-                "weapon":[
+                "weapon": [
                   {
                     "name": "Griffes lourdes",
                     "range": "Mêlée",
                     "attacks": 2,
-                    "armor_piercing": 1
+                    "armor_piercing": 1,
+                    "special_rules": []
                   }
                 ],
-                "special_rules": ["Attaque de souffle", "Effrayant (1)", "Volant"]
+                "special_rules": [
+                  "Attaque de souffle",
+                  "Effrayant (1)",
+                  "Volant"
+                ]
               }
             },
             {
-              "name": "Grand Dragon", 
-              "cost": 350, 
-              "mount":{
+              "name": "Grand Dragon",
+              "cost": 350,
+              "mount": {
                 "name": "Grand Dragon",
                 "coriace_bonus": 12,
-                "weapon":[
+                "weapon": [
                   {
                     "name": "Griffes lourdes",
                     "range": "Mêlée",
                     "attacks": 6,
-                    "armor_piercing": 1
+                    "armor_piercing": 1,
+                    "special_rules": []
                   },
                   {
                     "name": "Piétinement",
                     "range": "Mêlée",
                     "attacks": 4,
                     "armor_piercing": 1,
-                    "special_rules":  []
-                    }
+                    "special_rules": []
+                  }
                 ],
-                "special_rules": ["Attaque de souffle", "Effrayant (2)", "Volant"]
+                "special_rules": [
+                  "Attaque de souffle",
+                  "Effrayant (2)",
+                  "Volant"
+                ]
               }
             }
           ]
         },
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer le héros avec les options suivantes :",
           "options": [
-            {"name": "Fanal de foudre", "cost": 35, "special_rules": ["Perforation de la cible (1)"]},
-            {"name": "Compagnon Limier", "cost": 10, "special_rules": ["Chasse à l’Embuscade"]}
+            {
+              "name": "Fanal de foudre",
+              "cost": 35,
+              "special_rules": [
+                "Perforation de la cible (1)"
+              ]
+            },
+            {
+              "name": "Compagnon Limier",
+              "cost": 10,
+              "special_rules": [
+                "Chasse à l'Embuscade"
+              ]
+            }
           ]
         }
       ]
@@ -257,14 +376,21 @@
       "quality": 4,
       "defense": 4,
       "coriace": 6,
-      "special_rules": ["Furieux", "Gardien", "Héros", "Sans peur"],
+      "special_rules": [
+        "Furieux",
+        "Gardien",
+        "Héros",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Épée et sceptre",
           "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 1,
-          "special_rules": ["Fléau"]
+          "special_rules": [
+            "Fléau"
+          ]
         }
       ],
       "upgrade_groups": [
@@ -273,33 +399,145 @@
           "type": "role",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
-            {"name": "Hérault", "cost": 10, "special_rules": ["Imparable en mêlée"]},
-            {"name": "Prêtre", "cost": 25, "special_rules": ["Aura de Furtivité"]},
-            {"name": "Exorciste", "cost": 35, "special_rules": ["Lanceur de sorts (2)"]},
-            {"name": "Collectionneur d’âmes", "cost": 40, "special_rules": ["Aura de Fléau au tir"]},
-            {"name": "Porteur de l’Héritage", "cost": 45, "special_rules": ["Redéploiement"]},
-            {"name": "Maitre exorciste", "cost": 60, "special_rules": ["Lanceur de sorts (3)"]}
+            {
+              "name": "Hérault",
+              "cost": 10,
+              "special_rules": [
+                "Imparable en mêlée"
+              ]
+            },
+            {
+              "name": "Prêtre",
+              "cost": 25,
+              "special_rules": [
+                "Aura de Furtivité"
+              ]
+            },
+            {
+              "name": "Exorciste",
+              "cost": 35,
+              "special_rules": [
+                "Lanceur de sorts (2)"
+              ]
+            },
+            {
+              "name": "Collectionneur d'âmes",
+              "cost": 40,
+              "special_rules": [
+                "Aura de Fléau au tir"
+              ]
+            },
+            {
+              "name": "Porteur de l'Héritage",
+              "cost": 45,
+              "special_rules": [
+                "Redéploiement"
+              ]
+            },
+            {
+              "name": "Maitre exorciste",
+              "cost": 60,
+              "special_rules": [
+                "Lanceur de sorts (3)"
+              ]
+            }
           ]
         },
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacez l'Epée et le sceptre par :",
           "options": [
-            {"name": "Arme à une main lourde", "cost": 0, "weapon": {"name": "Arme à une main lourde", "range": "Mêlée", "attacks": 4, "armor_piercing": 1, "special_rules": []}},
-            {"name": "Grand sceptre", "cost": 10, "weapon": {"name": "Grand sceptre", "range": "Mêlée", "attacks": 4, "armor_piercing": 1, "special_rules": ["Fléau"]}},
-            {"name": "Grande Masse-tonnerre", "cost": 15, "weapon": {"name": "Grande Masse-tonnerre", "range": "Mêlée", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Grande arme lourde", "cost": 15, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 4, "armor_piercing": 3, "special_rules": []}},
-            {"name": "Paire d’armes à une main lourde", "cost": 30, "weapon": {"name": "Paire d’armes à une main lourde", "range": "Mêlée", "attacks": 8, "armor_piercing": 1, "special_rules": []}}
+            {
+              "name": "Arme à une main lourde",
+              "cost": 0,
+              "weapon": {
+                "name": "Arme à une main lourde",
+                "range": "Mêlée",
+                "attacks": 4,
+                "armor_piercing": 1,
+                "special_rules": []
+              }
+            },
+            {
+              "name": "Grand sceptre",
+              "cost": 10,
+              "weapon": {
+                "name": "Grand sceptre",
+                "range": "Mêlée",
+                "attacks": 4,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Fléau"
+                ]
+              }
+            },
+            {
+              "name": "Grande Masse-tonnerre",
+              "cost": 15,
+              "weapon": {
+                "name": "Grande Masse-tonnerre",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 4,
+                "special_rules": [
+                  "Fracas"
+                ]
+              }
+            },
+            {
+              "name": "Grande arme lourde",
+              "cost": 15,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "Mêlée",
+                "attacks": 4,
+                "armor_piercing": 3,
+                "special_rules": []
+              }
+            },
+            {
+              "name": "Paire d'armes à une main lourde",
+              "cost": 30,
+              "weapon": {
+                "name": "Paire d'armes à une main lourde",
+                "range": "Mêlée",
+                "attacks": 8,
+                "armor_piercing": 1,
+                "special_rules": []
+              }
+            }
           ]
         },
         {
-          "group": "Ajout d’une arme de tir",
+          "group": "Ajout d'une arme de tir",
           "type": "conditional_weapon",
           "description": "Améliorer le héros avec UNE SEULE arme à distance :",
           "options": [
-            {"name": "Arc de chevalier", "cost": 45, "weapon": {"name": "Arc de chevalier", "range": 24, "attacks": 4, "armor_piercing": 1, "special_rules": []}},
-            {"name": "Grand arc", "cost": 50, "weapon": {"name": "Grand arc", "range": 30, "attacks": 1, "armor_piercing": 3, "special_rules": ["Mortel (3)"]}}
+            {
+              "name": "Arc de chevalier",
+              "cost": 45,
+              "weapon": {
+                "name": "Arc de chevalier",
+                "range": 24,
+                "attacks": 4,
+                "armor_piercing": 1,
+                "special_rules": []
+              }
+            },
+            {
+              "name": "Grand arc",
+              "cost": 50,
+              "weapon": {
+                "name": "Grand arc",
+                "range": 30,
+                "attacks": 1,
+                "armor_piercing": 3,
+                "special_rules": [
+                  "Mortel (3)"
+                ]
+              }
+            }
           ]
         },
         {
@@ -307,35 +545,49 @@
           "type": "mount",
           "options": [
             {
-              "name": "Drake-Lion", 
-              "cost": 15, 
+              "name": "Drake-Lion",
+              "cost": 15,
               "mount": {
                 "name": "Drake-Lion",
-                "special_rules": ["Arpenteur", "Rapide"]
+                "weapon": [],
+                "special_rules": [
+                  "Arpenteur",
+                  "Rapide"
+                ]
               }
             },
             {
-              "name": "Ailes", 
+              "name": "Ailes",
               "cost": 20,
               "mount": {
                 "name": "Ailes",
-                "special_rules": ["Embuscade", "Volant"]
+                "weapon": [],
+                "special_rules": [
+                  "Embuscade",
+                  "Volant"
+                ]
               }
             }
           ]
         },
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer le héros avec :",
           "options": [
-            {"name": "Paladin", "cost": 5, "special_rules": ["Combattant imprévisible"]}
+            {
+              "name": "Paladin",
+              "cost": 5,
+              "special_rules": [
+                "Combattant imprévisible"
+              ]
+            }
           ]
         }
       ]
     },
     {
-      "name": "Gardien d’Élite",
+      "name": "Gardien d'Élite",
       "type": "hero",
       "unit_detail": "hero",
       "size": 1,
@@ -343,7 +595,11 @@
       "quality": 4,
       "defense": 4,
       "coriace": 3,
-      "special_rules": ["Gardien", "Héros", "Sans peur"],
+      "special_rules": [
+        "Gardien",
+        "Héros",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Arme à une main lourde",
@@ -359,38 +615,122 @@
           "type": "role",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
-            {"name": "Gardien des Reliques", "cost": 10, "special_rules": ["Aura de Boost de Gardien"]},
-            {"name": "Artilleur", "cost": 15, "special_rules": ["Repositionnement de l'artillerie"]},
-            {"name": "Prêtre", "cost": 25, "special_rules": ["Aura de Furtivité"]},
-            {"name": "Collectionneur d’âmes", "cost": 40, "special_rules": ["Aura de Fléau au tir"]},
-            {"name": "Porteur de l’Héritage", "cost": 45, "special_rules": ["Redéploiement"]}
+            {
+              "name": "Gardien des Reliques",
+              "cost": 10,
+              "special_rules": [
+                "Aura de Boost de Gardien"
+              ]
+            },
+            {
+              "name": "Artilleur",
+              "cost": 15,
+              "special_rules": [
+                "Repositionnement de l'artillerie"
+              ]
+            },
+            {
+              "name": "Prêtre",
+              "cost": 25,
+              "special_rules": [
+                "Aura de Furtivité"
+              ]
+            },
+            {
+              "name": "Collectionneur d'âmes",
+              "cost": 40,
+              "special_rules": [
+                "Aura de Fléau au tir"
+              ]
+            },
+            {
+              "name": "Porteur de l'Héritage",
+              "cost": 45,
+              "special_rules": [
+                "Redéploiement"
+              ]
+            }
           ]
         },
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacez l'arme à une main lourde par :",
           "options": [
-            {"name": "Paire d’armes à une main lourde", "cost": 5, "weapon": {"name": "Paire d’armes à une main lourde", "range": "Mêlée", "attacks": 4, "armor_piercing": 1, "special_rules": []}},
-            {"name": "Hallebarde lourde", "cost": 5, "weapon": {"name": "Hallebarde lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 1, "special_rules": ["Perforant"]}},
-            {"name": "Grande arme lourde", "cost": 10, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
+            {
+              "name": "Paire d'armes à une main lourde",
+              "cost": 5,
+              "weapon": {
+                "name": "Paire d'armes à une main lourde",
+                "range": "Mêlée",
+                "attacks": 4,
+                "armor_piercing": 1,
+                "special_rules": []
+              }
+            },
+            {
+              "name": "Hallebarde lourde",
+              "cost": 5,
+              "weapon": {
+                "name": "Hallebarde lourde",
+                "range": "Mêlée",
+                "attacks": 3,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Perforant"
+                ]
+              }
+            },
+            {
+              "name": "Grande arme lourde",
+              "cost": 10,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "Mêlée",
+                "attacks": 3,
+                "armor_piercing": 3,
+                "special_rules": []
+              }
+            }
           ]
         },
         {
-          "group": "Ajout d’une arme de tir",
+          "group": "Ajout d'une arme de tir",
           "type": "weapon",
           "description": "Améliorer le héros avec une arme à distance :",
           "options": [
-            {"name": "Arc d’élite", "cost": 20, "weapon": {"name": "Arc d’élite", "range": 24, "attacks": 3, "armor_piercing": 0, "special_rules": []}}
+            {
+              "name": "Arc d'élite",
+              "cost": 20,
+              "weapon": {
+                "name": "Arc d'élite",
+                "range": 24,
+                "attacks": 3,
+                "armor_piercing": 0,
+                "special_rules": []
+              }
+            }
           ]
         },
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer le héros avec :",
           "options": [
-            {"name": "Fanal de foudre", "cost": 35, "special_rules": ["Perforation de la cible (1)"]},
-            {"name": "Compagnon Limier", "cost": 10, "special_rules": ["Chasse à l’Embuscade"]}
+            {
+              "name": "Fanal de foudre",
+              "cost": 35,
+              "special_rules": [
+                "Perforation de la cible (1)"
+              ]
+            },
+            {
+              "name": "Compagnon Limier",
+              "cost": 10,
+              "special_rules": [
+                "Chasse à l'Embuscade"
+              ]
+            }
           ]
         }
       ]
@@ -403,35 +743,80 @@
       "base_cost": 75,
       "quality": 4,
       "defense": 4,
-      "special_rules": ["Gardien", "Sans peur"],
+      "special_rules": [
+        "Gardien",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Hallebarde lourde",
           "range": "Mêlée",
           "attacks": 1,
           "armor_piercing": 1,
-          "special_rules": ["Perforant"]
+          "special_rules": [
+            "Perforant"
+          ]
         }
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacer toutes les Hallebardes lourdes par :",
           "options": [
-            {"name": "Pique lourde", "cost": 5, "weapon": {"name": "Pique lourde", "attacks": 1, "armor_piercing": 1, "special_rules": ["Contre-charge"]}},
-            {"name": "Grande arme lourde", "cost": 10, "weapon": {"name": "Grande arme lourde", "attacks": 1, "armor_piercing": 3, "special_rules": []}}
+            {
+              "name": "Pique lourde",
+              "cost": 5,
+              "weapon": {
+                "name": "Pique lourde",
+                "range": "Mêlée",
+                "attacks": 1,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Contre-charge"
+                ]
+              }
+            },
+            {
+              "name": "Grande arme lourde",
+              "cost": 10,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "Mêlée",
+                "attacks": 1,
+                "armor_piercing": 3,
+                "special_rules": []
+              }
+            }
           ]
         },
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer l'unité avec :",
           "options": [
-            {"name": "Fanal de foudre", "cost": 35, "special_rules": ["Perforation de la cible (1)"]},
-            {"name": "Bannière", "cost": 5, "special_rules": []},
-            {"name": "Sergent", "cost": 5, "special_rules": []},
-            {"name": "Musicien", "cost": 10, "special_rules": []}
+            {
+              "name": "Fanal de foudre",
+              "cost": 35,
+              "special_rules": [
+                "Perforation de la cible (1)"
+              ]
+            },
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
           ]
         }
       ]
@@ -445,7 +830,11 @@
       "quality": 4,
       "defense": 4,
       "coriace": 3,
-      "special_rules": ["Gardien", "Furieux", "Sans peur"],
+      "special_rules": [
+        "Gardien",
+        "Furieux",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Arme à une main lourde",
@@ -457,11 +846,21 @@
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacez toutes les Armes à une main lourdes par :",
           "options": [
-            {"name": "Paire d’armes à une main lourdes", "cost": 45, "weapon": {"name": "Paire d’armes à une main lourdes", "range": "Mêlée", "attacks": 4, "armor_piercing": 1, "special_rules": []}}
+            {
+              "name": "Paire d'armes à une main lourdes",
+              "cost": 45,
+              "weapon": {
+                "name": "Paire d'armes à une main lourdes",
+                "range": "Mêlée",
+                "attacks": 4,
+                "armor_piercing": 1,
+                "special_rules": []
+              }
+            }
           ]
         },
         {
@@ -469,19 +868,59 @@
           "type": "conditional_weapon",
           "description": "Remplacer UNE SEULE Arme à une main lourde par :",
           "options": [
-            {"name": "Masse-tonnerre", "cost": 5, "weapon": {"name": "Masse-tonnerre", "range": "Mêlée", "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Grande arme lourde", "cost": 20, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
+            {
+              "name": "Masse-tonnerre",
+              "cost": 5,
+              "weapon": {
+                "name": "Masse-tonnerre",
+                "range": "Mêlée",
+                "attacks": 1,
+                "armor_piercing": 4,
+                "special_rules": [
+                  "Fracas"
+                ]
+              }
+            },
+            {
+              "name": "Grande arme lourde",
+              "cost": 20,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "Mêlée",
+                "attacks": 3,
+                "armor_piercing": 3,
+                "special_rules": []
+              }
+            }
           ]
-        },        
+        },
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer l'unité avec :",
           "options": [
-            {"name": "Fanal de foudre", "cost": 35, "special_rules": ["Perforation de la cible (1)"]},
-            {"name": "Bannière", "cost": 5, "special_rules": []},
-            {"name": "Sergent", "cost": 5, "special_rules": []},
-            {"name": "Musicien", "cost": 10, "special_rules": []}
+            {
+              "name": "Fanal de foudre",
+              "cost": 35,
+              "special_rules": [
+                "Perforation de la cible (1)"
+              ]
+            },
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
           ]
         }
       ]
@@ -495,41 +934,97 @@
       "quality": 4,
       "defense": 4,
       "coriace": 3,
-      "special_rules": ["Gardien", "Combattant imprévisible", "Sans peur"],
+      "special_rules": [
+        "Gardien",
+        "Combattant imprévisible",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Épée et sceptre",
           "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 0,
-          "special_rules": ["Fléau"]
+          "special_rules": [
+            "Fléau"
+          ]
         }
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
-          "description": "Remplacer toutes les Épées et sceptres par : ",
+          "description": "Remplacer toutes les Épées et sceptres par :",
           "options": [
-            {"name": "Arme à une main", "cost": 5, "weapon": {"name": "Arme à une main", "range": "Mêlée", "attacks": 3, "armor_piercing": 0, "special_rules": []}},
-            {"name": "Grand sceptre", "cost": 10, "weapon": {"name": "Grand sceptre", "range": "Mêlée", "attacks": 2, "armor_piercing": 1, "special_rules": ["Fléau"]}}
+            {
+              "name": "Arme à une main",
+              "cost": 5,
+              "weapon": {
+                "name": "Arme à une main",
+                "range": "Mêlée",
+                "attacks": 3,
+                "armor_piercing": 0,
+                "special_rules": []
+              }
+            },
+            {
+              "name": "Grand sceptre",
+              "cost": 10,
+              "weapon": {
+                "name": "Grand sceptre",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Fléau"
+                ]
+              }
+            }
           ]
-        },            
+        },
         {
           "group": "Améliorations d'arme",
           "type": "conditional_weapon",
           "description": "Remplacer UNE SEULE Arme à une main lourde par :",
           "options": [
-            {"name": "Masse-tonnerre", "cost": 5, "weapon": {"name": "Masse-tonnerre", "range": "Mêlée", "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Grande arme lourde", "cost": 20, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
+            {
+              "name": "Masse-tonnerre",
+              "cost": 5,
+              "weapon": {
+                "name": "Masse-tonnerre",
+                "range": "Mêlée",
+                "attacks": 1,
+                "armor_piercing": 4,
+                "special_rules": [
+                  "Fracas"
+                ]
+              }
+            },
+            {
+              "name": "Grande arme lourde",
+              "cost": 20,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "Mêlée",
+                "attacks": 3,
+                "armor_piercing": 3,
+                "special_rules": []
+              }
+            }
           ]
         },
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer l'unité avec :",
           "options": [
-            {"name": "Évocateur", "cost": 15, "special_rules": ["Lanceur de sorts (1)"]}
+            {
+              "name": "Évocateur",
+              "cost": 15,
+              "special_rules": [
+                "Lanceur de sorts (1)"
+              ]
+            }
           ]
         }
       ]
@@ -543,7 +1038,12 @@
       "quality": 4,
       "defense": 4,
       "coriace": 3,
-      "special_rules": ["Gardien", "Furieux", "Sans peur", "Volant"],
+      "special_rules": [
+        "Gardien",
+        "Furieux",
+        "Sans peur",
+        "Volant"
+      ],
       "weapon": [
         {
           "name": "Arme à une main lourde",
@@ -555,69 +1055,104 @@
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacer toutes les Armes à une main lourdes par :",
           "options": [
             {
-              "name": "Javelot", 
+              "name": "Javelot",
               "cost": 5,
-              "tags": ["has_javelot"],
+              "tags": [
+                "has_javelot"
+              ],
               "weapon": {
-                "name": "Javelot", 
-                "range": 12, 
-                "attacks": 2, 
-                "armor_piercing": 1, 
+                "name": "Javelot",
+                "range": 12,
+                "attacks": 2,
+                "armor_piercing": 1,
                 "special_rules": [],
-                "count": 3
+                "_count": 3
               }
             },
             {
-              "name": "Paire d’arme à une main Lourdes", 
-              "cost": 45, 
+              "name": "Paire d'arme à une main Lourdes",
+              "cost": 45,
               "weapon": {
-                "name": "Paire d’arme à une main Lourdes", 
-                "range": "Mêlée", "attacks": 4, 
-                "armor_piercing": 1, 
+                "name": "Paire d'arme à une main Lourdes",
+                "range": "Mêlée",
+                "attacks": 4,
+                "armor_piercing": 1,
                 "special_rules": []
               }
             }
           ]
-        },            
+        },
         {
           "group": "Améliorations d'arme",
           "type": "conditional_weapon",
           "description": "Remplacer UNE SEULE arme à une main lourde par :",
           "options": [
-            {"name": "Masse-tonnerre", "cost": 5, "weapon": {"name": "Masse-tonnerre", "range": "Mêlée", "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Grande arme lourde", "cost": 10, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
-          ]
-        },
-        {
-          "group": "Amélioration d'arme",
-          "type": "conditional_weapon",
-          "description": "Améliorer un seul Javelot par  (disponible seulement si Javelots équipés) :",
-          "options": [
             {
-              "name": "Javelot des Tempêtes", 
+              "name": "Masse-tonnerre",
               "cost": 5,
-              "requires": ["Javelot"],
               "weapon": {
-                "name": "Javelot des Tempêtes", 
-                "range": 12, 
-                "attacks": 1, 
-                "armor_piercing": 2, 
-                "special_rules": ["Mortel (3)"]
+                "name": "Masse-tonnerre",
+                "range": "Mêlée",
+                "attacks": 1,
+                "armor_piercing": 4,
+                "special_rules": [
+                  "Fracas"
+                ]
+              }
+            },
+            {
+              "name": "Grande arme lourde",
+              "cost": 10,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "Mêlée",
+                "attacks": 3,
+                "armor_piercing": 3,
+                "special_rules": []
               }
             }
           ]
         },
         {
-          "group": "Améliorations d’unité",
+          "group": "Amélioration d'arme",
+          "type": "conditional_weapon",
+          "description": "Améliorer un seul Javelot par (disponible seulement si Javelots équipés) :",
+          "options": [
+            {
+              "name": "Javelot des Tempêtes",
+              "cost": 5,
+              "requires": [
+                "Javelot"
+              ],
+              "weapon": {
+                "name": "Javelot des Tempêtes",
+                "range": 12,
+                "attacks": 1,
+                "armor_piercing": 2,
+                "special_rules": [
+                  "Mortel (3)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer l'unité avec :",
           "options": [
-            {"name": "Descente céleste", "cost": 15, "special_rules": ["Embuscade"]}
+            {
+              "name": "Descente céleste",
+              "cost": 15,
+              "special_rules": [
+                "Embuscade"
+              ]
+            }
           ]
         }
       ]
@@ -631,14 +1166,21 @@
       "quality": 3,
       "defense": 3,
       "coriace": 3,
-      "special_rules": ["Gardien", "Sans peur", "Tueur en mêlée"],
+      "special_rules": [
+        "Gardien",
+        "Sans peur",
+        "Tueur en mêlée"
+      ],
       "weapon": [
         {
           "name": "Hache-hallebarde",
           "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 0,
-          "special_rules": ["Fiable", "Perforant"]
+          "special_rules": [
+            "Fiable",
+            "Perforant"
+          ]
         }
       ]
     },
@@ -650,34 +1192,85 @@
       "base_cost": 195,
       "quality": 3,
       "defense": 3,
-      "coriace_bonus": 3,
-      "special_rules": ["Gardien", "Sans peur"],
+      "coriace": 3,
+      "special_rules": [
+        "Gardien",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Grande vouge",
           "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 1,
-          "special_rules": ["Perforant"]
+          "special_rules": [
+            "Perforant"
+          ]
         }
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacer toutes les Grandes vouges par :",
           "options": [
-            {"name": "Grade hache", "cost": 15, "weapon": {"name": "Grade hache", "range": "Mêlée", "attacks": 3, "armor_piercing": 1, "special_rules": ["Fiable"]}},
-            {"name": "Grand marteau", "cost": 25, "weapon": {"name": "Grand marteau", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}}
+            {
+              "name": "Grande hache",
+              "cost": 15,
+              "weapon": {
+                "name": "Grande hache",
+                "range": "Mêlée",
+                "attacks": 3,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Fiable"
+                ]
+              }
+            },
+            {
+              "name": "Grand marteau",
+              "cost": 25,
+              "weapon": {
+                "name": "Grand marteau",
+                "range": "Mêlée",
+                "attacks": 3,
+                "armor_piercing": 3,
+                "special_rules": []
+              }
+            }
           ]
-        },            
+        },
         {
           "group": "Améliorations d'arme",
           "type": "conditional_weapon",
           "description": "Remplacer UNE SEULE Grande vouge par :",
           "options": [
-            {"name": "Paire de haches", "cost": 5, "weapon": {"name": "Paire de haches", "range": "Mêlée", "attacks": 4, "armor_piercing": 0, "special_rules": ["Fiable"]}},
-            {"name": "Grande masse-tonnerre", "cost": 15, "weapon": {"name": "Grande masse-tonnerre", "range": "Mêlée", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}}
+            {
+              "name": "Paire de haches",
+              "cost": 5,
+              "weapon": {
+                "name": "Paire de haches",
+                "range": "Mêlée",
+                "attacks": 4,
+                "armor_piercing": 0,
+                "special_rules": [
+                  "Fiable"
+                ]
+              }
+            },
+            {
+              "name": "Grande masse-tonnerre",
+              "cost": 15,
+              "weapon": {
+                "name": "Grande masse-tonnerre",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 4,
+                "special_rules": [
+                  "Fracas"
+                ]
+              }
+            }
           ]
         }
       ]
@@ -691,7 +1284,12 @@
       "quality": 3,
       "defense": 2,
       "coriace": 3,
-      "special_rules": ["Gardien", "Infiltration", "Lent", "Sans peur"],
+      "special_rules": [
+        "Gardien",
+        "Infiltration",
+        "Lent",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Marteau-météore",
@@ -703,31 +1301,34 @@
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "conditional_weapon",
           "description": "Remplacer UN SEUL Marteau-météore par :",
           "options": [
             {
-              "name": "Grande masse-tonnerre", 
-              "cost": 5, 
+              "name": "Grande masse-tonnerre",
+              "cost": 5,
               "weapon": {
-                "name": "Grande masse-tonnerre", 
-                "range": "Mêlée", 
-                "attacks": 2, 
-                "armor_piercing": 4, 
-                "special_rules": ["Fracas"]
+                "name": "Grande masse-tonnerre",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 4,
+                "special_rules": [
+                  "Fracas"
+                ]
               }
             },
             {
-              "name": 
-              "Grand marteau-météore", 
-              "cost": 10, 
+              "name": "Grand marteau-météore",
+              "cost": 10,
               "weapon": {
-                "name": "Grand marteau-météore", 
-                "range": "Mêlée", 
-                "attacks": 2, 
-                "armor_piercing": 2, 
-                "special_rules": ["Mortel (3)"]
+                "name": "Grand marteau-météore",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 2,
+                "special_rules": [
+                  "Mortel (3)"
+                ]
               }
             }
           ]
@@ -742,7 +1343,10 @@
       "base_cost": 95,
       "quality": 4,
       "defense": 4,
-      "special_rules": ["Gardien", "Sans peur"],
+      "special_rules": [
+        "Gardien",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Arc",
@@ -761,11 +1365,17 @@
       ],
       "upgrade_groups": [
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer l'unité avec :",
           "options": [
-            {"name": "Fanal de foudre", "cost": 35, "special_rules": ["Perforation de la cible (1)"]}
+            {
+              "name": "Fanal de foudre",
+              "cost": 35,
+              "special_rules": [
+                "Perforation de la cible (1)"
+              ]
+            }
           ]
         }
       ]
@@ -778,8 +1388,11 @@
       "base_cost": 175,
       "quality": 4,
       "defense": 4,
-      "coriace_bonus": 3,
-      "special_rules": ["Gardien", "Sans peur"],
+      "coriace": 3,
+      "special_rules": [
+        "Gardien",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Arc",
@@ -798,22 +1411,70 @@
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacer toutes les Arcs par :",
           "options": [
-            {"name": "Arbalète-tonnerre", "cost": 5, "weapon": {"name": "Arbalète-tonnerre", "range": 18, "attacks": 1, "armor_piercing": 4, "special_rules": ["Fracas"]}},
-            {"name": "Arbalète lourde rapide", "cost": 20, "weapon": {"name": "Arbalète lourde rapide", "range": 24, "attacks": 2, "armor_piercing": 1, "special_rules": ["Perforant"]}},
-            {"name": "Arbalète lourde à répétition", "cost": 20, "weapon": {"name": "Arbalète lourde à répétition", "range": 12, "attacks": 4, "armor_piercing": 1, "special_rules": ["Perforant"]}}
+            {
+              "name": "Arbalète-tonnerre",
+              "cost": 5,
+              "weapon": {
+                "name": "Arbalète-tonnerre",
+                "range": 18,
+                "attacks": 1,
+                "armor_piercing": 4,
+                "special_rules": [
+                  "Fracas"
+                ]
+              }
+            },
+            {
+              "name": "Arbalète lourde rapide",
+              "cost": 20,
+              "weapon": {
+                "name": "Arbalète lourde rapide",
+                "range": 24,
+                "attacks": 2,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Perforant"
+                ]
+              }
+            },
+            {
+              "name": "Arbalète lourde à répétition",
+              "cost": 20,
+              "weapon": {
+                "name": "Arbalète lourde à répétition",
+                "range": 12,
+                "attacks": 4,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Perforant"
+                ]
+              }
+            }
           ]
         },
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer l'unité avec :",
           "options": [
-            {"name": "Invocateur de Tempêtes", "cost": 35, "special_rules": ["Marque de tir Imparable"]},
-            {"name": "Fanal de foudre", "cost": 35, "special_rules": ["Perforation de la cible (1)"]}
+            {
+              "name": "Invocateur de Tempêtes",
+              "cost": 35,
+              "special_rules": [
+                "Marque de tir Imparable"
+              ]
+            },
+            {
+              "name": "Fanal de foudre",
+              "cost": 35,
+              "special_rules": [
+                "Perforation de la cible (1)"
+              ]
+            }
           ]
         }
       ]
@@ -827,18 +1488,25 @@
       "quality": 4,
       "defense": 4,
       "coriace": 3,
-      "special_rules": ["Arpenteur", "Éclaireur", "Gardien", "Sans peur"],
+      "special_rules": [
+        "Arpenteur",
+        "Éclaireur",
+        "Gardien",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Pistolet arbalète",
           "range": 12,
           "attacks": 2,
           "armor_piercing": 0,
-          "special_rules": ["Perforant"]
+          "special_rules": [
+            "Perforant"
+          ]
         },
         {
           "name": "Arme à une main",
-          "unit_detail": "unit",
+          "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 0,
           "special_rules": []
@@ -846,7 +1514,7 @@
       ]
     },
     {
-      "name": "Gardiens Tireurs d’élite",
+      "name": "Gardiens Tireurs d'élite",
       "type": "unit",
       "unit_detail": "unit",
       "size": 3,
@@ -854,14 +1522,19 @@
       "quality": 4,
       "defense": 4,
       "coriace": 3,
-      "special_rules": ["Gardien", "Sans peur"],
+      "special_rules": [
+        "Gardien",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Arbalète Cyclone",
           "range": 18,
           "attacks": 3,
           "armor_piercing": 1,
-          "special_rules": ["Perforant"]
+          "special_rules": [
+            "Perforant"
+          ]
         },
         {
           "name": "Arme à une main",
@@ -873,19 +1546,39 @@
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacer toutes les Arbalète Cyclone par :",
           "options": [
-            {"name": "Arbalète-de précision", "cost": 105, "weapon": {"name": "Arbalète de précision", "range": 24, "attacks": 2, "armor_piercing": 1, "special_rules": ["Élimination", "Fiable", "Perforant"]}}
+            {
+              "name": "Arbalète de précision",
+              "cost": 105,
+              "weapon": {
+                "name": "Arbalète de précision",
+                "range": 24,
+                "attacks": 2,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Élimination",
+                  "Fiable",
+                  "Perforant"
+                ]
+              }
+            }
           ]
         },
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer l'unité avec :",
           "options": [
-            {"name": "Invocateur de Tempêtes", "cost": 35, "special_rules": ["Marque de tir Imparable"]}
+            {
+              "name": "Invocateur de Tempêtes",
+              "cost": 35,
+              "special_rules": [
+                "Marque de tir Imparable"
+              ]
+            }
           ]
         }
       ]
@@ -899,14 +1592,21 @@
       "quality": 5,
       "defense": 5,
       "coriace": 3,
-      "special_rules": ["Embuscade", "Gardien", "Rapide", "Volant"],
+      "special_rules": [
+        "Embuscade",
+        "Gardien",
+        "Rapide",
+        "Volant"
+      ],
       "weapon": [
         {
           "name": "Griffes perforantes",
           "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 0,
-          "special_rules": ["Perforant"]
+          "special_rules": [
+            "Perforant"
+          ]
         }
       ]
     },
@@ -919,7 +1619,12 @@
       "quality": 4,
       "defense": 5,
       "coriace": 3,
-      "special_rules": ["Arpenteur", "Chasse à l’Embuscade", "Gardien", "Rapide"],
+      "special_rules": [
+        "Arpenteur",
+        "Chasse à l'Embuscade",
+        "Gardien",
+        "Rapide"
+      ],
       "weapon": [
         {
           "name": "Morsures vicieuses",
@@ -931,11 +1636,17 @@
       ],
       "upgrade_groups": [
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer l'unité avec :",
           "options": [
-            {"name": "Meute de chasse", "cost": 15, "special_rules": ["Éclaireur"]}
+            {
+              "name": "Meute de chasse",
+              "cost": 15,
+              "special_rules": [
+                "Éclaireur"
+              ]
+            }
           ]
         }
       ]
@@ -949,7 +1660,13 @@
       "quality": 4,
       "defense": 4,
       "coriace": 3,
-      "special_rules": ["Éclaireur", "Gardien", "Impact (2)", "Rapide", "Sans peur"],
+      "special_rules": [
+        "Éclaireur",
+        "Gardien",
+        "Impact (2)",
+        "Rapide",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Arc",
@@ -968,23 +1685,69 @@
       ],
       "upgrade_groups": [
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer l'unité avec :",
           "options": [
-            {"name": "Bannière", "cost": 5, "special_rules": []},
-            {"name": "Sergent", "cost": 5, "special_rules": []},
-            {"name": "Musicien", "cost": 10, "special_rules": []}
+            {
+              "name": "Bannière",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Sergent",
+              "cost": 5,
+              "special_rules": []
+            },
+            {
+              "name": "Musicien",
+              "cost": 10,
+              "special_rules": []
+            }
           ]
         },
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacer toutes les Armes à une main par :",
           "options": [
-            {"name": "Lance", "cost": 10, "weapon": {"name": "Lance", "range": "Mêlée", "attacks": 2, "armor_piercing": 0, "special_rules": ["Percée"]}},
-            {"name": "Pistolet arbalète", "cost": 20, "weapon": {"name": "Pistolet arbalète", "range": 12, "attacks": 2, "armor_piercing": 0, "special_rules": ["Perforant"]}},
-            {"name": "Javelot", "cost": 20, "weapon": {"name": "Javelot", "range": 12, "attacks": 2, "armor_piercing": 1, "special_rules": []}}
+            {
+              "name": "Lance",
+              "cost": 10,
+              "weapon": {
+                "name": "Lance",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 0,
+                "special_rules": [
+                  "Percée"
+                ]
+              }
+            },
+            {
+              "name": "Pistolet arbalète",
+              "cost": 20,
+              "weapon": {
+                "name": "Pistolet arbalète",
+                "range": 12,
+                "attacks": 2,
+                "armor_piercing": 0,
+                "special_rules": [
+                  "Perforant"
+                ]
+              }
+            },
+            {
+              "name": "Javelot",
+              "cost": 20,
+              "weapon": {
+                "name": "Javelot",
+                "range": 12,
+                "attacks": 2,
+                "armor_piercing": 1,
+                "special_rules": []
+              }
+            }
           ]
         }
       ]
@@ -998,7 +1761,13 @@
       "quality": 4,
       "defense": 4,
       "coriace": 3,
-      "special_rules": ["Arpenteur", "Combattant imprévisible", "Gardien", "Rapide", "Sans peur"],
+      "special_rules": [
+        "Arpenteur",
+        "Combattant imprévisible",
+        "Gardien",
+        "Rapide",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Griffes lourdes",
@@ -1006,15 +1775,17 @@
           "attacks": 2,
           "armor_piercing": 1,
           "special_rules": [],
-          "count": 3
+          "_count": 3
         },
         {
           "name": "Épée et sceptre",
           "range": "Mêlée",
           "attacks": 2,
           "armor_piercing": 0,
-          "special_rules": ["Fléau"],
-          "count": 3
+          "special_rules": [
+            "Fléau"
+          ],
+          "_count": 3
         }
       ],
       "upgrade_groups": [
@@ -1031,24 +1802,40 @@
                 "range": "Mêlée",
                 "attacks": 2,
                 "armor_piercing": 1,
-                "special_rules": ["Fléau"]
+                "special_rules": [
+                  "Fléau"
+                ]
               },
               "max_count": {
                 "type": "size_based",
                 "value": 3
               },
               "min_count": 0,
-              "replaces": ["Épée et sceptre"]
+              "replaces": [
+                "Épée et sceptre"
+              ]
             }
           ]
         },
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer l'unité avec :",
           "options": [
-            {"name": "Évocateur", "cost": 15, "special_rules": ["Lanceur de sorts (1)"]},
-            {"name": "Invocateur de Tempêtes", "cost": 35, "special_rules": ["Marque de tir Imparable"]}
+            {
+              "name": "Évocateur",
+              "cost": 15,
+              "special_rules": [
+                "Lanceur de sorts (1)"
+              ]
+            },
+            {
+              "name": "Invocateur de Tempêtes",
+              "cost": 35,
+              "special_rules": [
+                "Marque de tir Imparable"
+              ]
+            }
           ]
         }
       ]
@@ -1062,33 +1849,88 @@
       "quality": 3,
       "defense": 3,
       "coriace": 6,
-      "special_rules": ["Attaque de souffle", "Gardien", "Rapide", "Sans peur"],
+      "special_rules": [
+        "Attaque de souffle",
+        "Gardien",
+        "Rapide",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Griffes perforantes",
           "range": "Mêlée",
           "attacks": 1,
           "armor_piercing": 0,
-          "special_rules": ["Perforant"]
+          "special_rules": [
+            "Perforant"
+          ]
         },
         {
           "name": "Masse-tonnerre",
           "range": "Mêlée",
           "attacks": 1,
           "armor_piercing": 4,
-          "special_rules": ["Fracas"]
+          "special_rules": [
+            "Fracas"
+          ]
         }
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacer la Masse-tonnerre par :",
           "options": [
-            {"name": "Grande vouge", "cost": 5, "weapon": {"name": "Grande vouge", "range": "Mêlée", "attacks": 3, "armor_piercing": 1, "special_rules": ["Perforant"]}},
-            {"name": "Grade hache", "cost": 15, "weapon": {"name": "Grade hache", "range": "Mêlée", "attacks": 3, "armor_piercing": 1, "special_rules": ["Fiable"]}},
-            {"name": "Grand marteau", "cost": 15, "weapon": {"name": "Grand marteau", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}},
-            {"name": "Arbalète à répétition", "cost": 20, "weapon": {"name": "Arbalète à répétition", "range": 12, "attacks": 4, "armor_piercing": 1, "special_rules": ["Perforant"]}}
+            {
+              "name": "Grande vouge",
+              "cost": 5,
+              "weapon": {
+                "name": "Grande vouge",
+                "range": "Mêlée",
+                "attacks": 3,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Perforant"
+                ]
+              }
+            },
+            {
+              "name": "Grande hache",
+              "cost": 15,
+              "weapon": {
+                "name": "Grande hache",
+                "range": "Mêlée",
+                "attacks": 3,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Fiable"
+                ]
+              }
+            },
+            {
+              "name": "Grand marteau",
+              "cost": 15,
+              "weapon": {
+                "name": "Grand marteau",
+                "range": "Mêlée",
+                "attacks": 3,
+                "armor_piercing": 3,
+                "special_rules": []
+              }
+            },
+            {
+              "name": "Arbalète à répétition",
+              "cost": 20,
+              "weapon": {
+                "name": "Arbalète à répétition",
+                "range": 12,
+                "attacks": 4,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Perforant"
+                ]
+              }
+            }
           ]
         }
       ]
@@ -1102,7 +1944,13 @@
       "quality": 3,
       "defense": 3,
       "coriace": 6,
-      "special_rules": ["Attaque de souffle", "Effrayant (1)", "Gardien", "Sans peur", "Volant"],
+      "special_rules": [
+        "Attaque de souffle",
+        "Effrayant (1)",
+        "Gardien",
+        "Sans peur",
+        "Volant"
+      ],
       "weapon": [
         {
           "name": "Griffes lourdes",
@@ -1116,25 +1964,55 @@
           "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 1,
-          "special_rules": ["Percée"]
+          "special_rules": [
+            "Percée"
+          ]
         }
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacer la Lance lourde par :",
           "options": [
-            {"name": "Grande arme lourde", "cost": 5, "weapon": {"name": "Grande arme lourde", "range": "Mêlée", "attacks": 3, "armor_piercing": 3, "special_rules": []}},
-            {"name": "Grande Masse-tonnerre", "cost": 5, "weapon": {"name": "Grande Masse-tonnerre", "range": "Mêlée", "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}}
+            {
+              "name": "Grande arme lourde",
+              "cost": 5,
+              "weapon": {
+                "name": "Grande arme lourde",
+                "range": "Mêlée",
+                "attacks": 3,
+                "armor_piercing": 3,
+                "special_rules": []
+              }
+            },
+            {
+              "name": "Grande Masse-tonnerre",
+              "cost": 5,
+              "weapon": {
+                "name": "Grande Masse-tonnerre",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 4,
+                "special_rules": [
+                  "Fracas"
+                ]
+              }
+            }
           ]
         },
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer l'unité avec :",
           "options": [
-            {"name": "Invocateur de Tempêtes", "cost": 35, "special_rules": ["Marque de tir Imparable"]}
+            {
+              "name": "Invocateur de Tempêtes",
+              "cost": 35,
+              "special_rules": [
+                "Marque de tir Imparable"
+              ]
+            }
           ]
         }
       ]
@@ -1148,7 +2026,12 @@
       "quality": 4,
       "defense": 3,
       "coriace": 9,
-      "special_rules": ["Gardien", "Impact (6)", "Rapide", "Sans peur"],
+      "special_rules": [
+        "Gardien",
+        "Impact (6)",
+        "Rapide",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Griffes lourdes",
@@ -1158,20 +2041,32 @@
           "special_rules": []
         },
         {
-          "name": "Lance de l’équipage",
+          "name": "Lance de l'équipage",
           "range": "Mêlée",
           "attacks": 4,
           "armor_piercing": 0,
-          "special_rules": ["Percée"]
+          "special_rules": [
+            "Percée"
+          ]
         }
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacer la Lance de l'équipage par :",
           "options": [
-            {"name": "Arc de l’équipage", "cost": 55, "weapon": {"name": "Arc de l’équipage", "range": 18, "attacks": 9, "armor_piercing": 1, "special_rules": []}}
+            {
+              "name": "Arc de l'équipage",
+              "cost": 55,
+              "weapon": {
+                "name": "Arc de l'équipage",
+                "range": 18,
+                "attacks": 9,
+                "armor_piercing": 1,
+                "special_rules": []
+              }
+            }
           ]
         }
       ]
@@ -1185,17 +2080,23 @@
       "quality": 4,
       "defense": 4,
       "coriace": 3,
-      "special_rules": ["Artillerie", "Gardien", "Sans peur"],
+      "special_rules": [
+        "Artillerie",
+        "Gardien",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Traits Célestes",
           "range": 30,
           "attacks": 2,
           "armor_piercing": 1,
-          "special_rules": ["Mortel (3)"]
+          "special_rules": [
+            "Mortel (3)"
+          ]
         },
         {
-          "name": "Attaque de l’équipage",
+          "name": "Attaque de l'équipage",
           "range": "Mêlée",
           "attacks": 3,
           "armor_piercing": 0,
@@ -1204,20 +2105,48 @@
       ],
       "upgrade_groups": [
         {
-          "group": "Remplacement d’arme",
+          "group": "Remplacement d'arme",
           "type": "weapon",
           "description": "Remplacer les Traits célestes par :",
           "options": [
-            {"name": "Trait de choc", "cost": 5, "weapon": {"name": "Trait de choc", "range": 24, "attacks": 6, "armor_piercing": 1, "special_rules": []}},
-            {"name": "Trait-tonnerre", "cost": 10, "weapon": {"name": "Trait-tonnerre", "range": 30, "attacks": 2, "armor_piercing": 4, "special_rules": ["Fracas"]}}
+            {
+              "name": "Trait de choc",
+              "cost": 5,
+              "weapon": {
+                "name": "Trait de choc",
+                "range": 24,
+                "attacks": 6,
+                "armor_piercing": 1,
+                "special_rules": []
+              }
+            },
+            {
+              "name": "Trait-tonnerre",
+              "cost": 10,
+              "weapon": {
+                "name": "Trait-tonnerre",
+                "range": 30,
+                "attacks": 2,
+                "armor_piercing": 4,
+                "special_rules": [
+                  "Fracas"
+                ]
+              }
+            }
           ]
         },
         {
-          "group": "Améliorations d’unité",
+          "group": "Améliorations d'unité",
           "type": "upgrades",
           "description": "Améliorer l'unité avec :",
           "options": [
-            {"name": "Invocateur de Tempêtes", "cost": 35, "special_rules": ["Marque de tir Imparable"]}
+            {
+              "name": "Invocateur de Tempêtes",
+              "cost": 35,
+              "special_rules": [
+                "Marque de tir Imparable"
+              ]
+            }
           ]
         }
       ]
