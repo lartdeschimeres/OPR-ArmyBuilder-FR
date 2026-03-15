@@ -657,24 +657,48 @@ if st.session_state.page == "army":
 
     st.subheader("📊 Points de l'Armée")
     pu = st.session_state.army_cost; pt = st.session_state.points
-    st.progress(min(pu/pt,1.0) if pt > 0 else 0)
-    c1,c2=st.columns(2)
-    with c1: st.markdown(f"**Points utilisés :** {pu} pts")
-    with c2: st.markdown(f"**Points totaux :** {pt} pts")
-    if pu > pt: st.error("⚠️ Dépassement du total de points autorisé")
-    st.divider()
-
     gc = GAME_CONFIG.get(st.session_state.game, {})
-    c1,c2,c3=st.columns(3)
-    with c1:
-        uc=math.floor(st.session_state.points/gc.get("unit_per_points",150)); un=len([u for u in st.session_state.army_list if u.get("type")!="hero"])
-        st.progress(min(un/max(uc,1),1.0)); st.caption(f"Unités : {un} / {uc}")
-    with c2:
-        hc=math.floor(st.session_state.points/gc.get("hero_limit",375)); hn=len([u for u in st.session_state.army_list if u.get("type")=="hero"])
-        st.progress(min(hn/max(hc,1),1.0)); st.caption(f"Héros : {hn} / {hc}")
-    with c3:
-        cc=1+math.floor(st.session_state.points/gc.get("unit_copy_rule",750))
-        st.progress(min(cc/5,1.0)); st.caption(f"Copies max : {cc} / unité")
+    uc  = math.floor(pt / gc.get("unit_per_points", 150))
+    un  = len([u for u in st.session_state.army_list if u.get("type") != "hero"])
+    hc  = math.floor(pt / gc.get("hero_limit", 375))
+    hn  = len([u for u in st.session_state.army_list if u.get("type") == "hero"])
+    cc  = 1 + math.floor(pt / gc.get("unit_copy_rule", 750))
+    pct = min(pu / pt * 100, 100) if pt > 0 else 0
+    restants = pt - pu
+
+    # Couleurs selon état
+    bar_color   = "#e74c3c" if pu >= pt else ("#f39c12" if pct >= 85 else "#2980b9")
+    pts_color   = "#e74c3c" if pu >= pt else ("#f39c12" if pct >= 85 else "#212529")
+    hero_color  = "#e74c3c" if hn >= hc else "#2980b9"
+    hero_bg     = "#FCEBEB" if hn >= hc else "#E6F1FB"
+    hero_txt    = "#791F1F" if hn >= hc else "#0C447C"
+    hero_label  = f"Héros : {hn} / {hc}" + (" — LIMITE" if hn >= hc else "")
+    reste_label = f"⚠️ {abs(restants)} pts de dépassement !" if pu > pt else f"{restants} pts restants"
+    reste_color = "#e74c3c" if pu > pt else "#6c757d"
+
+    st.markdown(f"""
+<div style="margin-bottom:16px;">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+    <span style="font-size:22px;font-weight:700;color:{pts_color};">{pu} pts</span>
+    <span style="font-size:13px;color:#6c757d;">/ {pt} pts</span>
+  </div>
+  <div style="height:16px;background:#e9ecef;border-radius:8px;overflow:hidden;position:relative;margin-bottom:6px;">
+    <div style="width:{pct:.1f}%;height:100%;background:{bar_color};border-radius:8px;transition:width .3s;"></div>
+  </div>
+  <div style="font-size:12px;color:{reste_color};text-align:right;margin-bottom:12px;">{reste_label}</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <span style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;background:#E6F1FB;color:#0C447C;">
+      Unités : {un} / {uc}
+    </span>
+    <span style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;background:{hero_bg};color:{hero_txt};">
+      {hero_label}
+    </span>
+    <span style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;background:#f0f0f0;color:#555;">
+      Copies max : {cc} / unité
+    </span>
+  </div>
+</div>
+""", unsafe_allow_html=True)
     st.divider()
 
     if st.session_state.faction_special_rules:
