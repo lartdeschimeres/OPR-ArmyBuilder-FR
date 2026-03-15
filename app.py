@@ -621,6 +621,12 @@ if st.session_state.page == "setup":
         "Age of Fantasy: Skirmish":   "Composez vos bandes pour l'escarmouche fantastique",
     }
     game_subtitle = game_subtitles.get(current_game, "Construisez et commandez vos armées")
+    # ── Debug vignette (temporaire) ─────────────────────────────────────────
+    from pathlib import Path as _P
+    _dbg_path = game_images.get(current_game, "")
+    _dbg_exists = _P(_dbg_path).exists() if _dbg_path else False
+    st.caption(f"🔍 Debug image : `{_dbg_path}` | existe={_dbg_exists}")
+
     # ── Hero banner ───────────────────────────────────────────────────────────
     # SVG triangles inline (motif géométrique, pas de fichier externe)
     tri_svg = f"""<svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.18;"
