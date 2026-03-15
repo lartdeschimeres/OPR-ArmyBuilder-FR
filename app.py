@@ -208,13 +208,9 @@ def export_html(army_list, army_name, army_limit):
         return str(txt).replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace('"',"&quot;")
 
     def get_priority(unit):
-        t = unit.get("type","unit"); d = unit.get("unit_detail","unit")
-        if t == "hero" or d == "named_hero": return 1
-        if d == "unit": return 2
-        if d == "light_vehicle": return 3
-        if d == "vehicle": return 4
-        if d == "titan": return 5
-        return 6
+        d = unit.get("unit_detail", unit.get("type","unit"))
+        order = {"named_hero": 1, "hero": 2, "unit": 3, "light_vehicle": 4, "vehicle": 5, "titan": 6}
+        return order.get(d, 7)
 
     def fmt_range(rng):
         if rng in (None, "-", "mêlée", "Mêlée") or str(rng).lower() == "mêlée": return "-"
@@ -467,7 +463,7 @@ body{{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;margi
             if faction_spells:
                 html += """<h3 style="text-align:center;color:var(--accent);border-bottom:2px solid var(--accent);padding-bottom:8px;margin-bottom:16px;font-size:15px;">✨ Sorts de la faction</h3>"""
                 html += """<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;">"""
-                for spell_name, spell_data in sorted(faction_spells.items()):
+                for spell_name, spell_data in faction_spells.items():
                     if isinstance(spell_data, dict):
                         cost = spell_data.get("cost","?")
                         desc = spell_data.get("description","")
