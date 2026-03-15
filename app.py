@@ -654,7 +654,7 @@ if st.session_state.page == "setup":
     <div style="font-size:38px;font-weight:700;color:#fff;letter-spacing:.03em;line-height:1.1;">
       ArmyBuilder <span style="color:#002395;font-weight:700;">F</span><span style="color:#EDEDED;font-weight:700;text-shadow:0 0 2px rgba(0,0,0,.5);">R</span><span style="color:#ED2939;font-weight:700;">A</span>
     </div>
-    <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:8px;font-style:italic;">{game_subtitle}</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:8px;letter-spacing:.04em;">Constructeur d'armée pour OPR en français</div>
     <div style="width:44px;height:3px;background:{acc};border-radius:2px;margin:9px auto 0;"></div>
   </div>
 </div>
@@ -667,9 +667,9 @@ if st.session_state.page == "setup":
                 background:#1a2332;">
       {vignette_html}
     </div>
-    <div style="flex:1;font-size:13px;color:#6c757d;padding-top:4px;line-height:1.6;">
-      Construisez, équilibrez et façonnez vos armées.<br>
-      <strong style="color:#212529;">{short}</strong> — sélectionnez votre faction et votre format ci-dessous.
+    <div style="flex:1;padding-top:6px;line-height:1.7;">
+      <div style="font-size:15px;font-weight:600;color:#212529;margin-bottom:4px;">{short}</div>
+      <div style="font-size:13px;color:#6c757d;">{game_subtitle}</div>
     </div>
   </div>
 </div>
