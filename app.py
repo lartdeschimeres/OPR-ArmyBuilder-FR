@@ -640,7 +640,7 @@ if st.session_state.page == "setup":
     <div style="font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.2em;
                 text-transform:uppercase;margin-bottom:5px;">OPR</div>
     <div style="font-size:38px;font-weight:700;color:#fff;letter-spacing:.03em;line-height:1.1;">
-      ArmyBuilder <span style="color:{acc};">FR</span>
+      ArmyBuilder <span style="color:#002395;font-weight:700;">F</span><span style="color:#EDEDED;font-weight:700;text-shadow:0 0 2px rgba(0,0,0,.5);">R</span><span style="color:#ED2939;font-weight:700;">A</span>
     </div>
     <div style="font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.12em;
                 text-transform:uppercase;margin-top:7px;">{current_game}</div>
@@ -650,7 +650,7 @@ if st.session_state.page == "setup":
 <div style="background:white;border:1px solid #dee2e6;border-top:none;
             border-radius:0 0 12px 12px;padding:16px;margin-bottom:1.5rem;">
   <div style="display:flex;gap:16px;align-items:flex-start;">
-    <div style="flex-shrink:0;width:90px;height:90px;border-radius:8px;
+    <div style="flex-shrink:0;width:130px;height:130px;border-radius:8px;
                 overflow:hidden;border:1px solid {acc};
                 display:flex;align-items:center;justify-content:center;
                 background:#1a2332;">
