@@ -331,22 +331,31 @@ def export_html(army_list, army_name, army_limit):
         return rows
 
     def render_upgrade_rows(unit):
+        return ""   # remplacé par render_upgrades_section
+
+    def render_upgrades_section(unit):
+        """Bloc Améliorations sous les règles spéciales."""
         upgrades = []
         if "options" in unit and isinstance(unit["options"], dict):
             for group_opts in unit["options"].values():
                 opts = group_opts if isinstance(group_opts, list) else [group_opts]
                 for opt in opts:
                     if not isinstance(opt, dict): continue
-                    if opt.get("type") == "upgrade":
-                        upgrades.append((opt.get("name","Amélioration"), ", ".join(opt.get("special_rules",[]))))
-                    elif opt.get("type") == "role":
-                        rules = ", ".join(opt.get("special_rules",[]))
-                        if rules: upgrades.append((opt.get("name","Rôle"), rules))
+                    if opt.get("type") in ("upgrade", "role"):
+                        rules = ", ".join(opt.get("special_rules", []))
+                        upgrades.append((opt.get("name","Amélioration"), rules))
         if not upgrades: return ""
-        rows = "<tr><td colspan='2' style='font-weight:700;background:#f0f0f0;padding:6px 12px;border-top:2px solid #dee2e6;'>Upgrade</td><td colspan='3' style='font-weight:700;background:#f0f0f0;padding:6px 12px;border-top:2px solid #dee2e6;'>Spé</td></tr>"
+        items = ""
         for n, r in upgrades:
-            rows += f"<tr><td class='weapon-name' colspan='2'>{esc(n)}</td><td colspan='3'>{esc(r) if r else '-'}</td></tr>"
-        return rows
+            items += f'<span class="rule-tag" style="background:#e8f4fd;border-color:#b8d9f0;">{esc(n)}'
+            if r: items += f' <span style="font-weight:400;color:#555;">({esc(r)})</span>'
+            items += '</span>'
+        return (
+            '<div style="border-top:1px solid var(--brd);margin-top:8px;padding-top:8px;">'
+            '<div class="rules-title">Améliorations</div>'
+            f'<div style="margin-bottom:4px;">{items}</div>'
+            '</div>'
+        )
 
     def render_mount_section(unit):
         if not unit.get("mount"): return ""
@@ -422,8 +431,9 @@ body{{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;margi
         weapons = collect_weapons(unit)
         final_weapons = group_weapons(weapons, unit_size=size)
         weapon_rows = render_weapon_rows(final_weapons, unit_size=size)
-        upgrade_rows = render_upgrade_rows(unit)
-        mount_section = render_mount_section(unit)
+        upgrade_rows     = render_upgrade_rows(unit)
+        upgrades_section = render_upgrades_section(unit)
+        mount_section    = render_mount_section(unit)
 
         detail_labels = {
             "named_hero":    "Héros nommé",
@@ -453,6 +463,7 @@ body{{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;margi
     <div class="rules-section">
       <div class="rules-title">Règles spéciales</div>
       <div style="margin-bottom:10px;">{rules_html}</div>
+      {upgrades_section}
     </div>
     <div class="section-title">⚔️ Armes</div>
     <table class="weapon-table">
