@@ -1094,12 +1094,6 @@ if st.session_state.page == "army":
     final_cost=(unit.get("base_cost",0)+weapon_cost)*multiplier+upgrades_cost+mount_cost
     st.subheader("Coût de l'unité sélectionnée"); st.markdown(f"**Coût total :** {final_cost} pts"); st.divider()
 
-    # DEBUG temporaire — à supprimer après diagnostic
-    with st.expander("🔍 Debug weapons (temporaire)", expanded=False):
-        st.write(f"unit_key: {unit_key}")
-        st.write(f"weapons ({len(weapons)}):")
-        for _w in weapons:
-            st.write(f"  - {_w.get('name')} | upgraded={_w.get('_upgraded')} | _count={_w.get('_count')} | _replaces={_w.get('_replaces')}")
     if st.button("➕ Ajouter à l'armée",key=f"{unit_key}_add"):
         if st.session_state.army_cost+final_cost>st.session_state.points:
             st.error(f"⛔ Dépassement : {st.session_state.army_cost+final_cost} / {st.session_state.points} pts"); st.stop()
