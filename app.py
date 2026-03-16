@@ -556,32 +556,35 @@ body{{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;margi
     except Exception as e:
         html += f'<div style="color:red;padding:10px;">Erreur règles faction : {esc(str(e))}</div>'
 
-    # QR code encodant la liste (résumé JSON compact)
-    _qr_html = ""
+    # QR code : stratégie double
+    # 1. qrcode[pil] installé → PNG base64 inline (offline)
+    # 2. fallback → URL api.qrserver.com (requiert internet à l'ouverture)
+    import urllib.parse as _urlp
+    _payload = json.dumps({
+        "faction": army_name, "pts": army_limit,
+        "units": [{"n": u.get("name",""), "c": u.get("cost",0)} for u in army_list]
+    }, ensure_ascii=False, separators=(',',':'))
+
+    _qr_img_tag = ""
     try:
         import qrcode as _qrc, io as _io, base64 as _b64
-        _payload = json.dumps({
-            "faction": army_name, "pts": army_limit,
-            "units": [{"n": u.get("name",""), "c": u.get("cost",0)} for u in army_list]
-        }, ensure_ascii=False, separators=(',',':'))
         _qr = _qrc.QRCode(version=None, error_correction=_qrc.constants.ERROR_CORRECT_M, box_size=4, border=2)
         _qr.add_data(_payload); _qr.make(fit=True)
         _img = _qr.make_image(fill_color="black", back_color="white")
         _buf = _io.BytesIO(); _img.save(_buf, format="PNG"); _buf.seek(0)
         _qr_b64 = _b64.b64encode(_buf.read()).decode()
-        _qr_html = (
-            '<div style="text-align:center;margin-top:28px;padding:16px;border-top:1px solid var(--brd);">'
-            '<div style="font-size:11px;color:var(--muted);margin-bottom:8px;letter-spacing:.04em;">SCANNER POUR PARTAGER</div>'
-            f'<img src="data:image/png;base64,{_qr_b64}" '
-            'style="width:96px;height:96px;border:1px solid var(--brd);border-radius:4px;display:block;margin:0 auto;" '
-            'alt="QR code liste">'
-            '</div>'
-        )
-    except ImportError:
-        _qr_html = '<div style="text-align:center;font-size:10px;color:var(--muted);margin-top:20px;">Installez qrcode[pil] pour activer le QR code</div>'
+        _qr_img_tag = f'<img src="data:image/png;base64,{_qr_b64}" style="width:96px;height:96px;display:block;margin:0 auto;border:1px solid var(--brd);border-radius:4px;" alt="QR code">'
     except Exception:
-        _qr_html = ""
-    html += _qr_html
+        # Fallback URL externe (fonctionne si internet disponible à l'ouverture du HTML)
+        _qr_url = "https://api.qrserver.com/v1/create-qr-code/?data=" + _urlp.quote(_payload) + "&size=96x96&margin=2"
+        _qr_img_tag = f'<img src="{_qr_url}" style="width:96px;height:96px;display:block;margin:0 auto;border:1px solid var(--brd);border-radius:4px;" alt="QR code">'
+
+    html += (
+        '<div style="text-align:center;margin-top:28px;padding:16px 0;border-top:1px solid var(--brd);">'
+        '<div style="font-size:10px;color:var(--muted);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase;">Scanner pour partager</div>'
+        + _qr_img_tag +
+        '</div>'
+    )
     html += f'<div style="text-align:center;margin-top:16px;font-size:11px;color:var(--muted);">Généré par OPR ArmyBuilder FRA — {datetime.now().strftime("%d/%m/%Y %H:%M")}</div></div></body></html>'
     return html
 
