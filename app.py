@@ -7,7 +7,7 @@ import re
 import math
 import base64
 
-st.set_page_config(page_title="OPR ArmyBuilder FR", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="OPR ArmyBuilder FR", layout="wide", initial_sidebar_state="auto")
 
 # Couleur d'accent par jeu
 _GAME_COLORS = {
@@ -27,11 +27,28 @@ section[data-testid="stSidebar"] {{background: #dee2e6; border-right: 1px solid 
 h1, h2, h3 {{color: #202c45; letter-spacing: 0.04em; font-weight: 600;}}
 .stSelectbox, .stNumberInput, .stTextInput {{background-color: white; border-radius: 6px; border: 1px solid #ced4da;}}
 button[kind="primary"] {{background: var(--acc) !important; color: white !important; font-weight: bold; border-radius: 6px;}}
-.badge {{display: inline-block; padding: 0.35rem 0.75rem; border-radius: 4px; background: var(--acc); color: white; font-size: 0.8rem; margin-bottom: 0.75rem; font-weight: 600;}}
-.stButton>button {{background-color: #f8f9fa; border: 1px solid #ced4da; border-radius: 6px; padding: 0.5rem 1rem; color: #212529; font-weight: 500;}}
+.badge {{display: inline-block; padding: 0.35rem 0.75rem; border-radius: 4px; background: var(--acc); color: white; font-size: clamp(0.7rem,2vw,0.8rem); margin-bottom: 0.75rem; font-weight: 600;}}
+.stButton>button {{background-color: #f8f9fa; border: 1px solid #ced4da; border-radius: 6px; padding: 0.5rem 1rem; color: #212529; font-weight: 500; min-height: 44px;}}
 .stProgress > div > div > div {{background-color: var(--acc) !important;}}
 .section-sep {{background: var(--acc); opacity:.12; height:2px; margin: 8px 0 12px; border-radius:1px;}}
-.section-header {{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color: var(--acc); margin: 16px 0 6px; padding: 4px 8px; background: rgba(0,0,0,.03); border-left: 3px solid var(--acc); border-radius: 0 4px 4px 0;}}
+.section-header {{font-size:clamp(10px,2.5vw,11px); font-weight:700; text-transform:uppercase; letter-spacing:.1em; color: var(--acc); margin: 16px 0 6px; padding: 4px 8px; background: rgba(0,0,0,.03); border-left: 3px solid var(--acc); border-radius: 0 4px 4px 0;}}
+/* ── Responsive mobile ── */
+@media (max-width: 640px) {{
+  .stApp {{font-size: 14px;}}
+  /* Colonnes Streamlit empilées sur mobile */
+  [data-testid="column"] {{width: 100% !important; flex: 1 1 100% !important; min-width: 100% !important;}}
+  /* Boutons pleine largeur sur mobile */
+  .stButton>button {{width: 100%; min-height: 48px; font-size: 15px;}}
+  /* Agrandir les labels de formulaire */
+  .stSelectbox label, .stNumberInput label, .stTextInput label {{font-size: 14px !important;}}
+  /* Supprimer les shadows lourdes sur mobile */
+  section[data-testid="stSidebar"] {{box-shadow: none;}}
+}}
+@media (max-width: 480px) {{
+  h1 {{font-size: clamp(1.2rem, 5vw, 1.8rem) !important;}}
+  h2 {{font-size: clamp(1rem, 4vw, 1.4rem) !important;}}
+  h3 {{font-size: clamp(0.9rem, 3.5vw, 1.2rem) !important;}}
+}}
 </style>""", unsafe_allow_html=True)
 
 with st.sidebar:
@@ -683,7 +700,7 @@ if st.session_state.page == "setup":
 
     st.markdown(f"""
 <div style="background:#1a2332;border-radius:12px 12px 0 0;position:relative;
-            overflow:hidden;height:200px;display:flex;align-items:center;
+            overflow:hidden;height:clamp(130px,25vw,200px);display:flex;align-items:center;
             justify-content:center;margin-bottom:0;">
   {tri_svg}
   <div style="position:relative;z-index:2;text-align:center;padding:0 2rem;">
@@ -693,7 +710,7 @@ if st.session_state.page == "setup":
            style="width:52px;height:52px;border-radius:50%;mix-blend-mode:screen;opacity:.92;"
            alt="OPR logo">
     </div>
-    <div style="font-size:38px;font-weight:700;color:#fff;letter-spacing:.03em;line-height:1.1;">
+    <div style="font-size:clamp(24px,6vw,38px);font-weight:700;color:#fff;letter-spacing:.03em;line-height:1.1;">
       ArmyBuilder <span style="color:#002395;font-weight:700;">F</span><span style="color:#EDEDED;font-weight:700;text-shadow:0 0 2px rgba(0,0,0,.5);">R</span><span style="color:#ED2939;font-weight:700;">A</span>
     </div>
     <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:8px;letter-spacing:.04em;">Constructeur d'armée pour OPR en français</div>
@@ -702,16 +719,16 @@ if st.session_state.page == "setup":
 </div>
 <div style="background:white;border:1px solid #dee2e6;border-top:none;
             border-radius:0 0 12px 12px;padding:16px;margin-bottom:1.5rem;">
-  <div style="display:flex;gap:16px;align-items:flex-start;">
-    <div style="flex-shrink:0;width:130px;height:130px;border-radius:8px;
+  <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+    <div style="flex-shrink:0;width:min(130px,25vw);height:min(130px,25vw);border-radius:8px;
                 overflow:hidden;border:1px solid {acc};
                 display:flex;align-items:center;justify-content:center;
                 background:#1a2332;">
       {vignette_html}
     </div>
     <div style="flex:1;padding-top:6px;line-height:1.7;">
-      <div style="font-size:15px;font-weight:600;color:#212529;margin-bottom:4px;">{short}</div>
-      <div style="font-size:13px;color:#6c757d;">{game_subtitle}</div>
+      <div style="font-size:clamp(13px,3vw,15px);font-weight:600;color:#212529;margin-bottom:4px;">{short}</div>
+      <div style="font-size:clamp(12px,2.5vw,13px);color:#6c757d;">{game_subtitle}</div>
     </div>
   </div>
 </div>
@@ -817,15 +834,15 @@ if st.session_state.page == "army":
     st.markdown(f"""
 <div style="margin-bottom:16px;">
   <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
-    <span style="font-size:22px;font-weight:700;color:{pts_color};">{pu} pts</span>
+    <span style="font-size:clamp(18px,4vw,22px);font-weight:700;color:{pts_color};">{pu} pts</span>
     <span style="font-size:13px;color:#6c757d;">/ {pt} pts</span>
   </div>
   <div style="height:16px;background:#e9ecef;border-radius:8px;overflow:hidden;position:relative;margin-bottom:6px;">
     <div style="width:{pct:.1f}%;height:100%;background:{bar_color};border-radius:8px;transition:width .3s;"></div>
   </div>
-  <div style="font-size:12px;color:{reste_color};text-align:right;margin-bottom:12px;">{reste_label}</div>
+  <div style="font-size:clamp(11px,2.5vw,12px);color:{reste_color};text-align:right;margin-bottom:12px;">{reste_label}</div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <span style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;background:#E6F1FB;color:#0C447C;">
+    <span style="padding:5px 10px;border-radius:6px;font-size:clamp(11px,2vw,12px);font-weight:500;background:#E6F1FB;color:#0C447C;">
       Unités : {un} / {uc}
     </span>
     <span style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;background:{hero_bg};color:{hero_txt};">
@@ -888,7 +905,7 @@ if st.session_state.page == "army":
                     f"<span style='margin-right:12px;'>Taille <b>{ud.get('size','?')}</b></span>"
                     + (f"<span>Coriace <b>{cor}</b></span>" if cor else "")
                 )
-                st.markdown(f"<div style='font-size:0.85em;color:#555;margin-bottom:6px;'>{stats_html}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='font-size:clamp(12px,2vw,0.85em);color:#555;margin-bottom:6px;'>{stats_html}</div>", unsafe_allow_html=True)
 
                 # ── Armes ───────────────────────────────────────────────────
                 weapons=ud.get("weapon",[])
@@ -896,7 +913,7 @@ if st.session_state.page == "army":
                 armes=[fmt_weapon_line(w) for w in ws if isinstance(w,dict)]
                 if armes:
                     st.markdown(
-                        "<div style='font-size:0.8em;color:#333;margin-bottom:4px;'>"
+                        "<div style='font-size:clamp(12px,2vw,0.8em);color:#333;margin-bottom:4px;'>"
                         "<b>Armes :</b> " + " · ".join(armes) + "</div>",
                         unsafe_allow_html=True)
 
@@ -912,7 +929,7 @@ if st.session_state.page == "army":
                             upgrades_items.append(f"{label}" + (f" <span style='color:#888;'>({sr_upg})</span>" if sr_upg else ""))
                 if upgrades_items:
                     st.markdown(
-                        "<div style='font-size:0.8em;color:#333;margin-bottom:4px;'>"
+                        "<div style='font-size:clamp(12px,2vw,0.8em);color:#333;margin-bottom:4px;'>"
                         "<b>Améliorations :</b> " + " · ".join(upgrades_items) + "</div>",
                         unsafe_allow_html=True)
 
@@ -926,7 +943,7 @@ if st.session_state.page == "army":
                     if marmes: mount_parts.append("Armes : "+" · ".join(marmes))
                     if msr: mount_parts.append(", ".join(msr))
                     st.markdown(
-                        f"<div style='font-size:0.8em;color:#333;margin-bottom:4px;'>"
+                        f"<div style='font-size:clamp(12px,2vw,0.8em);color:#333;margin-bottom:4px;'>"
                         f"<b>🐴 {m.get('name','Monture')}</b>"
                         + (f" — {' | '.join(mount_parts)}" if mount_parts else "")
                         + "</div>",
@@ -936,7 +953,7 @@ if st.session_state.page == "army":
                 sr_unit=ud.get("special_rules",[])
                 if sr_unit:
                     st.markdown(
-                        "<div style='font-size:0.78em;color:#666;margin-bottom:6px;'>"
+                        "<div style='font-size:clamp(12px,2vw,0.78em);color:#666;margin-bottom:6px;'>"
                         + ", ".join(sr_unit) + "</div>",
                         unsafe_allow_html=True)
 
