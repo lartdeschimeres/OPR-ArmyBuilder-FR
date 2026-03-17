@@ -146,13 +146,18 @@
       "quality": 3,
       "defense": 3,
       "coriace": 3,
-      "special_rules": ["Attaque versatile", "Héros", "Guerrier-né"],
+      "special_rules": [
+        "Attaque versatile",
+        "Héros",
+        "Guerrier-né"
+      ],
       "weapon": [
         {
           "name": "Arme à une main lourde",
           "range": "Mêlée",
           "attacks": 3,
-          "armor_piercing": 1
+          "armor_piercing": 1,
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -161,13 +166,55 @@
           "type": "role",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
-            {"name": "Conquérant", "cost": 20, "special_rules": ["Aura d'Eclaireur"]},
-            {"name": "Marauder", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
-            {"name": "Porteur de la bannière de l'armée", "cost": 30, "special_rules": ["Effrayant (3)"]},
-            {"name": "Ensorceleur", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
-            {"name": "Sorcier", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
-            {"name": "Seigneur de Guerre", "cost": 50, "special_rules": ["Aura de Boost de Guerrier-né"]},
-            {"name": "Maître Sorcier", "cost": 65, "special_rules": ["Lanceur de sorts (3)"]}
+            {
+              "name": "Conquérant",
+              "cost": 20,
+              "special_rules": [
+                "Aura d'Eclaireur"
+              ]
+            },
+            {
+              "name": "Marauder",
+              "cost": 30,
+              "special_rules": [
+                "Aura de Combattant imprévisible"
+              ]
+            },
+            {
+              "name": "Porteur de la bannière de l'armée",
+              "cost": 30,
+              "special_rules": [
+                "Effrayant (3)"
+              ]
+            },
+            {
+              "name": "Ensorceleur",
+              "cost": 35,
+              "special_rules": [
+                "Aura de Voile fluctuant"
+              ]
+            },
+            {
+              "name": "Sorcier",
+              "cost": 40,
+              "special_rules": [
+                "Lanceur de sorts (2)"
+              ]
+            },
+            {
+              "name": "Seigneur de Guerre",
+              "cost": 50,
+              "special_rules": [
+                "Aura de Boost de Guerrier-né"
+              ]
+            },
+            {
+              "name": "Maître Sorcier",
+              "cost": 65,
+              "special_rules": [
+                "Lanceur de sorts (3)"
+              ]
+            }
           ]
         },
         {
@@ -183,7 +230,9 @@
                 "range": "Mêlée",
                 "attacks": 3,
                 "armor_piercing": 1,
-                "special_rules": ["Perforant"]
+                "special_rules": [
+                  "Perforant"
+                ]
               }
             },
             {
@@ -193,7 +242,8 @@
                 "name": "Paire d'armes à une main lourdes",
                 "range": "Mêlée",
                 "attacks": 4,
-                "armor_piercing": 1
+                "armor_piercing": 1,
+                "special_rules": []
               }
             },
             {
@@ -203,7 +253,8 @@
                 "name": "Grande arme lourde",
                 "range": "Mêlée",
                 "attacks": 3,
-                "armor_piercing": 3
+                "armor_piercing": 3,
+                "special_rules": []
               }
             },
             {
@@ -214,7 +265,9 @@
                 "range": "Mêlée",
                 "attacks": 3,
                 "armor_piercing": 1,
-                "special_rules": ["Percée"]
+                "special_rules": [
+                  "Percée"
+                ]
               }
             }
           ]
@@ -229,7 +282,11 @@
               "cost": 15,
               "mount": {
                 "name": "Cheval",
-                "special_rules": ["Impact (1)", "Rapide"]
+                "weapon": [],
+                "special_rules": [
+                  "Impact (1)",
+                  "Rapide"
+                ]
               }
             },
             {
@@ -243,10 +300,14 @@
                     "name": "Griffes lourdes",
                     "range": "Mêlée",
                     "attacks": 1,
-                    "armor_piercing": 1
-                    }
+                    "armor_piercing": 1,
+                    "special_rules": []
+                  }
                 ],
-                "special_rules": ["Impact (2)", "Rapide"]
+                "special_rules": [
+                  "Impact (2)",
+                  "Rapide"
+                ]
               }
             },
             {
@@ -260,10 +321,15 @@
                     "name": "Griffes lourdes",
                     "range": "Mêlée",
                     "attacks": 1,
-                    "armor_piercing": 1
-                    }
+                    "armor_piercing": 1,
+                    "special_rules": []
+                  }
                 ],
-                "special_rules": ["Effrayant (1)", "Impact (2)", "Rapide"]
+                "special_rules": [
+                  "Effrayant (1)",
+                  "Impact (2)",
+                  "Rapide"
+                ]
               }
             },
             {
@@ -277,10 +343,14 @@
                     "name": "Sabots",
                     "range": "Mêlée",
                     "attacks": 2,
-                    "armor_piercing": 0
-                    }
+                    "armor_piercing": 0,
+                    "special_rules": []
+                  }
                 ],
-                "special_rules": ["Impact (4)", "Rapide"]
+                "special_rules": [
+                  "Impact (4)",
+                  "Rapide"
+                ]
               }
             },
             {
@@ -294,10 +364,15 @@
                     "name": "Griffes lourdes",
                     "range": "Mêlée",
                     "attacks": 2,
-                    "armor_piercing": 1
-                    }
+                    "armor_piercing": 1,
+                    "special_rules": []
+                  }
                 ],
-                "special_rules": ["Effrayant (1)", "Impact (4)", "Rapide"]
+                "special_rules": [
+                  "Effrayant (1)",
+                  "Impact (4)",
+                  "Rapide"
+                ]
               }
             },
             {
@@ -312,10 +387,15 @@
                     "range": "Mêlée",
                     "attacks": 6,
                     "armor_piercing": 0,
-                    "special_rules":  ["Perforant"]
-                    }
+                    "special_rules": [
+                      "Perforant"
+                    ]
+                  }
                 ],
-                "special_rules": ["Effrayant (1)", "Volant"]
+                "special_rules": [
+                  "Effrayant (1)",
+                  "Volant"
+                ]
               }
             },
             {
@@ -330,17 +410,21 @@
                     "range": "Mêlée",
                     "attacks": 6,
                     "armor_piercing": 1,
-                    "special_rules":  []
-                    },
-                   {
+                    "special_rules": []
+                  },
+                  {
                     "name": "Piétinement",
                     "range": "Mêlée",
                     "attacks": 4,
                     "armor_piercing": 1,
-                    "special_rules":  []
-                    }
+                    "special_rules": []
+                  }
                 ],
-                "special_rules": ["Attaque de souffle", "Effrayant (2)", "Volant"]
+                "special_rules": [
+                  "Attaque de souffle",
+                  "Effrayant (2)",
+                  "Volant"
+                ]
               }
             }
           ]
@@ -356,13 +440,17 @@
       "quality": 3,
       "defense": 3,
       "coriace": 3,
-      "special_rules": ["Héros", "Guerrier-né"],
+      "special_rules": [
+        "Héros",
+        "Guerrier-né"
+      ],
       "weapon": [
         {
           "name": "Arme à une main lourde",
           "range": "Mêlée",
           "attacks": 3,
-          "armor_piercing": 1
+          "armor_piercing": 1,
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -371,13 +459,55 @@
           "type": "role",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
-            {"name": "Conquérant", "cost": 20, "special_rules": ["Aura d'Eclaireur"]},
-            {"name": "Marauder", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
-            {"name": "Porteur de la bannière de l'armée", "cost": 30, "special_rules": ["Effrayant (3)"]},
-            {"name": "Ensorceleur", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
-            {"name": "Sorcier", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
-            {"name": "Seigneur de Guerre", "cost": 50, "special_rules": ["Aura de Boost de Guerrier-né"]},
-            {"name": "Maître Sorcier", "cost": 65, "special_rules": ["Lanceur de sorts (3)"]}
+            {
+              "name": "Conquérant",
+              "cost": 20,
+              "special_rules": [
+                "Aura d'Eclaireur"
+              ]
+            },
+            {
+              "name": "Marauder",
+              "cost": 30,
+              "special_rules": [
+                "Aura de Combattant imprévisible"
+              ]
+            },
+            {
+              "name": "Porteur de la bannière de l'armée",
+              "cost": 30,
+              "special_rules": [
+                "Effrayant (3)"
+              ]
+            },
+            {
+              "name": "Ensorceleur",
+              "cost": 35,
+              "special_rules": [
+                "Aura de Voile fluctuant"
+              ]
+            },
+            {
+              "name": "Sorcier",
+              "cost": 40,
+              "special_rules": [
+                "Lanceur de sorts (2)"
+              ]
+            },
+            {
+              "name": "Seigneur de Guerre",
+              "cost": 50,
+              "special_rules": [
+                "Aura de Boost de Guerrier-né"
+              ]
+            },
+            {
+              "name": "Maître Sorcier",
+              "cost": 65,
+              "special_rules": [
+                "Lanceur de sorts (3)"
+              ]
+            }
           ]
         },
         {
@@ -393,7 +523,9 @@
                 "range": "Mêlée",
                 "attacks": 3,
                 "armor_piercing": 1,
-                "special_rules": ["Perforant"]
+                "special_rules": [
+                  "Perforant"
+                ]
               }
             },
             {
@@ -403,7 +535,8 @@
                 "name": "Paire d'armes à une main lourdes",
                 "range": "Mêlée",
                 "attacks": 4,
-                "armor_piercing": 1
+                "armor_piercing": 1,
+                "special_rules": []
               }
             },
             {
@@ -413,7 +546,8 @@
                 "name": "Grande arme lourde",
                 "range": "Mêlée",
                 "attacks": 3,
-                "armor_piercing": 3
+                "armor_piercing": 3,
+                "special_rules": []
               }
             },
             {
@@ -424,7 +558,9 @@
                 "range": "Mêlée",
                 "attacks": 3,
                 "armor_piercing": 1,
-                "special_rules": ["Percée"]
+                "special_rules": [
+                  "Percée"
+                ]
               }
             }
           ]
@@ -439,7 +575,11 @@
               "cost": 15,
               "mount": {
                 "name": "Cheval",
-                "special_rules": ["Impact (1)", "Rapide"]
+                "weapon": [],
+                "special_rules": [
+                  "Impact (1)",
+                  "Rapide"
+                ]
               }
             },
             {
@@ -454,10 +594,13 @@
                     "range": "Mêlée",
                     "attacks": 1,
                     "armor_piercing": 1,
-                    "special_rules":  []
-                    }
+                    "special_rules": []
+                  }
                 ],
-                "special_rules": ["Impact (2)", "Rapide"]
+                "special_rules": [
+                  "Impact (2)",
+                  "Rapide"
+                ]
               }
             },
             {
@@ -472,10 +615,14 @@
                     "range": "Mêlée",
                     "attacks": 1,
                     "armor_piercing": 1,
-                    "special_rules":  []
-                    }
+                    "special_rules": []
+                  }
                 ],
-                "special_rules": ["Effrayant (1)", "Impact (2)", "Rapide"]
+                "special_rules": [
+                  "Effrayant (1)",
+                  "Impact (2)",
+                  "Rapide"
+                ]
               }
             },
             {
@@ -490,10 +637,13 @@
                     "range": "Mêlée",
                     "attacks": 2,
                     "armor_piercing": 0,
-                    "special_rules":  []
-                    }
-                  ],
-                "special_rules": ["Sabots (A2)", "Impact (4)", "Rapide"]
+                    "special_rules": []
+                  }
+                ],
+                "special_rules": [
+                  "Impact (4)",
+                  "Rapide"
+                ]
               }
             },
             {
@@ -508,10 +658,14 @@
                     "range": "Mêlée",
                     "attacks": 2,
                     "armor_piercing": 1,
-                    "special_rules":  []
-                    }
-                  ],
-                "special_rules": ["Effrayant (1)", "Impact (4)", "Rapide"]
+                    "special_rules": []
+                  }
+                ],
+                "special_rules": [
+                  "Effrayant (1)",
+                  "Impact (4)",
+                  "Rapide"
+                ]
               }
             },
             {
@@ -526,10 +680,15 @@
                     "range": "Mêlée",
                     "attacks": 6,
                     "armor_piercing": 0,
-                    "special_rules":  ["Perforant"]
-                    }
-                  ],
-                "special_rules": ["Effrayant (1)", "Volant"]
+                    "special_rules": [
+                      "Perforant"
+                    ]
+                  }
+                ],
+                "special_rules": [
+                  "Effrayant (1)",
+                  "Volant"
+                ]
               }
             },
             {
@@ -544,17 +703,21 @@
                     "range": "Mêlée",
                     "attacks": 6,
                     "armor_piercing": 1,
-                    "special_rules":  []
-                    },
+                    "special_rules": []
+                  },
                   {
                     "name": "Piétinement",
                     "range": "Mêlée",
                     "attacks": 4,
                     "armor_piercing": 1,
-                    "special_rules":  []
-                    }
-                  ],
-                "special_rules": ["Attaque de souffle", "Effrayant (2)", "Volant"]
+                    "special_rules": []
+                  }
+                ],
+                "special_rules": [
+                  "Attaque de souffle",
+                  "Effrayant (2)",
+                  "Volant"
+                ]
               }
             }
           ]
@@ -570,13 +733,19 @@
       "quality": 5,
       "defense": 5,
       "coriace": 3,
-      "special_rules": ["Eclaireur", "Furieux", "Guerrier-né", "Héros"],
+      "special_rules": [
+        "Eclaireur",
+        "Furieux",
+        "Guerrier-né",
+        "Héros"
+      ],
       "weapon": [
         {
           "name": "Arme à une main",
           "range": "Mêlée",
           "attacks": 3,
-          "armor_piercing": "-"
+          "armor_piercing": 0,
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -585,11 +754,41 @@
           "type": "role",
           "description": "Choisissez un rôle spécial pour ce héros (un seul choix possible)",
           "options": [
-            {"name": "Héraut", "cost": 25, "special_rules": ["Aura de Lacération au tir"]},
-            {"name": "Marauder", "cost": 30, "special_rules": ["Aura de Combattant imprévisible"]},
-            {"name": "Ensorceleur", "cost": 35, "special_rules": ["Aura de Voile fluctuant"]},
-            {"name": "Sorcier", "cost": 40, "special_rules": ["Lanceur de sorts (2)"]},
-            {"name": "Seigneur de Guerre", "cost": 50, "special_rules": ["Aura de Boost de Guerrier-né"]}
+            {
+              "name": "Héraut",
+              "cost": 25,
+              "special_rules": [
+                "Aura de Lacération au tir"
+              ]
+            },
+            {
+              "name": "Marauder",
+              "cost": 30,
+              "special_rules": [
+                "Aura de Combattant imprévisible"
+              ]
+            },
+            {
+              "name": "Ensorceleur",
+              "cost": 35,
+              "special_rules": [
+                "Aura de Voile fluctuant"
+              ]
+            },
+            {
+              "name": "Sorcier",
+              "cost": 40,
+              "special_rules": [
+                "Lanceur de sorts (2)"
+              ]
+            },
+            {
+              "name": "Seigneur de Guerre",
+              "cost": 50,
+              "special_rules": [
+                "Aura de Boost de Guerrier-né"
+              ]
+            }
           ]
         },
         {
@@ -604,7 +803,8 @@
                 "name": "Paire d'armes à une main",
                 "range": "Mêlée",
                 "attacks": 4,
-                "armor_piercing": "-"
+                "armor_piercing": 0,
+                "special_rules": []
               }
             },
             {
@@ -614,8 +814,10 @@
                 "name": "Hallebarde",
                 "range": "Mêlée",
                 "attacks": 3,
-                "armor_piercing": "-",
-                "special_rules": ["Perforant"]
+                "armor_piercing": 0,
+                "special_rules": [
+                  "Perforant"
+                ]
               }
             },
             {
@@ -625,8 +827,10 @@
                 "name": "Lance",
                 "range": "Mêlée",
                 "attacks": 3,
-                "armor_piercing": "-",
-                "special_rules": ["Percée"]
+                "armor_piercing": 0,
+                "special_rules": [
+                  "Percée"
+                ]
               }
             },
             {
@@ -636,14 +840,15 @@
                 "name": "Grande arme",
                 "range": "Mêlée",
                 "attacks": 3,
-                "armor_piercing": 2
+                "armor_piercing": 2,
+                "special_rules": []
               }
             }
           ]
         },
         {
           "group": "Améliorations d'arme",
-          "type": "weapon_upgrades",
+          "type": "conditional_weapon",
           "description": "Améliorer avec une des options suivantes (un seul choix possible)",
           "options": [
             {
@@ -651,9 +856,10 @@
               "cost": 10,
               "weapon": {
                 "name": "Arc court",
-                "range": "18",
+                "range": 18,
                 "attacks": 2,
-                "armor_piercing": "-"
+                "armor_piercing": 0,
+                "special_rules": []
               }
             },
             {
@@ -661,10 +867,12 @@
               "cost": 10,
               "weapon": {
                 "name": "Javelots barbelés",
-                "range": "12",
+                "range": 12,
                 "attacks": 2,
                 "armor_piercing": 1,
-                "special_rules": ["Eclatement"]
+                "special_rules": [
+                  "Eclatement"
+                ]
               }
             }
           ]
@@ -679,7 +887,11 @@
               "cost": 15,
               "mount": {
                 "name": "Cheval",
-                "special_rules": ["Impact (1)", "Rapide"]
+                "weapon": [],
+                "special_rules": [
+                  "Impact (1)",
+                  "Rapide"
+                ]
               }
             }
           ]
@@ -694,13 +906,18 @@
       "base_cost": 95,
       "quality": 5,
       "defense": 5,
-      "special_rules": ["Eclaireur", "Furieux", "Guerrier-né"],
+      "special_rules": [
+        "Eclaireur",
+        "Furieux",
+        "Guerrier-né"
+      ],
       "weapon": [
         {
           "name": "Armes à une main",
           "range": "Mêlée",
           "attacks": 1,
-          "armor_piercing": "-"
+          "armor_piercing": 0,
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -727,8 +944,10 @@
                 "name": "Pique",
                 "range": "Mêlée",
                 "attacks": 1,
-                "armor_piercing": "-",
-                "special_rules": ["Contre-charge"]
+                "armor_piercing": 0,
+                "special_rules": [
+                  "Contre-charge"
+                ]
               }
             }
           ]
@@ -741,7 +960,9 @@
             {
               "name": "Icône du Ravage (Aura de Défense versatile)",
               "cost": 20,
-              "special_rules": ["Aura de Défense versatile"]
+              "special_rules": [
+                "Aura de Défense versatile"
+              ]
             },
             {
               "name": "Sergent",
@@ -770,13 +991,17 @@
       "base_cost": 100,
       "quality": 5,
       "defense": 5,
-      "special_rules": ["Combattant sanguinaire", "Guerrier-né"],
+      "special_rules": [
+        "Combattant sanguinaire",
+        "Guerrier-né"
+      ],
       "weapon": [
         {
           "name": "Grandes armes",
           "range": "Mêlée",
           "attacks": 1,
-          "armor_piercing": 2
+          "armor_piercing": 2,
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -792,7 +1017,7 @@
                 "name": "Paire d'armes à une main",
                 "range": "Mêlée",
                 "attacks": 2,
-                "armor_piercing": "-",
+                "armor_piercing": 0,
                 "special_rules": []
               }
             }
@@ -830,13 +1055,16 @@
       "base_cost": 80,
       "quality": 3,
       "defense": 3,
-      "special_rules": ["Guerrier-né"],
+      "special_rules": [
+        "Guerrier-né"
+      ],
       "weapon": [
         {
           "name": "Armes à une main lourdes",
           "range": "Mêlée",
           "attacks": 1,
-          "armor_piercing": 1
+          "armor_piercing": 1,
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -853,7 +1081,9 @@
                 "range": "Mêlée",
                 "attacks": 1,
                 "armor_piercing": 1,
-                "special_rules": ["Perforant"]
+                "special_rules": [
+                  "Perforant"
+                ]
               }
             },
             {
@@ -888,7 +1118,9 @@
             {
               "name": "Icône du Ravage (Aura de Défense versatile)",
               "cost": 20,
-              "special_rules": ["Aura de Défense versatile"]
+              "special_rules": [
+                "Aura de Défense versatile"
+              ]
             },
             {
               "name": "Sergent",
@@ -917,13 +1149,17 @@
       "base_cost": 100,
       "quality": 3,
       "defense": 3,
-      "special_rules": ["Attaque versatile", "Guerrier-né"],
+      "special_rules": [
+        "Attaque versatile",
+        "Guerrier-né"
+      ],
       "weapon": [
         {
           "name": "Armes à une main lourdes",
           "range": "Mêlée",
           "attacks": 1,
-          "armor_piercing": 1
+          "armor_piercing": 1,
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -940,7 +1176,9 @@
                 "range": "Mêlée",
                 "attacks": 1,
                 "armor_piercing": 1,
-                "special_rules": ["Perforant"]
+                "special_rules": [
+                  "Perforant"
+                ]
               }
             },
             {
@@ -975,7 +1213,9 @@
             {
               "name": "Icône du Ravage (Aura de Défense versatile)",
               "cost": 20,
-              "special_rules": ["Aura de Défense versatile"]
+              "special_rules": [
+                "Aura de Défense versatile"
+              ]
             },
             {
               "name": "Sergent",
@@ -1004,13 +1244,18 @@
       "base_cost": 105,
       "quality": 4,
       "defense": 4,
-      "special_rules": ["Combattant imprévisible", "Guerrier-né", "Sans peur"],
+      "special_rules": [
+        "Combattant imprévisible",
+        "Guerrier-né",
+        "Sans peur"
+      ],
       "weapon": [
         {
           "name": "Membres mutants",
           "range": "Mêlée",
           "attacks": 2,
-          "armor_piercing": "-"
+          "armor_piercing": 0,
+          "special_rules": []
         }
       ]
     },
@@ -1023,13 +1268,18 @@
       "quality": 3,
       "defense": 4,
       "coriace": 3,
-      "special_rules": ["Assaut tranchant", "Combattant sanguinaire", "Guerrier-né"],
+      "special_rules": [
+        "Assaut tranchant",
+        "Combattant sanguinaire",
+        "Guerrier-né"
+      ],
       "weapon": [
         {
           "name": "Armes à une main lourdes",
           "range": "Mêlée",
           "attacks": 1,
-          "armor_piercing": 1
+          "armor_piercing": 1,
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
@@ -1045,25 +1295,29 @@
                 "name": "Paire d'armes à une main",
                 "range": "Mêlée",
                 "attacks": 2,
-                "armor_piercing": "-",
+                "armor_piercing": 0,
                 "special_rules": []
               }
             }
           ]
         },
         {
-          "group": "Améliorations d'arme",
-          "type": "weapon_upgrades",
-          "description": "Remplacer une seule arme à une main lourde par :",
+          "group": "Amélioration d'arme",
+          "type": "conditional_weapon",
+          "description": "Améliorer UNE SEULE arme à une main lourde par :",
           "options": [
             {
-              "name": "Grande arme lourde (une seule)",
+              "name": "Grande arme lourde",
               "cost": 30,
+              "requires": [
+                "Armes à une main lourdes"
+              ],
               "weapon": {
-                "name": "Grande arme lourde (une seule)",
+                "name": "Grande arme lourde",
                 "range": "Mêlée",
                 "attacks": 2,
-                "armor_piercing": 3
+                "armor_piercing": 3,
+                "special_rules": []
               }
             }
           ]
@@ -1101,13 +1355,17 @@
       "quality": 3,
       "defense": 4,
       "coriace": 3,
-      "special_rules": ["Guerrier-né", "Impact (2)"],
+      "special_rules": [
+        "Guerrier-né",
+        "Impact (2)"
+      ],
       "weapon": [
         {
           "name": "Paire de marteau-fléaux",
           "range": "Mêlée",
           "attacks": 2,
-          "armor_piercing": 2
+          "armor_piercing": 2,
+          "special_rules": []
         }
       ]
     },
@@ -1120,21 +1378,26 @@
       "quality": 3,
       "defense": 4,
       "coriace": 3,
-      "special_rules": ["Assaut tranchant", "Guerrier-né"],
+      "special_rules": [
+        "Assaut tranchant",
+        "Guerrier-né"
+      ],
       "weapon": [
         {
           "name": "Paires d'armes ensorcelées",
           "range": "Mêlée",
           "attacks": 4,
-          "armor_piercing": "-",
-          "special_rules": ["Perforant"]
+          "armor_piercing": 0,
+          "special_rules": [
+            "Perforant"
+          ]
         }
       ],
       "upgrade_groups": [
         {
           "group": "Remplacement d'armes",
           "type": "weapon",
-          "description": "Remplacez toutes les armes de base par : ",
+          "description": "Remplacez toutes les armes de base par :",
           "options": [
             {
               "name": "Grande arme ensorcelée",
@@ -1144,7 +1407,9 @@
                 "range": "Mêlée",
                 "attacks": 4,
                 "armor_piercing": 2,
-                "special_rules": ["Perforant"]
+                "special_rules": [
+                  "Perforant"
+                ]
               }
             }
           ]
@@ -1181,36 +1446,43 @@
       "base_cost": 65,
       "quality": 5,
       "defense": 5,
-      "special_rules": ["Eclaireur", "Guerrier-né"],
+      "special_rules": [
+        "Eclaireur",
+        "Guerrier-né"
+      ],
       "weapon": [
         {
           "name": "Arcs courts",
-          "range": "18",
+          "range": 18,
           "attacks": 1,
-          "armor_piercing": "-"
+          "armor_piercing": 0,
+          "special_rules": []
         },
         {
           "name": "Armes à une main",
           "range": "Mêlée",
           "attacks": 1,
-          "armor_piercing": "-"
+          "armor_piercing": 0,
+          "special_rules": []
         }
       ],
       "upgrade_groups": [
         {
           "group": "Remplacement d'armes",
           "type": "weapon",
-          "description": "Remplacez tous les Arcs courts par : ",
+          "description": "Remplacez tous les Arcs courts par :",
           "options": [
             {
               "name": "Javelots barbelés",
               "cost": 5,
               "weapon": {
                 "name": "Javelots barbelés",
-                "range": "12",
+                "range": 12,
                 "attacks": 1,
                 "armor_piercing": 1,
-                "special_rules": ["Eclatement"]
+                "special_rules": [
+                  "Eclatement"
+                ]
               }
             }
           ]
@@ -1223,7 +1495,9 @@
             {
               "name": "Icône du Ravage (Aura de Défense versatile)",
               "cost": 20,
-              "special_rules": ["Aura de Défense versatile"]
+              "special_rules": [
+                "Aura de Défense versatile"
+              ]
             }
           ]
         }
@@ -1237,14 +1511,20 @@
       "base_cost": 70,
       "quality": 4,
       "defense": 5,
-      "special_rules": ["Arpenteur", "Guerrier-né", "Rapide"],
+      "special_rules": [
+        "Arpenteur",
+        "Guerrier-né",
+        "Rapide"
+      ],
       "weapon": [
         {
           "name": "Griffes perforantes",
           "range": "Mêlée",
           "attacks": 1,
-          "armor_piercing": "-",
-          "special_rules": ["Perforant"]
+          "armor_piercing": 0,
+          "special_rules": [
+            "Perforant"
+          ]
         }
       ],
       "upgrade_groups": [
@@ -1256,12 +1536,16 @@
             {
               "name": "Vicieux",
               "cost": 5,
-              "special_rules": ["Lacération en mêlée"]
+              "special_rules": [
+                "Lacération en mêlée"
+              ]
             },
             {
               "name": "Eclaireur",
               "cost": 10,
-              "special_rules": ["Eclaireur"]
+              "special_rules": [
+                "Eclaireur"
+              ]
             }
           ]
         }
@@ -1275,7 +1559,13 @@
       "base_cost": 80,
       "quality": 5,
       "defense": 5,
-      "special_rules": ["Eclaireur", "Furieux", "Guerrier-né", "Impact (1)", "Rapide"],
+      "special_rules": [
+        "Eclaireur",
+        "Furieux",
+        "Guerrier-né",
+        "Impact (1)",
+        "Rapide"
+      ],
       "weapon": [
         {
           "name": "Armes à une main",
@@ -1306,7 +1596,7 @@
         },
         {
           "group": "Améliorations d'armes",
-          "type": "weapon_upgrades",
+          "type": "conditional_weapon",
           "description": "Améliorer toutes les figurines avec une des options suivantes (un seul choix possible)",
           "options": [
             {
@@ -1314,7 +1604,7 @@
               "cost": 25,
               "weapon": {
                 "name": "Arc court",
-                "range": "12",
+                "range": 12,
                 "attacks": 1,
                 "armor_piercing": 0,
                 "special_rules": []
@@ -1325,10 +1615,12 @@
               "cost": 30,
               "weapon": {
                 "name": "Javelot barbelé",
-                "range": "12",
+                "range": 12,
                 "attacks": 1,
                 "armor_piercing": 1,
-                "special_rules": ["Eclatement"]
+                "special_rules": [
+                  "Eclatement"
+                ]
               }
             }
           ]
@@ -1341,7 +1633,9 @@
             {
               "name": "Icône du Ravage (Aura de Défense versatile)",
               "cost": 20,
-              "special_rules": ["Aura de Défense versatile"]
+              "special_rules": [
+                "Aura de Défense versatile"
+              ]
             }
           ]
         }
@@ -1356,7 +1650,11 @@
       "quality": 3,
       "defense": 3,
       "coriace": 3,
-      "special_rules": ["Guerrier-né", "Impact (1)", "Rapide"],
+      "special_rules": [
+        "Guerrier-né",
+        "Impact (1)",
+        "Rapide"
+      ],
       "weapon": [
         {
           "name": "Armes à une main lourdes",
@@ -1380,7 +1678,9 @@
                 "range": "Mêlée",
                 "attacks": 1,
                 "armor_piercing": 1,
-                "special_rules": ["Percée"]
+                "special_rules": [
+                  "Percée"
+                ]
               }
             }
           ]
@@ -1393,7 +1693,9 @@
             {
               "name": "Icône du Ravage (Aura de Défense versatile)",
               "cost": 20,
-              "special_rules": ["Aura de Défense versatile"]
+              "special_rules": [
+                "Aura de Défense versatile"
+              ]
             },
             {
               "name": "Bannière",
@@ -1423,7 +1725,11 @@
       "quality": 3,
       "defense": 3,
       "coriace": 3,
-      "special_rules": ["Guerrier-né", "Impact (2)", "Rapide"],
+      "special_rules": [
+        "Guerrier-né",
+        "Impact (2)",
+        "Rapide"
+      ],
       "weapon": [
         {
           "name": "Griffes lourdes",
@@ -1450,13 +1756,17 @@
               "name": "Lances lourdes",
               "cost": 25,
               "weapon": {
-                  "name": "Lances lourdes",
-                  "range": "Mêlée",
-                  "attacks": 1,
-                  "armor_piercing": 1,
-                  "special_rules": ["Percée"]
-                },
-              "replaces": ["Armes à une main lourdes"]
+                "name": "Lances lourdes",
+                "range": "Mêlée",
+                "attacks": 1,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Percée"
+                ]
+              },
+              "replaces": [
+                "Armes à une main lourdes"
+              ]
             }
           ]
         },
@@ -1493,14 +1803,20 @@
       "quality": 3,
       "defense": 4,
       "coriace": 6,
-      "special_rules": ["Effrayant (1)", "Furieux", "Guerrier-né"],
+      "special_rules": [
+        "Effrayant (1)",
+        "Furieux",
+        "Guerrier-né"
+      ],
       "weapon": [
         {
           "name": "Griffes perforantes",
           "range": "Mêlée",
           "attacks": 6,
           "armor_piercing": 1,
-          "special_rules": ["Perforant"]
+          "special_rules": [
+            "Perforant"
+          ]
         }
       ],
       "upgrade_groups": [
@@ -1512,7 +1828,10 @@
             {
               "name": "Maître des Bêtes",
               "cost": 30,
-              "special_rules": ["Régénération", "Sans peur"]
+              "special_rules": [
+                "Régénération",
+                "Sans peur"
+              ]
             }
           ]
         }
@@ -1527,7 +1846,11 @@
       "quality": 3,
       "defense": 3,
       "coriace": 6,
-      "special_rules": ["Guerrier-né", "Impact (4)", "Rapide"],
+      "special_rules": [
+        "Guerrier-né",
+        "Impact (4)",
+        "Rapide"
+      ],
       "weapon": [
         {
           "name": "Sabots",
@@ -1539,8 +1862,8 @@
         {
           "name": "Attaques de l'équipage",
           "range": "Mêlée",
-          "attacks": "2",
-          "armor_piercing": "2",
+          "attacks": 2,
+          "armor_piercing": 2,
           "special_rules": []
         }
       ],
@@ -1554,13 +1877,17 @@
               "name": "Javelots barbelés",
               "cost": 50,
               "weapon": {
-                  "name": "Javelots barbelés",
-                  "range": "12\"",
-                  "attacks": 6,
-                  "armor_piercing": 1,
-                  "special_rules": ["Éclatement"]
-                },
-              "replaces": ["Attaques de l'équipage"]
+                "name": "Javelots barbelés",
+                "range": 12,
+                "attacks": 6,
+                "armor_piercing": 1,
+                "special_rules": [
+                  "Eclatement"
+                ]
+              },
+              "replaces": [
+                "Attaques de l'équipage"
+              ]
             }
           ]
         },
@@ -1572,7 +1899,9 @@
             {
               "name": "Faveur du Ravage",
               "cost": 15,
-              "special_rules": ["Bonus d'Inébranlable"]
+              "special_rules": [
+                "Bonus d'Inébranlable"
+              ]
             }
           ]
         }
@@ -1587,7 +1916,12 @@
       "quality": 3,
       "defense": 3,
       "coriace": 6,
-      "special_rules": ["Effrayant (1)", "Guerrier-né", "Impact (4)", "Rapide"],
+      "special_rules": [
+        "Effrayant (1)",
+        "Guerrier-né",
+        "Impact (4)",
+        "Rapide"
+      ],
       "weapon": [
         {
           "name": "Griffes lourdes",
@@ -1613,7 +1947,9 @@
             {
               "name": "Faveur du Ravage",
               "cost": 15,
-              "special_rules": ["Bonus d'Inébranlable"]
+              "special_rules": [
+                "Bonus d'Inébranlable"
+              ]
             }
           ]
         }
@@ -1628,7 +1964,10 @@
       "quality": 3,
       "defense": 3,
       "coriace": 12,
-      "special_rules": ["Effrayant (2)", "Guerrier-né"],
+      "special_rules": [
+        "Effrayant (2)",
+        "Guerrier-né"
+      ],
       "weapon": [
         {
           "name": "Poings géants",
@@ -1654,11 +1993,14 @@
             {
               "name": "Aura de bataille",
               "cost": 15,
-              "special_rules": ["Bonus de Combattant précis"]
+              "special_rules": [
+                "Bonus de Combattant précis"
+              ]
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "faction_image_url": "https://cdn.prod.website-files.com/636c3b6dcdb4eb2dce722889/66804388df734edb194d3e8a_hw-1-textured-web.avif"
 }
