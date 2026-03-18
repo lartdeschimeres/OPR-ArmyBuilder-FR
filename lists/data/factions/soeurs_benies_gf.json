@@ -423,22 +423,22 @@
             {
               "name": "Fusil Tempête rapide",
               "cost": 80,
-              "weapon": {
-                "name": "Fusil Tempête rapide",
-                "range": 24,
-                "attacks": 6,
-                "armor_piercing": 1,
-                "special_rules": []
-              },
-              {
-                "name": "ACC",
-                "range": "Mêlée",
-                "attacks": 4,
-                "armor_piercing": 0,
-                "special_rules": [
-                  
-                ]
-              }
+              "weapon": [
+                {
+                  "name": "Fusil Tempête rapide",
+                  "range": 24,
+                  "attacks": 6,
+                  "armor_piercing": 1,
+                  "special_rules": []
+                },
+                {
+                  "name": "ACC",
+                  "range": "Mêlée",
+                  "attacks": 4,
+                  "armor_piercing": 0,
+                  "special_rules": []
+                }
+              ]
             }
           ]
         },
