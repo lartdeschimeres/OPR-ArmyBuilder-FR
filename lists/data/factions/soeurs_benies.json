@@ -50,15 +50,15 @@
       "description": "Lorsque cette figurine tire sur des ennemis situés à 12\" ou moins, les résultats non modifiés de 6 pour toucher infligent une touche supplémentaire (seule la touche initiale compte comme un 6 pour les règles spéciales)."
     },
     {
-      "name": "Precision Fighter Buff [Bonus de Combattant précis]",
+      "name": "Precision Fighter  [Bonus de Combattant précis]",
       "description": "Une fois par activation, avant d'attaquer, choisissez une unité amie à 12\" ou moins, qui obtient un bonus de +1 aux jets pour toucher en mêlée une seule fois (la prochaine fois que l'effet s'appliquerait)."
     },
     {
-      "name": "Precision Shooter Buff [Boost de Tireur précis]",
+      "name": "Precision Shooter  [Bonus de Tireur précis]",
       "description": "Une fois par activation, avant d'attaquer, choisissez une unité amie à 12\" ou moins qui gagne un bonus de +1 aux jets pour toucher lorsqu'elle tire, une seule fois (l'effet s'appliquera la prochaine fois qu'elle devrait tirer)."
     },
     {
-      "name": "Precision Target (X) [Cible acquise (X)]",
+      "name": "Precision Target (X) [Cible désignée (X)]",
       "description": "Une fois par partie, lors de l'activation de cette figurine, choisissez une unité ennemie à 36\" ou moins et dans sa ligne de vue, et placez X marqueurs dessus. Les unités amies obtiennent +X aux jets pour toucher lorsqu'elles l'attaquent."
     },
     {
@@ -78,19 +78,19 @@
       "description": "Les Lanceurs de sorts situés à 12\" appartenant à d'autres unités amies peuvent lancer des sorts comme s'ils se trouvaient à la position de cette figurine, et bénéficient d'un bonus de +1 aux jets de lancement."
     },
     {
-      "name": "Courage Aura [Aura de Courage]",
+      "name": "Courage Aura [Aura Courage]",
       "description": "Cette figurine et son unité gagne un bonus de +1 aux Tests de Moral."
     },
     {
-      "name": "Devout Boost Aura [Aura de Boost de Dévotion]",
+      "name": "Devout Boost Aura [Aura Boost de Dévotion]",
       "description": "Cette figurine et son unité gagne la règle spéciale Boost de Dévotion."
     },
     {
-      "name": "Fast Aura [Aura de Rapidité]",
+      "name": "Fast Aura [Aura Rapidité]",
       "description": "Cette figurine et son unité gagne un bonus de +2\" lorsqu'elles Avancent et +4\" lorsqu'elles Courent ou Chargent."
     },
     {
-      "name": "Fortified Aura [Aura de Renforcement]",
+      "name": "Fortified Aura [Aura Renforcement]",
       "description": "Cette figurine et son unité gagne la règle spéciale Renforcé."
     },
     {
@@ -98,15 +98,15 @@
       "description": "Cette figurine et son unité gagnent un bonus de +6\" de portée lorsqu'ils tirent."
     },
     {
-      "name": "Point-Blank Piercing Aura [Aura de Tranchant à bout portant]",
+      "name": "Point-Blank Piercing Aura [Aura Tranchant à bout portant]",
       "description": "Cette figurine et son unité gagne la règle spéciale Tranchant à bout portant."
     },
     {
-      "name": "Regeneration Aura [Aura de Régénération]",
+      "name": "Regeneration Aura [Aura Régénération]",
       "description": "Cette figurine et son unité gagne la règle spéciale Régénération."
     },
     {
-      "name": "Shred in Melee Aura [Aura de Lacération en mêlée]",
+      "name": "Shred in Melee Aura [Aura Lacération en mêlée]",
       "description": "Cette figurine et son unité gagne la règle spéciale Lacération en mêlée."
     }
   ],
@@ -186,21 +186,21 @@
               "name": "Abbesse",
               "cost": 15,
               "special_rules": [
-                "Aura de Rapidité"
+                "Aura Rapidité"
               ]
             },
             {
               "name": "Révérende",
               "cost": 20,
               "special_rules": [
-                "Aura de Protection"
+                "Aura Protection"
               ]
             },
             {
               "name": "Supérieure",
               "cost": 25,
               "special_rules": [
-                "Aura de Boost de Dévotion"
+                "Aura Boost de Dévotion"
               ]
             },
             {
@@ -362,28 +362,28 @@
               "name": "Abbesse",
               "cost": 20,
               "special_rules": [
-                "Aura de Rapidité"
+                "Aura Rapidité"
               ]
             },
             {
               "name": "Prêtresse",
               "cost": 25,
               "special_rules": [
-                "Aura de Lacération en mêlée"
+                "Aura Lacération en mêlée"
               ]
             },
             {
               "name": "Chanoinesse",
               "cost": 50,
               "special_rules": [
-                "Aura de Tranchant à bout portant"
+                "Aura Tranchant à bout portant"
               ]
             },
             {
               "name": "Supérieure",
               "cost": 55,
               "special_rules": [
-                "Aura de Boost de Dévotion"
+                "Aura Boost de Dévotion"
               ]
             },
             {
@@ -534,28 +534,28 @@
               "name": "Révérende",
               "cost": 10,
               "special_rules": [
-                "Aura de Protection"
+                "Aura Protection"
               ]
             },
             {
               "name": "Prêtresse",
               "cost": 25,
               "special_rules": [
-                "Aura de Lacération en mêlée"
+                "Aura Lacération en mêlée"
               ]
             },
             {
               "name": "Chanoinesse",
               "cost": 50,
               "special_rules": [
-                "Aura de Tranchant à bout portant"
+                "Aura Tranchant à bout portant"
               ]
             },
             {
               "name": "Supérieure",
               "cost": 55,
               "special_rules": [
-                "Aura de Boost de Dévotion"
+                "Aura Boost de Dévotion"
               ]
             },
             {
@@ -888,7 +888,7 @@
               "name": "Révérende",
               "cost": 10,
               "special_rules": [
-                "Aura de Protection"
+                "Aura Protection"
               ]
             },
             {
@@ -902,21 +902,21 @@
               "name": "Abbesse",
               "cost": 20,
               "special_rules": [
-                "Aura de Rapidité"
+                "Aura Rapidité"
               ]
             },
             {
               "name": "Prêtresse",
               "cost": 25,
               "special_rules": [
-                "Aura de Lacération en mêlée"
+                "Aura Lacération en mêlée"
               ]
             },
             {
               "name": "Chanoinesse",
               "cost": 50,
               "special_rules": [
-                "Aura de Tranchant à bout portant"
+                "Aura Tranchant à bout portant"
               ]
             },
             {
@@ -1314,7 +1314,7 @@
               "name": "Révérende",
               "cost": 10,
               "special_rules": [
-                "Aura de Protection"
+                "Aura Protection"
               ]
             },
             {
@@ -1328,21 +1328,21 @@
               "name": "Abbesse",
               "cost": 20,
               "special_rules": [
-                "Aura de Rapidité"
+                "Aura Rapidité"
               ]
             },
             {
               "name": "Prêtresse",
               "cost": 25,
               "special_rules": [
-                "Aura de Lacération en mêlée"
+                "Aura Lacération en mêlée"
               ]
             },
             {
               "name": "Supérieure",
               "cost": 55,
               "special_rules": [
-                "Aura de Boost de Dévotion"
+                "Aura Boost de Dévotion"
               ]
             }
           ]
@@ -1449,7 +1449,7 @@
               "name": "Révérende",
               "cost": 10,
               "special_rules": [
-                "Aura de Protection"
+                "Aura Protection"
               ]
             },
             {
@@ -1463,21 +1463,21 @@
               "name": "Abbesse",
               "cost": 20,
               "special_rules": [
-                "Aura de Rapidité"
+                "Aura Rapidité"
               ]
             },
             {
               "name": "Prêtresse",
               "cost": 25,
               "special_rules": [
-                "Aura de Lacération en mêlée"
+                "Aura Lacération en mêlée"
               ]
             },
             {
               "name": "Chanoinesse",
               "cost": 50,
               "special_rules": [
-                "Aura de Tranchant à bout portant"
+                "Aura Tranchant à bout portant"
               ]
             },
             {
@@ -1815,21 +1815,21 @@
               "name": "Bannière sacrée",
               "cost": 5,
               "special_rules": [
-                "Aura de Courage"
+                "Aura Courage"
               ]
             },
             {
               "name": "Mégaphone de Cantique",
               "cost": 25,
               "special_rules": [
-                "Cible acquise (1)"
+                "Cible désignée (1)"
               ]
             },
             {
               "name": "Entraînement médical",
               "cost": 30,
               "special_rules": [
-                "Aura de Régénération"
+                "Aura Régénération"
               ]
             }
           ]
@@ -1837,7 +1837,7 @@
         {
           "group": "Remplacement d'armes",
           "type": "weapon",
-          "description": "Remplacer toutes les Paires d'armes à une main par :",
+          "description": "Remplacer toutes les Paires d'ACC par :",
           "options": [
             {
               "name": "Fusil + ACC",
@@ -1973,7 +1973,7 @@
           "description": "Améliorer toutes les figurines avec :",
           "options": [
             {
-              "name": "Flagellants",
+              "name": "Flagellant",
               "cost": 10,
               "special_rules": [
                 "Régénération"
@@ -2034,21 +2034,21 @@
               "name": "Bannière sacrée",
               "cost": 5,
               "special_rules": [
-                "Aura de Courage"
+                "Aura Courage"
               ]
             },
             {
               "name": "Mégaphone de Cantique",
               "cost": 25,
               "special_rules": [
-                "Cible acquise (1)"
+                "Cible désignée (1)"
               ]
             },
             {
               "name": "Entraînement médical",
               "cost": 30,
               "special_rules": [
-                "Aura de Régénération"
+                "Aura Régénération"
               ]
             }
           ]
@@ -2380,21 +2380,21 @@
               "name": "Bannière sacrée",
               "cost": 5,
               "special_rules": [
-                "Aura de Courage"
+                "Aura Courage"
               ]
             },
             {
               "name": "Mégaphone de Cantique",
               "cost": 25,
               "special_rules": [
-                "Cible acquise (1)"
+                "Cible désignée (1)"
               ]
             },
             {
               "name": "Entraînement médical",
               "cost": 30,
               "special_rules": [
-                "Aura de Régénération"
+                "Aura Régénération"
               ]
             }
           ]
@@ -2751,21 +2751,21 @@
               "name": "Bannière sacrée",
               "cost": 5,
               "special_rules": [
-                "Aura de Courage"
+                "Aura Courage"
               ]
             },
             {
               "name": "Mégaphone de Cantique",
               "cost": 25,
               "special_rules": [
-                "Cible acquise (1)"
+                "Cible désignée (1)"
               ]
             },
             {
               "name": "Entraînement médical",
               "cost": 30,
               "special_rules": [
-                "Aura de Régénération"
+                "Aura Régénération"
               ]
             }
           ]
@@ -3006,21 +3006,21 @@
               "name": "Bannière sacrée",
               "cost": 5,
               "special_rules": [
-                "Aura de Courage"
+                "Aura Courage"
               ]
             },
             {
               "name": "Mégaphone de Cantique",
               "cost": 25,
               "special_rules": [
-                "Cible acquise (1)"
+                "Cible désignée (1)"
               ]
             },
             {
               "name": "Entraînement médical",
               "cost": 30,
               "special_rules": [
-                "Aura de Régénération"
+                "Aura Régénération"
               ]
             }
           ]
@@ -3455,7 +3455,7 @@
       "special_rules": [
         "Bonus de Courage",
         "Bonus de Protection",
-        "Boost de Tireur précis",
+        "Bonus de Tireur précis",
         "Dévotion",
         "Impact (3)",
         "Rapide",
