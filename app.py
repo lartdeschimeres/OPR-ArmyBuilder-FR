@@ -137,10 +137,12 @@ def check_weapon_conditions(unit_key, requires, unit=None):
     """
     Vérifie si les conditions d'un groupe ou d'une option sont remplies.
 
-    Deux types de requires sont supportés :
+    Trois types de requires sont supportés :
     1. Nom d'une arme de base encore active (ex: "Bouclier de combat", "ACC")
        → on recalcule les armes actives en appliquant les replaces des groupes type=weapon choisis
-    2. Nom d'une option choisie dans un autre groupe (ex: "Pistolet lourd de sergent + Épée énergétique")
+    2. Nom d'une arme ajoutée via conditional_weapon (ex: "Fusil lourd de maître")
+       → on vérifie si cette arme a été choisie dans un groupe conditional_weapon
+    3. Nom d'une option choisie dans un autre groupe (ex: "Pistolet lourd de sergent + Épée énergétique")
        → on vérifie si cette option a été sélectionnée dans les selections
     """
     if not requires:
@@ -148,11 +150,10 @@ def check_weapon_conditions(unit_key, requires, unit=None):
 
     selections = st.session_state.unit_selections.get(unit_key, {})
 
-    # ── 1. Calculer les armes actives ──────────────────────────────────────
-    # Partir des armes de base de l'unité
+    # ── 1. Calculer les armes actives à partir des armes de base ───────────
     current_weapons = {w["name"] for w in unit.get("weapon", []) if isinstance(w, dict)} if unit else set()
 
-    # Appliquer les remplacements des groupes type=weapon qui ont été choisis
+    # Appliquer les remplacements des groupes type=weapon choisis
     if unit is not None:
         for gi, g in enumerate(unit.get("upgrade_groups", [])):
             if g.get("type") != "weapon":
@@ -161,7 +162,6 @@ def check_weapon_conditions(unit_key, requires, unit=None):
             selection = selections.get(g_key)
             if not selection:
                 continue
-            # Trouver l'option correspondant à la sélection
             for o in g.get("options", []):
                 w = o.get("weapon", {})
                 if isinstance(w, list):
@@ -185,9 +185,35 @@ def check_weapon_conditions(unit_key, requires, unit=None):
                         current_weapons.add(nw.get("name", ""))
                     break
 
-    # ── 2. Collecter les noms d'options choisies ───────────────────────────
+    # ── 2. Ajouter les armes choisies via conditional_weapon ───────────────
+    # (ex: "Fusil lourd de maître" choisi dans "Remplacement Bouclier de combat")
+    if unit is not None:
+        for gi, g in enumerate(unit.get("upgrade_groups", [])):
+            if g.get("type") != "conditional_weapon":
+                continue
+            g_key = f"group_{gi}"
+            selection = selections.get(g_key)
+            if not selection or selection == "Aucune amélioration":
+                continue
+            # Trouver l'option choisie et ajouter son arme à current_weapons
+            for o in g.get("options", []):
+                w_cond = o.get("weapon", {})
+                if isinstance(w_cond, dict) and w_cond:
+                    lbl = format_weapon_option(w_cond, o.get("cost", 0))
+                else:
+                    lbl = f"{o.get('name', '')} (+{o.get('cost', 0)} pts)"
+                if lbl == selection:
+                    nw = o.get("weapon", {})
+                    if isinstance(nw, dict) and nw:
+                        current_weapons.add(nw.get("name", ""))
+                    elif isinstance(nw, list):
+                        for w2 in nw:
+                            if isinstance(w2, dict):
+                                current_weapons.add(w2.get("name", ""))
+                    break
+
+    # ── 3. Collecter les noms d'options choisies ───────────────────────────
     # Pour les requires du type "Pistolet lourd de sergent + Épée énergétique"
-    # qui pointent vers le nom d'une option sélectionnée (pas une arme de base)
     selected_option_names = set()
     for sel in selections.values():
         if isinstance(sel, str) and sel not in ("Aucune amélioration", "Aucune arme", "Aucun rôle", "Aucune monture"):
@@ -195,7 +221,7 @@ def check_weapon_conditions(unit_key, requires, unit=None):
             name_part = sel.split(" (+")[0].strip()
             selected_option_names.add(name_part)
 
-    # ── 3. Vérifier chaque require ─────────────────────────────────────────
+    # ── 4. Vérifier chaque require ─────────────────────────────────────────
     for req in requires:
         if req not in current_weapons and req not in selected_option_names:
             return False
