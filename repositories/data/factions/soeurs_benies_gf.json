@@ -31,6 +31,110 @@
     "Point-Blank Piercing Aura [Aura Tranchant à bout portant]",
     "Regeneration Aura [Aura Régénération]",
     "Shred in Melee Aura [Aura Lacération en mêlée]"
+    {
+      "name": "Devout [Dévotion]",
+      "description": "Lors d'une attaque, les résultats non modifiés de 6 pour toucher infligent une touche supplémentaire (seule la touche initiale compte comme un 6 pour les règles spéciales)."
+    },
+    {
+      "name": "Casting Debuff [Malus de magie]",
+      "description": "Une fois par activation, avant d'attaquer, choisissez une unité ennemie à 18\" ou moins du lanceur, qui subit un malus de -1 aux jets de lancement de sort une fois (l'effet s'appliquera la prochaine fois qu'elle devrait s'appliquer)."
+    },
+    {
+      "name": "Courage Buff [Bonus de courage]",
+      "description": "Une fois par activation, avant d'attaquer, choisissez une unité amie à 12\" ou moins qui obtient un bonus de +1 aux Tests de Moral une fois (la prochaine fois que l'effet s'appliquerait)."
+    },
+    {
+      "name": "Devout Boost [Boost de Dévotion]",
+      "description": "Si cette figurine dispose de la règle spéciale Dévotion, elle inflige des touches supplémentaires sur les résultats réussis non modifiés de 5-6 provenant de Dévotion (au lieu de seulement sur 6)."
+    },
+    {
+      "name": "Fortified [Renforcé]",
+      "description": "Lorsque des unités dont toutes les figurines possèdent cette règle subissent des blessures, ces blessures comptent comme ayant une PA (-1), jusqu'à un minimum de PA (0)."
+    },
+    {
+      "name": "Guarded [Protégé]",
+      "description": "Lorsque des unités dont toutes les figurines possèdent cette règle subissent des tirs ou sont chargées à plus de 9\", elles obtiennent un bonus de +1 aux jets de Défense."
+    },
+    {
+      "name": "Guarded Buff [Bonus de Protection]",
+      "description": "Une fois par activation, avant d'attaquer, choisissez une unité amie à 12\" ou moins qui bénéficie de la règle spéciale Protégé une seule fois (la prochaine fois que l'effet s'appliquerait)."
+    },
+    {
+      "name": "Piercing Assault [Assaut tranchant]",
+      "description": "Cette figurine gagne PA (+1) lorsqu'elle Charge."
+    },
+    {
+      "name": "Piercing Hunter [Chasseur tranchant]",
+      "description": "Lorsque cette figurine tire sur des ennemis situés à 9\" ou plus, ses armes bénéficient d'un bonus de PA (+1)."
+    },
+    {
+      "name": "Point-Blank Piercing [Tranchant à bout portant]",
+      "description": "Cette figurine gagne un bonus de PA (+1) lorsqu'elle tire sur des ennemis à 12\" ou moins."
+    },
+    {
+      "name": "Point-Blank Surge [Surcharge à bout portant]",
+      "description": "Lorsque cette figurine tire sur des ennemis situés à 12\" ou moins, les résultats non modifiés de 6 pour toucher infligent une touche supplémentaire (seule la touche initiale compte comme un 6 pour les règles spéciales)."
+    },
+    {
+      "name": "Precision Fighter Buff [Bonus de Combattant précis]",
+      "description": "Une fois par activation, avant d'attaquer, choisissez une unité amie à 12\" ou moins, qui obtient un bonus de +1 aux jets pour toucher en mêlée une seule fois (la prochaine fois que l'effet s'appliquerait)."
+    },
+    {
+      "name": "Precision Shooter Buff [Bonus de Tireur précis]",
+      "description": "Une fois par activation, avant d'attaquer, choisissez une unité amie à 12\" ou moins qui gagne un bonus de +1 aux jets pour toucher lorsqu'elle tire, une seule fois (l'effet s'appliquera la prochaine fois qu'elle devrait tirer)."
+    },
+    {
+      "name": "Precision Target (X) [Cible désignée (X)]",
+      "description": "Une fois par partie, lors de l'activation de cette figurine, choisissez une unité ennemie à 36\" ou moins et dans sa ligne de vue, et placez X marqueurs dessus. Les unités amies obtiennent +X aux jets pour toucher lorsqu'elles l'attaquent."
+    },
+    {
+      "name": "Purge [Purge]",
+      "description": "Ignore la Régénération, et contre les unités dont la plupart des figurines possèdent une Défense comprise entre 2+ et 4+, cette arme gagne un bonus de PA (+1)."
+    },
+    {
+      "name": "Shielded [Blindé]",
+      "description": "Les unités dont toutes les figurines possèdent cette règle spéciale obtiennent un bonus de +1 aux jets de Défense contre les touches qui ne proviennent pas de sorts."
+    },
+    {
+      "name": "Shred [Lacération]",
+      "description": "Sur des résultats non modifiés de 1 pour bloquer des touches, cette arme inflige une blessure supplémentaire."
+    },
+    {
+      "name": "Spell Conduit [Canalisateur de sort]",
+      "description": "Les Lanceurs de sorts situés à 12\" appartenant à d'autres unités amies peuvent lancer des sorts comme s'ils se trouvaient à la position de cette figurine, et bénéficient d'un bonus de +1 aux jets de lancement."
+    },
+    {
+      "name": "Courage Aura [Aura Courage]",
+      "description": "Cette figurine et son unité gagne un bonus de +1 aux Tests de Moral."
+    },
+    {
+      "name": "Devout Boost Aura [Aura de Boost de Dévotion]",
+      "description": "Cette figurine et son unité gagne la règle spéciale Boost de Dévotion."
+    },
+    {
+      "name": "Fast Aura [Aura Rapidité]",
+      "description": "Cette figurine et son unité gagne un bonus de +2\" lorsqu'elles Avancent et +4\" lorsqu'elles Courent ou Chargent."
+    },
+    {
+      "name": "Fortified Aura [Aura Renforcement]",
+      "description": "Cette figurine et son unité gagne la règle spéciale Renforcé."
+    },
+    {
+      "name": "Increased Shooting Range Aura [Aura d'Augmentation de la portée de tir]",
+      "description": "Cette figurine et son unité gagnent un bonus de +6\" de portée lorsqu'ils tirent."
+    },
+    {
+      "name": "Point-Blank Piercing Aura [Aura Tranchant à bout portant]",
+      "description": "Cette figurine et son unité gagne la règle spéciale Tranchant à bout portant."
+    },
+    {
+      "name": "Regeneration Aura [Aura Régénération]",
+      "description": "Cette figurine et son unité gagne la règle spéciale Régénération."
+    },
+    {
+      "name": "Shred in Melee Aura [Aura Lacération en mêlée]",
+      "description": "Cette figurine et son unité gagne la règle spéciale Lacération en mêlée."
+    }
   ],
   "spells": {
     "Burn the Heretic [Brulez les hérétiques] (1)": {
@@ -340,26 +444,24 @@
                 "special_rules": [
                   "Perforant"
                 ]
-              }
+              },
+              "replaces": [
+                "ACC",
+                "Bouclier de combat"
+              ]
             },
             {
-              "name": "Fusil Tempête rapide",
+              "name": "Fusil Tempête rapide + ACC",
               "cost": 80,
-              "weapon": [
-                {
-                  "name": "Fusil Tempête rapide",
-                  "range": 24,
-                  "attacks": 6,
-                  "armor_piercing": 1,
-                  "special_rules": []
-                },
-                {
-                  "name": "ACC",
-                  "range": "Mêlée",
-                  "attacks": 4,
-                  "armor_piercing": 0,
-                  "special_rules": []
-                }
+              "weapon": {
+                "name": "Fusil Tempête rapide",
+                "range": 24,
+                "attacks": 6,
+                "armor_piercing": 1,
+                "special_rules": []
+              },
+              "replaces": [
+                "Bouclier de combat"
               ]
             }
           ]
@@ -372,9 +474,6 @@
             {
               "name": "Épée énergétique",
               "cost": 20,
-              "replaces": [
-                "ACC"
-              ],
               "weapon": {
                 "name": "Épée énergétique",
                 "range": "Mêlée",
@@ -388,9 +487,6 @@
             {
               "name": "Poing tronçonneur",
               "cost": 30,
-              "replaces": [
-                "ACC"
-              ],
               "weapon": {
                 "name": "Poing tronçonneur",
                 "range": "Mêlée",
@@ -404,9 +500,6 @@
             {
               "name": "Masse lourde",
               "cost": 30,
-              "replaces": [
-                "ACC"
-              ],
               "weapon": {
                 "name": "Masse lourde",
                 "range": "Mêlée",
@@ -420,9 +513,6 @@
             {
               "name": "Poing énergétique",
               "cost": 35,
-              "replaces": [
-                "ACC"
-              ],
               "weapon": {
                 "name": "Poing énergétique",
                 "range": "Mêlée",
@@ -431,6 +521,9 @@
                 "special_rules": []
               }
             }
+          ],
+          "requires": [
+            "Bouclier de combat"
           ]
         }
       ]
@@ -531,7 +624,11 @@
                 "attacks": 4,
                 "armor_piercing": 1,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "ACC",
+                "Bouclier de combat"
+              ]
             },
             {
               "name": "Sainte lance",
@@ -544,7 +641,11 @@
                 "special_rules": [
                   "Fiable"
                 ]
-              }
+              },
+              "replaces": [
+                "ACC",
+                "Bouclier de combat"
+              ]
             }
           ]
         },
@@ -556,9 +657,6 @@
             {
               "name": "Pistolet lance-flamme",
               "cost": 10,
-              "requires": [
-                "Bouclier de combat"
-              ],
               "weapon": {
                 "name": "Pistolet lance-flamme",
                 "range": 6,
@@ -572,10 +670,7 @@
             },
             {
               "name": "Pistolet lourd de maître",
-              "cost": 15,
-              "requires": [
-                "Bouclier de combat"
-              ],
+              "cost": 10,
               "weapon": {
                 "name": "Pistolet lourd de maître",
                 "range": 12,
@@ -586,10 +681,7 @@
             },
             {
               "name": "Pistolet à fusion",
-              "cost": 15,
-              "requires": [
-                "Bouclier de combat"
-              ],
+              "cost": 10,
               "weapon": {
                 "name": "Pistolet à fusion",
                 "range": 6,
@@ -602,10 +694,7 @@
             },
             {
               "name": "Pistolet lacérateur de maître",
-              "cost": 25,
-              "requires": [
-                "Bouclier de combat"
-              ],
+              "cost": 20,
               "weapon": {
                 "name": "Pistolet lacérateur de maître",
                 "range": 9,
@@ -618,10 +707,7 @@
             },
             {
               "name": "Fusil à pompe de maître",
-              "cost": 25,
-              "requires": [
-                "Bouclier de combat"
-              ],
+              "cost": 20,
               "weapon": {
                 "name": "Fusil à pompe de maître",
                 "range": 12,
@@ -632,10 +718,7 @@
             },
             {
               "name": "Pistolet à plasma de maître",
-              "cost": 30,
-              "requires": [
-                "Bouclier de combat"
-              ],
+              "cost": 20,
               "weapon": {
                 "name": "Pistolet à plasma de maître",
                 "range": 12,
@@ -646,10 +729,7 @@
             },
             {
               "name": "Fusil lourd de maître",
-              "cost": 35,
-              "requires": [
-                "Bouclier de combat"
-              ],
+              "cost": 25,
               "weapon": {
                 "name": "Fusil lourd de maître",
                 "range": 24,
@@ -660,10 +740,7 @@
             },
             {
               "name": "Fusil à plasma de maître",
-              "cost": 60,
-              "requires": [
-                "Bouclier de combat"
-              ],
+              "cost": 50,
               "weapon": {
                 "name": "Fusil à plasma de maître",
                 "range": 24,
@@ -675,9 +752,6 @@
             {
               "name": "Fusil sniper lance-flamme de maître",
               "cost": 65,
-              "requires": [
-                "Bouclier de combat"
-              ],
               "weapon": {
                 "name": "Fusil sniper lance-flamme de maître",
                 "range": 18,
@@ -692,10 +766,7 @@
             },
             {
               "name": "Fusil Tempête de maître",
-              "cost": 70,
-              "requires": [
-                "Bouclier de combat"
-              ],
+              "cost": 55,
               "weapon": {
                 "name": "Fusil Tempête de maître",
                 "range": 24,
@@ -704,6 +775,9 @@
                 "special_rules": []
               }
             }
+          ],
+          "requires": [
+            "ACC"
           ]
         },
         {
@@ -714,9 +788,6 @@
             {
               "name": "Module lance-flamme",
               "cost": 10,
-              "requires": [
-                "Fusil lourd de maître"
-              ],
               "weapon": {
                 "name": "Module lance-flamme",
                 "range": 12,
@@ -732,9 +803,6 @@
             {
               "name": "Module lance-plasma",
               "cost": 10,
-              "requires": [
-                "Fusil lourd de maître"
-              ],
               "weapon": {
                 "name": "Module lance-plasma",
                 "range": 24,
@@ -748,9 +816,6 @@
             {
               "name": "Module arbalète",
               "cost": 10,
-              "requires": [
-                "Fusil lourd de maître"
-              ],
               "weapon": {
                 "name": "Module arbalète",
                 "range": 24,
@@ -765,10 +830,7 @@
             },
             {
               "name": "Module fusion",
-              "cost": 15,
-              "requires": [
-                "Fusil lourd de maître"
-              ],
+              "cost": 10,
               "weapon": {
                 "name": "Module fusion",
                 "range": 12,
@@ -780,92 +842,9 @@
                 ]
               }
             }
-          ]
-        },
-        {
-          "group": "Remplacement ACC",
-          "type": "conditional_weapon",
-          "description": "Remplacer l'ACC par :",
-          "options": [
-            {
-              "name": "Épée énergétique",
-              "cost": 10,
-              "requires": [
-                "ACC"
-              ],
-              "weapon": {
-                "name": "Épée énergétique",
-                "range": "Mêlée",
-                "attacks": 4,
-                "armor_piercing": 1,
-                "special_rules": [
-                  "Perforant"
-                ]
-              }
-            },
-            {
-              "name": "Poing tronçonneur",
-              "cost": 20,
-              "requires": [
-                "ACC"
-              ],
-              "weapon": {
-                "name": "Poing tronçonneur",
-                "range": "Mêlée",
-                "attacks": 2,
-                "armor_piercing": 2,
-                "special_rules": [
-                  "Mortel (3)"
-                ]
-              }
-            },
-            {
-              "name": "Masse lourde",
-              "cost": 20,
-              "requires": [
-                "ACC"
-              ],
-              "weapon": {
-                "name": "Masse lourde",
-                "range": "Mêlée",
-                "attacks": 2,
-                "armor_piercing": 2,
-                "special_rules": [
-                  "Explosion (3)"
-                ]
-              }
-            },
-            {
-              "name": "Poing énergétique",
-              "cost": 20,
-              "requires": [
-                "ACC"
-              ],
-              "weapon": {
-                "name": "Poing énergétique",
-                "range": "Mêlée",
-                "attacks": 4,
-                "armor_piercing": 4,
-                "special_rules": []
-              }
-            },
-            {
-              "name": "Epée de Procession",
-              "cost": 20,
-              "requires": [
-                "ACC"
-              ],
-              "weapon": {
-                "name": "Epée de Procession",
-                "range": "Mêlée",
-                "attacks": 2,
-                "armor_piercing": 1,
-                "special_rules": [
-                  "Fiable",
-                  "Perforant"
-                ]
-              }
-            }
+          ],
+          "requires": [
+            "Fusil lourd de maître"
           ]
         },
         {
@@ -1020,7 +999,11 @@
                 "attacks": 4,
                 "armor_piercing": 1,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "ACC",
+                "Bouclier de combat"
+              ]
             },
             {
               "name": "Sainte lance",
@@ -1033,7 +1016,11 @@
                 "special_rules": [
                   "Fiable"
                 ]
-              }
+              },
+              "replaces": [
+                "ACC",
+                "Bouclier de combat"
+              ]
             }
           ]
         },
@@ -1163,6 +1150,9 @@
                 "special_rules": []
               }
             }
+          ],
+          "requires": [
+            "ACC"
           ]
         },
         {
@@ -1227,6 +1217,9 @@
                 ]
               }
             }
+          ],
+          "requires": [
+            "Fusil lourd de maître"
           ]
         },
         {
@@ -1298,6 +1291,9 @@
                 ]
               }
             }
+          ],
+          "requires": [
+            "Bouclier de combat"
           ]
         },
         {
@@ -1434,7 +1430,10 @@
                 "special_rules": [
                   "Mortel (3)"
                 ]
-              }
+              },
+              "replaces": [
+                "Paire de fouets de choc"
+              ]
             },
             {
               "name": "Paire de fouets plasma",
@@ -1445,7 +1444,10 @@
                 "attacks": 2,
                 "armor_piercing": 4,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "Paire de fouets de choc"
+              ]
             },
             {
               "name": "Épée tronçonneuse supérieure",
@@ -1458,7 +1460,10 @@
                 "special_rules": [
                   "Perforant"
                 ]
-              }
+              },
+              "replaces": [
+                "Paire de fouets de choc"
+              ]
             }
           ]
         },
@@ -1574,7 +1579,11 @@
                 "attacks": 4,
                 "armor_piercing": 1,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "ACC",
+                "Bouclier de combat"
+              ]
             },
             {
               "name": "Sainte lance",
@@ -1587,7 +1596,11 @@
                 "special_rules": [
                   "Fiable"
                 ]
-              }
+              },
+              "replaces": [
+                "ACC",
+                "Bouclier de combat"
+              ]
             }
           ]
         },
@@ -1717,6 +1730,9 @@
                 "special_rules": []
               }
             }
+          ],
+          "requires": [
+            "ACC"
           ]
         },
         {
@@ -1781,6 +1797,9 @@
                 ]
               }
             }
+          ],
+          "requires": [
+            "Fusil lourd de maître"
           ]
         },
         {
@@ -1852,6 +1871,9 @@
                 ]
               }
             }
+          ],
+          "requires": [
+            "Bouclier de combat"
           ]
         }
       ]
@@ -1919,7 +1941,10 @@
                 "attacks": 1,
                 "armor_piercing": 0,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "Paires d'ACC"
+              ]
             },
             {
               "name": "Pistolet + ACC",
@@ -1930,7 +1955,10 @@
                 "attacks": 1,
                 "armor_piercing": 0,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "Paires d'ACC"
+              ]
             },
             {
               "name": "Grande arme",
@@ -1941,7 +1969,10 @@
                 "attacks": 2,
                 "armor_piercing": 1,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "Paires d'ACC"
+              ]
             }
           ]
         },
@@ -2034,7 +2065,10 @@
                 "special_rules": [
                   "Perforant"
                 ]
-              }
+              },
+              "replaces": [
+                "Épées tronçonneuses"
+              ]
             }
           ]
         },
@@ -2240,11 +2274,81 @@
             {
               "name": "Pistolet lourd de sergent + Épée énergétique",
               "cost": 10,
+              "weapon": [
+                {
+                  "name": "Pistolet lourd de sergent",
+                  "range": 12,
+                  "attacks": 1,
+                  "armor_piercing": 1,
+                  "special_rules": []
+                },
+                {
+                  "name": "Épée énergétique",
+                  "range": "Mêlée",
+                  "attacks": 2,
+                  "armor_piercing": 1,
+                  "special_rules": [
+                    "Perforant"
+                  ]
+                }
+              ],
+              "replaces": [
+                "Fusils lourds",
+                "ACC"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Remplacement Pistolet lourd de sergent",
+          "type": "conditional_weapon",
+          "description": "Remplacer le Pistolet lourd de sergent par :",
+          "requires": [
+            "Pistolet lourd de sergent + Épée énergétique"
+          ],
+          "options": [
+            {
+              "name": "Pistolet lacérateur",
+              "cost": 5,
               "weapon": {
-                "name": "Pistolet lourd de sergent",
+                "name": "Pistolet lacérateur",
+                "range": 9,
+                "attacks": 2,
+                "armor_piercing": 0,
+                "special_rules": [
+                  "Perforant"
+                ]
+              }
+            },
+            {
+              "name": "Pistolet à plasma",
+              "cost": 5,
+              "weapon": {
+                "name": "Pistolet à plasma",
                 "range": 12,
                 "attacks": 1,
-                "armor_piercing": 1,
+                "armor_piercing": 4,
+                "special_rules": []
+              }
+            }
+          ]
+        },
+        {
+          "group": "Remplacement Épée énergétique",
+          "type": "conditional_weapon",
+          "description": "Remplacer l'Épée énergétique par :",
+          "requires": [
+            "Pistolet lourd de sergent + Épée énergétique"
+          ],
+          "options": [
+            {
+              "name": "Poing énergétique",
+              "cost": 5,
+              "weapon": {
+                "name": "Poing énergétique",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 4,
                 "special_rules": []
               }
             }
@@ -2296,7 +2400,10 @@
                 "attacks": 2,
                 "armor_piercing": 1,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "Fusils lourds"
+              ]
             }
           ]
         },
@@ -2394,16 +2501,86 @@
         {
           "group": "Sergent",
           "type": "conditional_weapon",
-          "description": "Remplacer un Fusil lourd et une ACC par :",
+          "description": "Remplacer un Fusils lourds et une ACC par :",
           "options": [
             {
               "name": "Pistolet lourd de sergent + Épée énergétique",
               "cost": 10,
+              "replaces": [
+                "Fusils lourds",
+                "ACC"
+              ],
+              "weapon": [
+                {
+                  "name": "Pistolet lourd de sergent",
+                  "range": 12,
+                  "attacks": 1,
+                  "armor_piercing": 1,
+                  "special_rules": []
+                },
+                {
+                  "name": "Épée énergétique",
+                  "range": "Mêlée",
+                  "attacks": 2,
+                  "armor_piercing": 1,
+                  "special_rules": [
+                    "Perforant"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Remplacement Pistolet lourd de sergent",
+          "type": "conditional_weapon",
+          "description": "Remplacer le Pistolet lourd de sergent par :",
+          "requires": [
+            "Pistolet lourd de sergent + Épée énergétique"
+          ],
+          "options": [
+            {
+              "name": "Pistolet lacérateur",
+              "cost": 5,
               "weapon": {
-                "name": "Pistolet lourd de sergent",
+                "name": "Pistolet lacérateur",
+                "range": 9,
+                "attacks": 2,
+                "armor_piercing": 0,
+                "special_rules": [
+                  "Perforant"
+                ]
+              }
+            },
+            {
+              "name": "Pistolet à plasma",
+              "cost": 5,
+              "weapon": {
+                "name": "Pistolet à plasma",
                 "range": 12,
                 "attacks": 1,
-                "armor_piercing": 1,
+                "armor_piercing": 4,
+                "special_rules": []
+              }
+            }
+          ]
+        },
+        {
+          "group": "Remplacement Épée énergétique",
+          "type": "conditional_weapon",
+          "description": "Remplacer l'Épée énergétique par :",
+          "requires": [
+            "Pistolet lourd de sergent + Épée énergétique"
+          ],
+          "options": [
+            {
+              "name": "Poing énergétique",
+              "cost": 5,
+              "weapon": {
+                "name": "Poing énergétique",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 4,
                 "special_rules": []
               }
             }
@@ -2487,14 +2664,21 @@
                   "Fiable",
                   "Perforant"
                 ]
-              }
+              },
+              "replaces": [
+                "Lances",
+                "Pistolets lourds"
+              ]
             }
           ]
         },
         {
-          "group": "Remplacement toutes Lances",
+          "group": "Remplacement toutes les Lances",
           "type": "weapon",
           "description": "Remplacer toutes les Lances par :",
+          "requires_not": [
+            "Épée de procession"
+          ],
           "options": [
             {
               "name": "Hallebarde",
@@ -2507,7 +2691,10 @@
                 "special_rules": [
                   "Perforant"
                 ]
-              }
+              },
+              "replaces": [
+                "Lances"
+              ]
             },
             {
               "name": "Masse",
@@ -2518,7 +2705,10 @@
                 "attacks": 2,
                 "armor_piercing": 2,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "Lances"
+              ]
             }
           ]
         },
@@ -2526,6 +2716,9 @@
           "group": "Remplacement une Lance",
           "type": "conditional_weapon",
           "description": "Remplacer une Lance par :",
+          "requires_not": [
+            "Épée de procession"
+          ],
           "options": [
             {
               "name": "Lance sacrée",
@@ -2546,6 +2739,9 @@
           "group": "Remplacement un Pistolet lourd",
           "type": "conditional_weapon",
           "description": "Remplacer un Pistolet lourd par :",
+          "requires_not": [
+            "Épée de procession"
+          ],
           "options": [
             {
               "name": "Pistolet à plasma",
@@ -2688,17 +2884,80 @@
         {
           "group": "Sergent",
           "type": "conditional_weapon",
-          "description": "Remplacer un Pistolet lourd jumelé et une ACC par :",
+          "description": "Remplacer un Pistolets lourds jumelés et une ACC par :",
           "options": [
             {
               "name": "Pistolet lourd de sergent + Épée énergétique",
               "cost": 5,
+              "replaces": [
+                "Pistolets lourds jumelés",
+                "ACC"
+              ],
+              "weapon": [
+                {
+                  "name": "Pistolet lourd de sergent",
+                  "range": 12,
+                  "attacks": 1,
+                  "armor_piercing": 1,
+                  "special_rules": []
+                },
+                {
+                  "name": "Épée énergétique",
+                  "range": "Mêlée",
+                  "attacks": 2,
+                  "armor_piercing": 1,
+                  "special_rules": [
+                    "Perforant"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Remplacement Pistolet lourd de sergent",
+          "type": "conditional_weapon",
+          "description": "Remplacer le Pistolet lourd de sergent par :",
+          "requires": [
+            "Pistolet lourd de sergent + Épée énergétique"
+          ],
+          "options": [
+            {
+              "name": "Pistolet lance-flamme",
+              "cost": 5,
               "weapon": {
-                "name": "Pistolet lourd de sergent",
+                "name": "Pistolet lance-flamme",
+                "range": 6,
+                "attacks": 1,
+                "armor_piercing": 0,
+                "special_rules": [
+                  "Explosion (3)",
+                  "Fiable"
+                ]
+              }
+            },
+            {
+              "name": "Pistolet à plasma",
+              "cost": 5,
+              "weapon": {
+                "name": "Pistolet à plasma",
                 "range": 12,
                 "attacks": 1,
-                "armor_piercing": 1,
+                "armor_piercing": 4,
                 "special_rules": []
+              }
+            },
+            {
+              "name": "Pistolet à fusion",
+              "cost": 10,
+              "weapon": {
+                "name": "Pistolet à fusion",
+                "range": 6,
+                "attacks": 1,
+                "armor_piercing": 4,
+                "special_rules": [
+                  "Mortel (3)"
+                ]
               }
             }
           ]
@@ -2952,16 +3211,86 @@
         {
           "group": "Sergent",
           "type": "conditional_weapon",
-          "description": "Remplacer un Pistolet lourd jumelé et une ACC par :",
+          "description": "Remplacer un Fusils lourds et une ACC par :",
           "options": [
             {
               "name": "Pistolet lourd de sergent + Épée énergétique",
               "cost": 10,
+              "replaces": [
+                "Fusils lourds",
+                "ACC"
+              ],
+              "weapon": [
+                {
+                  "name": "Pistolet lourd de sergent",
+                  "range": 12,
+                  "attacks": 1,
+                  "armor_piercing": 1,
+                  "special_rules": []
+                },
+                {
+                  "name": "Épée énergétique",
+                  "range": "Mêlée",
+                  "attacks": 2,
+                  "armor_piercing": 1,
+                  "special_rules": [
+                    "Perforant"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Remplacement Pistolet lourd de sergent",
+          "type": "conditional_weapon",
+          "description": "Remplacer le Pistolet lourd de sergent par :",
+          "requires": [
+            "Pistolet lourd de sergent + Épée énergétique"
+          ],
+          "options": [
+            {
+              "name": "Pistolet lacérateur",
+              "cost": 5,
               "weapon": {
-                "name": "Pistolet lourd de sergent",
+                "name": "Pistolet lacérateur",
+                "range": 9,
+                "attacks": 2,
+                "armor_piercing": 0,
+                "special_rules": [
+                  "Perforant"
+                ]
+              }
+            },
+            {
+              "name": "Pistolet à plasma",
+              "cost": 5,
+              "weapon": {
+                "name": "Pistolet à plasma",
                 "range": 12,
                 "attacks": 1,
-                "armor_piercing": 1,
+                "armor_piercing": 4,
+                "special_rules": []
+              }
+            }
+          ]
+        },
+        {
+          "group": "Remplacement Épée énergétique",
+          "type": "conditional_weapon",
+          "description": "Remplacer l'Épée énergétique par :",
+          "requires": [
+            "Pistolet lourd de sergent + Épée énergétique"
+          ],
+          "options": [
+            {
+              "name": "Poing énergétique",
+              "cost": 10,
+              "weapon": {
+                "name": "Poing énergétique",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 4,
                 "special_rules": []
               }
             }
@@ -3004,7 +3333,7 @@
       "upgrade_groups": [
         {
           "group": "Remplacement n'importe quel Lance-flammes béni",
-          "type": "conditional_weapon",
+          "type": "variable_weapon_count",
           "description": "Remplacer n'importe quel Lance-flammes béni par :",
           "options": [
             {
@@ -3018,7 +3347,15 @@
                 "special_rules": [
                   "Mortel (3)"
                 ]
-              }
+              },
+              "min_count": 0,
+              "max_count": {
+                "type": "size_based",
+                "value": 3
+              },
+              "replaces": [
+                "Lance-flammes bénis"
+              ]
             },
             {
               "name": "Mitrailleuse lourde",
@@ -3029,7 +3366,15 @@
                 "attacks": 3,
                 "armor_piercing": 1,
                 "special_rules": []
-              }
+              },
+              "min_count": 0,
+              "max_count": {
+                "type": "size_based",
+                "value": 3
+              },
+              "replaces": [
+                "Lance-flammes bénis"
+              ]
             }
           ]
         }
@@ -3112,7 +3457,11 @@
                 "special_rules": [
                   "Perforant"
                 ]
-              }
+              },
+              "replaces": [
+                "ACC",
+                "Bouclier de combat"
+              ]
             },
             {
               "name": "Fusil Tempête + ACC",
@@ -3123,7 +3472,10 @@
                 "attacks": 3,
                 "armor_piercing": 1,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "Bouclier de combat"
+              ]
             }
           ]
         },
@@ -3160,6 +3512,9 @@
                 ]
               }
             }
+          ],
+          "requires": [
+            "Fusil Tempête"
           ]
         },
         {
@@ -3230,6 +3585,9 @@
                 "special_rules": []
               }
             }
+          ],
+          "requires": [
+            "Bouclier de combat"
           ]
         }
       ]
@@ -3317,7 +3675,11 @@
                 "attacks": 1,
                 "armor_piercing": 1,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "Pistolets lourds",
+                "ACC"
+              ]
             },
             {
               "name": "Lance énergétique (Percée)",
@@ -3330,7 +3692,11 @@
                 "special_rules": [
                   "Percée"
                 ]
-              }
+              },
+              "replaces": [
+                "Pistolets lourds",
+                "ACC"
+              ]
             }
           ]
         },
@@ -3382,16 +3748,86 @@
         {
           "group": "Sergent",
           "type": "conditional_weapon",
-          "description": "Remplacer un Pistolet lourd jumelé et une ACC par :",
+          "description": "Remplacer un Pistolets lourds et une ACC par :",
           "options": [
             {
               "name": "Pistolet lourd de sergent + Épée énergétique",
               "cost": 10,
+              "replaces": [
+                "Pistolets lourds",
+                "ACC"
+              ],
+              "weapon": [
+                {
+                  "name": "Pistolet lourd de sergent",
+                  "range": 12,
+                  "attacks": 1,
+                  "armor_piercing": 1,
+                  "special_rules": []
+                },
+                {
+                  "name": "Épée énergétique",
+                  "range": "Mêlée",
+                  "attacks": 2,
+                  "armor_piercing": 1,
+                  "special_rules": [
+                    "Perforant"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Remplacement Pistolet lourd de sergent",
+          "type": "conditional_weapon",
+          "description": "Remplacer le Pistolet lourd de sergent par :",
+          "requires": [
+            "Pistolet lourd de sergent + Épée énergétique"
+          ],
+          "options": [
+            {
+              "name": "Pistolet à plasma",
+              "cost": 5,
               "weapon": {
-                "name": "Pistolet lourd de sergent",
+                "name": "Pistolet à plasma",
                 "range": 12,
                 "attacks": 1,
-                "armor_piercing": 1,
+                "armor_piercing": 4,
+                "special_rules": []
+              }
+            },
+            {
+              "name": "Pistolet lacérateur",
+              "cost": 5,
+              "weapon": {
+                "name": "Pistolet lacérateur",
+                "range": 9,
+                "attacks": 2,
+                "armor_piercing": 0,
+                "special_rules": [
+                  "Perforant"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "group": "Remplacement Épée énergétique",
+          "type": "conditional_weapon",
+          "description": "Remplacer l'Épée énergétique par :",
+          "requires": [
+            "Pistolet lourd de sergent + Épée énergétique"
+          ],
+          "options": [
+            {
+              "name": "Poing énergétique",
+              "cost": 10,
+              "weapon": {
+                "name": "Poing énergétique",
+                "range": "Mêlée",
+                "attacks": 2,
+                "armor_piercing": 4,
                 "special_rules": []
               }
             }
@@ -3567,6 +4003,9 @@
               },
               "special_rules": [
                 "Bonus de Combattant précis"
+              ],
+              "replaces": [
+                "Explosions enflammées de la Statue Sacrée"
               ]
             }
           ]
@@ -3658,7 +4097,10 @@
                 "special_rules": [
                   "Perforant"
                 ]
-              }
+              },
+              "replaces": [
+                "Masse énergétique"
+              ]
             },
             {
               "name": "Masse énergétique lourde",
@@ -3671,7 +4113,10 @@
                 "special_rules": [
                   "Explosion (3)"
                 ]
-              }
+              },
+              "replaces": [
+                "Masse énergétique"
+              ]
             },
             {
               "name": "Épée énergétique lourde",
@@ -3684,7 +4129,10 @@
                 "special_rules": [
                   "Perforant"
                 ]
-              }
+              },
+              "replaces": [
+                "Masse énergétique"
+              ]
             }
           ]
         },
@@ -3823,7 +4271,10 @@
                 "special_rules": [
                   "Mortel (3)"
                 ]
-              }
+              },
+              "replaces": [
+                "Lance-flammes béni jumelé"
+              ]
             },
             {
               "name": "Mitrailleuse lourde jumelée",
@@ -3834,7 +4285,10 @@
                 "attacks": 6,
                 "armor_piercing": 1,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "Lance-flammes béni jumelé"
+              ]
             },
             {
               "name": "Canon lance-flamme béni jumelé",
@@ -3849,7 +4303,10 @@
                   "Fiable",
                   "Purge"
                 ]
-              }
+              },
+              "replaces": [
+                "Lance-flammes béni jumelé"
+              ]
             }
           ]
         },
@@ -4068,7 +4525,10 @@
                   "Explosion (3)",
                   "Indirect"
                 ]
-              }
+              },
+              "replaces": [
+                "Lance-missiles orgue lourd"
+              ]
             }
           ]
         },
@@ -4181,7 +4641,10 @@
                 "special_rules": [
                   "Explosion (3)"
                 ]
-              }
+              },
+              "replaces": [
+                "Canon anti-char"
+              ]
             },
             {
               "name": "Autocanon jumelé",
@@ -4192,7 +4655,10 @@
                 "attacks": 6,
                 "armor_piercing": 2,
                 "special_rules": []
-              }
+              },
+              "replaces": [
+                "Canon anti-char"
+              ]
             }
           ]
         },
@@ -4352,34 +4818,63 @@
       "upgrade_groups": [
         {
           "group": "Remplacement n'importe quel Fléau lourd",
-          "type": "conditional_weapon",
+          "type": "variable_weapon_count",
           "description": "Remplacer n'importe quel Fléau lourd par :",
           "options": [
             {
-              "name": "Lance-flamme béni rapide",
+              "name": "Lance-flamme béni rapide + Frappe",
               "cost": 55,
-              "weapon": {
-                "name": "Lance-flamme béni rapide",
-                "range": 12,
-                "attacks": 2,
-                "armor_piercing": 0,
-                "special_rules": [
-                  "Explosion (3)",
-                  "Fiable",
-                  "Purge"
-                ]
-              }
+              "min_count": 0,
+              "max_count": {
+                "type": "fixed",
+                "value": 2
+              },
+              "replaces": [
+                "Fléaux lourds"
+              ],
+              "weapon": [
+                {
+                  "name": "Lance-flamme béni rapide",
+                  "range": 12,
+                  "attacks": 2,
+                  "armor_piercing": 0,
+                  "special_rules": [
+                    "Explosion (3)",
+                    "Fiable",
+                    "Purge"
+                  ]
+                },
+                {
+                  "name": "Frappe",
+                  "range": "Mêlée",
+                  "attacks": 1,
+                  "armor_piercing": 0,
+                  "special_rules": []
+                }
+              ]
             }
           ]
         },
         {
           "group": "Remplacement n'importe quelle Frappe",
-          "type": "conditional_weapon",
+          "type": "variable_weapon_count",
           "description": "Remplacer n'importe quelle Frappe par :",
+          "requires": [
+            "Frappe"
+          ],
           "options": [
             {
               "name": "Fléau léger",
               "cost": 10,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
+              },
+              "replaces": [
+                "Frappe"
+              ],
               "weapon": {
                 "name": "Fléau léger",
                 "range": "Mêlée",
@@ -4393,6 +4888,15 @@
             {
               "name": "Griffe légère",
               "cost": 15,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
+              },
+              "replaces": [
+                "Frappe"
+              ],
               "weapon": {
                 "name": "Griffe légère",
                 "range": "Mêlée",
@@ -4406,6 +4910,15 @@
             {
               "name": "Scie circulaire légère",
               "cost": 20,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
+              },
+              "replaces": [
+                "Frappe"
+              ],
               "weapon": {
                 "name": "Scie circulaire légère",
                 "range": "Mêlée",
@@ -4419,6 +4932,15 @@
             {
               "name": "Poing léger",
               "cost": 20,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
+              },
+              "replaces": [
+                "Frappe"
+              ],
               "weapon": {
                 "name": "Poing léger",
                 "range": "Mêlée",
@@ -4430,13 +4952,23 @@
           ]
         },
         {
-          "group": "Remplacement n'importe quel Fléau lourd (lourd)",
-          "type": "conditional_weapon",
-          "description": "Remplacer n'importe quel Fléau lourd par :",
+          "group": "Remplacement n'importe quel Fléau lourd (arme lourde)",
+          "type": "variable_weapon_count",
+          "description": "Remplacer n'importe quel Fléau lourd par une arme lourde :",
           "options": [
             {
               "name": "Scie circulaire lourde",
               "cost": 10,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked_remainder",
+                "source_group": 0,
+                "source_option": 0,
+                "total": 2
+              },
+              "replaces": [
+                "Fléaux lourds"
+              ],
               "weapon": {
                 "name": "Scie circulaire lourde",
                 "range": "Mêlée",
@@ -4450,6 +4982,16 @@
             {
               "name": "Griffe lourde",
               "cost": 25,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked_remainder",
+                "source_group": 0,
+                "source_option": 0,
+                "total": 2
+              },
+              "replaces": [
+                "Fléaux lourds"
+              ],
               "weapon": {
                 "name": "Griffe lourde",
                 "range": "Mêlée",
@@ -4463,6 +5005,16 @@
             {
               "name": "Poing lourd",
               "cost": 35,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked_remainder",
+                "source_group": 0,
+                "source_option": 0,
+                "total": 2
+              },
+              "replaces": [
+                "Fléaux lourds"
+              ],
               "weapon": {
                 "name": "Poing lourd",
                 "range": "Mêlée",
@@ -4511,30 +5063,59 @@
       "upgrade_groups": [
         {
           "group": "Remplacement n'importe quel Fléau lourd",
-          "type": "conditional_weapon",
+          "type": "variable_weapon_count",
           "description": "Remplacer n'importe quel Fléau lourd par :",
           "options": [
             {
               "name": "Mitrailleuse rapide lourde + Frappe",
               "cost": 110,
-              "weapon": {
-                "name": "Mitrailleuse rapide lourde",
-                "range": 30,
-                "attacks": 6,
-                "armor_piercing": 1,
-                "special_rules": []
-              }
+              "min_count": 0,
+              "max_count": {
+                "type": "fixed",
+                "value": 2
+              },
+              "replaces": [
+                "Fléaux lourds"
+              ],
+              "weapon": [
+                {
+                  "name": "Mitrailleuse rapide lourde",
+                  "range": 30,
+                  "attacks": 6,
+                  "armor_piercing": 1,
+                  "special_rules": []
+                },
+                {
+                  "name": "Frappe",
+                  "range": "Mêlée",
+                  "attacks": 1,
+                  "armor_piercing": 0,
+                  "special_rules": []
+                }
+              ]
             }
           ]
         },
         {
           "group": "Remplacement n'importe quelle Frappe",
-          "type": "conditional_weapon",
+          "type": "variable_weapon_count",
           "description": "Remplacer n'importe quelle Frappe par :",
+          "requires": [
+            "Frappe"
+          ],
           "options": [
             {
               "name": "Fléau léger",
               "cost": 10,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
+              },
+              "replaces": [
+                "Frappe"
+              ],
               "weapon": {
                 "name": "Fléau léger",
                 "range": "Mêlée",
@@ -4548,6 +5129,15 @@
             {
               "name": "Griffe légère",
               "cost": 20,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
+              },
+              "replaces": [
+                "Frappe"
+              ],
               "weapon": {
                 "name": "Griffe légère",
                 "range": "Mêlée",
@@ -4561,6 +5151,15 @@
             {
               "name": "Scie circulaire légère",
               "cost": 25,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
+              },
+              "replaces": [
+                "Frappe"
+              ],
               "weapon": {
                 "name": "Scie circulaire légère",
                 "range": "Mêlée",
@@ -4574,6 +5173,15 @@
             {
               "name": "Poing léger",
               "cost": 25,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
+              },
+              "replaces": [
+                "Frappe"
+              ],
               "weapon": {
                 "name": "Poing léger",
                 "range": "Mêlée",
@@ -4585,13 +5193,23 @@
           ]
         },
         {
-          "group": "Remplacement n'importe quel Fléau lourd (lourd)",
-          "type": "conditional_weapon",
-          "description": "Remplacer n'importe quel Fléau lourd par :",
+          "group": "Remplacement n'importe quel Fléau lourd (arme lourde)",
+          "type": "variable_weapon_count",
+          "description": "Remplacer n'importe quel Fléau lourd par une arme lourde :",
           "options": [
             {
               "name": "Scie circulaire lourde",
               "cost": 20,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked_remainder",
+                "source_group": 0,
+                "source_option": 0,
+                "total": 2
+              },
+              "replaces": [
+                "Fléaux lourds"
+              ],
               "weapon": {
                 "name": "Scie circulaire lourde",
                 "range": "Mêlée",
@@ -4605,6 +5223,16 @@
             {
               "name": "Griffe lourde",
               "cost": 30,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked_remainder",
+                "source_group": 0,
+                "source_option": 0,
+                "total": 2
+              },
+              "replaces": [
+                "Fléaux lourds"
+              ],
               "weapon": {
                 "name": "Griffe lourde",
                 "range": "Mêlée",
@@ -4618,6 +5246,16 @@
             {
               "name": "Poing lourd",
               "cost": 45,
+              "min_count": 0,
+              "max_count": {
+                "type": "linked_remainder",
+                "source_group": 0,
+                "source_option": 0,
+                "total": 2
+              },
+              "replaces": [
+                "Fléaux lourds"
+              ],
               "weapon": {
                 "name": "Poing lourd",
                 "range": "Mêlée",
