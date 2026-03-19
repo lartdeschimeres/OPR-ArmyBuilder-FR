@@ -1088,12 +1088,26 @@ if st.session_state.page == "army":
                 req=option.get("requires",[])
                 if req and not check_weapon_conditions(unit_key,req,unit): st.markdown(f"<div style='color:#999;font-size:.9em;'>{option['name']} <em>(Non disponible)</em></div>",unsafe_allow_html=True); continue
                 st.markdown(f"<h4 style='color:#3498db;'>{option['name']}</h4>",unsafe_allow_html=True)
-                # max_count : "fixed" = valeur absolue, "size_based" = min(value, size)
+                # max_count types :
+                # "fixed"            → valeur absolue
+                # "size_based"       → min(value, size)
+                # "linked"           → valeur du slider d'un autre groupe (ex: nb de Frappess = nb de tirs choisis)
+                # "linked_remainder" → total - valeur du slider source (ex: nb de Fléaux restants)
                 mc_cfg=option.get("max_count",{})
-                if mc_cfg.get("type") == "fixed":
+                mc_type=mc_cfg.get("type","size_based")
+                if mc_type == "fixed":
                     mc=mc_cfg.get("value",1)
-                elif mc_cfg.get("type") == "size_based":
+                elif mc_type == "size_based":
                     mc=min(mc_cfg.get("value", unit.get("size",1)), unit.get("size",1))
+                elif mc_type in ("linked", "linked_remainder"):
+                    src_g=mc_cfg.get("source_group",0)
+                    src_o=mc_cfg.get("source_option",0)
+                    src_key=f"{unit_key}_group_{src_g}_cnt_{src_o}"
+                    src_val=st.session_state.get(src_key,0) or 0
+                    if mc_type == "linked":
+                        mc=src_val
+                    else:  # linked_remainder
+                        mc=max(0, mc_cfg.get("total",2) - src_val)
                 else:
                     mc=unit.get("size",1)
                 cnt=st.number_input(f"Nombre de {option['name']} (0 – {mc})",min_value=option.get("min_count",0),max_value=mc,value=option.get("min_count",0),step=1,key=f"{unit_key}_{g_key}_cnt_{oi}")
