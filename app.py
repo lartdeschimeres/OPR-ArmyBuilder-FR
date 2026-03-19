@@ -7,7 +7,7 @@ import re
 import math
 import base64
 
-st.set_page_config(page_title="ArmyBuilder FRA", layout="wide", initial_sidebar_state="auto")
+st.set_page_config(page_title="OPR ArmyBuilder FR", layout="wide", initial_sidebar_state="auto")
 
 # URL de l'app (pour le QR code de partage)
 APP_URL = "https://opr-armybuilder-fr.streamlit.app/"
@@ -1120,8 +1120,9 @@ if st.session_state.page == "army":
                     mc = min(mc_cfg.get("value", unit.get("size",1)), unit.get("size",1))
                 elif mc_type == "count_in_weapons":
                     # Compter les exemplaires encore présents dans weapons (courant)
+                    # _count pour les armes ajoutées par variable_weapon_count, count pour les armes de base
                     wn = mc_cfg.get("weapon_name","")
-                    mc = sum(w.get("count",1) for w in weapons if isinstance(w,dict) and w.get("name")==wn)
+                    mc = sum(w.get("_count", w.get("count", 1)) for w in weapons if isinstance(w,dict) and w.get("name")==wn)
                 else:
                     mc = unit.get("size",1)
                 mc = max(mc, 0)
@@ -1144,9 +1145,14 @@ if st.session_state.page == "army":
                         for w in fw:
                             if not isinstance(w,dict): new_fw.append(w); continue
                             if w.get("name") in opt_replaces and remaining > 0:
-                                w_count = w.get("count",1)
+                                # Lire _count OU count (armes ajoutées vs armes de base)
+                                w_count = w.get("_count", w.get("count", 1))
                                 if w_count > remaining:
-                                    wc = w.copy(); wc["count"] = w_count - remaining; new_fw.append(wc)
+                                    wc = w.copy()
+                                    # Décrémenter le bon champ
+                                    if "_count" in w: wc["_count"] = w_count - remaining
+                                    else: wc["count"] = w_count - remaining
+                                    new_fw.append(wc)
                                     remaining = 0
                                 else:
                                     remaining -= w_count
