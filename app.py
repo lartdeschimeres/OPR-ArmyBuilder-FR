@@ -6,7 +6,6 @@ from datetime import datetime
 import re
 import math
 import base64
-from repositories import JsonFactionRepository
 
 st.set_page_config(page_title="OPR ArmyBuilder FR", layout="wide", initial_sidebar_state="auto")
 
@@ -215,15 +214,15 @@ def check_weapon_conditions(unit_key, requires, unit=None):
 
     # ── 2b. Ajouter les armes choisies via variable_weapon_count ────────────
     # (ex: "Frappe" ajoutée avec le Lance-flamme béni rapide sur les marcheurs)
-    # Les number_input sont stockés dans st.session_state sous la clé du widget
+    # Les compteurs sont stockés dans unit_selections sous la clé cnt_{gi}_{oi}
     if unit is not None:
         for gi, g in enumerate(unit.get("upgrade_groups", [])):
             if g.get("type") != "variable_weapon_count":
                 continue
             for oi, option in enumerate(g.get("options", [])):
-                widget_key = f"{unit_key}_group_{gi}_cnt_{oi}"
-                cnt_val = st.session_state.get(widget_key, 0)
-                if cnt_val and cnt_val > 0:
+                cnt_sel_key = f"cnt_{gi}_{oi}"
+                cnt_val = selections.get(cnt_sel_key, 0) or 0
+                if cnt_val > 0:
                     nw = option.get("weapon", {})
                     if isinstance(nw, dict) and nw:
                         current_weapons.add(nw.get("name", ""))
@@ -641,9 +640,22 @@ body{{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;margi
 
 @st.cache_data
 def load_factions():
+    factions = {}; games = set()
     try:
-        repository = JsonFactionRepository(Path(__file__).resolve().parent)
-        factions, games = repository.load_catalog()
+        FACTIONS_DIR = Path(__file__).resolve().parent / "frontend" / "public" / "factions"
+        if not FACTIONS_DIR.exists():
+            FACTIONS_DIR = Path(__file__).resolve().parent / "lists" / "data" / "factions"
+        for fp in FACTIONS_DIR.glob("*.json"):
+            try:
+                with open(fp, encoding="utf-8") as f:
+                    data = json.load(f)
+                game = data.get("game"); faction = data.get("faction")
+                if game and faction:
+                    if game not in factions: factions[game] = {}
+                    data.setdefault("faction_special_rules", []); data.setdefault("spells", {}); data.setdefault("units", [])
+                    factions[game][faction] = data; games.add(game)
+            except Exception as e:
+                st.warning(f"Erreur chargement {fp.name}: {e}")
     except Exception as e:
         st.error(f"Erreur chargement des factions: {e}"); return {}, []
     return factions, sorted(games) if games else list(GAME_CONFIG.keys())
@@ -1079,26 +1091,20 @@ if st.session_state.page == "army":
                 # max_count types :
                 # "fixed"            → valeur absolue
                 # "size_based"       → min(value, size)
-                # "linked"           → valeur du slider d'un autre groupe (ex: nb de Frappess = nb de tirs choisis)
-                # "linked_remainder" → total - valeur du slider source (ex: nb de Fléaux restants)
+                # "count_in_weapons" → compte combien de fois weapon_name est dans weapons (déjà rendu)
                 mc_cfg=option.get("max_count",{})
                 mc_type=mc_cfg.get("type","size_based")
                 if mc_type == "fixed":
                     mc=mc_cfg.get("value",1)
                 elif mc_type == "size_based":
                     mc=min(mc_cfg.get("value", unit.get("size",1)), unit.get("size",1))
-                elif mc_type in ("linked", "linked_remainder"):
-                    src_g=mc_cfg.get("source_group",0)
-                    src_o=mc_cfg.get("source_option",0)
-                    src_key=f"{unit_key}_group_{src_g}_cnt_{src_o}"
-                    src_val=st.session_state.get(src_key,0) or 0
-                    if mc_type == "linked":
-                        mc=src_val
-                    else:  # linked_remainder
-                        mc=max(0, mc_cfg.get("total",2) - src_val)
+                elif mc_type == "count_in_weapons":
+                    wn=mc_cfg.get("weapon_name","")
+                    mc=sum(1 for w in weapons if isinstance(w,dict) and w.get("name")==wn)
                 else:
                     mc=unit.get("size",1)
-                cnt=st.number_input(f"Nombre de {option['name']} (0 – {mc})",min_value=option.get("min_count",0),max_value=mc,value=option.get("min_count",0),step=1,key=f"{unit_key}_{g_key}_cnt_{oi}")
+                cnt=st.number_input(f"Nombre de {option['name']} (0 – {mc})",min_value=0,max_value=max(mc,0),value=min(st.session_state.unit_selections[unit_key].get(f"cnt_{g_idx}_{oi}",0),mc),step=1,key=f"{unit_key}_{g_key}_cnt_{oi}")
+                st.session_state.unit_selections[unit_key][f"cnt_{g_idx}_{oi}"]=cnt
                 tc=cnt*option["cost"]; upgrades_cost+=tc
                 st.markdown(f"<div style='margin:10px 0;padding:8px;background:#f8f9fa;border-radius:4px;'><strong>{option['name']}</strong> × {cnt} = <strong style='color:#e74c3c;'>{tc} pts</strong></div>",unsafe_allow_html=True)
                 if cnt > 0:
