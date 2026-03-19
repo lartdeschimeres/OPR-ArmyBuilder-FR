@@ -4842,8 +4842,9 @@
               "cost": 10,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
               },
               "replaces": [
                 "Frappe"
@@ -4863,8 +4864,9 @@
               "cost": 15,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
               },
               "replaces": [
                 "Frappe"
@@ -4884,8 +4886,9 @@
               "cost": 20,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
               },
               "replaces": [
                 "Frappe"
@@ -4905,8 +4908,9 @@
               "cost": 20,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
               },
               "replaces": [
                 "Frappe"
@@ -4931,8 +4935,10 @@
               "cost": 10,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked_remainder",
+                "source_group": 0,
+                "source_option": 0,
+                "total": 2
               },
               "replaces": [
                 "Fléaux lourds"
@@ -4952,8 +4958,10 @@
               "cost": 25,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked_remainder",
+                "source_group": 0,
+                "source_option": 0,
+                "total": 2
               },
               "replaces": [
                 "Fléaux lourds"
@@ -4973,8 +4981,10 @@
               "cost": 35,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked_remainder",
+                "source_group": 0,
+                "source_option": 0,
+                "total": 2
               },
               "replaces": [
                 "Fléaux lourds"
@@ -5073,8 +5083,9 @@
               "cost": 10,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
               },
               "replaces": [
                 "Frappe"
@@ -5094,8 +5105,9 @@
               "cost": 20,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
               },
               "replaces": [
                 "Frappe"
@@ -5115,8 +5127,9 @@
               "cost": 25,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
               },
               "replaces": [
                 "Frappe"
@@ -5136,8 +5149,9 @@
               "cost": 25,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked",
+                "source_group": 0,
+                "source_option": 0
               },
               "replaces": [
                 "Frappe"
@@ -5162,8 +5176,10 @@
               "cost": 20,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked_remainder",
+                "source_group": 0,
+                "source_option": 0,
+                "total": 2
               },
               "replaces": [
                 "Fléaux lourds"
@@ -5183,8 +5199,10 @@
               "cost": 30,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked_remainder",
+                "source_group": 0,
+                "source_option": 0,
+                "total": 2
               },
               "replaces": [
                 "Fléaux lourds"
@@ -5204,8 +5222,10 @@
               "cost": 45,
               "min_count": 0,
               "max_count": {
-                "type": "fixed",
-                "value": 2
+                "type": "linked_remainder",
+                "source_group": 0,
+                "source_option": 0,
+                "total": 2
               },
               "replaces": [
                 "Fléaux lourds"
