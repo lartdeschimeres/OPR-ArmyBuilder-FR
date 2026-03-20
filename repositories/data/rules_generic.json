@@ -3,44 +3,68 @@
   "description": "Règles spéciales génériques OPR — valables pour tous les jeux",
   "rules": [
     {
+      "name": "Aircraft [Aéronef]",
+      "description": "ne peut utiliser que des actions Avancer, se déplace en ligne droite en ajoutant 30\" à son déplacement total (même s'il est Ébranlé). Les Aéronefs ignorent toutes les unités et les éléments de décor lorsqu'ils se déplacent et s'arrêtent, ne peuvent pas capturer ou contester des objectifs, ne peuvent pas être chargés, et les unités qui les ciblent possèdent une portée de réduite de -12\"."
+    },
+    {
       "name": "Ambush [Embuscade]",
-      "description": "Cette unité peut être mise en réserve au lieu d'être déployée normalement. Elle peut entrer en jeu à partir du tour 2, en étant placée à plus de 9\" de toute unité ennemie."
+      "description": "Peut être mise de côté avant le déploiement. Au début de n'importe quel round après le premier, les unités peuvent être déployées n'importe où à plus de 9\" des unités ennemies. Les joueurs placent alternativement des unités en Embuscade, en commençant par le joueur qui doit s’activer en suivant. Les unités qui se déploient via une Embuscade ne peuvent pas s'emparer d'objectifs ou les contester lors du round où elles se déploient."
+    },
+    {
+      "name": "AP (X) [Pénétration d’Armure PA (X)]",
+      "description": "Les cibles obtiennent un malus de -X aux jets de Défense contre les attaques de cette arme."
+    },
+    {
+      "name": "Artillery [Artillerie]",
+      "description": "Ne peut utiliser que des actions Tenir. Lorsque cette figurine tire sur des ennemis situés à plus de 9\", elle obtient +1 aux jets pour toucher. Lorsque des unités ennemies tirent sur cette figurine à plus de 9\", elles obtiennent -2 aux jets pour toucher."
+    },
+    {
+      "name": "Bane [Fléau]",
+      "description": "Ignore la Régénération, et lors d’une attaque, la cible doit relancer les résultats de défense non modifiés de 6."
     },
     {
       "name": "Blast (X) [Explosion (X)]",
-      "description": "Lors d'une attaque avec cette arme, lancez X dés supplémentaires et conservez les X meilleurs résultats."
+      "description": "Ignore les Couverts, et après la résolution des effets d’autres règles spéciales, chaque touche est multipliée par X, où X représente autant de touches que de figurines dans l’unité ciblée."
     },
     {
-      "name": "Counter-charge [Contre-charge]",
-      "description": "Cette unité peut effectuer une réaction de contre-charge lorsqu'elle est chargée, en effectuant une attaque de mêlée avant l'attaquant."
+      "name": "Caster (X) [Lanceur de sorts (X)]",
+      "description": "Obtient X jetons de sort au début de chaque round, mais ne peut pas posséder plus de six jetons à la fois. À tout moment avant d’attaquer, dépensez autant de jetons que la valeur d’un sort pour essayer de lancer un ou plusieurs sorts (un seul essai par sort). Lancez 1D6 : sur un résultat de 4+, résolvez l'effet sur une cible en ligne de vue. Les figurines dans un rayon de 18” en ligne de vue du Lanceur de sorts peuvent dépenser n'importe quel nombre de jetons de sort en même temps avant le lancer de dé pour donner au lanceur +1/-1 au jet de dé par jeton."
+    },
+    {
+      "name": "Counter [Contre-chargex]",
+      "description": "Frappe en premier avec cette arme lorsqu'elle est chargée, et l’unité qui charge perd un jet de dés d’attaques d’Impact par figurine possédant cette règle."
     },
     {
       "name": "Deadly (X) [Mortel (X)]",
-      "description": "Les blessures infligées par cette arme comptent comme X blessures pour déterminer si l'unité cible est retirée."
+      "description": "Attribuez chaque blessure à une figurine, puis multipliez-là par X. Les blessures issues de cette règle spéciale doivent être résolues en premier, et ces blessures ne sont pas répercutées sur les autres figurines si la cible originelle est tuée."
     },
     {
       "name": "Fast [Rapide]",
-      "description": "Cette unité peut Avancer de 9\" au lieu de 6\", et Courir ou Charger de 18\" au lieu de 12\"."
+      "description": "Se déplace de +2\" pour Avancer et +4\" pour Courir ou Charger."
     },
     {
       "name": "Fear (X) [Effrayant (X)]",
-      "description": "Les ennemis qui affrontent cette unité subissent un malus de -X à leurs Tests de Moral."
+      "description": "Cette figurine compte toujours comme ayant infligé +X blessures supplémentaires pour déterminer qui a gagné la mêlée."
     },
     {
       "name": "Fearless [Sans peur]",
-      "description": "Cette unité réussit automatiquement ses Tests de Moral."
+      "description": "Lorsqu’une unité dont toutes les figurines possèdent cette règle spéciale échoue à un Test de Moral, 1D6 : sur un résultat de 4+, le test est réussi à la place."
     },
     {
       "name": "Flying [Volant]",
-      "description": "Cette unité peut se déplacer en ligne droite en ignorant les terrains et les unités. Elle ne peut pas terminer son déplacement dans un terrain infranchissable ou sur une unité."
+      "description": "Peut se déplacer à travers les unités et les décors, et peut ignorer les effets du terrain lors d’un déplacement."
     },
     {
-      "name": "Furious [Assaut tranchant]",
-      "description": "Cette unité gagne PA (+1) lorsqu'elle Charge."
+      "name": "Furious [Furieux]",
+      "description": "Lors d’une Charge, les résultats non modifiés de 6 pour toucher en mêlée infligent une touche supplémentaire (seule la touche initiale compte pour un 6 en regard des règles spéciales)."
     },
     {
       "name": "Hero [Héros]",
-      "description": "Cette figurine peut rejoindre une unité amie au début de la partie. Elle ne peut pas rejoindre d'autres héros. Lorsqu'elle rejoint une unité, elle en fait partie jusqu'à sa mort."
+      "description": "Un Héros avec Coriace (6) ou moins peut être déployé dans une unité amie composée de plusieurs figurines sans autre Héros. Le Héros peut passer des Tests de Moral pour l’unité, mais doit utiliser la valeur de Défense de l’unité jusqu’à ce que toutes les figurines de l’unité aient été tuées."
+    },
+    {
+      "name": "Immobile [Immobile]",
+      "description": "Ne peut utiliser que l’action Tenir."
     },
     {
       "name": "Impact (X) [Impact (X)]",
@@ -48,55 +72,67 @@
     },
     {
       "name": "Indirect [Indirect]",
-      "description": "Cette arme peut cibler des unités hors ligne de vue. Les attaques indirectes subissent un malus de -1 aux jets pour toucher."
+      "description": "Subit un malus de -1 pour tirer après s’être déplacé. Peut cibler des ennemis hors ligne de vue comme s’ils étaient en ligne de vue et ignorer le couvert dû aux obstacles."
     },
     {
       "name": "Limited [Limité]",
-      "description": "Cette arme ne peut être utilisée qu'une seule fois par partie."
-    },
-    {
-      "name": "Lock-On [Imparable]",
-      "description": "Les touches infligées par cette arme ne peuvent pas être sauvegardées."
+      "description": "Ne peut être utilisée qu’une seule fois par partie.."
     },
     {
       "name": "Regeneration [Régénération]",
-      "description": "À la fin de chaque round, cette unité peut tenter de récupérer une blessure sur un jet de 5+."
+      "description": "Lorsqu'une unité dont toutes les figurines possèdent cette règle subit des blessures, lancez un dé pour chacune d'entre elles. Sur un résultat de 5+, la blessure est ignorée."
+    },
+    {
+      "name": "Relentless [Implacable]",
+      "description": "Lorsque cette figurine tire sur des ennemis situés à plus de 9”, les résultats non modifiés de 6 pour toucher infligent une touche supplémentaire (seule la touche initiale compte pour un 6 en regard des règles spéciales)."
     },
     {
       "name": "Reliable [Fiable]",
-      "description": "Cette arme touche toujours sur 2+ au lieu de la valeur de Qualité de l'unité."
+      "description": "Attaque avec Qualité 2+."
+    },
+    {
+      "name": "Rending [Perforant]",
+      "description": "Ignore la Régénération, et sur un résultat non modifié de 6 pour toucher, ces touches gagnent PA (+4)."
     },
     {
       "name": "Scout [Éclaireur]",
-      "description": "Après le déploiement de toutes les unités, cette unité peut effectuer un déplacement de 9\" avant le début de la partie."
-    },
-    {
-      "name": "Scouting [Arpenteur]",
-      "description": "Cette unité ignore les terrains difficiles lors de ses déplacements."
+      "description": "Peut être mise de côté avant le déploiement. Une fois que toutes les autres unités sont déployées, l’unité peut être déployée et peut être placée n'importe où entièrement dans un rayon de 12\" de sa zone de déploiement. Les joueurs placent alternativement les unités d'Éclaireurs, en commençant par le joueur qui s'active en suivant."
     },
     {
       "name": "Slow [Lent]",
-      "description": "Cette unité ne peut Avancer que de 3\" au lieu de 6\", et Courir ou Charger de 6\" au lieu de 12\"."
+      "description": "Se déplace de -2\" pour Avancer et -4\" pour Charger ou Courir."
     },
     {
-      "name": "Sniper [Élimination]",
-      "description": "Cette arme peut cibler des figurines individuelles dans une unité au lieu de l'unité entière."
+      "name": "Stealth [Furtif]",
+      "description": "Lorsque des unités dont toutes les figurines possèdent cette règle sont ciblées par des tirs à plus de 9\", les unités ennemies subissent un malus de -1 aux jets pour toucher."
     },
     {
       "name": "Strider [Arpenteur]",
-      "description": "Cette unité ignore les terrains difficiles lors de ses déplacements."
+      "description": "Peut ignorer les effets des Terrains Difficiles lorsqu’elle se déplace."
+    },
+    {
+      "name": "Surge [Surcharge]",
+      "description": "Sur les résultats non modifiés de 6 pour toucher, cette arme inflige 1 touche supplémentaire (seule la touche initiale compte pour un 6 en regard des règles spéciales)."
+    },
+    {
+      "name": "Takedown [Élimination]",
+      "description": "Cette figurine peut cibler n’importe quelle figurine dans l’unité ciblée comme s’il s’agissait d’une figurine individuelle, qui est résolu comme s’il s’agissait d’une unité d’une seule figurine. Les attaques d’Élimination doivent être résolues avant les autres armes."
+    },
+    {
+      "name": "Thrust [Percée]",
+      "description": "Lors d’une action Charger, gagne un bonus de +1 pour toucher et PA (+1) en mêlée."
     },
     {
       "name": "Tough (X) [Coriace (X)]",
-      "description": "Cette unité peut subir X blessures avant d'être retirée. Notez les blessures au fur et à mesure."
+      "description": "Une figurine avec cette règle spéciale doit subir X blessures avant d’être retirée comme perte. Si une figurine Coriace rejoint une unité sans cette règle spéciale, alors elle est retirée en dernier lorsque l'unité subit des blessures. Vous devez continuer à infliger des blessures sur la figurine Coriace avec le plus de blessures dans l'unité jusqu'à ce qu'elle soit tuée, avant de commencer à les infliger à la prochaine figurine Coriace (les Héros doivent recevoir les blessures en dernier, même s'ils sont déjà blessés)."
     },
     {
       "name": "Transport (X) [Transport (X)]",
-      "description": "Ce véhicule peut transporter jusqu'à X figurines. Les figurines à l'intérieur ne peuvent pas agir tant qu'elles n'en sont pas sorties."
+      "description": "Peut transporter jusqu'à X figurines ou Héros avec Coriace (6) ou moins, et des non-Héros avec Coriace (3) ou moins qui occupent trois espaces chacun. Les transports peuvent se déployer avec des unités à l'intérieur, et les unités peuvent embarquer ou débarquer en utilisant n’importe quelle action de mouvement, mais doivent rester entièrement dans un rayon de 6\" du Transport lorsqu’elles en sortent. Les unités à l'intérieur/à l'extérieur des transports ne peuvent pas cibler d'autres unités à l'extérieur/à l'intérieur des transports, mais peuvent cibler le transport lui-même. Lorsqu’un transport est détruit, les unités à l’intérieur doivent effectuer alors un test de Terrain Dangereux, sont immédiatement Ébranlées et les figurines survivantes doivent être placées entièrement dans un rayon de 6\" du transport avant qu'il ne soit retiré."
     },
     {
-      "name": "Unique [Unique]",
-      "description": "Vous ne pouvez inclure qu'une seule copie de cette unité dans votre armée."
+      "name": "Unstoppable [Imparable]",
+      "description": "Ignore la Régénération et tous les modificateurs négatifs appliqués à cette arme."
     }
   ]
 }
