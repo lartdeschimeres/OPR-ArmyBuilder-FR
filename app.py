@@ -7,8 +7,6 @@ import re
 import math
 import base64
 
-from repositories.data.common_rules_repository import load_generic_rules
-
 st.set_page_config(page_title="OPR ArmyBuilder FR", layout="wide", initial_sidebar_state="auto")
 
 # URL de l'app (pour le QR code de partage)
