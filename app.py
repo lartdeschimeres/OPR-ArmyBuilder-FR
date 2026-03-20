@@ -1,4 +1,3 @@
-
 import json
 import copy
 import streamlit as st
@@ -453,6 +452,11 @@ def export_html(army_list, army_name, army_limit):
 {('<div style="margin-bottom:8px;">' + rhtml + '</div>') if rhtml else ""}
 <table class="weapon-table"><thead><tr><th>Arme</th><th>Por</th><th>Att</th><th>PA</th><th>Spé</th></tr></thead><tbody>{wrows}</tbody></table></div>"""
 
+    # Dictionnaire nom → description pour les tooltips
+    _rules_dict = {}
+    for _r in st.session_state.get("faction_special_rules", []):
+        if isinstance(_r, dict): _rules_dict[_r.get("name","")] = _r.get("description","")
+
     sorted_units = sorted(army_list, key=get_priority)
     total_cost = sum(u.get("cost",0) for u in sorted_units)
 
@@ -494,7 +498,7 @@ body{{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;margi
 .weapon-name{{font-weight:600;}}
 .rules-section{{margin:3px 0 0;}}
 .rules-title{{font-weight:600;margin-bottom:3px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}}
-.rule-tag{{background:var(--rule);padding:1px 6px;border-radius:3px;font-size:9px;border:1px solid var(--brd);margin-right:3px;margin-bottom:3px;display:inline-block;line-height:1.5;}}
+.rule-tag{{background:var(--rule);padding:1px 6px;border-radius:3px;font-size:9px;border:1px solid var(--brd);margin-right:3px;margin-bottom:3px;display:inline-block;line-height:1.5;cursor:help;position:relative;}}.rule-tag[title]:hover::after{{content:attr(title);position:absolute;bottom:120%;left:0;background:#333;color:#fff;padding:4px 8px;border-radius:4px;font-size:8px;white-space:pre-wrap;max-width:220px;z-index:99;line-height:1.4;pointer-events:none;}}
 .mount-section{{background:var(--mount);border:1px solid var(--brd);border-radius:4px;padding:4px 8px;margin:4px 0;font-size:10px;}}
 .mount-section .section-title{{font-size:10px;}}
 
@@ -530,7 +534,7 @@ body{{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;margi
         size = unit.get("size",10); coriace = unit.get("coriace",0)
 
         rules = get_rules(unit)
-        rules_html = " ".join(f'<span class="rule-tag">{esc(r)}</span>' for r in rules) if rules else '<span class="rule-tag">Aucune</span>'
+        rules_html = " ".join(f'<span class="rule-tag" title="{esc(_rules_dict.get(r,""))}">{esc(r)}</span>' for r in rules) if rules else '<span class="rule-tag">Aucune</span>'
 
         weapons = collect_weapons(unit)
         final_weapons = group_weapons(weapons, unit_size=size)
@@ -589,7 +593,7 @@ body{{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;margi
             # chaque colonne avant d'en créer une nouvelle → s'adapte à n'importe quel volume.
             html += """<div class="legend-page"><div class="faction-rules">"""
             html += """<div class="legend-title">📜 Règles spéciales &amp; Sorts</div>"""
-            html += """<div style="columns:3;column-gap:8px;column-rule:1px solid #dee2e6;font-size:7.5px;">"""
+            html += """<div style="columns:3;column-gap:12px;column-rule:1px solid #dee2e6;font-size:9px;">"""
 
             if all_rules:
                 if faction_spells:
@@ -663,6 +667,23 @@ body{{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;margi
     )
     html += f'<div style="text-align:center;margin-top:16px;font-size:11px;color:var(--muted);">Généré par OPR ArmyBuilder FRA — {datetime.now().strftime("%d/%m/%Y %H:%M")}</div></div></body></html>'
     return html
+
+@st.cache_data
+def load_generic_rules():
+    """Charge le dictionnaire des règles génériques OPR depuis repositories/data/generic_rules.json."""
+    try:
+        _BASE = Path(__file__).resolve().parent
+        for _p in [
+            _BASE / "repositories" / "data" / "generic_rules.json",
+            _BASE / "generic_rules.json",
+        ]:
+            if _p.exists():
+                with open(_p, encoding="utf-8") as f:
+                    data = json.load(f)
+                return {r["name"]: r["description"] for r in data.get("rules", []) if "name" in r}
+    except Exception:
+        pass
+    return {}
 
 @st.cache_data
 def load_factions():
@@ -1081,6 +1102,7 @@ if st.session_state.page == "army":
         st.session_state.draft_unit_name = unit['name']
     unit_key = f"draft_{st.session_state.draft_counter}"
     st.session_state.unit_selections.setdefault(unit_key, {})
+
     weapons = copy.deepcopy(list(unit.get("weapon",[]))); selected_options = {}; mount = None
     weapon_cost = 0; mount_cost = 0; upgrades_cost = 0
 
