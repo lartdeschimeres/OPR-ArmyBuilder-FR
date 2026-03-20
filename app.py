@@ -592,6 +592,13 @@ body{{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;margi
             html += """<div style="columns:3;column-gap:8px;column-rule:1px solid #dee2e6;font-size:7.5px;">"""
 
             if all_rules:
+                if faction_rules:
+                    html += "<h4 style='color: var(--accent); margin-bottom: 10px;'>Règles spéciales</h4><ul style='margin-left: 20px;'>"
+                for rule in sorted(faction_rules, key=lambda x: x.get("name", "").lower()):
+                    if isinstance(rule, dict):
+                        html += f"<li><strong>{esc(rule.get('name', ''))}</strong>: {esc(rule.get('description', ''))}</li>"
+                    html += "</ul>"
+                
                 if faction_spells:
                     html += """<div style="break-after:column;"></div>""" if False else ""
                 for rule in sorted(all_rules, key=lambda x: x.get("name","").lower()):
