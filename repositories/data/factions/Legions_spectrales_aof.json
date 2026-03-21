@@ -13,27 +13,90 @@
       "name": "Ethereal [Éthéré]",
       "description": "Une fois par activation, avant d'attaquer, déplacez cette figurine n'importe où à 6\" ou moins de sa position. Cette figurine se déplace de -6\" lorsqu'elle Avance, et de -6\" lorsqu'elle Cours ou Charge."
     },
-    "Armor (X) [Armure (X)]",
-    "Bane Mark [Marque de Fléau]",
-    "Crossing Attack (X) [Attaque croisée (X)]",
-    "Empyrean Spirit Boost [Boost de l'Esprit empyréen]",
-    "No Retreat [Pas de retraite]",
-    "Precision Feat [Précision extraordinaire]",
-    "Reap [Fauchage]",
-    "Repel Ambushers [Chasse à l'Embuscade]",
-    "Resistance [Résistance]",
-    "Shielded [Blindé]",
-    "Surge [Surcharge]",
-    "Transversal [Transversant]",
-    "Unpredictable [Imprévisible]",
-    "Unpredictable Fighter [Combattant imprévisible]",
-    "Empyrean Spirit Boost Aura [Aura Boost de l'Esprit empyréen]",
-    "No Retreat Aura [Aura Pas de retraite]",
-    "Precision Feat Aura [Aura Précision extraordinaire]",
-    "Relentless Aura [Aura Implacable]",
-    "Scout Aura [Aura Éclaireur]",
-    "Shielded Aura [Aura Blindé]",
-    "Unpredictable Fighter Aura [Aura Combattant imprévisible]"
+    {
+      "name": "Armor (X) [Armure (X)]",
+      "description": "Compte comme ayant Défense X+."
+    },
+    {
+      "name": "Bane Mark [Marque de Fléau]",
+      "description": "Une fois par activation, avant d'attaquer, choisissez une unité ennemie à 18\" ou moins. Les unités amies obtiennent la règle spéciale Fléau une seule fois lorsqu'elles l'attaquent (la prochaine fois que l'effet s'appliquerait)."
+    },
+    {
+      "name": "Crossing Attack (X) [Attaque croisée (X)]",
+      "description": "Une fois par activation, lorsque cette figurine traverse des unités ennemies, choisissez-en une et lancez X dés. Pour chaque 6+, elle subit une touche."
+    },
+    {
+      "name": "Empyrean Spirit Boost [Boost de l'Esprit empyréen]",
+      "description": "Si toutes les figurines de cette unité possèdent la règle spéciale Esprit empyréen, les ennemis qui les attaquent subissent toujours un malus de -1 aux jets pour toucher à cause de la règle spéciale Esprit empyréen (au lieu de seulement lorsqu'ils lui tirent dessus ou la Chargent à plus de 9\")."
+    },
+    {
+      "name": "No Retreat [Pas de retraite]",
+      "description": "Lorsqu'une unité dont la plupart des figurines possèdent cette règle spéciale échoue à un Test de Moral qui la rend Ébranlée ou En déroute, le test est considéré comme réussi. Lancez ensuite autant de dés que le nombre de blessures nécessaires pour la détruire entièrement, et pour chaque résultat de 1 à 3, l'unité subit une blessure qui ne peut être ignorée."
+    },
+    {
+      "name": "Precision Feat [Précision extraordinaire]",
+      "description": "Une fois par partie, lorsque cette unité attaque et que toutes ses figurines possèdent cette règle spéciale, vous pouvez l’utiliser pour qu'ils obtiennent un bonus de +2 aux jets pour toucher."
+    },
+    {
+      "name": "Reap [Fauchage]",
+      "description": "Contre les unités dont la plupart des figurines possèdent une Défense de 2+ à 3+, cette arme gagne un bonus de PA (+2)."
+    },
+    {
+      "name": "Repel Ambushers [Chasse à l'Embuscade]",
+      "description": "Les unités ennemies utilisant la règle spéciale Embuscade doivent être placées à plus de 12\" de l'unité de cette figurine."
+    },
+    {
+      "name": "Resistance [Résistance]",
+      "description": "Lorsqu'une unité dont toutes les figurines possèdent cette règle spéciale subit des blessures, lancez un dé pour chacune d'entre elles. Sur un résultat de 6+, la blessure est ignorée. Si les blessures proviennent d'un sort, elles sont alors ignorées sur un résultat de 2+ à la place."
+    },
+    {
+      "name": "Shielded [Blindé]",
+      "description": "Les unités dont toutes les figurines possèdent cette règle spéciale obtiennent un bonus de +1 aux jets de Défense contre les blessures qui ne proviennent pas de sorts."
+    },
+    {
+      "name": "Surge [Surcharge]",
+      "description": "Sur les résultats non modifiés de 6 pour toucher, cette arme inflige une touche supplémentaire (seul la touche initiale compte comme un 6 pour les règles spéciales)."
+    },
+    {
+      "name": "Transversal [Transversant]",
+      "description": "Peut se déplacer à travers des unités amies ou ennemies."
+    },
+    {
+      "name": "Unpredictable [Imprévisible]",
+      "description": "Lors d'une attaque, lancez un dé et appliquez un effet à toutes les figurines dotées de cette règle : sur un résultat de 1 à 3, elles obtiennent PA (+1), et sur un résultat de 4 à 6, elles obtiennent +1 aux jets d'attaque."
+    },
+    {
+      "name": "Unpredictable Fighter [Combattant imprévisible]",
+      "description": "En mêlée, lancez un dé et appliquez un effet à toutes les figurines dotées de cette règle : sur un résultat de 1 à 3, elles obtiennent PA (+1), et sur un résultat de 4 à 6, elles obtiennent +1 aux jets d'attaque."
+    },
+    {
+      "name": "Empyrean Spirit Boost Aura [Aura Boost de l'Esprit empyréen]",
+      "description": "Cette figurine et son unité obtiennent la règle spéciale Bosst d’Esprit empyréen."
+    },
+    {
+      "name": "No Retreat Aura [Aura Pas de retraite]",
+      "description": "Cette figurine et son unité obtiennent la règle spéciale Pas de retraite."
+    },
+    {
+      "name": "Precision Feat Aura [Aura Précision extraordinaire]",
+      "description": "Cette figurine et son unité obtiennent la règle spéciale Précision extraordinaire."
+    },
+    {
+      "name": "Relentless Aura [Aura Implacable]",
+      "description": "Cette figurine et son unité obtiennent la règle spéciale Implacable."
+    },
+    {
+      "name": "Scout Aura [Aura Éclaireur]",
+      "description": "Cette figurine et son unité obtiennent la règle spéciale Éclaireur."
+    },
+    {
+      "Shielded Aura [Aura Blindé]",
+      "description": "Cette figurine et son unité obtiennent la règle spéciale Blindé."
+    },
+    {
+      "name": "Unpredictable Fighter Aura [Aura Combattant imprévisible]"
+      "description": "Cette figurine et son unité obtiennent la règle spéciale Combattant imprévisible."
+    }
   ],
   "spells": {
     "Ethereal Warding [Protection éthérée] (1)": {
