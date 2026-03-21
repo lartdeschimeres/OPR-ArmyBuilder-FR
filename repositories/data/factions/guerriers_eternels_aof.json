@@ -5,24 +5,78 @@
   "status": "complete",
   "description": "Les Gardiens Éternels sont d'énormes soldats imprégnés de magie, équipés de lourdes armures de combat et d'armes mortelles. Peu nombreux, ils comptent sur leur cuirasse et leurs compétences au combat pour vaincre des ennemis plus nombreux. Originaires de la Cité d'Albâtre, ils voyagent à travers les plans pour capturer des âmes et les offrir à leur Dieu Gardien, afin de maintenir scellée la Grande Porte du Néant.",
   "faction_special_rules": [
-    "Warden [Gardien]",
-    "Armor (X+) [Armure (X+)]",
-    "Breath Attack [Attaque de souffle]",
-    "Infiltrate [Infiltration]",
-    "Melee Slayer [Tueur en mêlée]",
-    "Piercing Target (X) [Perforation de la cible (X)]",
-    "Re-Deployment [Redéploiement]",
-    "Re-Position Artillery [Repositionnement de l'artillerie]",
-    "Repel Ambushers [Chasse à l'Embuscade]",
-    "Shred [Lacération]",
-    "Smash [Fracas]",
-    "Unpredictable Fighter [Combattant imprévisible]",
-    "Unstoppable Shooting Mark [Marque de tir Imparable]",
-    "Warden Boost [Bosst de Gardien]",
-    "Bane when Shooting Aura [Aura de Fléau au tir]",
-    "Stealth Aura [Aura de Furtivité]",
-    "Unstoppable in Melee Aura [Aura Imparable en mêlée]",
-    "Warden Boost Aura [Aura de Boost de Gardien]"
+    {
+      "name": "Warden [Gardien]",
+      "description": "Lorsque des unités dont toutes les figurines possèdent cette règle spéciale subissent des tirs ou sont Chargées d’une distance supérieure à 9\" et subissent des blessures, ces blessures comptent comme ayant une PA (-1), jusqu'à un minimum de PA (0)."
+    },
+    {
+      "name": "Armor (X+) [Armure (X+)]",
+      "description": "Compte comme ayant Défense X+."
+    },
+    {
+      "name": "Breath Attack [Attaque de souffle]",
+      "description": "Une fois par activation de cette figurine, avant d'attaquer, lancez 1D6 : sur un résultat de 2+, une unité ennemie dans un rayon de 6\" en ligne de mire subit une touche avec Explosion (3) et PA (1)."
+    },
+    {
+      "name": "Infiltrate [Infiltration]",
+      "description": "Compte comme ayant la règle spéciale Embuscade, mais peut être déployé jusqu'à 1\" des unités ennemies."
+    },
+    {
+      "name": "Melee Slayer [Tueur en mêlée]",
+      "description": "Les armes de mêlée de cette figurine bénéficient d'un bonus de PA (+2) contre les unités dont la plupart des figurines possèdent Coriace (3) ou plus."
+    },
+    {
+      "name": "Piercing Target (X) [Perforation de la cible (X)]",
+      "description": "Une fois par partie, lors de l'activation de cette figurine, choisissez une unité ennemie à 36\" ou moins dans sa ligne de vue, et placez X marqueurs dessus. Les unités amies obtiennent +PA (X) lorsqu'elles l'attaquent."
+    },
+    {
+      "name" :"Re-Deployment [Redéploiement]",
+      "description": "Une fois toutes les autres unités déployées (à l'exception des unités mises de côté), vous pouvez retirer jusqu'à deux unités amies de la table et les redéployer. Les joueurs placent les unités de redéploiement à tour de rôle, en commençant par le joueur qui s’active ensuite."
+    },
+    {
+      "name": "Re-Position Artillery [Repositionnement de l'artillerie]",
+      "description": "Une fois par activation, choisissez une figurine amie à 6\" ou moins avec la règle spéciale Artillerie, qui peut immédiatement se déplacer jusqu'à 9\"."
+    },
+    {
+      "name": "Repel Ambushers [Chasse à l’Embuscade]",
+      "description": "Les unités ennemies utilisant la règle spéciale Embuscade doivent être placées à plus de 12\" de l'unité de cette figurine."
+    },
+    {
+      "name": "Shred [Lacération]",
+      "description": "Sur les résultats non modifiés de 1 pour bloquer les touches, cette arme inflige une blessure supplémentaire."
+    },
+    {
+      "name": "Smash [Fracas]",
+      "description": "Ignore la règle spéciale Régénération, et contre les unités dont la plupart des figurines ont une Défense comprise entre 5+ et 6+, cette arme obtient Explosion (3)."
+    },
+    {
+      "name": "Unpredictable Fighter [Combattant imprévisible]",
+      "description": "En mêlée, lancez un dé et appliquez un effet à toutes les figurines dotées de cette règle : sur un résultat de 1 à 3, elles obtiennent PA (+1), et sur un résultat de 4 à 6, elles obtiennent +1 aux jets d'attaque."
+    },
+    {
+      "name": "Unstoppable Shooting Mark [Marque de tir Imparable]",
+      "description": "Une fois par activation, avant d'attaquer, choisissez une unité ennemie à 18\" ou moins. Les unités amies obtiennent la règle spéciale Imparable une seule fois lorsqu'elles tirent sur cette unité (la prochaine fois que l'effet s'appliquerait)."
+    },
+    {
+      "name": "Warden Boost [Bosst de Gardien]",
+      "description": "Si toutes les figurines de cette unité possèdent la règle spéciale Gardien, les tirs ennemis comptent toujours comme ayant PA (-1) grâce à la règle spéciale Gardien (au lieu de seulement lorsqu'ils sont chargés ou qu’on leur tire dessus à plus de 9\")."
+    },
+    {
+      "name": "Bane when Shooting Aura [Aura Fléau au tir]",
+      "description": "Cette figurine et son unité obtiennent la règle spéciale Fléau au tir."
+    },
+    {
+      "name": "Stealth Aura [Aura Furtivité]",
+      "description": "Cette figurine et son unité obtiennent la règle spéciale Furtif."
+    },
+    {
+      "name": "Unstoppable in Melee Aura [Aura Imparable en mêlée]",
+      "description": "Cette figurine et son unité obtiennent la règle spéciale Imparable en mêlée."
+    },
+    {
+      "name": "Warden Boost Aura [Aura Boost de Gardien]",
+      "description": "Cette figurine et son unité obtiennent la règle spéciale Boost de Gardien."
+    }
   ],
   "spells": {
     "Shock Attack (1) [Attaque choc (1)]": {
