@@ -12,12 +12,12 @@
     },
     {
       "name": "Bloodthirsty Fighter [Combattant sanguinaire]",
-      "key": "[Combattant sanguinaire]"
+      "key": "[Combattant sanguinaire]",
       "description": "Pour chaque résultat de 1 non modifié obtenu par les ennemis lorsqu'ils bloquent les touches portées par les armes de cette figurine en mêlée, cette figurine peut effectuer un jet d'attaque supplémentaire avec cette arme. Cette règle ne s'applique pas aux nouvelles attaques générées."
     },
     {
       "name": "Break [Dislocation]",
-      "key": "[Dislocation]"
+      "key": "[Dislocation]",
       "description": "Ignore la Régénération, et sur les résultats non modifiés de 6 pour toucher, ces coups obtiennent PA (+2)."
     },
     {
